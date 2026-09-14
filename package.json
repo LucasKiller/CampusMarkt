@@ -23,10 +23,13 @@
     "test:operations": "vitest run tests/integration/operations --testTimeout=180000 --hookTimeout=180000 --passWithNoTests",
     "test:e2e": "playwright test --config apps/web/playwright.config.mjs",
     "security:scan": "node --experimental-strip-types scripts/security/scan-secrets.ts",
-    "env:validate": "node --experimental-strip-types scripts/config/validate-env.ts",
-    "preflight": "node --experimental-strip-types scripts/config/validate-env.ts --mode production",
+    "env:validate": "node --env-file-if-exists=.env --experimental-strip-types scripts/config/validate-env.ts --mode local",
+    "preflight": "node --env-file-if-exists=.env --experimental-strip-types scripts/config/validate-env.ts --mode production",
+    "backup": "node --env-file-if-exists=.env --experimental-strip-types scripts/operations/backup-restore.ts backup",
+    "restore": "node --env-file-if-exists=.env --experimental-strip-types scripts/operations/backup-restore.ts restore",
+    "docs:check": "node --experimental-strip-types scripts/operations/verify-doc-commands.ts",
     "build": "npm run --workspace @campusmarkt/web build",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:unit && npm run test:architecture && npm run security:scan",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:unit && npm run test:architecture && npm run security:scan && npm run docs:check",
     "verify": "npm run check && npm run build && npm run test:integration && npm run test:db && npm run test:stack && npm run test:operations && npm run test:e2e"
   },
   "devDependencies": {

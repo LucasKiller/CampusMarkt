@@ -8,10 +8,10 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 ## Goals
 
-- [ ] Start the complete local foundation through one documented Docker Compose workflow.
+- [x] Start the complete local foundation through one documented Docker Compose workflow.
 - [x] Provide a responsive Next.js application with explicit UI, application, and domain boundaries.
-- [ ] Provide a self-hosted Supabase foundation for PostgreSQL, Auth, Storage, and Realtime.
-- [ ] Establish deterministic quality, security, migration, backup, and environment contracts for later features.
+- [x] Provide a self-hosted Supabase foundation for PostgreSQL, Auth, Storage, and Realtime.
+- [x] Establish deterministic quality, security, migration, backup, and environment contracts for later features.
 
 ## Out of Scope
 
@@ -131,10 +131,10 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| FOUND-01 | P1: Reproducible full-stack startup | Execute | In Progress (T8-T13 complete; T16 pending) |
-| FOUND-02 | P1: Typed modular application foundation | Execute | In Progress (T1-T7 and T13 complete; T16 pending) |
-| FOUND-03 | P1: Safe Supabase baseline | Execute | In Progress (T8 and T11-T14 complete; T16 pending) |
-| FOUND-04 | P1: Production operations contract | Execute | In Progress (T8-T11 and T15 complete; T16 pending) |
+| FOUND-01 | P1: Reproducible full-stack startup | Execute | Complete (T8-T13 and T16) |
+| FOUND-02 | P1: Typed modular application foundation | Execute | Complete (T1-T7, T13, and T16) |
+| FOUND-03 | P1: Safe Supabase baseline | Execute | Complete (T8, T11-T14, and T16) |
+| FOUND-04 | P1: Production operations contract | Execute | Complete (T8-T11, T15, and T16) |
 
 **Coverage:** 4 total, 4 mapped to implementation, 0 pending implementation.
 
@@ -142,8 +142,8 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 ## Success Criteria
 
-- [ ] A clean compatible machine can start the local foundation through one documented Compose command.
-- [ ] Every documented quality and security gate passes from the repository root.
+- [x] A clean compatible machine can start the local foundation through one documented Compose command.
+- [x] Every documented quality and security gate passes from the repository root.
 - [x] A contributor can prove module-boundary enforcement through a failing scratch mutation.
 - [x] A contributor can apply the baseline migration and verify RLS-denied access for unapproved roles.
 - [x] An operator can complete the documented backup and isolated restore drill without relying on the primary volumes.

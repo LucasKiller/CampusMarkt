@@ -440,11 +440,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] A clean-machine local path uses one root Compose startup command and documents shutdown without volume deletion.
-- [ ] Production readiness covers HTTPS, SMTP, S3-compatible Storage, private ports, capacity, and off-host backups.
-- [ ] Upgrade steps require changelog review, dry run, backup, update, health checks, smoke checks, and restore readiness.
-- [ ] Every documented command exists and is exercised by a documentation-command test.
-- [ ] Verify gate passes with zero errors and all expected tests remain present.
+- [x] A clean-machine local path uses one root Compose startup command and documents shutdown without volume deletion.
+- [x] Production readiness covers HTTPS, SMTP, S3-compatible Storage, private ports, capacity, and off-host backups.
+- [x] Upgrade steps require changelog review, dry run, backup, update, health checks, smoke checks, and restore readiness.
+- [x] Every documented command exists and is exercised by a documentation-command test.
+- [x] Verify gate passes with zero errors and all expected tests remain present.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: verify

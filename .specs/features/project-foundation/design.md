@@ -1,6 +1,6 @@
 # Project Foundation Design
 
-**Spec:** `.specs/features/project-foundation/spec.md`  
+**Spec:** `.specs/features/project-foundation/spec.md`
 **Status:** Approved from the referenced planning conversation and the explicit request to create the foundation
 
 ## Architecture Overview

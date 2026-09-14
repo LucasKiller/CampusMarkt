@@ -4,7 +4,7 @@
 
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
-**Design:** `.specs/features/project-foundation/design.md`  
+**Design:** `.specs/features/project-foundation/design.md`
 **Status:** Done
 
 ## Test Coverage Matrix
@@ -266,7 +266,7 @@ T9 -> T10
 
 ### T9: Remove feature-range whitespace defects
 
-**Status**: Ready
+**Status**: Complete
 
 **What**: Remove the four trailing-space Markdown line breaks identified by the independent verifier.
 **Where**: `.specs/features/project-foundation/context.md`, `.specs/features/project-foundation/design.md`, `.specs/features/project-foundation/tasks.md`
@@ -281,9 +281,9 @@ T9 -> T10
 
 **Done when**:
 
-- [ ] Trailing whitespace is removed without changing prose meaning.
-- [ ] `git diff --check 99c978b` exits zero against the complete feature surface including the working fix.
-- [ ] Spec and task validators still report zero errors.
+- [x] Trailing whitespace is removed without changing prose meaning.
+- [x] `git diff --check 99c978b` exits zero against the complete feature surface including the working fix.
+- [x] Spec and task validators still report zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: full

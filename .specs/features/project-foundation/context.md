@@ -1,7 +1,7 @@
 # Project Foundation Context
 
-**Gathered:** 2026-09-14  
-**Spec:** `.specs/features/project-foundation/spec.md`  
+**Gathered:** 2026-09-14
+**Spec:** `.specs/features/project-foundation/spec.md`
 **Status:** Ready for design
 
 ## Feature Boundary

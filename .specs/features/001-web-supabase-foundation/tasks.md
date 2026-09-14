@@ -121,10 +121,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] The package exposes only its public entry point.
-- [ ] No Next.js, React, Supabase, presentation, or infrastructure dependency exists.
-- [ ] Unit tests prove its public contract can be imported.
-- [ ] Quick gate passes with zero errors and at least 1 package test passes.
+- [x] The package exposes only its public entry point.
+- [x] No Next.js, React, Supabase, presentation, or infrastructure dependency exists.
+- [x] Unit tests prove its public contract can be imported.
+- [x] Quick gate passes with zero errors and at least 1 package test passes.
 
 **Tests**: unit
 **Gate**: quick

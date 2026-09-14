@@ -52,6 +52,8 @@ T8
 
 ### T1: Populate the agent navigation guide
 
+**Status**: Complete
+
 **What**: Replace the empty agent file with a concise source-of-truth map and execution constraints.
 **Where**: `AGENTS.md`
 **Depends on**: None
@@ -65,10 +67,10 @@ T8
 
 **Done when**:
 
-- [ ] Product docs, `.specs/STATE.md`, and active feature artifacts are linked.
-- [ ] Current V1 and deferred scope rules are explicit.
-- [ ] Spec-first, test traceability, local-only authority, and terminal shutdown rules are explicit.
-- [ ] Build gate passes with zero errors.
+- [x] Product docs, `.specs/STATE.md`, and active feature artifacts are linked.
+- [x] Current V1 and deferred scope rules are explicit.
+- [x] Spec-first, test traceability, local-only authority, and terminal shutdown rules are explicit.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

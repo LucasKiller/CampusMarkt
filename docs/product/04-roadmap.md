@@ -25,6 +25,8 @@ graph LR
 
 **Outcome**: The repository preserves product decisions, scope, policy, future boundaries, and a deterministic feature-delivery method.
 
+**Entry evidence**: The referenced planning conversation contains confirmed product decisions, while the repository contains only a title and empty product-document placeholders.
+
 **Deliverables**:
 
 - Product vision and shared domain language.
@@ -44,6 +46,8 @@ graph LR
 ## Horizon 1: Web and Data Foundation
 
 **Outcome**: A reproducible local project can build, test, and run a minimal responsive web shell against a local Supabase environment.
+
+**Entry evidence**: Horizon 0 has a PASS validation report, and the product owner has approved starting the first runtime feature.
 
 **Expected feature**: `001-web-supabase-foundation`
 
@@ -70,11 +74,14 @@ graph LR
 
 **Outcome**: People can create and use accounts safely, and TU Braunschweig students can add an optional current trust badge.
 
+**Entry evidence**: Horizon 1 reproduces local web, test, and database gates from a clean checkout, including an authorization-test harness.
+
 **Expected features**:
 
 1. `002-identity-accounts`
-2. `003-public-profiles`
-3. `004-university-verification`
+2. `003-university-verification`
+
+Public-safe profile behavior belongs to `002-identity-accounts`, matching the canonical sequence in [V1 Scope](02-mvp-scope.md#v1-feature-sequence).
 
 **Deliverables to specify**:
 
@@ -96,13 +103,16 @@ graph LR
 
 **Outcome**: Users can publish supported physical goods, and visitors can find and understand them.
 
+**Entry evidence**: Identity, public-profile ownership, and optional-verification boundaries have independent PASS reports.
+
 **Expected features**:
 
-1. `005-listing-creation-management`
-2. `006-listing-media`
-3. `007-marketplace-feed-details`
-4. `008-search-filters`
-5. `009-favorites`
+1. `004-listing-creation-management`
+2. `005-marketplace-feed-listing-details`
+3. `006-search-filters`
+4. `007-favorites`
+
+Listing media belongs to `004-listing-creation-management` so upload lifecycle and listing ownership are delivered together.
 
 **Deliverables to specify**:
 
@@ -126,13 +136,15 @@ graph LR
 
 **Outcome**: Marketplace participants can move from interest to one clear local-pickup agreement without relying on ambiguous chat state.
 
+**Entry evidence**: Supported listing types, ownership, discovery, search, and favorites have independent PASS reports and stable concurrency identifiers.
+
 **Expected features**:
 
-1. `010-purchase-intent`
-2. `011-offers-counteroffers`
-3. `012-reservations`
-4. `013-messaging`
-5. `014-local-pickup-completion`
+1. `008-purchase-intent-offers-reservations`
+2. `009-messaging`
+3. `010-pickup-completion`
+
+Purchase intent, offers, and reservations share feature 008 because one atomic reservation invariant governs their accepted outcomes.
 
 **Deliverables to specify**:
 
@@ -155,13 +167,15 @@ graph LR
 
 **Outcome**: CampusMarkt can support a controlled private beta with enforceable policy, safe core journeys, and observable product health.
 
+**Entry evidence**: The complete goods, negotiation, messaging, and pickup journeys have PASS reports, and product owners have approved the beta policy review.
+
 **Expected features**:
 
-1. `015-reporting-blocking`
-2. `016-basic-moderation`
-3. `017-german-english-localization`
-4. `018-accessibility-security-observability`
-5. `019-private-beta-readiness`
+1. `011-reporting-blocking`
+2. `012-moderation`
+3. `013-localization-launch-hardening`
+
+Accessibility, security, observability, and beta readiness are completion dimensions of feature 013 rather than separately numbered product features.
 
 **Deliverables to specify**:
 
@@ -186,6 +200,8 @@ graph LR
 
 **Outcome**: A controlled community proves that the marketplace creates useful local matches safely.
 
+**Entry evidence**: Features 001-013 are independently verified, legal and privacy reviews are complete, beta metrics are approved, and the operating team can support reports and incidents.
+
 **Launch shape**:
 
 - Seed supply with a small group of sellers and donors before broad buyer acquisition.
@@ -205,6 +221,8 @@ graph LR
 ## Horizon 7: Broader Braunschweig Beta
 
 **Outcome**: CampusMarkt serves a wider Braunschweig community without losing local relevance or trust.
+
+**Entry evidence**: The TU Braunschweig private beta meets its approved liquidity, repeat-use, safety, and operational targets across the agreed measurement window.
 
 **Potential work**:
 
@@ -229,9 +247,13 @@ The PWA feature must specify installability, caching, updates, notification cons
 
 **Entry evidence**: A material share of retained usage occurs on mobile web, and installation or notifications solve measured retention or response problems.
 
+**Non-goals**: Native-only behavior, offline transaction mutation, or notification prompts without a specified user benefit and consent flow.
+
 ## Horizon 9: Protected Payment Discovery
 
 **Outcome**: CampusMarkt decides whether protected online payment solves a verified user problem and selects a legally and operationally appropriate provider.
+
+**Entry evidence**: The broader Braunschweig beta shows sustained completed handovers, measurable demand for online protection, and operational capacity for payment discovery.
 
 **Required discovery**:
 
@@ -244,11 +266,13 @@ The PWA feature must specify installability, caching, updates, notification cons
 
 **Exit evidence**: A reviewed provider decision and approved payment, handover, cancellation, refund, and dispute specs.
 
-No payment code, provider coupling, or wallet-like language is created before this gate.
+**Non-goals**: Payment code, provider coupling, wallet-like language, or promises of protection before the provider and legal model are approved.
 
 ## Horizon 10: Protected Payment and Handover
 
 **Outcome**: Eligible transactions can use provider-backed online payment and one secure physical-handover confirmation mechanism.
+
+**Entry evidence**: Horizon 9 has an approved provider decision plus verified payment, cancellation, handover, refund, reconciliation, incident, and dispute specifications.
 
 Expected sequence:
 
@@ -266,13 +290,17 @@ Agreement
 
 This horizon requires P0-level security, authorization, idempotency, concurrency, audit, and discrimination testing.
 
+**Non-goals**: CampusMarkt custody of funds, storage of card data, unsupported payment methods, unreviewed countries, or ordinary moderators directly changing provider money state.
+
 ## Horizon 11: Native Mobile Evidence Gate
 
 **Outcome**: Product evidence determines whether native iOS and Android clients offer enough value beyond the responsive web and PWA.
 
-Entry evidence can include sustained retained usage, push-notification value, camera-heavy listing creation, device integration needs, and maintainable cross-client contracts.
+**Entry evidence**: Sustained retained mobile-web usage and measured value from push notifications, camera-heavy listing creation, device integration, or other native capabilities justify the additional client.
 
 If approved, an Expo/React Native client reuses application contracts and domain rules. It does not duplicate business logic from Next.js components.
+
+**Non-goals**: Rewriting marketplace rules for mobile, introducing native-only authorization behavior, or creating empty mobile scaffolding before a mobile feature is approved.
 
 ## Future Vertical Discovery
 

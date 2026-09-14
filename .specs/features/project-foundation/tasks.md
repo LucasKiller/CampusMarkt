@@ -323,7 +323,7 @@ T11 -> T12
 
 ### T11: Reconcile roadmap contracts and feature IDs
 
-**Status**: Ready
+**Status**: Complete
 
 **What**: Make every numbered roadmap horizon declare outcome, entry evidence, and non-goals, and align all feature IDs with the canonical V1 table.
 **Where**: `docs/product/04-roadmap.md`
@@ -338,10 +338,10 @@ T11 -> T12
 
 **Done when**:
 
-- [ ] Horizons 0-11 each contain an outcome, entry evidence, and explicit non-goals.
-- [ ] Feature IDs 001-013 carry the same meaning as the canonical V1 scope table.
-- [ ] No capability is dropped or moved into V1 by the reconciliation.
-- [ ] Full gate passes with zero errors.
+- [x] Horizons 0-11 each contain an outcome, entry evidence, and explicit non-goals.
+- [x] Feature IDs 001-013 carry the same meaning as the canonical V1 scope table.
+- [x] No capability is dropped or moved into V1 by the reconciliation.
+- [x] Full gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: full

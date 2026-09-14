@@ -97,10 +97,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] The root page communicates the product purpose without implementing marketplace features.
-- [ ] The application production build runs in a Node 24 container-compatible mode.
-- [ ] Playwright asserts no horizontal overflow at 360 and 1280 CSS pixels.
-- [ ] Build gate passes with zero errors and 2 viewport tests pass.
+- [x] The root page communicates the product purpose without implementing marketplace features.
+- [x] The application production build runs in a Node 24 container-compatible mode.
+- [x] Playwright asserts no horizontal overflow at 360 and 1280 CSS pixels.
+- [x] Build gate passes with zero errors and 2 viewport tests pass.
 
 **Tests**: e2e
 **Gate**: build

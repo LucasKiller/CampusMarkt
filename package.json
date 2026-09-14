@@ -12,7 +12,7 @@
     "packages/*"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && npm run --workspace @campusmarkt/web typecheck",
     "lint": "eslint .",
     "format:check": "prettier --check . --ignore-unknown",
     "test:unit": "vitest run tests/unit packages --passWithNoTests",
@@ -21,8 +21,8 @@
     "test:db": "vitest run supabase/tests --passWithNoTests",
     "test:stack": "vitest run tests/integration/stack --passWithNoTests",
     "test:operations": "vitest run tests/integration/operations --passWithNoTests",
-    "test:e2e": "playwright test --pass-with-no-tests",
-    "build": "npm run typecheck",
+    "test:e2e": "playwright test --config apps/web/playwright.config.mjs",
+    "build": "npm run --workspace @campusmarkt/web build",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:unit && npm run test:architecture",
     "verify": "npm run check && npm run build && npm run test:integration && npm run test:db && npm run test:stack && npm run test:operations && npm run test:e2e"
   },

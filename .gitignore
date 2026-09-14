@@ -3,6 +3,8 @@ node_modules/
 playwright-report/
 test-results/
 coverage/
+*.tsbuildinfo
+**/next-env.d.ts
 .env
 .env.*
 !.env.example

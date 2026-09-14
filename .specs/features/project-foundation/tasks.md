@@ -208,6 +208,8 @@ T8
 
 ### T7: Define the delivery roadmap
 
+**Status**: Complete
+
 **What**: Order product foundation, MVP slices, beta stages, PWA, protected payments, and mobile expansion.
 **Where**: `docs/product/04-roadmap.md`
 **Depends on**: T6
@@ -221,10 +223,10 @@ T8
 
 **Done when**:
 
-- [ ] Each horizon has outcomes, entry evidence, and explicit non-goals.
-- [ ] TU Braunschweig private beta precedes wider Braunschweig expansion.
-- [ ] Protected payment and native mobile require evidence from the web marketplace.
-- [ ] Build gate passes with zero errors.
+- [x] Each horizon has outcomes, entry evidence, and explicit non-goals.
+- [x] TU Braunschweig private beta precedes wider Braunschweig expansion.
+- [x] Protected payment and native mobile require evidence from the web marketplace.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

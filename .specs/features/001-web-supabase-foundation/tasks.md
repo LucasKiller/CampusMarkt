@@ -415,11 +415,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Backup writes database and Storage artifacts outside primary volumes with SHA-256 manifest entries.
-- [ ] No success manifest is emitted after database, Storage, or destination failure.
-- [ ] Restore refuses the active environment and accepts only an isolated target.
-- [ ] An isolated round-trip restores the canary row and Storage object with matching checksums.
-- [ ] Operations gate passes with at least 7 integration assertions.
+- [x] Backup writes database and Storage artifacts outside primary volumes with SHA-256 manifest entries.
+- [x] No success manifest is emitted after database, Storage, or destination failure.
+- [x] Restore refuses the active environment and accepts only an isolated target.
+- [x] An isolated round-trip restores the canary row and Storage object with matching checksums.
+- [x] Operations gate passes with at least 7 integration assertions.
 
 **Tests**: integration
 **Gate**: full

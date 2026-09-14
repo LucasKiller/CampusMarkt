@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 3 / T15 - backup and isolated restore verification
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14
+- **Phase / Task**: Phase 3 / T16 - operations documentation and foundation closure
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15
 - **In-progress** (file:line): none
-- **Next step**: Implement T15 backup and isolated restore verification, run its full gate, and commit it atomically.
+- **Next step**: Complete T16 operations documentation, run the final verify gate, and commit it atomically.
 - **Blockers**: none
-- **Uncommitted files**: none after the T14 commit
+- **Uncommitted files**: none after the T15 commit
 - **Branch**: main

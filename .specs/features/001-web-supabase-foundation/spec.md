@@ -134,7 +134,7 @@ CampusMarkt has product rules but no executable application foundation. The firs
 | FOUND-01 | P1: Reproducible full-stack startup | Execute | In Progress (T8-T13 complete; T16 pending) |
 | FOUND-02 | P1: Typed modular application foundation | Execute | In Progress (T1-T7 and T13 complete; T16 pending) |
 | FOUND-03 | P1: Safe Supabase baseline | Execute | In Progress (T8 and T11-T14 complete; T16 pending) |
-| FOUND-04 | P1: Production operations contract | Execute | In Progress (T8-T11 complete; T15-T16 pending) |
+| FOUND-04 | P1: Production operations contract | Execute | In Progress (T8-T11 and T15 complete; T16 pending) |
 
 **Coverage:** 4 total, 4 mapped to implementation, 0 pending implementation.
 
@@ -146,4 +146,4 @@ CampusMarkt has product rules but no executable application foundation. The firs
 - [ ] Every documented quality and security gate passes from the repository root.
 - [x] A contributor can prove module-boundary enforcement through a failing scratch mutation.
 - [x] A contributor can apply the baseline migration and verify RLS-denied access for unapproved roles.
-- [ ] An operator can complete the documented backup and isolated restore drill without relying on the primary volumes.
+- [x] An operator can complete the documented backup and isolated restore drill without relying on the primary volumes.

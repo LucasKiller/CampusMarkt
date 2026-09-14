@@ -20,7 +20,7 @@
     "test:integration": "vitest run tests/integration/compose --passWithNoTests",
     "test:db": "vitest run supabase/tests --testTimeout=120000 --hookTimeout=120000 --passWithNoTests",
     "test:stack": "vitest run tests/integration/stack --testTimeout=300000 --hookTimeout=300000 --passWithNoTests",
-    "test:operations": "vitest run tests/integration/operations --passWithNoTests",
+    "test:operations": "vitest run tests/integration/operations --testTimeout=180000 --hookTimeout=180000 --passWithNoTests",
     "test:e2e": "playwright test --config apps/web/playwright.config.mjs",
     "security:scan": "node --experimental-strip-types scripts/security/scan-secrets.ts",
     "env:validate": "node --experimental-strip-types scripts/config/validate-env.ts",

@@ -1,5 +1,23 @@
 name: campusmarkt
 
+x-migration-service: &migration-service
+  image: supabase/postgres:17.6.1.136
+  restart: "no"
+  depends_on:
+    db:
+      condition: service_healthy
+  environment:
+    PGHOST: db
+    PGPORT: ${POSTGRES_PORT:-5432}
+    PGDATABASE: ${POSTGRES_DB:-postgres}
+    PGUSER: postgres
+    PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    MIGRATIONS_DIRECTORY: /app/migrations
+  volumes:
+    - ./supabase/migrations:/app/migrations:ro
+    - ./supabase/apply-migrations.sh:/app/apply-migrations.sh:ro
+  entrypoint: ["/bin/sh", "/app/apply-migrations.sh"]
+
 include:
   - path:
       - ./infra/supabase/docker-compose.yml
@@ -33,11 +51,15 @@ services:
     depends_on:
       api-gw:
         condition: service_healthy
+      migration-gate:
+        condition: service_completed_successfully
     environment:
       HOSTNAME: 0.0.0.0
       PORT: 3000
       NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL:?NEXT_PUBLIC_SUPABASE_URL is required}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:?NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required}
+      SUPABASE_INTERNAL_URL: http://api-gw:8000
+      SUPABASE_HEALTH_KEY: ${ANON_KEY:?ANON_KEY is required}
     expose:
       - "3000"
     healthcheck:
@@ -46,30 +68,18 @@ services:
           "CMD",
           "node",
           "-e",
-          "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+          "fetch('http://127.0.0.1:3000/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
         ]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  migration-gate:
+    <<: *migration-service
+
   migration:
-    image: supabase/postgres:17.6.1.136
+    <<: *migration-service
     profiles: ["operations"]
-    restart: "no"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      PGHOST: db
-      PGPORT: ${POSTGRES_PORT:-5432}
-      PGDATABASE: ${POSTGRES_DB:-postgres}
-      PGUSER: postgres
-      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      MIGRATIONS_DIRECTORY: /app/migrations
-    volumes:
-      - ./supabase/migrations:/app/migrations:ro
-      - ./supabase/apply-migrations.sh:/app/apply-migrations.sh:ro
-    entrypoint: ["/bin/sh", "/app/apply-migrations.sh"]
 
 networks:
   default:

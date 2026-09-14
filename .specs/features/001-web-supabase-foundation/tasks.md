@@ -365,11 +365,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Liveness succeeds independently and readiness returns 503 when Supabase is unavailable.
-- [ ] Healthy startup serves the shell and documented Supabase APIs through ingress.
-- [ ] Fixture database and Storage data survive a normal stop/start without volume deletion.
-- [ ] Unhealthy services and migration failures prevent ready status with bounded diagnostics.
-- [ ] Stack gate passes with at least 8 integration assertions.
+- [x] Liveness succeeds independently and readiness returns 503 when Supabase is unavailable.
+- [x] Healthy startup serves the shell and documented Supabase APIs through ingress.
+- [x] Fixture database and Storage data survive a normal stop/start without volume deletion.
+- [x] Unhealthy services and migration failures prevent ready status with bounded diagnostics.
+- [x] Stack gate passes with at least 8 integration assertions.
 
 **Tests**: integration
 **Gate**: full

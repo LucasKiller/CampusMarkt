@@ -1,0 +1,24 @@
+services:
+  api-gw:
+    ports: !reset []
+
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - campusmarkt-postgres-data:/var/lib/postgresql/data
+
+  supavisor:
+    ports: !reset []
+
+  storage:
+    volumes:
+      - campusmarkt-storage-data:/var/lib/storage
+
+  imgproxy:
+    volumes:
+      - campusmarkt-storage-data:/var/lib/storage
+
+volumes:
+  campusmarkt-postgres-data:
+  campusmarkt-storage-data:

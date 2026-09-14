@@ -265,11 +265,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Rendered Compose contains the web, gateway, PostgreSQL, Auth, REST, Realtime, Storage, migration, and required support services.
-- [ ] PostgreSQL and internal service ports are not publicly bound.
-- [ ] Named volumes preserve database and local Storage data.
-- [ ] Missing required environment values fail rendered/startup validation with variable names.
-- [ ] Integration gate passes with at least 8 Compose topology assertions.
+- [x] Rendered Compose contains the web, gateway, PostgreSQL, Auth, REST, Realtime, Storage, migration, and required support services.
+- [x] PostgreSQL and internal service ports are not publicly bound.
+- [x] Named volumes preserve database and local Storage data.
+- [x] Missing required environment values fail rendered/startup validation with variable names.
+- [x] Integration gate passes with at least 8 Compose topology assertions.
 
 **Tests**: integration
 **Gate**: full

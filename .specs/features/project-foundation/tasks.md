@@ -291,7 +291,7 @@ T9 -> T10
 
 ### T10: Reconcile the project handoff
 
-**Status**: Ready
+**Status**: Complete
 
 **What**: Replace only the `.specs/STATE.md` handoff body with the actual post-fix state and next action.
 **Where**: `.specs/STATE.md`
@@ -306,10 +306,10 @@ T9 -> T10
 
 **Done when**:
 
-- [ ] The handoff records T1-T10 complete and the correct branch.
-- [ ] The handoff points to independent re-verification as the next action.
-- [ ] The handoff matches Git status and task evidence at commit time.
-- [ ] Full gate passes with zero errors.
+- [x] The handoff records T1-T10 complete and the correct branch.
+- [x] The handoff points to independent re-verification as the next action.
+- [x] The handoff matches Git status and task evidence at commit time.
+- [x] Full gate passes with zero errors.
 
 **Tests**: none - TLC state documentation matches the matrix
 **Gate**: full

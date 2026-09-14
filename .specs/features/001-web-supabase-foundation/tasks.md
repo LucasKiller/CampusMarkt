@@ -390,11 +390,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Publishable browser values and safe placeholders are allowed.
-- [ ] Secret/service keys, database passwords, SMTP passwords, TLS keys, and Storage secrets are rejected.
-- [ ] Diagnostics identify file and rule without printing credential contents.
-- [ ] Scratch detection tests leave the real working tree unchanged.
-- [ ] Quick gate passes with at least 8 scanner tests.
+- [x] Publishable browser values and safe placeholders are allowed.
+- [x] Secret/service keys, database passwords, SMTP passwords, TLS keys, and Storage secrets are rejected.
+- [x] Diagnostics identify file and rule without printing credential contents.
+- [x] Scratch detection tests leave the real working tree unchanged.
+- [x] Quick gate passes with at least 8 scanner tests.
 
 **Tests**: unit
 **Gate**: quick

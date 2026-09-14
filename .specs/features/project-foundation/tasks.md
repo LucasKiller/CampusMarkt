@@ -78,6 +78,8 @@ T8
 
 ### T2: Expand the repository entry point
 
+**Status**: Complete
+
 **What**: Turn the one-line README into the product and documentation entry point.
 **Where**: `README.md`
 **Depends on**: T1
@@ -91,10 +93,10 @@ T8
 
 **Done when**:
 
-- [ ] Purpose, current status, scope, target architecture, and SDD workflow are stated.
-- [ ] Every product document and the foundation feature are linked.
-- [ ] The README does not claim that application code already exists.
-- [ ] Build gate passes with zero errors.
+- [x] Purpose, current status, scope, target architecture, and SDD workflow are stated.
+- [x] Every product document and the foundation feature are linked.
+- [x] The README does not claim that application code already exists.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

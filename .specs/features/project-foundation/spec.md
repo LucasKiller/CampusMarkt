@@ -124,7 +124,7 @@ CampusMarkt has a confirmed product direction, but its repository contains only 
 | PFND-05 | P1: Preserve safety and privacy | Tasks | In Tasks |
 | PFND-06 | P1: Preserve delivery path | Tasks | In Tasks |
 | PFND-07 | P1: Preserve delivery path | Tasks | In Tasks |
-| PFND-08 | P1: Understand product and scope | Tasks | In Tasks |
+| PFND-08 | P1: Understand product and scope | Implementing | Implementing |
 
 **Coverage:** 8 total, 8 mapped to tasks, 0 unmapped.
 

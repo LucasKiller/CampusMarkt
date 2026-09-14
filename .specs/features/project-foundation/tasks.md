@@ -24,7 +24,7 @@ Implement these tasks with the `tlc-spec-driven` skill: activate it by name and 
 | --- | --- | --- |
 | Quick | Documentation edit checkpoint | `git diff --check` |
 | Build | After each documentation task | `git diff --check` |
-| Full | After T8 | `git diff --check`; run `validate_spec.py` and `validate_tasks.py`; verify the eight required Markdown files exist and are non-empty |
+| Full | After T8 and validation fixes | `git diff --check 99c978b`; run `validate_spec.py` and `validate_tasks.py`; verify the eight required Markdown files exist and are non-empty |
 
 ## Execution Plan
 
@@ -46,6 +46,12 @@ T3 -> T4 -> T5 -> T6 -> T7
 
 ```text
 T8
+```
+
+### Phase 4: Validation Fixes
+
+```text
+T9 -> T10
 ```
 
 ## Task Breakdown
@@ -258,14 +264,66 @@ T8
 **Gate**: full
 **Commit**: `docs(future): define deferred capabilities`
 
+### T9: Remove feature-range whitespace defects
+
+**Status**: Ready
+
+**What**: Remove the four trailing-space Markdown line breaks identified by the independent verifier.
+**Where**: `.specs/features/project-foundation/context.md`, `.specs/features/project-foundation/design.md`, `.specs/features/project-foundation/tasks.md`
+**Depends on**: None
+**Reuses**: Independent validation evidence at `.specs/features/project-foundation/validation.md:72`
+**Requirement**: PFND-08
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Trailing whitespace is removed without changing prose meaning.
+- [ ] `git diff --check 99c978b` exits zero against the complete feature surface including the working fix.
+- [ ] Spec and task validators still report zero errors.
+
+**Tests**: none - documentation layer matches the matrix
+**Gate**: full
+**Commit**: `style(sdd): remove markdown trailing whitespace`
+
+### T10: Reconcile the project handoff
+
+**Status**: Ready
+
+**What**: Replace only the `.specs/STATE.md` handoff body with the actual post-fix state and next action.
+**Where**: `.specs/STATE.md`
+**Depends on**: T9
+**Reuses**: Git history, task completion state, and independent validation evidence
+**Requirement**: PFND-01
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] The handoff records T1-T10 complete and the correct branch.
+- [ ] The handoff points to independent re-verification as the next action.
+- [ ] The handoff matches Git status and task evidence at commit time.
+- [ ] Full gate passes with zero errors.
+
+**Tests**: none - TLC state documentation matches the matrix
+**Gate**: full
+**Commit**: `docs(sdd): reconcile project foundation handoff`
+
 ## Phase Execution Map
 
 ```text
-Phase 1 -> Phase 2 -> Phase 3
+Phase 1 -> Phase 2 -> Phase 3 -> Phase 4
 
 Phase 1: T1 -> T2
 Phase 2: T3 -> T4 -> T5 -> T6 -> T7
 Phase 3: T8
+Phase 4: T9 -> T10
 ```
 
 ## Task Granularity Check
@@ -280,6 +338,8 @@ Phase 3: T8
 | T6 | One policy document | Granular |
 | T7 | One roadmap document | Granular |
 | T8 | One future-capabilities document | Granular |
+| T9 | One mechanical whitespace repair set | Granular exception: three planning artifacts share one gate defect |
+| T10 | One handoff section | Granular |
 
 ## Diagram-Definition Cross-Check
 
@@ -293,6 +353,8 @@ Phase 3: T8
 | T6 | T5 | T5 -> T6 | Match |
 | T7 | T6 | T6 -> T7 | Match |
 | T8 | None | Phase start | Match |
+| T9 | None | Phase start | Match |
+| T10 | T9 | T9 -> T10 | Match |
 
 ## Test Co-location Validation
 
@@ -306,3 +368,5 @@ Phase 3: T8
 | T6 | Documentation | none | none | OK |
 | T7 | Documentation | none | none | OK |
 | T8 | Documentation | none | none | OK |
+| T9 | Documentation | none | none | OK |
+| T10 | TLC state documentation | none | none | OK |

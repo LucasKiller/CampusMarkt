@@ -9,7 +9,7 @@ const privateWorkspaceImport = {
 
 export default tseslint.config(
   {
-    ignores: ["**/.next/**", "**/node_modules/**"],
+    ignores: ["**/.next/**", "**/node_modules/**", "infra/supabase/**"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

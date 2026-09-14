@@ -241,10 +241,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] `.supabase-version` records `self-hosted/v0.8.1` and the imported files match that tag.
-- [ ] Upstream container images use immutable tags or digests supplied by the release.
-- [ ] Data directories and generated secrets are ignored while safe examples remain tracked.
-- [ ] Build gate passes with zero errors and version-provenance verification passes.
+- [x] `.supabase-version` records `self-hosted/v0.8.1` and the imported files match that tag.
+- [x] Upstream container images use immutable tags or digests supplied by the release.
+- [x] Data directories and generated secrets are ignored while safe examples remain tracked.
+- [x] Build gate passes with zero errors and version-provenance verification passes.
 
 **Tests**: none - static vendored configuration matches the matrix
 **Gate**: build

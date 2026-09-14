@@ -145,10 +145,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] The package exposes only validation-safe public exports.
-- [ ] The package does not depend on Next.js or presentation code.
-- [ ] Unit tests cover valid and invalid boundary marker inputs.
-- [ ] Quick gate passes with zero errors and at least 2 package tests pass.
+- [x] The package exposes only validation-safe public exports.
+- [x] The package does not depend on Next.js or presentation code.
+- [x] Unit tests cover valid and invalid boundary marker inputs.
+- [x] Quick gate passes with zero errors and at least 2 package tests pass.
 
 **Tests**: unit
 **Gate**: quick

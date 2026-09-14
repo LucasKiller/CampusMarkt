@@ -6,9 +6,9 @@ CampusMarkt has a confirmed product direction, but its repository contains only 
 
 ## Goals
 
-- [ ] Preserve every confirmed product, scope, safety, roadmap, and architecture decision from the planning conversation.
-- [ ] Give contributors one clear route from repository entry point to product knowledge and feature specifications.
-- [ ] Separate V1 behavior from future capabilities without creating speculative code.
+- [x] Preserve every confirmed product, scope, safety, roadmap, and architecture decision from the planning conversation.
+- [x] Give contributors one clear route from repository entry point to product knowledge and feature specifications.
+- [x] Separate V1 behavior from future capabilities without creating speculative code.
 
 ## Out of Scope
 
@@ -117,20 +117,20 @@ CampusMarkt has a confirmed product direction, but its repository contains only 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PFND-01 | P2: Guide future agents | Implementing | Implementing |
-| PFND-02 | P1: Understand product and scope | Implementing | Implementing |
-| PFND-03 | P1: Understand product and scope | Implementing | Implementing |
-| PFND-04 | P1: Understand product and scope | Implementing | Implementing |
-| PFND-05 | P1: Preserve safety and privacy | Implementing | Implementing |
-| PFND-06 | P1: Preserve delivery path | Implementing | Implementing |
-| PFND-07 | P1: Preserve delivery path | Implementing | Implementing |
-| PFND-08 | P1: Understand product and scope | Implementing | Implementing |
+| PFND-01 | P2: Guide future agents | Validation | Verified |
+| PFND-02 | P1: Understand product and scope | Validation | Verified |
+| PFND-03 | P1: Understand product and scope | Validation | Verified |
+| PFND-04 | P1: Understand product and scope | Validation | Verified |
+| PFND-05 | P1: Preserve safety and privacy | Validation | Verified |
+| PFND-06 | P1: Preserve delivery path | Validation | Verified |
+| PFND-07 | P1: Preserve delivery path | Validation | Verified |
+| PFND-08 | P1: Understand product and scope | Validation | Verified |
 
 **Coverage:** 8 total, 8 mapped to tasks, 0 unmapped.
 
 ## Success Criteria
 
-- [ ] All eight required repository and product documents exist and contain substantive content.
-- [ ] Every confirmed conversation decision appears in one authoritative document.
-- [ ] The spec and task validators finish with zero errors.
-- [ ] Repository Markdown passes whitespace and required-file integrity checks.
+- [x] All eight required repository and product documents exist and contain substantive content.
+- [x] Every confirmed conversation decision appears in one authoritative document.
+- [x] The spec and task validators finish with zero errors.
+- [x] Repository Markdown passes whitespace and required-file integrity checks.

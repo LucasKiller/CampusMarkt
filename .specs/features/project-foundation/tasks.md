@@ -104,6 +104,8 @@ T8
 
 ### T3: Define the product vision
 
+**Status**: Complete
+
 **What**: Populate the vision document with audience, problem, positioning, access, principles, and success signals.
 **Where**: `docs/product/00-product-vision.md`
 **Depends on**: None
@@ -117,10 +119,10 @@ T8
 
 **Done when**:
 
-- [ ] CampusMarkt, Braunschweig, web-first, local pickup, and optional verification are defined.
-- [ ] The value proposition and initial launch audience are explicit.
-- [ ] Product principles and measurable launch hypotheses are present.
-- [ ] Build gate passes with zero errors.
+- [x] CampusMarkt, Braunschweig, web-first, local pickup, and optional verification are defined.
+- [x] The value proposition and initial launch audience are explicit.
+- [x] Product principles and measurable launch hypotheses are present.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

@@ -118,7 +118,7 @@ CampusMarkt has a confirmed product direction, but its repository contains only 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | PFND-01 | P2: Guide future agents | Implementing | Implementing |
-| PFND-02 | P1: Understand product and scope | Tasks | In Tasks |
+| PFND-02 | P1: Understand product and scope | Implementing | Implementing |
 | PFND-03 | P1: Understand product and scope | Tasks | In Tasks |
 | PFND-04 | P1: Understand product and scope | Tasks | In Tasks |
 | PFND-05 | P1: Preserve safety and privacy | Tasks | In Tasks |

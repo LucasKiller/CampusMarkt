@@ -5,7 +5,7 @@
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
 **Design:** `.specs/features/project-foundation/design.md`  
-**Status:** Approved
+**Status:** Done
 
 ## Test Coverage Matrix
 
@@ -234,6 +234,8 @@ T8
 
 ### T8: Define future capability contracts
 
+**Status**: Complete
+
 **What**: Document deferred verticals and flows with boundaries, prerequisites, and non-implementation rules.
 **Where**: `docs/product/05-future-capabilities.md`
 **Depends on**: None
@@ -247,10 +249,10 @@ T8
 
 **Done when**:
 
-- [ ] SERVICES, HOUSING, JOBS, SWAP, MOVING_OUT, MEETUP_SPOTS, PROTECTED_PAYMENT, and native mobile are documented as deferred.
-- [ ] Payment-provider and CampusMarkt ownership are separated.
-- [ ] QR and numeric confirmation share one future handover-token model, with disputes acknowledged.
-- [ ] Full gate passes with zero errors and all required files are non-empty.
+- [x] SERVICES, HOUSING, JOBS, SWAP, MOVING_OUT, MEETUP_SPOTS, PROTECTED_PAYMENT, and native mobile are documented as deferred.
+- [x] Payment-provider and CampusMarkt ownership are separated.
+- [x] QR and numeric confirmation share one future handover-token model, with disputes acknowledged.
+- [x] Full gate passes with zero errors and all required files are non-empty.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: full

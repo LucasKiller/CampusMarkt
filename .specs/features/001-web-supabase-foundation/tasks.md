@@ -5,7 +5,7 @@
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
 **Design:** `.specs/features/001-web-supabase-foundation/design.md`
-**Status:** Approved on 2026-09-14
+**Status:** Verification fixes in progress (iteration 1)
 
 ## Test Coverage Matrix
 
@@ -54,6 +54,12 @@ T8 -> T9 -> T10 -> T11 -> T12
 
 ```text
 T13 -> T14 -> T15 -> T16
+```
+
+### Phase 4: Independent Verification Repairs
+
+```text
+T17 -> T18 -> T19 -> T20
 ```
 
 ## Task Breakdown
@@ -450,15 +456,115 @@ T13 -> T14 -> T15 -> T16
 **Gate**: verify
 **Commit**: `docs(operations): close foundation workflow`
 
+### T17: Stabilize cold-stack readiness
+
+**What**: Add a CampusMarkt-owned Storage health override with a bounded cold-start allowance and preserve service diagnostics when startup fails.
+**Where**: `infra/compose/`
+**Depends on**: T16
+**Reuses**: Root Compose topology and stack integration harness
+**Requirement**: FOUND-01, FOUND-02
+
+**Tools**:
+
+- MCP: Web for official Docker Compose health-check semantics
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] Storage receives a bounded start period and retry window through a CampusMarkt override without editing vendored Supabase files.
+- [ ] Failed startup preserves bounded service health/log diagnostics before teardown.
+- [ ] A cold clean-volume stack startup passes in one gate invocation without a manual retry.
+- [ ] Full gate passes with zero skipped stack tests.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `fix(stack): stabilize cold storage readiness`
+
+### T18: Probe production TLS, SMTP, and Storage dependencies
+
+**What**: Extend production readiness with bounded, credential-redacting probes that validate TLS certificates and SMTP/S3 connectivity while preserving offline local validation.
+**Where**: `scripts/config/`
+**Depends on**: T17
+**Reuses**: Environment validator and production configuration contract
+**Requirement**: FOUND-04
+
+**Tools**:
+
+- MCP: Web for official TLS, SMTP, and S3 protocol documentation
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] Local validation remains offline and succeeds without production providers.
+- [ ] Production probe rejects an invalid or expired TLS certificate and accepts a trusted valid certificate.
+- [ ] Production probe requires bounded successful SMTP and S3 connectivity before returning production-ready.
+- [ ] Failure diagnostics name the dependency without printing credentials or response secrets.
+- [ ] Full gate passes with exact success, timeout, certificate, authentication, and reachability assertions.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `fix(config): verify production dependencies`
+
+### T19: Prove database advisor failures block the gate
+
+**What**: Add an isolated known database policy/advisor violation and assert the configured database gate exits non-zero with the finding before cleanup.
+**Where**: `supabase/tests/`
+**Depends on**: T18
+**Reuses**: Foundation database harness and the same advisor command used by `npm run test:db`
+**Requirement**: FOUND-03
+
+**Tools**:
+
+- MCP: Web for current official Supabase advisor documentation
+- Skill: `tlc-spec-driven`, `supabase`, `supabase-postgres-best-practices`
+
+**Done when**:
+
+- [ ] The test creates the violation only in an isolated database or schema and never changes committed migration history.
+- [ ] The configured advisor or lint entry point exits non-zero and reports the expected redacted finding.
+- [ ] Cleanup removes the violation and the clean database gate still passes.
+- [ ] Full gate passes with both negative and clean advisor paths.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `test(database): enforce advisor failure path`
+
+### T20: Prove tracked-secret CLI failure
+
+**What**: Execute the repository secret-scanner CLI inside an isolated Git repository containing a tracked secret and assert its non-zero redacted diagnostic.
+**Where**: `scripts/security/`
+**Depends on**: T19
+**Reuses**: Existing scanner CLI and scratch-repository test helpers
+**Requirement**: FOUND-03
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] A temporary Git repository tracks an environment file containing a generated forbidden credential.
+- [ ] The same scanner CLI used by the root gate exits non-zero and names the file and detection rule.
+- [ ] Output does not contain the generated credential value.
+- [ ] Scratch files are removed and the real repository remains unchanged.
+- [ ] Verify gate passes with no skips and all security tests retained.
+
+**Tests**: unit
+**Gate**: verify
+**Commit**: `test(security): prove tracked-secret gate`
+
 ## Phase Execution Map
 
 ```text
-Phase 1 -> Phase 2 -> Phase 3
+Phase 1 -> Phase 2 -> Phase 3 -> Phase 4
 
 Phase 1: T1 -> T2 -> T3 -> T4 -> T5 -> T6 -> T7
 Phase 2: T8 -> T9 -> T10 -> T11 -> T12
 Cross-phase: T12 -> T13
 Phase 3: T13 -> T14 -> T15 -> T16
+Cross-phase: T16 -> T17
+Phase 4: T17 -> T18 -> T19 -> T20
 ```
 
 ## Task Granularity Check
@@ -481,6 +587,10 @@ Phase 3: T13 -> T14 -> T15 -> T16
 | T14 | One secret scanner | Granular |
 | T15 | One backup/restore workflow | Granular |
 | T16 | One operations guide set | Granular |
+| T17 | One cold-start health repair | Granular |
+| T18 | One production dependency probe | Granular |
+| T19 | One database advisor negative path | Granular |
+| T20 | One scanner CLI negative path | Granular |
 
 ## Diagram-Definition Cross-Check
 
@@ -502,6 +612,10 @@ Phase 3: T13 -> T14 -> T15 -> T16
 | T14 | T13 | T13 -> T14 | Match |
 | T15 | T14 | T14 -> T15 | Match |
 | T16 | T15 | T15 -> T16 | Match |
+| T17 | T16 | T16 -> T17 | Match |
+| T18 | T17 | T17 -> T18 | Match |
+| T19 | T18 | T18 -> T19 | Match |
+| T20 | T19 | T19 -> T20 | Match |
 
 ## Test Co-location Validation
 
@@ -523,3 +637,7 @@ Phase 3: T13 -> T14 -> T15 -> T16
 | T14 | Security tooling | unit | unit | OK |
 | T15 | Backup and restore | integration | integration | OK |
 | T16 | Documentation | none | none | OK |
+| T17 | Running stack | integration | integration | OK |
+| T18 | Environment tooling | integration | integration | OK |
+| T19 | Migration and RLS | integration | integration | OK |
+| T20 | Security tooling | unit | unit | OK |

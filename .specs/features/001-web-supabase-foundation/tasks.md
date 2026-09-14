@@ -73,10 +73,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Node 24, npm workspaces, exact dependency versions, and one lockfile are present.
-- [ ] Typecheck, lint, format, unit, architecture, integration, database, stack, operations, build, check, and verify scripts are defined.
-- [ ] A bootstrap test proves the unit runner executes.
-- [ ] Build gate passes with zero errors and at least 1 unit test passes.
+- [x] Node 24, npm workspaces, exact dependency versions, and one lockfile are present.
+- [x] Typecheck, lint, format, unit, architecture, integration, database, stack, operations, build, check, and verify scripts are defined.
+- [x] A bootstrap test proves the unit runner executes.
+- [x] Build gate passes with zero errors and at least 1 unit test passes.
 
 **Tests**: unit
 **Gate**: build

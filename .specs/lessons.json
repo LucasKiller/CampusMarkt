@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 3,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "gate_fail::run whitespace checks against the full feature commit range not only the working tree",
+      "text": "Run whitespace checks against the full feature commit range, not only the working tree.",
+      "signal": "gate_fail",
+      "scope": "documentation",
+      "status": "candidate",
+      "features": [
+        "project-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".specs/features/project-foundation/validation.md:72 (documentation)"
+      ],
+      "created": "2026-09-14T19:32:07Z",
+      "last_seen": "2026-09-14T19:32:07Z"
+    },
+    {
+      "id": "L-002",
+      "key": "ac_gap::reconcile the project handoff with git and task state after the final task",
+      "text": "Reconcile the project handoff with git and task state after the final task.",
+      "signal": "ac_gap",
+      "scope": "sdd-memory",
+      "status": "candidate",
+      "features": [
+        "project-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".specs/features/project-foundation/validation.md:115 (sdd-memory)"
+      ],
+      "created": "2026-09-14T19:32:07Z",
+      "last_seen": "2026-09-14T19:32:07Z"
+    }
+  ]
+}

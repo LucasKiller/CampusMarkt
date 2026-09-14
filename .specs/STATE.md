@@ -52,11 +52,11 @@
 
 ## Handoff
 
-- **Feature**: project-foundation / `.specs/features/project-foundation/`
-- **Phase / Task**: Complete; third independent verification passed
+- **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
+- **Phase / Task**: Phase 3 / T13 - stack health and persistence verification
 - **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
-- **In-progress** (file:line): none
-- **Next step**: Specify `001-web-supabase-foundation` before creating application code or runtime directories.
-- **Blockers**: none; final validation is PASS
-- **Uncommitted files**: none after the validation closure commit
+- **In-progress** (file:line): `tests/integration/stack/foundation-stack.test.ts:1`
+- **Next step**: After Docker Desktop recovers, fix the one Compose profile assertion, run the T13 full gate, complete T13, then continue T14-T16.
+- **Blockers**: Docker Desktop cannot remove stale zero-byte AF_UNIX reparse socket `C:\Users\INOVV\AppData\Local\Docker\run\dockerInference`; manual deletion with Docker closed and a Docker restart are required.
+- **Uncommitted files**: `.specs/STATE.md`, `apps/web/package.json`, `compose.yaml`, `package-lock.json`, `package.json`, `apps/web/src/app/health/`, `apps/web/src/modules/`, `tests/integration/stack/`
 - **Branch**: main

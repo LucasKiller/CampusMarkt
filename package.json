@@ -18,7 +18,7 @@
     "test:unit": "vitest run tests/unit packages scripts --passWithNoTests",
     "test:architecture": "vitest run tests/architecture --testTimeout=15000 --passWithNoTests",
     "test:integration": "vitest run tests/integration/compose --passWithNoTests",
-    "test:db": "vitest run supabase/tests --passWithNoTests",
+    "test:db": "vitest run supabase/tests --testTimeout=120000 --hookTimeout=120000 --passWithNoTests",
     "test:stack": "vitest run tests/integration/stack --passWithNoTests",
     "test:operations": "vitest run tests/integration/operations --passWithNoTests",
     "test:e2e": "playwright test --config apps/web/playwright.config.mjs",
@@ -35,6 +35,7 @@
     "@vitest/coverage-v8": "5.0.0",
     "eslint": "10.10.0",
     "prettier": "3.9.6",
+    "supabase": "2.117.0",
     "typescript": "6.0.2",
     "typescript-eslint": "8.70.0",
     "vitest": "5.0.0"

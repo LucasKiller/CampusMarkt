@@ -340,11 +340,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] A clean database applies the canary migration once and records its history.
-- [ ] The canary table enables RLS and denies `anon` and `authenticated` access without policies.
-- [ ] A deliberately invalid scratch migration exits non-zero without false readiness.
-- [ ] Database checks report no unhandled security or performance finding.
-- [ ] Database gate passes with at least 6 database assertions.
+- [x] A clean database applies the canary migration once and records its history.
+- [x] The canary table enables RLS and denies `anon` and `authenticated` access without policies.
+- [x] A deliberately invalid scratch migration exits non-zero without false readiness.
+- [x] Database checks report no unhandled security or performance finding.
+- [x] Database gate passes with at least 6 database assertions.
 
 **Tests**: integration
 **Gate**: full

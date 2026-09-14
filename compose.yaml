@@ -65,8 +65,11 @@ services:
       PGDATABASE: ${POSTGRES_DB:-postgres}
       PGUSER: postgres
       PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-    entrypoint: ["/bin/sh", "-c"]
-    command: ["pg_isready -h db -U postgres"]
+      MIGRATIONS_DIRECTORY: /app/migrations
+    volumes:
+      - ./supabase/migrations:/app/migrations:ro
+      - ./supabase/apply-migrations.sh:/app/apply-migrations.sh:ro
+    entrypoint: ["/bin/sh", "/app/apply-migrations.sh"]
 
 networks:
   default:

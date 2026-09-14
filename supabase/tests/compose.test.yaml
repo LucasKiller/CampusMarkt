@@ -1,0 +1,6 @@
+services:
+  db:
+    container_name: !reset null
+    ports:
+      - target: 5432
+        host_ip: 127.0.0.1

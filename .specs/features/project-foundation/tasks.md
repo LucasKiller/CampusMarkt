@@ -54,6 +54,12 @@ T8
 T9 -> T10
 ```
 
+### Phase 5: Roadmap Reconciliation
+
+```text
+T11 -> T12
+```
+
 ## Task Breakdown
 
 ### T1: Populate the agent navigation guide
@@ -315,15 +321,68 @@ T9 -> T10
 **Gate**: full
 **Commit**: `docs(sdd): reconcile project foundation handoff`
 
+### T11: Reconcile roadmap contracts and feature IDs
+
+**Status**: Ready
+
+**What**: Make every numbered roadmap horizon declare outcome, entry evidence, and non-goals, and align all feature IDs with the canonical V1 table.
+**Where**: `docs/product/04-roadmap.md`
+**Depends on**: None
+**Reuses**: Canonical feature sequence in `docs/product/02-mvp-scope.md` and independent validation evidence
+**Requirement**: PFND-06
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Horizons 0-11 each contain an outcome, entry evidence, and explicit non-goals.
+- [ ] Feature IDs 001-013 carry the same meaning as the canonical V1 scope table.
+- [ ] No capability is dropped or moved into V1 by the reconciliation.
+- [ ] Full gate passes with zero errors.
+
+**Tests**: none - documentation layer matches the matrix
+**Gate**: full
+**Commit**: `docs(roadmap): reconcile horizons and feature ids`
+
+### T12: Reconcile handoff after roadmap repair
+
+**Status**: Ready
+
+**What**: Replace only the `.specs/STATE.md` handoff body with the current T1-T12 completion state and final re-verification step.
+**Where**: `.specs/STATE.md`
+**Depends on**: T11
+**Reuses**: Git history, task completion state, and second validation report
+**Requirement**: PFND-01
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] The handoff records T1-T12 complete and the current branch.
+- [ ] The handoff points to the third independent verification as the next action.
+- [ ] Git status and task evidence match the handoff at commit time.
+- [ ] Full gate passes with zero errors.
+
+**Tests**: none - TLC state documentation matches the matrix
+**Gate**: full
+**Commit**: `docs(sdd): reconcile roadmap repair handoff`
+
 ## Phase Execution Map
 
 ```text
-Phase 1 -> Phase 2 -> Phase 3 -> Phase 4
+Phase 1 -> Phase 2 -> Phase 3 -> Phase 4 -> Phase 5
 
 Phase 1: T1 -> T2
 Phase 2: T3 -> T4 -> T5 -> T6 -> T7
 Phase 3: T8
 Phase 4: T9 -> T10
+Phase 5: T11 -> T12
 ```
 
 ## Task Granularity Check
@@ -340,6 +399,8 @@ Phase 4: T9 -> T10
 | T8 | One future-capabilities document | Granular |
 | T9 | One mechanical whitespace repair set | Granular exception: three planning artifacts share one gate defect |
 | T10 | One handoff section | Granular |
+| T11 | One roadmap document | Granular |
+| T12 | One handoff section | Granular |
 
 ## Diagram-Definition Cross-Check
 
@@ -355,6 +416,8 @@ Phase 4: T9 -> T10
 | T8 | None | Phase start | Match |
 | T9 | None | Phase start | Match |
 | T10 | T9 | T9 -> T10 | Match |
+| T11 | None | Phase start | Match |
+| T12 | T11 | T11 -> T12 | Match |
 
 ## Test Co-location Validation
 
@@ -370,3 +433,5 @@ Phase 4: T9 -> T10
 | T8 | Documentation | none | none | OK |
 | T9 | Documentation | none | none | OK |
 | T10 | TLC state documentation | none | none | OK |
+| T11 | Documentation | none | none | OK |
+| T12 | TLC state documentation | none | none | OK |

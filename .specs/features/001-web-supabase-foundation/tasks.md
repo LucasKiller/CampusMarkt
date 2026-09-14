@@ -315,11 +315,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Local validation accepts generated development values without production providers.
-- [ ] Production validation requires TLS, SMTP, S3-compatible Storage, backup target, 4 CPU cores, 8 GB RAM, and 80 GB disk.
-- [ ] Failures list missing variable or resource names but never values.
-- [ ] Unit tests cover valid modes and every failure branch.
-- [ ] Quick gate passes with at least 12 validator tests.
+- [x] Local validation accepts generated development values without production providers.
+- [x] Production validation requires TLS, SMTP, S3-compatible Storage, backup target, 4 CPU cores, 8 GB RAM, and 80 GB disk.
+- [x] Failures list missing variable or resource names but never values.
+- [x] Unit tests cover valid modes and every failure branch.
+- [x] Quick gate passes with at least 12 validator tests.
 
 **Tests**: unit
 **Gate**: quick

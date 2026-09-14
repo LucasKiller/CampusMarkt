@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 3,
+  "next_id": 5,
   "lessons": [
     {
       "id": "L-001",
@@ -40,6 +40,42 @@
       ],
       "created": "2026-09-14T19:32:07Z",
       "last_seen": "2026-09-14T19:32:07Z"
+    },
+    {
+      "id": "L-003",
+      "key": "ac_gap::verify every conjunct in a task s done when criteria against each repeated document section",
+      "text": "Verify every conjunct in a task's done-when criteria against each repeated document section.",
+      "signal": "ac_gap",
+      "scope": "documentation",
+      "status": "candidate",
+      "features": [
+        "project-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".specs/features/project-foundation/validation.md:126 (documentation)"
+      ],
+      "created": "2026-09-14T19:45:14Z",
+      "last_seen": "2026-09-14T19:45:14Z"
+    },
+    {
+      "id": "L-004",
+      "key": "ac_gap::maintain one canonical feature id registry and reference it instead of independently renumbering roadmaps",
+      "text": "Maintain one canonical feature ID registry and reference it instead of independently renumbering roadmaps.",
+      "signal": "ac_gap",
+      "scope": "product-planning",
+      "status": "candidate",
+      "features": [
+        "project-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".specs/features/project-foundation/validation.md:127 (product-planning)"
+      ],
+      "created": "2026-09-14T19:45:14Z",
+      "last_seen": "2026-09-14T19:45:14Z"
     }
   ]
 }

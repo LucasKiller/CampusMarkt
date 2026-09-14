@@ -1,57 +1,63 @@
 # Project Foundation Validation
 
 **Verdict**: FAIL
+**Result**: FAIL
 **Date**: 2026-09-14
 **Spec**: `.specs/features/project-foundation/spec.md`
-**Diff range**: `99c978b..HEAD` (`HEAD` = `3f18062`)
-**Verifier**: independent sub-agent (author != verifier)
+**Diff range**: `99c978b..HEAD` (`HEAD` = `8f4afe4`)
+**Verifier**: independent re-verifier (author != verifier)
 
-The documentary outcomes are complete, but the feature is not ready. The committed
-feature diff fails its whitespace integrity check, and the repository handoff still
-describes execution as not started.
+The previous whitespace and handoff defects are fixed. The feature is still not ready:
+T7 is marked complete without satisfying one of its explicit Done-when conditions, and
+the MVP scope and roadmap assign different capabilities to the same numbered features.
 
 ## Task Completion
 
 | Task | Status | Evidence |
 | --- | --- | --- |
-| T1 | Done | `.specs/features/project-foundation/tasks.md:53`, `.specs/features/project-foundation/tasks.md:55` |
-| T2 | Done | `.specs/features/project-foundation/tasks.md:79`, `.specs/features/project-foundation/tasks.md:81` |
-| T3 | Done | `.specs/features/project-foundation/tasks.md:105`, `.specs/features/project-foundation/tasks.md:107` |
-| T4 | Done | `.specs/features/project-foundation/tasks.md:131`, `.specs/features/project-foundation/tasks.md:133` |
-| T5 | Done | `.specs/features/project-foundation/tasks.md:157`, `.specs/features/project-foundation/tasks.md:159` |
-| T6 | Done | `.specs/features/project-foundation/tasks.md:183`, `.specs/features/project-foundation/tasks.md:185` |
-| T7 | Done | `.specs/features/project-foundation/tasks.md:209`, `.specs/features/project-foundation/tasks.md:211` |
-| T8 | Done | `.specs/features/project-foundation/tasks.md:235`, `.specs/features/project-foundation/tasks.md:237` |
+| T1 | Done | `.specs/features/project-foundation/tasks.md:61`; commit `046e3d9` |
+| T2 | Done | `.specs/features/project-foundation/tasks.md:87`; commit `a044408` |
+| T3 | Done | `.specs/features/project-foundation/tasks.md:113`; commit `12ff7d2` |
+| T4 | Done | `.specs/features/project-foundation/tasks.md:139`; commit `26175a7` |
+| T5 | Done | `.specs/features/project-foundation/tasks.md:165`; commit `8d2742f` |
+| T6 | Done | `.specs/features/project-foundation/tasks.md:191`; commit `036b397` |
+| T7 | Done-when gap | Marked complete at `.specs/features/project-foundation/tasks.md:217`, but `.specs/features/project-foundation/tasks.md:232` requires every horizon to have outcome, entry evidence, and explicit non-goals; `docs/product/04-roadmap.md:224` through `docs/product/04-roadmap.md:275` do not provide all three for Horizons 8-11. Commit `70ac500`. |
+| T8 | Done | `.specs/features/project-foundation/tasks.md:243`; commit `3f18062` |
+| T9 | Done | `.specs/features/project-foundation/tasks.md:269`, `.specs/features/project-foundation/tasks.md:284`; commit `8e88ee3` |
+| T10 | Done | `.specs/features/project-foundation/tasks.md:294`, `.specs/features/project-foundation/tasks.md:309`; commit `8f4afe4` |
 
-The eight post-planning commits are present in task order: `046e3d9`, `a044408`,
-`12ff7d2`, `26175a7`, `8d2742f`, `036b397`, `70ac500`, and `3f18062`. Each commit
-contains its task document plus the matching `spec.md` and `tasks.md` status updates.
+**Task completion**: 9/10 task outcomes confirmed. T7 is marked Complete but does not meet
+its full completion contract.
+
+The task commits are atomic and appear in dependency order. The two fix commits contain
+only their declared surfaces: `8e88ee3` removes the four whitespace defects and completes
+T9; `8f4afe4` reconciles the handoff and completes T10.
 
 ## Spec-Anchored Acceptance Criteria
 
-The Test Coverage Matrix assigns `Tests: none` to this documentation layer at
-`.specs/features/project-foundation/tasks.md:13`. Therefore, the evidence column
-cites the exact documentary contract statement rather than a runtime assertion.
+The approved coverage matrix assigns no runtime tests to this documentation-only layer at
+`.specs/features/project-foundation/tasks.md:16`. Evidence therefore cites the exact
+documentary statement that realizes each required outcome.
 
-| Criterion | Spec-defined outcome | Documentary evidence | Result |
+| Criterion | Spec-defined outcome | `file:line` documentary assertion | Result |
 | --- | --- | --- | --- |
-| Product/scope AC1 | The repository identifies CampusMarkt, current maturity, and canonical documentation paths. | `README.md:1`, `README.md:9`, `README.md:21`, `README.md:25`, `README.md:32` | PASS |
-| Product/scope AC2 | The vision states target users, Braunschweig focus, value proposition, access model, and local-first strategy. | `docs/product/00-product-vision.md:5`, `docs/product/00-product-vision.md:22`, `docs/product/00-product-vision.md:34`, `docs/product/00-product-vision.md:47`, `docs/product/00-product-vision.md:66`, `docs/product/00-product-vision.md:78` | PASS |
-| Product/scope AC3 | The domain model separates current V1 concepts from future concepts. | `docs/product/01-domain-model.md:106`, `docs/product/01-domain-model.md:114`, `docs/product/01-domain-model.md:220`, `docs/product/01-domain-model.md:249` | PASS |
-| Product/scope AC4 | MVP scope distinguishes included, deferred, and explicitly excluded capabilities. | `docs/product/02-mvp-scope.md:9`, `docs/product/02-mvp-scope.md:97`, `docs/product/02-mvp-scope.md:115` | PASS |
-| Safety/privacy AC1 | Marketplace policy separates prohibited content from legitimate but unsupported content. | `docs/product/03-marketplace-policy.md:30`, `docs/product/03-marketplace-policy.md:32`, `docs/product/03-marketplace-policy.md:75`, `docs/product/03-marketplace-policy.md:77` | PASS |
-| Safety/privacy AC2 | Verification is optional, uses a separate institutional address, keeps it private, and does not gate ordinary access. | `docs/product/03-marketplace-policy.md:13`, `docs/product/03-marketplace-policy.md:126`, `docs/product/03-marketplace-policy.md:129`, `docs/product/03-marketplace-policy.md:141`, `docs/product/03-marketplace-policy.md:145` | PASS |
-| Safety/privacy AC3 | Visitors may browse; registered users may perform supported marketplace interactions. | `docs/product/03-marketplace-policy.md:11`, `docs/product/03-marketplace-policy.md:12` | PASS |
-| Safety/privacy AC4 | V1 uses local pickup and no platform-held funds. | `docs/product/03-marketplace-policy.md:111`, `docs/product/00-product-vision.md:86` | PASS |
-| Delivery AC1 | The roadmap orders foundation, private beta, broader beta, PWA, protected payment, and native mobile. | `docs/product/04-roadmap.md:11`, `docs/product/04-roadmap.md:14`, `docs/product/04-roadmap.md:15`, `docs/product/04-roadmap.md:16`, `docs/product/04-roadmap.md:17`, `docs/product/04-roadmap.md:19`, `docs/product/04-roadmap.md:20` | PASS |
-| Delivery AC2 | Services, housing, jobs, swap, moving out, meetup spots, protected payment, and handover confirmation are deferred. | `docs/product/05-future-capabilities.md:5`, `docs/product/05-future-capabilities.md:32`, `docs/product/05-future-capabilities.md:58`, `docs/product/05-future-capabilities.md:82`, `docs/product/05-future-capabilities.md:110`, `docs/product/05-future-capabilities.md:191`, `docs/product/05-future-capabilities.md:243`, `docs/product/05-future-capabilities.md:259`, `docs/product/05-future-capabilities.md:274` | PASS |
-| Delivery AC3 | QR and numeric codes are representations of one handover mechanism, not separate approvals. | `docs/product/05-future-capabilities.md:191`, `docs/product/05-future-capabilities.md:197`, `docs/product/05-future-capabilities.md:198`, `docs/product/05-future-capabilities.md:200` | PASS |
-| Delivery AC4 | A regulated provider controls money movement; CampusMarkt controls marketplace state. | `docs/product/05-future-capabilities.md:114`, `docs/product/05-future-capabilities.md:116` | PASS |
-| Agent guidance AC1 | `AGENTS.md` directs agents to product docs, project state, and active feature artifacts. | `AGENTS.md:7`, `AGENTS.md:8`, `AGENTS.md:9`, `AGENTS.md:18`, `AGENTS.md:24` | PASS |
-| Agent guidance AC2 | The guide requires spec-first delivery, requirement-linked tests, local-only authority, and process termination. | `AGENTS.md:10`, `AGENTS.md:11`, `AGENTS.md:14`, `AGENTS.md:50`, `AGENTS.md:54` | PASS |
+| Product/scope AC1 | Identify CampusMarkt, current maturity, and canonical documentation paths. | `README.md:1`, `README.md:9`, `README.md:21`, `README.md:25`, `README.md:32` | PASS |
+| Product/scope AC2 | State target users, Braunschweig focus, value proposition, access model, and local-first strategy. | `docs/product/00-product-vision.md:5`, `docs/product/00-product-vision.md:9`, `docs/product/00-product-vision.md:34`, `docs/product/00-product-vision.md:47`, `docs/product/00-product-vision.md:66`, `docs/product/00-product-vision.md:78` | PASS |
+| Product/scope AC3 | Distinguish current V1 concepts from documented future concepts. | `docs/product/01-domain-model.md:106`, `docs/product/01-domain-model.md:187`, `docs/product/01-domain-model.md:220`, `docs/product/01-domain-model.md:222` | PASS |
+| Product/scope AC4 | Distinguish included, deferred, and explicitly excluded capabilities. | `docs/product/02-mvp-scope.md:9`, `docs/product/02-mvp-scope.md:97`, `docs/product/02-mvp-scope.md:115` | PASS |
+| Safety/privacy AC1 | Separate prohibited content from legitimate but unsupported content. | `docs/product/03-marketplace-policy.md:30`, `docs/product/03-marketplace-policy.md:32`, `docs/product/03-marketplace-policy.md:75`, `docs/product/03-marketplace-policy.md:77` | PASS |
+| Safety/privacy AC2 | Verification is optional, uses a separate institutional address, keeps it private, and does not gate ordinary access. | `docs/product/03-marketplace-policy.md:13`, `docs/product/03-marketplace-policy.md:129`, `docs/product/03-marketplace-policy.md:141`, `docs/product/03-marketplace-policy.md:145` | PASS |
+| Safety/privacy AC3 | Visitors browse and registered users perform supported interactions. | `docs/product/03-marketplace-policy.md:11`, `docs/product/03-marketplace-policy.md:12` | PASS |
+| Safety/privacy AC4 | V1 provides local-pickup guidance without platform-held funds. | `docs/product/03-marketplace-policy.md:111`, `docs/product/03-marketplace-policy.md:112`, `docs/product/03-marketplace-policy.md:113` | PASS |
+| Delivery AC1 | Order foundation, private beta, broader beta, PWA, protected payment, and native mobile. | `docs/product/04-roadmap.md:11`, `docs/product/04-roadmap.md:14`, `docs/product/04-roadmap.md:15`, `docs/product/04-roadmap.md:16`, `docs/product/04-roadmap.md:17`, `docs/product/04-roadmap.md:18`, `docs/product/04-roadmap.md:19` | PASS |
+| Delivery AC2 | Describe Moving Out, SWAP, Meetup Spots, protected payment, handover, services, housing, and jobs as deferred. | `docs/product/05-future-capabilities.md:5`, `docs/product/05-future-capabilities.md:32`, `docs/product/05-future-capabilities.md:58`, `docs/product/05-future-capabilities.md:82`, `docs/product/05-future-capabilities.md:110`, `docs/product/05-future-capabilities.md:191`, `docs/product/05-future-capabilities.md:243`, `docs/product/05-future-capabilities.md:259`, `docs/product/05-future-capabilities.md:274` | PASS |
+| Delivery AC3 | QR and numeric codes represent one secure handover token. | `docs/product/05-future-capabilities.md:195`, `docs/product/05-future-capabilities.md:197`, `docs/product/05-future-capabilities.md:198`, `docs/product/05-future-capabilities.md:200` | PASS |
+| Delivery AC4 | The regulated provider controls money movement while CampusMarkt controls marketplace state. | `docs/product/05-future-capabilities.md:114`, `docs/product/05-future-capabilities.md:116`, `docs/product/05-future-capabilities.md:140` | PASS |
+| Agent guidance AC1 | Direct agents to product docs, project state, and active feature artifacts. | `AGENTS.md:7`, `AGENTS.md:8`, `AGENTS.md:9`, `AGENTS.md:18` | PASS |
+| Agent guidance AC2 | Require spec-first execution, requirement-linked tests, local-only authority, and process termination. | `AGENTS.md:7`, `AGENTS.md:10`, `AGENTS.md:11`, `AGENTS.md:14`, `AGENTS.md:50`, `AGENTS.md:54` | PASS |
 
-**Spec-anchored result**: 14/14 acceptance criteria match precise spec outcomes.
-There are 0 uncovered criteria and 0 spec-precision gaps.
+**Spec-anchored check**: 14/14 acceptance criteria match the outcomes written in the
+spec. There are 0 uncovered criteria and 0 spec-precision gaps.
 
 ## Edge Cases
 
@@ -60,111 +66,131 @@ There are 0 uncovered criteria and 0 spec-precision gaps.
 | Future capability mentions are deferred and cannot authorize speculative implementation. | `docs/product/05-future-capabilities.md:5`, `docs/product/05-future-capabilities.md:7`, `AGENTS.md:38`, `AGENTS.md:40` | PASS |
 | An approved feature spec overrides a conflicting general product document and creates a reconciliation task. | `AGENTS.md:26` | PASS |
 | Verification expiry removes only the badge, not ordinary account access. | `docs/product/01-domain-model.md:89`, `docs/product/03-marketplace-policy.md:145` | PASS |
-| Provider-specific payment behavior remains unspecified without an approved provider. | `docs/product/05-future-capabilities.md:176`, `docs/product/05-future-capabilities.md:178`, `.specs/STATE.md:32` | PASS |
+| Provider-specific payment behavior remains unspecified without an approved provider. | `.specs/features/project-foundation/context.md:52`, `docs/product/05-future-capabilities.md:176`, `docs/product/05-future-capabilities.md:178` | PASS |
 
-**Edge-case result**: 4/4 handled.
+**Edge-case check**: 4/4 handled.
 
 ## Gate Results
 
 | Check | Result | Detail |
 | --- | --- | --- |
-| Build gate: `git diff --check` | PASS | Exit 0, no output. |
-| Feature-diff whitespace audit: `git diff --check 99c978b..HEAD` | FAIL | Four trailing-whitespace findings: `.specs/features/project-foundation/context.md:3`, `.specs/features/project-foundation/context.md:4`, `.specs/features/project-foundation/design.md:3`, `.specs/features/project-foundation/tasks.md:7`. |
+| Full whitespace gate: `git diff --check 99c978b` | PASS | Exit 0, no output. This proves the T9 repair over the complete feature range and current tree. |
 | `validate_spec.py` | PASS | 0 errors, 0 warnings. |
-| `validate_tasks.py` | PASS | 0 errors. Eight warnings correspond exactly to the eight intentional `Tests: none` entries confirmed by the Test Coverage Matrix. |
-| Closing `validate_state.py project-foundation` | PASS | 0 errors. This structural result does not override the independent verifier's FAIL verdict or the ranked gaps below. |
-| Required-document integrity | PASS | 8/8 files exist and are non-empty. |
-| Relative Markdown links | PASS | 20 checked, 0 broken. |
+| `validate_tasks.py` | PASS with warnings | 0 errors, 11 warnings. Ten warnings are the intentional `Tests: none` entries confirmed at `.specs/features/project-foundation/tasks.md:363` through `.specs/features/project-foundation/tasks.md:372`. The remaining T9 multi-file granularity warning is explicitly justified at `.specs/features/project-foundation/tasks.md:341`. |
+| Required-document integrity | PASS | 8/8 required repository and product Markdown files exist and are non-empty. |
+| Relative Markdown links | PASS | 20/20 relative links in the feature's changed Markdown surface resolve. |
+| Closing `validate_state.py project-foundation` | EXPECTED FAIL | Exit 1 with one error because this report's truthful verdict is FAIL; the feature remains incomplete. |
 
-There is no runtime test framework or runtime code in this feature. Test count before:
-0. Test count after: 0. Delta: 0. Failed: 0. Skipped: 0. The absence of tests is
-explicitly authorized for documentation by `.specs/features/project-foundation/tasks.md:13`.
-
-The bare build command passes only because all task changes are committed. The
-feature-range audit exposes whitespace already committed within the validated diff.
-That violates the explicit Markdown whitespace success criterion at
-`.specs/features/project-foundation/spec.md:136`.
+There is no runtime code or runtime test framework. Test count before feature: 0. Test
+count after feature: 0. Passed: 0. Failed: 0. Skipped: 0. The approved documentation
+coverage model explicitly assigns `none` at `.specs/features/project-foundation/tasks.md:16`
+and `.specs/features/project-foundation/tasks.md:17`.
 
 ## Discrimination Sensor
 
-The sensor used a detached temporary worktree at `3f18062`; it never modified the
+The sensor used a detached temporary worktree at commit `8f4afe4`. It did not modify the
 real tree and did not use `git stash`.
 
-| Mutation | Scratch file | Integrity assertion | Result |
+| Mutation | Scratch file:line | Detection contract | Result |
 | --- | --- | --- | --- |
-| Break the Product Vision relative link in README. | `README.md:25` | Required-file/link checker must reject unresolved relative links. | KILLED: checker exited 1 and named the broken target. |
-| Remove the global statement that all future capabilities are deferred. | `docs/product/05-future-capabilities.md:5` | Scope-contract check must require the deferred-capability statement. | KILLED: checker exited 1 and named the missing scope phrase. |
+| Break the Product Vision link target. | `README.md:25` | Relative-link integrity checker must reject the unresolved target. | KILLED: checker exited 1 and reported `README.md:25`. |
+| Weaken the global future-scope rule from every capability to only some capabilities. | `docs/product/05-future-capabilities.md:5` | Spec-anchored scope checker must require the global deferred-capability contract. | KILLED: checker exited 1 and named the missing contract. |
+| Omit T10 from the handoff's completed-task list. | `.specs/STATE.md:49` | Task/state coherence checker must match all Complete task blocks to the handoff list. | KILLED: checker exited 1 and reported the T10 mismatch. |
 
-**Sensor depth**: lightweight, 2 targeted contract mutations.
-**Sensor result**: 2/2 killed, 0 survived, PASS.
+**Sensor depth**: lightweight, 3 targeted behavior-level mutations.
+**Sensor check**: 3/3 killed, 0 survived, PASS.
 
-The scratch worktree was removed. Real-tree `git status --porcelain=v1` was empty
-before the sensor and empty after cleanup, so isolation is proven.
+The worktree was verified as the `8f4afe4` checkout, removed with `git worktree remove
+--force`, and pruned. Its path no longer exists. Real-tree `git status --porcelain=v1`
+was empty before the sensor and empty after cleanup, so isolation is proven.
 
-## Document Quality
+## Handoff Reconciliation
+
+Before this report was written, Git was on `main` at `8f4afe4` with empty porcelain.
+The handoff names `main` at `.specs/STATE.md:54`, records T1-T10 at
+`.specs/STATE.md:49`, and points to independent re-verification at `.specs/STATE.md:51`.
+It therefore matches Git and task metadata at the T10 handoff. The T7 outcome gap below
+means that the metadata's Complete label is not sufficient evidence of feature completion.
+
+## Code and Document Quality
 
 | Principle | Result | Evidence |
 | --- | --- | --- |
-| No features beyond the approved foundation | PASS | The diff contains planning artifacts and the eight required documents only; no runtime files exist. |
-| No speculative implementation | PASS | `docs/product/05-future-capabilities.md:7`, `docs/product/01-domain-model.md:249` |
-| Surgical, task-aligned commits | PASS | Eight post-planning commits map one-to-one to T1-T8. |
-| Existing style and source-of-truth structure | PASS | `README.md:21`, `AGENTS.md:18`, `.specs/STATE.md:3` |
-| Spec-anchored outcomes | PASS | 14/14 acceptance criteria and 4/4 edge cases have documentary evidence. |
-| Test mapping and per-layer coverage | PASS | Documentation is assigned no tests by `.specs/features/project-foundation/tasks.md:13`; integrity, validators, and sensor cover the layer contract. |
-| Whitespace hygiene | FAIL | The feature-diff audit reports four trailing-whitespace findings. |
-| Handoff accuracy | FAIL | `README.md:32` calls `.specs/STATE.md` the latest handoff, but `.specs/STATE.md:48`, `.specs/STATE.md:49`, `.specs/STATE.md:51`, and `.specs/STATE.md:53` still describe pre-execution state. |
-| Documented project guidelines | PASS | `AGENTS.md:5` through `AGENTS.md:14` were followed for verification scope and local-only authority. |
-| Senior-review readiness | FAIL | Whitespace integrity and the stale handoff require correction before readiness. |
+| Minimum implementation and no scope creep | PASS | The diff contains governance, product knowledge, validation evidence, and no runtime code. |
+| Surgical, task-aligned changes | PASS | T1-T10 have atomic commits; T9 and T10 touch only their declared files. |
+| No speculative implementation | PASS | `docs/product/05-future-capabilities.md:7`, `docs/product/01-domain-model.md:218` |
+| Matches repository patterns | PASS | `README.md:21`, `AGENTS.md:18`, `.specs/STATE.md:3` |
+| Spec-anchored outcomes | PASS | 14/14 ACs and 4/4 listed edge cases have exact documentary evidence. |
+| Per-layer coverage expectation | PASS | Documentation has no runtime-test requirement; deterministic integrity checks and a 3/3 sensor cover the approved layer contract. |
+| Every check maps to an AC, edge case, or Done-when criterion | PASS | Link/required-file checks map to Product/scope AC1 and success criteria; scope and state checks map to Delivery AC2 and T10. |
+| T7 completion evidence | FAIL | `.specs/features/project-foundation/tasks.md:232` is stricter than the horizon content at `docs/product/04-roadmap.md:224` through `docs/product/04-roadmap.md:275`. |
+| Canonical source-of-truth consistency | FAIL | `docs/product/02-mvp-scope.md:131` declares each numbered row a feature, but `docs/product/02-mvp-scope.md:136` through `docs/product/02-mvp-scope.md:147` conflict with `docs/product/04-roadmap.md:75` through `docs/product/04-roadmap.md:77` and `docs/product/04-roadmap.md:101` through `docs/product/04-roadmap.md:105`. |
+| Documented project guidelines followed | PASS | Verification followed the reading order and local-only authority in `AGENTS.md:5` through `AGENTS.md:14`; all test processes terminated per `AGENTS.md:52`. |
+| Senior-review readiness | FAIL | The task completion and canonical-sequence contradictions require reconciliation. |
 
-## Requirement Traceability Proposal
+## Requirement Traceability
 
-The requirement outcomes have evidence, but statuses should not be promoted while the
-feature-level integrity and handoff gaps remain.
+No requirement is promoted while the feature verdict is FAIL. Current rows remain at
+`.specs/features/project-foundation/spec.md:120` through
+`.specs/features/project-foundation/spec.md:127`.
 
-| Requirement | Current status | Proposed status after fixes and re-verification |
+| Requirement | Current status | Validation result |
 | --- | --- | --- |
-| PFND-01 | Implementing | Verified |
-| PFND-02 | Implementing | Verified |
-| PFND-03 | Implementing | Verified |
-| PFND-04 | Implementing | Verified |
-| PFND-05 | Implementing | Verified |
-| PFND-06 | Implementing | Verified |
-| PFND-07 | Implementing | Verified |
-| PFND-08 | Implementing | Verified |
-
-Current traceability rows are at `.specs/features/project-foundation/spec.md:120`
-through `.specs/features/project-foundation/spec.md:127`.
+| PFND-01 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
+| PFND-02 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
+| PFND-03 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
+| PFND-04 | Implementing | Acceptance criteria pass; canonical feature-sequence conflict needs repair. |
+| PFND-05 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
+| PFND-06 | Implementing | Acceptance criteria pass; T7 completion contract and roadmap sequence need repair. |
+| PFND-07 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
+| PFND-08 | Implementing | Acceptance criteria pass; hold pending feature-level fixes. |
 
 ## Ranked Gaps and Fix Plans
 
-### 1. Feature diff fails whitespace integrity
+### 1. T7 is marked complete without meeting its Done-when contract
 
-- **Severity**: Major. It directly fails `.specs/features/project-foundation/spec.md:136`.
-- **Evidence**: `.specs/features/project-foundation/context.md:3`, `.specs/features/project-foundation/context.md:4`, `.specs/features/project-foundation/design.md:3`, `.specs/features/project-foundation/tasks.md:7`.
-- **Root cause**: Markdown hard-line-break spaces were committed while the gate was run against an already clean working tree rather than the full feature diff.
-- **Fix task**: Remove or replace the four trailing-space line breaks, then run both `git diff --check` and `git diff --check 99c978b..HEAD` before re-verification.
-- **Done when**: Both commands exit 0 and return no findings.
+- **Severity**: Major.
+- **Evidence**: `.specs/features/project-foundation/tasks.md:217` marks T7 Complete and
+  `.specs/features/project-foundation/tasks.md:232` requires outcome, entry evidence, and
+  explicit non-goals for every horizon. Horizons 8-11 at
+  `docs/product/04-roadmap.md:224` through `docs/product/04-roadmap.md:275` omit one or
+  more of those required elements; Horizon 10 has an outcome and sequence but no entry
+  evidence or explicit non-goals.
+- **Root cause**: T7's content review checked the broad roadmap ordering but did not check
+  every horizon against each conjunct in the Done-when statement.
+- **Fix task**: Add explicit entry evidence and non-goals wherever missing so every horizon
+  satisfies the existing T7 contract. Do not weaken the completed task's criterion.
+- **Done when**: A horizon-by-horizon matrix demonstrates outcome, entry evidence, and
+  explicit non-goals for Horizons 0-11, with exact `file:line` evidence.
 
-### 2. Project handoff is stale
+### 2. The two canonical feature sequences assign different meanings to the same IDs
 
-- **Severity**: Major. It makes the repository's advertised latest handoff inaccurate and fails the story-level independent test for identifying the next SDD action.
-- **Evidence**: `README.md:32`, `.specs/STATE.md:48`, `.specs/STATE.md:49`, `.specs/STATE.md:51`, `.specs/STATE.md:53`.
-- **Root cause**: Task completion was recorded in feature artifacts, but the project handoff was not reconciled after execution.
-- **Fix task**: Update `.specs/STATE.md` to the actual validation state, completed tasks, current next action, blockers, and uncommitted files; then verify it against git and `tasks.md`.
-- **Done when**: The handoff matches current git evidence and points to fix/re-verification rather than T1.
+- **Severity**: Major.
+- **Evidence**: `docs/product/02-mvp-scope.md:131` says each numbered row is a separate TLC
+  feature. In that table, `003` is University verification and `004` is Listing creation at
+  `docs/product/02-mvp-scope.md:137` and `docs/product/02-mvp-scope.md:138`. In the roadmap,
+  `003` is Public profiles, `004` is University verification, and listing creation begins at
+  `005`, at `docs/product/04-roadmap.md:75` through `docs/product/04-roadmap.md:77` and
+  `docs/product/04-roadmap.md:101`.
+- **Root cause**: The roadmap split profile and media work into separate features without
+  reconciling the authoritative V1 sequence in the MVP scope.
+- **Fix task**: Choose one numbered feature decomposition and reconcile both product
+  documents, preserving their current capability boundaries and change-control rules.
+- **Done when**: Every shared numeric ID names the same feature in both documents, no
+  capability disappears, and the relative-link plus feature-range gates still pass.
 
 ## Summary
 
 **Overall**: NOT READY
 
-- Acceptance criteria: 14/14 matched.
+- Spec-anchored acceptance criteria: 14/14 matched.
 - Edge cases: 4/4 handled.
-- Required documents: 8/8 non-empty.
+- Structural validators: 0 errors.
+- Required files: 8/8 non-empty.
 - Relative links: 20/20 resolved.
-- Structural validators: 2/2 passed with no errors.
-- Runtime tests: none by approved matrix.
-- Discrimination sensor: 2/2 mutations killed.
-- Blocking gaps: committed whitespace integrity and stale project handoff.
+- Discrimination sensor: 3/3 mutations killed.
+- Previous verifier gaps: 2/2 fixed.
+- New blocking gaps: 2 Major.
 
-After both gaps are fixed, rerun the full gate, repeat independent verification, and
-only then promote PFND-01 through PFND-08 to Verified.
+Fix T7's missing horizon evidence and reconcile the numbered feature sequences, then run a
+fresh independent verification before promoting PFND-01 through PFND-08.

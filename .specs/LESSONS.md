@@ -26,6 +26,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: .specs/features/project-foundation/validation.md:115 (sdd-memory)
 - last seen: 2026-09-14T19:32:07Z
 
+### L-003 - Verify every conjunct in a task's done-when criteria against each repeated document section.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `documentation` · harmful: 0
+- features: project-foundation
+- evidence: .specs/features/project-foundation/validation.md:126 (documentation)
+- last seen: 2026-09-14T19:45:14Z
+
+### L-004 - Maintain one canonical feature ID registry and reference it instead of independently renumbering roadmaps.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `product-planning` · harmful: 0
+- features: project-foundation
+- evidence: .specs/features/project-foundation/validation.md:127 (product-planning)
+- last seen: 2026-09-14T19:45:14Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

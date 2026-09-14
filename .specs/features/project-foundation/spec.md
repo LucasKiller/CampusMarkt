@@ -121,7 +121,7 @@ CampusMarkt has a confirmed product direction, but its repository contains only 
 | PFND-02 | P1: Understand product and scope | Implementing | Implementing |
 | PFND-03 | P1: Understand product and scope | Implementing | Implementing |
 | PFND-04 | P1: Understand product and scope | Implementing | Implementing |
-| PFND-05 | P1: Preserve safety and privacy | Tasks | In Tasks |
+| PFND-05 | P1: Preserve safety and privacy | Implementing | Implementing |
 | PFND-06 | P1: Preserve delivery path | Tasks | In Tasks |
 | PFND-07 | P1: Preserve delivery path | Tasks | In Tasks |
 | PFND-08 | P1: Understand product and scope | Implementing | Implementing |

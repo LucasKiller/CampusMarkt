@@ -182,6 +182,8 @@ T8
 
 ### T6: Establish marketplace policy
 
+**Status**: Complete
+
 **What**: Define participant rules, prohibited content, unsupported content, privacy, reporting, and local-meeting guidance.
 **Where**: `docs/product/03-marketplace-policy.md`
 **Depends on**: T5
@@ -195,10 +197,10 @@ T8
 
 **Done when**:
 
-- [ ] Prohibited and unsupported classifications are separate and unambiguous.
-- [ ] Account, university-email, messaging, and location privacy boundaries are explicit.
-- [ ] Safe local pickup and report/moderation expectations are explicit.
-- [ ] Build gate passes with zero errors.
+- [x] Prohibited and unsupported classifications are separate and unambiguous.
+- [x] Account, university-email, messaging, and location privacy boundaries are explicit.
+- [x] Safe local pickup and report/moderation expectations are explicit.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

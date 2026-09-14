@@ -130,6 +130,8 @@ T8
 
 ### T4: Define the domain model
 
+**Status**: Complete
+
 **What**: Populate the domain glossary, ownership boundaries, and current-versus-future state models.
 **Where**: `docs/product/01-domain-model.md`
 **Depends on**: T3
@@ -143,10 +145,10 @@ T8
 
 **Done when**:
 
-- [ ] Users, verification, listings, offers, reservations, transactions, conversations, favorites, reports, and moderation are defined.
-- [ ] V1 states are separated from future payment and handover states.
-- [ ] Persistence rules call for constraints, foreign-key indexes, RLS, exact money, and timezone-aware timestamps only when implemented.
-- [ ] Build gate passes with zero errors.
+- [x] Users, verification, listings, offers, reservations, transactions, conversations, favorites, reports, and moderation are defined.
+- [x] V1 states are separated from future payment and handover states.
+- [x] Persistence rules call for constraints, foreign-key indexes, RLS, exact money, and timezone-aware timestamps only when implemented.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

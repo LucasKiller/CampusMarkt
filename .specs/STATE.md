@@ -45,10 +45,10 @@
 ## Handoff
 
 - **Feature**: project-foundation / `.specs/features/project-foundation/`
-- **Phase / Task**: Phase 4 / T10 complete; independent re-verification pending
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10
+- **Phase / Task**: Phase 5 / T12 complete; third independent verification pending
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12
 - **In-progress** (file:line): none
-- **Next step**: Run a fresh independent verification over `99c978b..HEAD`, then promote PFND-01 through PFND-08 only if the verdict is PASS.
-- **Blockers**: none; the first verifier's whitespace and stale-handoff gaps are corrected
-- **Uncommitted files**: none after the T10 commit
+- **Next step**: Run the third independent verification over `99c978b..HEAD`, then promote PFND-01 through PFND-08 only if the verdict is PASS.
+- **Blockers**: none; both prior validation rounds' gaps are corrected
+- **Uncommitted files**: none after the T12 commit
 - **Branch**: main

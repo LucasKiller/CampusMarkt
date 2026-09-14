@@ -349,7 +349,7 @@ T11 -> T12
 
 ### T12: Reconcile handoff after roadmap repair
 
-**Status**: Ready
+**Status**: Complete
 
 **What**: Replace only the `.specs/STATE.md` handoff body with the current T1-T12 completion state and final re-verification step.
 **Where**: `.specs/STATE.md`
@@ -364,10 +364,10 @@ T11 -> T12
 
 **Done when**:
 
-- [ ] The handoff records T1-T12 complete and the current branch.
-- [ ] The handoff points to the third independent verification as the next action.
-- [ ] Git status and task evidence match the handoff at commit time.
-- [ ] Full gate passes with zero errors.
+- [x] The handoff records T1-T12 complete and the current branch.
+- [x] The handoff points to the third independent verification as the next action.
+- [x] Git status and task evidence match the handoff at commit time.
+- [x] Full gate passes with zero errors.
 
 **Tests**: none - TLC state documentation matches the matrix
 **Gate**: full

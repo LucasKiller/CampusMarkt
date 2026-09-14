@@ -156,6 +156,8 @@ T8
 
 ### T5: Bound the MVP
 
+**Status**: Complete
+
 **What**: Define included, deferred, and excluded V1 capabilities and the first feature sequence.
 **Where**: `docs/product/02-mvp-scope.md`
 **Depends on**: T4
@@ -169,10 +171,10 @@ T8
 
 **Done when**:
 
-- [ ] V1 includes responsive web, identity, goods listings, discovery, structured negotiation, chat, favorites, verification, reports, and basic moderation.
-- [ ] Protected payment, shipping, SWAP, future verticals, meetup spots, and native mobile are deferred.
-- [ ] Auctions, ads, subscriptions, AI recommendations, and national expansion are excluded.
-- [ ] Build gate passes with zero errors.
+- [x] V1 includes responsive web, identity, goods listings, discovery, structured negotiation, chat, favorites, verification, reports, and basic moderation.
+- [x] Protected payment, shipping, SWAP, future verticals, meetup spots, and native mobile are deferred.
+- [x] Auctions, ads, subscriptions, AI recommendations, and national expansion are excluded.
+- [x] Build gate passes with zero errors.
 
 **Tests**: none - documentation layer matches the matrix
 **Gate**: build

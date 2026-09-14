@@ -1,0 +1,17 @@
+{$CADDY_SITE_ADDRESS:http://localhost} {
+	@supa_api path \
+		/auth/v1 /auth/v1/* \
+		/rest/v1 /rest/v1/* \
+		/realtime/v1 /realtime/v1/* \
+		/storage/v1 /storage/v1/* \
+		/functions/v1 /functions/v1/* \
+		/graphql/v1 /graphql/v1/*
+
+	handle @supa_api {
+		reverse_proxy api-gw:8000
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}

@@ -290,11 +290,11 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Local routes forward only documented web and API paths.
-- [ ] Production mode requires hostnames and valid HTTPS configuration.
-- [ ] Studio and all internal service endpoints remain private by default.
-- [ ] Integration tests reject a public PostgreSQL or Studio binding.
-- [ ] Integration gate passes with at least 6 ingress assertions.
+- [x] Local routes forward only documented web and API paths.
+- [x] Production mode requires hostnames and valid HTTPS configuration.
+- [x] Studio and all internal service endpoints remain private by default.
+- [x] Integration tests reject a public PostgreSQL or Studio binding.
+- [x] Integration gate passes with at least 6 ingress assertions.
 
 **Tests**: integration
 **Gate**: full

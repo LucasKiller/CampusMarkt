@@ -6,6 +6,24 @@ include:
       - ./infra/compose/supabase.override.yaml
 
 services:
+  caddy:
+    image: caddy:2.11.4-alpine@sha256:5f5c8640aae01df9654968d946d8f1a56c497f1dd5c5cda4cf95ab7c14d58648
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+      api-gw:
+        condition: service_healthy
+    environment:
+      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:-http://localhost}
+    ports:
+      - "${CADDY_BIND_ADDRESS:-127.0.0.1}:${CADDY_HTTP_PORT:-8080}:80"
+      - "${CADDY_BIND_ADDRESS:-127.0.0.1}:${CADDY_HTTPS_PORT:-8443}:443"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
   web:
     image: campusmarkt/web:local
     build:
@@ -53,3 +71,7 @@ services:
 networks:
   default:
     name: campusmarkt-platform
+
+volumes:
+  caddy-data:
+  caddy-config:

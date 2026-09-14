@@ -193,10 +193,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] The package depends only on approved public workspace contracts.
-- [ ] No Next.js server or Supabase secret dependency enters the client contract.
-- [ ] Unit tests cover healthy and non-ready response parsing.
-- [ ] Quick gate passes with zero errors and at least 2 package tests pass.
+- [x] The package depends only on approved public workspace contracts.
+- [x] No Next.js server or Supabase secret dependency enters the client contract.
+- [x] Unit tests cover healthy and non-ready response parsing.
+- [x] Quick gate passes with zero errors and at least 2 package tests pass.
 
 **Tests**: unit
 **Gate**: quick

@@ -42,6 +42,14 @@
 - **Date**: 2026-09-14
 - **Status**: active
 
+### AD-006
+- **Decision**: CampusMarkt will start as a TypeScript modular monolith in which Next.js hosts the responsive UI and server-side application layer, while a self-hosted Supabase stack provides PostgreSQL, Auth, Storage, and Realtime; Docker Compose will coordinate the complete deployable stack behind an HTTPS reverse proxy.
+- **Reason**: A single language and deployment unit reduce MVP complexity, preserve explicit domain boundaries for a future mobile client, and allow the existing VPS to run the application and its supporting services reproducibly.
+- **Trade-off**: Self-hosting avoids dependence on the managed Supabase service but makes CampusMarkt responsible for updates, hardening, SMTP, monitoring, backups, recovery, and VPS capacity.
+- **Scope**: Repository structure, application runtime, local development, production deployment, data, authentication, media, and realtime features.
+- **Date**: 2026-09-14
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: project-foundation / `.specs/features/project-foundation/`

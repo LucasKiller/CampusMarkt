@@ -217,10 +217,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] Allowed imports across public entry points pass.
-- [ ] Forbidden domain-to-framework, presentation-to-infrastructure, and private deep imports fail with named diagnostics.
-- [ ] Tests use scratch fixtures and never leave repository changes behind.
-- [ ] Quick gate passes with zero errors and at least 4 architecture tests pass.
+- [x] Allowed imports across public entry points pass.
+- [x] Forbidden domain-to-framework, presentation-to-infrastructure, and private deep imports fail with named diagnostics.
+- [x] Tests use scratch fixtures and never leave repository changes behind.
+- [x] Quick gate passes with zero errors and at least 4 architecture tests pass.
 
 **Tests**: unit
 **Gate**: quick

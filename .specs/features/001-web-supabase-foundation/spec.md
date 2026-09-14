@@ -9,7 +9,7 @@ CampusMarkt has product rules but no executable application foundation. The firs
 ## Goals
 
 - [ ] Start the complete local foundation through one documented Docker Compose workflow.
-- [ ] Provide a responsive Next.js application with explicit UI, application, and domain boundaries.
+- [x] Provide a responsive Next.js application with explicit UI, application, and domain boundaries.
 - [ ] Provide a self-hosted Supabase foundation for PostgreSQL, Auth, Storage, and Realtime.
 - [ ] Establish deterministic quality, security, migration, backup, and environment contracts for later features.
 
@@ -132,7 +132,7 @@ CampusMarkt has product rules but no executable application foundation. The firs
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | FOUND-01 | P1: Reproducible full-stack startup | Tasks | In Tasks |
-| FOUND-02 | P1: Typed modular application foundation | Execute | In Progress (T1-T6 complete) |
+| FOUND-02 | P1: Typed modular application foundation | Execute | In Progress (T1-T7 complete; T13 pending) |
 | FOUND-03 | P1: Safe Supabase baseline | Tasks | In Tasks |
 | FOUND-04 | P1: Production operations contract | Tasks | In Tasks |
 
@@ -144,6 +144,6 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 - [ ] A clean compatible machine can start the local foundation through one documented Compose command.
 - [ ] Every documented quality and security gate passes from the repository root.
-- [ ] A contributor can prove module-boundary enforcement through a failing scratch mutation.
+- [x] A contributor can prove module-boundary enforcement through a failing scratch mutation.
 - [ ] A contributor can apply the baseline migration and verify RLS-denied access for unapproved roles.
 - [ ] An operator can complete the documented backup and isolated restore drill without relying on the primary volumes.

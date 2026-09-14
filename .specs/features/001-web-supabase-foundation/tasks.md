@@ -169,10 +169,10 @@ T13 -> T14 -> T15 -> T16
 
 **Done when**:
 
-- [ ] The package defines transport data without framework or provider imports.
-- [ ] A typed liveness/readiness response contract is exported publicly.
-- [ ] Unit tests prove valid contract construction.
-- [ ] Quick gate passes with zero errors and at least 1 package test passes.
+- [x] The package defines transport data without framework or provider imports.
+- [x] A typed liveness/readiness response contract is exported publicly.
+- [x] Unit tests prove valid contract construction.
+- [x] Quick gate passes with zero errors and at least 1 package test passes.
 
 **Tests**: unit
 **Gate**: quick

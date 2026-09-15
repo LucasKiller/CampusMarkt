@@ -5,24 +5,31 @@ import { createHmac } from "node:crypto";
 const EVENT_TYPES = [
   "registration",
   "confirmation_resend",
-  "email_confirmation",
+  "confirmation",
   "sign_in",
-  "logout",
-  "logout_all",
-  "password_recovery",
+  "sign_out",
+  "recovery",
   "password_reset",
+  "reauthentication",
+  "profile_update",
+  "avatar_update",
   "account_deletion",
+  "worker",
 ] as const;
 
 const OUTCOMES = [
-  "allowed",
-  "denied",
+  "accepted",
   "succeeded",
-  "failed",
-  "unavailable",
+  "denied",
+  "rate_limited",
+  "invalid",
+  "dependency_failure",
+  "conflict",
+  "retry",
 ] as const;
 
-type EventType = (typeof EVENT_TYPES)[number];
+type RateAction =
+  "sign_in" | "registration" | "confirmation_resend" | "recovery";
 
 type RepositoryResult =
   { ok: true; value: unknown } | { ok: false; code?: string };
@@ -53,13 +60,13 @@ type AuditInput = {
 };
 
 type EnforceInput = {
-  action: EventType;
+  action: RateAction;
   normalizedIdentity: string;
   trustedClientIp: string;
   correlationId: string;
 };
 
-const BYTEA_SHA256 = /^\\x[0-9a-f]{64}$/u;
+const HMAC_SHA256 = /^[0-9a-f]{64}$/u;
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
@@ -75,7 +82,7 @@ function includes<const T extends readonly string[]>(
 }
 
 function validNullableHash(value: string | null) {
-  return value === null || BYTEA_SHA256.test(value);
+  return value === null || HMAC_SHA256.test(value);
 }
 
 function parseDecision(value: unknown) {
@@ -104,10 +111,10 @@ export function createIdentitySecurity({
   repository: SecurityRepository;
 }) {
   function fingerprint(kind: "identity" | "ip", value: string) {
-    return `\\x${createHmac("sha256", pepper)
+    return createHmac("sha256", pepper)
       .update(`campusmarkt:${kind}:`)
       .update(value)
-      .digest("hex")}`;
+      .digest("hex");
   }
 
   function fingerprintIdentity(identity: string) {
@@ -169,7 +176,7 @@ export function createIdentitySecurity({
         subjectHash,
         ipHash,
         eventType: input.action,
-        outcome: "unavailable",
+        outcome: "dependency_failure",
         correlationId: input.correlationId,
       });
       return { status: "unavailable" as const };
@@ -182,7 +189,7 @@ export function createIdentitySecurity({
         subjectHash,
         ipHash,
         eventType: input.action,
-        outcome: "unavailable",
+        outcome: "dependency_failure",
         correlationId: input.correlationId,
       });
       return { status: "unavailable" as const };
@@ -194,7 +201,7 @@ export function createIdentitySecurity({
         subjectHash,
         ipHash,
         eventType: input.action,
-        outcome: "denied",
+        outcome: "rate_limited",
         correlationId: input.correlationId,
       });
       return {
@@ -208,7 +215,7 @@ export function createIdentitySecurity({
       subjectHash,
       ipHash,
       eventType: input.action,
-      outcome: "allowed",
+      outcome: "accepted",
       correlationId: input.correlationId,
     });
     return { status: "allowed" as const, value: await operation() };

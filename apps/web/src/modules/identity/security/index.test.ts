@@ -31,12 +31,12 @@ describe("identity request fingerprints", () => {
     );
   });
 
-  it("returns a PostgreSQL bytea HMAC-SHA-256 identity hash", () => {
+  it("returns exactly 64 lowercase hex HMAC-SHA-256 characters", () => {
     expect(
       createIdentitySecurity(dependencies()).fingerprintIdentity(
         "person@example.test",
       ),
-    ).toMatch(/^\\x[0-9a-f]{64}$/u);
+    ).toMatch(/^[0-9a-f]{64}$/u);
   });
 
   it("does not include the raw email in the identity hash", () => {
@@ -60,12 +60,12 @@ describe("identity request fingerprints", () => {
     );
   });
 
-  it("returns a PostgreSQL bytea HMAC without the raw trusted IP", () => {
+  it("returns a 64-hex HMAC without the raw trusted IP", () => {
     const ip = "203.0.113.8";
     const hash = createIdentitySecurity(dependencies()).fingerprintClientIp({
       trustedClientIp: ip,
     });
-    expect(hash).toMatch(/^\\x[0-9a-f]{64}$/u);
+    expect(hash).toMatch(/^[0-9a-f]{64}$/u);
     expect(hash).not.toContain(ip);
   });
 
@@ -116,7 +116,8 @@ describe("identity abuse boundary", () => {
     const persisted = JSON.stringify(
       ports.repository.consumeRateLimits.mock.calls,
     );
-    expect(persisted).toMatch(/\\\\x[0-9a-f]{64}/u);
+    expect(persisted).toMatch(/[0-9a-f]{64}/u);
+    expect(persisted).not.toContain("\\\\x");
     expect(persisted).not.toContain("person@example.test");
     expect(persisted).not.toContain("203.0.113.8");
   });
@@ -146,7 +147,7 @@ describe("identity abuse boundary", () => {
 
     const result = await createIdentitySecurity(ports).enforce(
       {
-        action: "password_recovery",
+        action: "recovery",
         normalizedIdentity: "person@example.test",
         trustedClientIp: "203.0.113.8",
         correlationId,
@@ -257,9 +258,9 @@ describe("identity abuse boundary", () => {
       authUserId: null,
       correlationId,
       eventType: "registration",
-      ipHash: expect.stringMatching(/^\\x[0-9a-f]{64}$/u),
-      outcome: "denied",
-      subjectHash: expect.stringMatching(/^\\x[0-9a-f]{64}$/u),
+      ipHash: expect.stringMatching(/^[0-9a-f]{64}$/u),
+      outcome: "rate_limited",
+      subjectHash: expect.stringMatching(/^[0-9a-f]{64}$/u),
     });
   });
 });
@@ -272,7 +273,7 @@ describe("identity security audit allowlist", () => {
         authUserId: null,
         subjectHash: null,
         ipHash: null,
-        eventType: "logout_all",
+        eventType: "sign_out",
         outcome: "succeeded",
         correlationId,
       }),
@@ -286,7 +287,7 @@ describe("identity security audit allowlist", () => {
       subjectHash: null,
       ipHash: null,
       eventType: "SMTP password invalid for person@example.test",
-      outcome: "failed",
+      outcome: "dependency_failure",
       correlationId,
     });
     expect(result).toEqual({ status: "rejected" });
@@ -314,8 +315,8 @@ describe("identity security audit allowlist", () => {
       authUserId: null,
       subjectHash: null,
       ipHash: null,
-      eventType: "password_recovery",
-      outcome: "failed",
+      eventType: "recovery",
+      outcome: "dependency_failure",
       correlationId,
       password: "secret",
       token: "raw-token",
@@ -340,7 +341,7 @@ describe("identity security audit allowlist", () => {
         subjectHash: "person@example.test",
         ipHash: "203.0.113.8",
         eventType: "sign_in",
-        outcome: "failed",
+        outcome: "dependency_failure",
         correlationId,
       }),
     ).resolves.toEqual({ status: "rejected" });
@@ -355,7 +356,7 @@ describe("identity security audit allowlist", () => {
         subjectHash: null,
         ipHash: null,
         eventType: "sign_in",
-        outcome: "failed",
+        outcome: "dependency_failure",
         correlationId: "inbound\nheader",
       }),
     ).resolves.toEqual({ status: "rejected" });

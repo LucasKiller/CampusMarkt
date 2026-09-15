@@ -452,11 +452,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] User client receives only request cookies; admin client and service key cannot enter client bundles.
-- [ ] Every chunk is HttpOnly, SameSite=Lax, Path=/, <=30 days, Secure in production, and fully cleared on denial/logout.
-- [ ] Rotation/expiry/malformed/chunk-removal/provider errors fail closed and set no `localStorage` path.
-- [ ] At least 16 new adapter unit/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] User client receives only request cookies; admin client and service key cannot enter client bundles.
+- [x] Every chunk is HttpOnly, SameSite=Lax, Path=/, <=30 days, Secure in production, and fully cleared on denial/logout.
+- [x] Rotation/expiry/malformed/chunk-removal/provider errors fail closed and set no `localStorage` path.
+- [x] At least 16 new adapter unit/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: unit + integration
 **Gate**: Integration

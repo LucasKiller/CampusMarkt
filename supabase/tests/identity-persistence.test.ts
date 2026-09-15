@@ -148,7 +148,7 @@ function createAuthUser(options?: {
   const result = query(`
     insert into auth.users (
       instance_id, id, aud, role, email, encrypted_password,
-      confirmed_at, raw_app_meta_data, raw_user_meta_data,
+      email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
       created_at, updated_at
     ) values (
       '00000000-0000-0000-0000-000000000000', '${id}', 'authenticated',
@@ -162,8 +162,50 @@ function createAuthUser(options?: {
   return id;
 }
 
+function createAuthSession(
+  authUserId: string,
+  options?: { id?: string; notAfter?: string | null },
+) {
+  const id = options?.id ?? crypto.randomUUID();
+  const notAfter =
+    options?.notAfter === undefined
+      ? "transaction_timestamp() + interval '30 days'"
+      : options.notAfter === null
+        ? "null"
+        : `'${options.notAfter}'::timestamptz`;
+  const result = query(`
+    insert into auth.sessions (id, user_id, created_at, updated_at, not_after)
+    values (
+      '${id}', '${authUserId}', transaction_timestamp(),
+      transaction_timestamp(), ${notAfter}
+    );
+  `);
+  expect(result.status, result.stderr).toBe(0);
+  return id;
+}
+
+function authenticatedQuery(
+  authUserId: string,
+  sessionId: string,
+  sql: string,
+) {
+  return query(`
+    do $claims$
+    begin
+      perform set_config(
+        'request.jwt.claims',
+        '{"sub":"${authUserId}","session_id":"${sessionId}","role":"authenticated"}',
+        false
+      );
+    end
+    $claims$;
+    set role authenticated;
+    ${sql}
+  `);
+}
+
 beforeAll(() => {
-  const started = compose(["up", "--detach", "--wait", "db"]);
+  const started = compose(["up", "--detach", "--wait", "db", "auth"]);
   if (started.status !== 0) {
     throw new Error(started.stderr || started.stdout);
   }
@@ -943,6 +985,334 @@ describe("T10 atomic abuse limits and redacted audit", () => {
     expect(
       query(
         `select count(*) from identity.security_events where auth_user_id = '${id}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+});
+
+describe("T11 session assurance and immediate revocation", () => {
+  it("accepts only a session bound to the JWT subject", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        "select identity_api.current_session_is_active();",
+      ).stdout,
+    ).toBe("t");
+  });
+
+  it("rejects a missing backing session", () => {
+    const id = createAuthUser({ confirmed: true });
+    expect(
+      authenticatedQuery(
+        id,
+        crypto.randomUUID(),
+        "select identity_api.current_session_is_active();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("rejects a session belonging to another user", () => {
+    const owner = createAuthUser({ confirmed: true });
+    const caller = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(owner);
+    expect(
+      authenticatedQuery(
+        caller,
+        sessionId,
+        "select identity_api.current_session_is_active();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("rejects an authenticated role without trusted claims", () => {
+    expect(
+      query(`
+        do $claims$
+        begin
+          perform set_config('request.jwt.claims', '{}', false);
+        end
+        $claims$;
+        set role authenticated;
+        select identity_api.current_session_is_active();
+      `).stdout,
+    ).toBe("f");
+  });
+
+  it("rejects a session exactly at its not-after boundary", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id, {
+      notAfter: "2026-09-15T12:00:00.000Z",
+    });
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        "select identity_api.current_session_is_active();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("returns confirmed, active, fully provisioned identity status", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        `select is_active, email_confirmed, profile_complete, consent_complete
+         from identity_api.current_identity_status();`,
+      ).stdout,
+    ).toBe("t|t|t|t");
+  });
+
+  it("reports an unconfirmed identity as non-participating", () => {
+    const id = createAuthUser();
+    const sessionId = createAuthSession(id);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        `select is_active, email_confirmed, profile_complete, consent_complete
+         from identity_api.current_identity_status();`,
+      ).stdout,
+    ).toBe("t|f|t|t");
+  });
+
+  it("reports deletion-pending identity as inactive", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      update identity.accounts set state = 'deletion_pending',
+        deletion_requested_at = transaction_timestamp(),
+        purge_due_at = transaction_timestamp() + interval '30 days'
+      where auth_user_id = '${id}';
+    `);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        "select is_active from identity_api.current_identity_status();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("fails closed when the profile projection is missing", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`delete from identity.profiles where auth_user_id = '${id}';`);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        "select profile_complete from identity_api.current_identity_status();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("records password assurance only for a live matching session", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(
+      query(`
+        select identity_api.record_password_assurance('${id}', '${sessionId}');
+        select auth_user_id, password_verified_at is not null
+        from identity.session_assurance where session_id = '${sessionId}';
+      `).stdout,
+    ).toBe(`${id}|t`);
+  });
+
+  it("rejects assurance for another user's session", () => {
+    const owner = createAuthUser({ confirmed: true });
+    const caller = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(owner);
+    expect(
+      query(
+        `select identity_api.record_password_assurance('${caller}', '${sessionId}');`,
+      ).status,
+    ).not.toBe(0);
+    expect(
+      query(
+        `select count(*) from identity.session_assurance where session_id = '${sessionId}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+
+  it("rejects assurance for an expired session", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id, {
+      notAfter: "2026-09-15T12:00:00.000Z",
+    });
+    expect(
+      query(
+        `select identity_api.record_password_assurance('${id}', '${sessionId}');`,
+      ).status,
+    ).not.toBe(0);
+  });
+
+  it("upserts one assurance row for repeated password verification", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      update identity.session_assurance
+      set password_verified_at = transaction_timestamp() - interval '1 minute'
+      where session_id = '${sessionId}';
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+    `);
+    expect(
+      query(`
+        select count(*), password_verified_at > transaction_timestamp() - interval '10 seconds'
+        from identity.session_assurance where session_id = '${sessionId}'
+        group by password_verified_at;
+      `).stdout,
+    ).toBe("1|t");
+  });
+
+  it("does not refresh assurance when the Auth session refreshes", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      update identity.session_assurance
+      set password_verified_at = '2026-09-15T12:00:00.000Z'
+      where session_id = '${sessionId}';
+      update auth.sessions set refreshed_at = transaction_timestamp()
+      where id = '${sessionId}';
+    `);
+    expect(
+      query(`
+        select password_verified_at from identity.session_assurance
+        where session_id = '${sessionId}';
+      `).stdout,
+    ).toBe("2026-09-15 12:00:00+00");
+  });
+
+  it("accepts assurance exactly at the ten-minute boundary", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      update identity.session_assurance
+      set password_verified_at = '2026-09-15T12:00:00.000Z'
+      where session_id = '${sessionId}';
+    `);
+    expect(
+      query(`
+        select identity.password_assurance_is_recent(
+          '${id}', '${sessionId}', '2026-09-15T12:10:00.000Z'
+        );
+      `).stdout,
+    ).toBe("t");
+  });
+
+  it("rejects assurance beyond the ten-minute boundary", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      update identity.session_assurance
+      set password_verified_at = '2026-09-15T12:00:00.000Z'
+      where session_id = '${sessionId}';
+    `);
+    expect(
+      query(`
+        select identity.password_assurance_is_recent(
+          '${id}', '${sessionId}', '2026-09-15T12:10:00.001Z'
+        );
+      `).stdout,
+    ).toBe("f");
+  });
+
+  it("revokes every target session and preserves another user's session", () => {
+    const target = createAuthUser({ confirmed: true });
+    const other = createAuthUser({ confirmed: true });
+    createAuthSession(target);
+    createAuthSession(target);
+    createAuthSession(other);
+    expect(
+      query(`
+        select identity_api.revoke_user_sessions('${target}');
+        select
+          (select count(*) from auth.sessions where user_id = '${target}'),
+          (select count(*) from auth.sessions where user_id = '${other}');
+      `).stdout,
+    ).toBe("2\n0|1");
+  });
+
+  it("treats repeated all-session revocation as idempotent", () => {
+    const id = createAuthUser({ confirmed: true });
+    createAuthSession(id);
+    expect(
+      query(`
+        select identity_api.revoke_user_sessions('${id}');
+        select identity_api.revoke_user_sessions('${id}');
+      `).stdout,
+    ).toBe("1\n0");
+  });
+
+  it("converges safely when all-session revocations race", async () => {
+    const id = createAuthUser({ confirmed: true });
+    createAuthSession(id);
+    createAuthSession(id);
+    const sql = `select identity_api.revoke_user_sessions('${id}');`;
+    const results = await Promise.all([queryAsync(sql), queryAsync(sql)]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(
+      results
+        .map((result) => Number(result.stdout))
+        .reduce((sum, count) => sum + count, 0),
+    ).toBe(2);
+    expect(
+      query(`select count(*) from auth.sessions where user_id = '${id}';`)
+        .stdout,
+    ).toBe("0");
+  });
+
+  it.each([
+    ["current_identity_status()", "authenticated"],
+    ["current_session_is_active()", "authenticated"],
+    ["record_password_assurance(uuid,uuid)", "service_role"],
+    ["revoke_user_sessions(uuid)", "service_role"],
+  ])("grants identity_api.%s only to %s", (signature, role) => {
+    expect(
+      query(`
+        select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+      `).stdout,
+    ).toBe(role === "authenticated" ? "f|f|t|f" : "f|f|f|t");
+  });
+
+  it("forces assurance RLS, denies direct roles, and indexes account cleanup", () => {
+    expect(
+      query(`
+        select c.relrowsecurity, c.relforcerowsecurity,
+          has_table_privilege('authenticated', 'identity.session_assurance', 'select'),
+          has_table_privilege('service_role', 'identity.session_assurance', 'insert'),
+          exists (
+            select 1 from pg_indexes where schemaname = 'identity'
+              and indexname = 'session_assurance_auth_user_id_idx'
+          )
+        from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'identity' and c.relname = 'session_assurance';
+      `).stdout,
+    ).toBe("t|t|f|f|t");
+  });
+
+  it("cascades assurance when the Auth identity is deleted", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      delete from auth.users where id = '${id}';
+    `);
+    expect(
+      query(
+        `select count(*) from identity.session_assurance where auth_user_id = '${id}';`,
       ).stdout,
     ).toBe("0");
   });

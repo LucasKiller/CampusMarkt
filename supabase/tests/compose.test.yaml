@@ -4,6 +4,8 @@ services:
     ports:
       - target: 5432
         host_ip: 127.0.0.1
+  auth:
+    container_name: !reset null
 
 networks:
   default:

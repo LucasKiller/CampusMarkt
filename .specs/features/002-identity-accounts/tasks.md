@@ -350,11 +350,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Active-session checks bind JWT `session_id` and user, and revoked/deleted/expired sessions fail closed.
-- [ ] Assurance is service-only, session-bound, unchanged by refresh, and exact at the 10-minute boundary.
-- [ ] Revocation removes every target session and concurrent/idempotent calls remain safe.
-- [ ] At least 16 new DB/security tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Active-session checks bind JWT `session_id` and user, and revoked/deleted/expired sessions fail closed.
+- [x] Assurance is service-only, session-bound, unchanged by refresh, and exact at the 10-minute boundary.
+- [x] Revocation removes every target session and concurrent/idempotent calls remain safe.
+- [x] At least 16 new DB/security tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

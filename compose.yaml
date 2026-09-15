@@ -4,7 +4,7 @@ x-migration-service: &migration-service
   image: supabase/postgres:17.6.1.136
   restart: "no"
   depends_on:
-    db:
+    auth:
       condition: service_healthy
   environment:
     PGHOST: db

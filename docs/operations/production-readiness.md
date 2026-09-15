@@ -13,11 +13,11 @@ This feature defines a deployable contract; it does not authorize a deployment. 
 
 Start with `infra/supabase/.env.example`, merge the variable names from `infra/compose/production.env.example` into the ignored root `.env`, and replace every placeholder. Generate keys on a trusted host and keep the root `.env` readable only by the service account.
 
-Configure a production SMTP provider; the bundled development mail service is not production delivery. Configure Supabase Storage with a provider-specific S3-compatible override following the [official S3 backend guide](https://supabase.com/docs/guides/self-hosting/self-hosted-s3). Setting `STORAGE_BACKEND=s3` alone is not sufficient: the active Compose model must render the endpoint, bucket, region, access key ID, and secret for the Storage service.
+Configure a production SMTP provider with implicit TLS (`SMTP_TLS_MODE=implicit`, normally port 465); the bundled development mail service is not production delivery. Configure Supabase Storage with a provider-specific S3-compatible override following the [official S3 backend guide](https://supabase.com/docs/guides/self-hosting/self-hosted-s3). Setting `STORAGE_BACKEND=s3` alone is not sufficient: the active Compose model must render the endpoint, bucket, region, access key ID, and secret for the Storage service.
 
 Set `BACKUP_TARGET` to mounted storage that is replicated or transferred off the primary VPS. Named Docker volumes provide restart persistence, not disaster recovery. Database dumps do not contain Storage objects, so both artifacts in the CampusMarkt manifest are required.
 
-Validate resources and configuration without printing secret values, then render the exact Compose model before any production start:
+Validate resources and configuration, then probe the public TLS certificate, authenticate to SMTP, and issue an authenticated S3 `HeadBucket`, all with bounded redacted failures. The same `preflight` command performs both layers without printing secret values. Render the exact Compose model before any production start:
 
 ```console
 $ npm run preflight

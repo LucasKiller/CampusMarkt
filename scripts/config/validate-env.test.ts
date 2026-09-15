@@ -24,7 +24,8 @@ const productionEnvironment: DeploymentEnvironment = {
   CADDY_SITE_ADDRESS: "markt.example.edu",
   SMTP_ADMIN_EMAIL: "operator@example.edu",
   SMTP_HOST: "smtp.example.edu",
-  SMTP_PORT: "587",
+  SMTP_PORT: "465",
+  SMTP_TLS_MODE: "implicit",
   SMTP_USER: "campusmarkt",
   SMTP_PASS: "generated-smtp-password",
   SMTP_SENDER_NAME: "CampusMarkt",
@@ -145,6 +146,7 @@ describe("deployment environment validation", () => {
     "SMTP_ADMIN_EMAIL",
     "SMTP_HOST",
     "SMTP_PORT",
+    "SMTP_TLS_MODE",
     "SMTP_USER",
     "SMTP_PASS",
     "SMTP_SENDER_NAME",
@@ -208,6 +210,16 @@ describe("deployment environment validation", () => {
         resources: productionResources,
       }).errors,
     ).toContain("Invalid production storage backend: STORAGE_BACKEND");
+  });
+
+  it("requires implicit TLS for the production SMTP probe", () => {
+    expect(
+      validateDeployment({
+        mode: "production",
+        environment: { ...productionEnvironment, SMTP_TLS_MODE: "plain" },
+        resources: productionResources,
+      }).errors,
+    ).toContain("Invalid production SMTP TLS mode: SMTP_TLS_MODE");
   });
 
   it.each([

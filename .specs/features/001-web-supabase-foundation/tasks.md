@@ -495,11 +495,11 @@ T17 -> T18 -> T19 -> T20
 
 **Done when**:
 
-- [ ] Local validation remains offline and succeeds without production providers.
-- [ ] Production probe rejects an invalid or expired TLS certificate and accepts a trusted valid certificate.
-- [ ] Production probe requires bounded successful SMTP and S3 connectivity before returning production-ready.
-- [ ] Failure diagnostics name the dependency without printing credentials or response secrets.
-- [ ] Full gate passes with exact success, timeout, certificate, authentication, and reachability assertions.
+- [x] Local validation remains offline and succeeds without production providers.
+- [x] Production probe rejects an invalid or expired TLS certificate and accepts a trusted valid certificate.
+- [x] Production probe requires bounded successful SMTP and S3 connectivity before returning production-ready.
+- [x] Failure diagnostics name the dependency without printing credentials or response secrets.
+- [x] Full gate passes with exact success, timeout, certificate, authentication, and reachability assertions.
 
 **Tests**: integration
 **Gate**: full

@@ -35,6 +35,7 @@ const PRODUCTION_REQUIRED = [
   "SMTP_ADMIN_EMAIL",
   "SMTP_HOST",
   "SMTP_PORT",
+  "SMTP_TLS_MODE",
   "SMTP_USER",
   "SMTP_PASS",
   "SMTP_SENDER_NAME",
@@ -173,6 +174,13 @@ export function validateDeployment(input: {
       input.environment.STORAGE_BACKEND !== "s3"
     ) {
       errors.push("Invalid production storage backend: STORAGE_BACKEND");
+    }
+
+    if (
+      hasValue(input.environment, "SMTP_TLS_MODE") &&
+      input.environment.SMTP_TLS_MODE !== "implicit"
+    ) {
+      errors.push("Invalid production SMTP TLS mode: SMTP_TLS_MODE");
     }
 
     const resourceChecks = [

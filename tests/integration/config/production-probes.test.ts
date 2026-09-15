@@ -224,7 +224,7 @@ function validS3Signature(request: IncomingMessage) {
   );
 }
 
-async function fixtures(options: { hangTls?: boolean } = {}) {
+async function fixtures(options: { hangS3?: boolean; hangTls?: boolean } = {}) {
   const tls = createHttpsServer(
     { key, cert: certificate },
     (_request, response) => {
@@ -237,7 +237,9 @@ async function fixtures(options: { hangTls?: boolean } = {}) {
   const s3 = createHttpsServer(
     { key, cert: certificate },
     (request, response) => {
-      response.writeHead(validS3Signature(request) ? 200 : 403).end();
+      if (!options.hangS3) {
+        response.writeHead(validS3Signature(request) ? 200 : 403).end();
+      }
     },
   );
   const [tlsPort, smtpPort, s3Port] = await Promise.all([
@@ -390,6 +392,50 @@ describe("production dependency probes", () => {
       expect(cli.status).not.toBe(0);
       expect(cli.stderr).toContain("S3 authentication failed.");
       expectBoundedRedacted(`${cli.stdout}${cli.stderr}`, [wrongSecret]);
+    } finally {
+      await setup.close();
+    }
+  });
+
+  it("reports unreachable S3 through the aggregate and real CLI", async () => {
+    const setup = await fixtures();
+    try {
+      setup.environment.GLOBAL_S3_ENDPOINT = "https://localhost:1";
+      const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
+      expect(result.errors).toContain("S3 dependency is unreachable.");
+      expectBoundedRedacted(result.errors.join("\n"));
+      expect(result.errors.join("\n")).not.toContain("localhost");
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.durationMs).toBeLessThan(2_000);
+      expect(cli.stderr).toContain("S3 dependency is unreachable.");
+      expect(cli.stdout).not.toContain(
+        "Production dependencies are reachable and authenticated.",
+      );
+      expect(`${cli.stdout}${cli.stderr}`).not.toContain("localhost");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
+    } finally {
+      await setup.close();
+    }
+  });
+
+  it("bounds a hanging S3 endpoint through the aggregate and real CLI", async () => {
+    const setup = await fixtures({ hangS3: true });
+    try {
+      const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
+      expect(result.errors).toContain("S3 dependency timed out.");
+      expectBoundedRedacted(result.errors.join("\n"));
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.durationMs).toBeLessThan(2_000);
+      expect(cli.stderr).toContain("S3 dependency timed out.");
+      expect(cli.stdout).not.toContain(
+        "Production dependencies are reachable and authenticated.",
+      );
+      expect(`${cli.stdout}${cli.stderr}`).not.toContain("localhost");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }

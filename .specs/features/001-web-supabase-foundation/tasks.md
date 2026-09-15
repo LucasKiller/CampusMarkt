@@ -703,10 +703,10 @@ T25 -> T26
 
 **Done when**:
 
-- [ ] Unreachable S3 produces `ok: false`, non-zero CLI exit, and a redacted reachability diagnostic.
-- [ ] A hanging S3 endpoint times out within the configured bound with `ok: false` and non-zero CLI exit.
-- [ ] A scratch mutation that accepts unreachable S3 is killed by the focused integration suite.
-- [ ] Verify gate passes once from a clean state with no skips and all sensor gaps closed.
+- [x] Unreachable S3 produces `ok: false`, non-zero CLI exit, and a redacted reachability diagnostic.
+- [x] A hanging S3 endpoint times out within the configured bound with `ok: false` and non-zero CLI exit.
+- [x] A scratch mutation that accepts unreachable S3 is killed by the focused integration suite.
+- [x] Verify gate passes once from a clean state with no skips and all sensor gaps closed.
 
 **Tests**: integration
 **Gate**: verify

@@ -527,11 +527,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Only SHA-256 digests persist; raw tokens exist only during mail/staging and never enter errors/audit/log fixtures.
-- [ ] Confirmation/recovery URLs and expiry copy are purpose-correct; a send failure invalidates the new token.
-- [ ] Token staging sets short-lived HttpOnly SameSite=Strict state and redirects to a tokenless page with no-referrer policy.
-- [ ] At least 18 new unit/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] Only SHA-256 digests persist; raw tokens exist only during mail/staging and never enter errors/audit/log fixtures.
+- [x] Confirmation/recovery URLs and expiry copy are purpose-correct; a send failure invalidates the new token.
+- [x] Token staging sets short-lived HttpOnly SameSite=Strict state and redirects to a tokenless page with no-referrer policy.
+- [x] At least 18 new unit/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: unit + integration
 **Gate**: Integration

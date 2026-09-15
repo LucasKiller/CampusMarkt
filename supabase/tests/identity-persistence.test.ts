@@ -2128,3 +2128,299 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     ).toBe("0");
   });
 });
+
+describe("T14 identity reconciliation and confirmation synchronization", () => {
+  function removeProjection(authUserId: string) {
+    query(
+      `delete from identity.accounts where auth_user_id = '${authUserId}';`,
+    );
+  }
+
+  function repair(authUserId: string) {
+    return query(
+      `select * from identity_api.repair_auth_projection('${authUserId}');`,
+    );
+  }
+
+  it("does not confirm application state before Auth confirmation", () => {
+    const id = createAuthUser();
+    expect(
+      query(`
+        select identity_api.synchronize_confirmation('${id}');
+        select state, confirmed_at is null from identity.accounts
+        where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("f\nactive_unconfirmed|t");
+  });
+
+  it("synchronizes a confirmed Auth identity exactly once", () => {
+    const id = createAuthUser();
+    query(`
+      update auth.users set email_confirmed_at = transaction_timestamp()
+      where id = '${id}';
+    `);
+    expect(
+      query(`
+        select identity_api.synchronize_confirmation('${id}');
+        select state, confirmed_at is not null from identity.accounts
+        where auth_user_id = '${id}';
+        select identity_api.synchronize_confirmation('${id}');
+      `).stdout,
+    ).toBe("t\nactive_confirmed|t\nf");
+  });
+
+  it("never duplicates identity, profile, or consent during sync", () => {
+    const id = createAuthUser();
+    query(
+      `update auth.users set email_confirmed_at = transaction_timestamp() where id = '${id}';`,
+    );
+    query(`
+      select identity_api.synchronize_confirmation('${id}');
+      select identity_api.synchronize_confirmation('${id}');
+    `);
+    expect(
+      query(`
+        select
+          (select count(*) from identity.accounts where auth_user_id = '${id}'),
+          (select count(*) from identity.profiles where auth_user_id = '${id}'),
+          (select count(*) from identity.consents where auth_user_id = '${id}');
+      `).stdout,
+    ).toBe("1|1|1");
+  });
+
+  it("does not create a missing projection during confirmation sync", () => {
+    const id = createAuthUser({ confirmed: true });
+    removeProjection(id);
+    expect(
+      query(`
+        select identity_api.synchronize_confirmation('${id}');
+        select count(*) from identity.accounts where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("f\n0");
+  });
+
+  it("does not confirm an incomplete application projection", () => {
+    const id = createAuthUser();
+    query(`
+      delete from identity.consents where auth_user_id = '${id}';
+      update auth.users set email_confirmed_at = transaction_timestamp()
+      where id = '${id}';
+    `);
+    expect(
+      query(`
+        select identity_api.synchronize_confirmation('${id}');
+        select state from identity.accounts where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("f\nactive_unconfirmed");
+  });
+
+  it("never reactivates a deletion-pending identity", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      select * from identity_api.request_deletion('${id}', '${sessionId}');
+    `);
+    expect(
+      query(`
+        select identity_api.synchronize_confirmation('${id}');
+        select state from identity.accounts where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("f\ndeletion_pending");
+  });
+
+  it("concurrent confirmation callbacks converge on one transition", async () => {
+    const id = createAuthUser();
+    query(
+      `update auth.users set email_confirmed_at = transaction_timestamp() where id = '${id}';`,
+    );
+    const sql = `select identity_api.synchronize_confirmation('${id}')::int;`;
+    const results = await Promise.all([queryAsync(sql), queryAsync(sql)]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(results.map((result) => Number(result.stdout)).sort()).toEqual([
+      0, 1,
+    ]);
+    expect(
+      query(`select state from identity.accounts where auth_user_id = '${id}';`)
+        .stdout,
+    ).toBe("active_confirmed");
+  });
+
+  it("repairs a valid missing account, profile, and consent once", () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    expect(
+      query(`
+        select repaired, profile_complete, consent_complete
+        from identity_api.repair_auth_projection('${id}');
+        select
+          (select count(*) from identity.accounts where auth_user_id = '${id}'),
+          (select count(*) from identity.profiles where auth_user_id = '${id}'),
+          (select count(*) from identity.consents where auth_user_id = '${id}');
+        select repaired from identity_api.repair_auth_projection('${id}');
+      `).stdout,
+    ).toBe("t|t|t\n1|1|1\nf");
+  });
+
+  it("repairs only a missing profile without duplicating consent", () => {
+    const id = createAuthUser();
+    query(`delete from identity.profiles where auth_user_id = '${id}';`);
+    expect(repair(id).stdout).toBe("t|t|t");
+    expect(
+      query(`
+        select
+          (select count(*) from identity.profiles where auth_user_id = '${id}'),
+          (select count(*) from identity.consents where auth_user_id = '${id}');
+      `).stdout,
+    ).toBe("1|1");
+  });
+
+  it("repairs only missing consent without duplicating the profile", () => {
+    const id = createAuthUser();
+    query(`delete from identity.consents where auth_user_id = '${id}';`);
+    expect(repair(id).stdout).toBe("t|t|t");
+    expect(
+      query(`
+        select
+          (select count(*) from identity.profiles where auth_user_id = '${id}'),
+          (select count(*) from identity.consents where auth_user_id = '${id}');
+      `).stdout,
+    ).toBe("1|1");
+  });
+
+  it("keeps participation unavailable for invalid bootstrap data", () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    query(`
+      update auth.users
+      set raw_user_meta_data = raw_user_meta_data || '{"display_name":"<"}'::jsonb
+      where id = '${id}';
+    `);
+    expect(repair(id).stdout).toBe("f|f|f");
+    expect(
+      authenticatedQuery(
+        id,
+        crypto.randomUUID(),
+        "select is_active, profile_complete, consent_complete from identity_api.current_identity_status();",
+      ).stdout,
+    ).toBe("f|f|f");
+  });
+
+  it("rejects missing adult consent during repair", () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    query(`
+      update auth.users
+      set raw_user_meta_data = raw_user_meta_data - 'adult_declared'
+      where id = '${id}';
+    `);
+    expect(repair(id).stdout).toBe("f|f|f");
+  });
+
+  it("rejects an invalid consent timestamp during repair", () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    query(`
+      update auth.users
+      set raw_user_meta_data = raw_user_meta_data || '{"accepted_at":"not-a-time"}'::jsonb
+      where id = '${id}';
+    `);
+    expect(repair(id).stdout).toBe("f|f|f");
+  });
+
+  it("does not repair a conflicting email key", () => {
+    const emailKey = subjectHash();
+    createAuthUser({ emailKey });
+    const candidate = createAuthUser();
+    removeProjection(candidate);
+    query(`
+      update auth.users
+      set raw_user_meta_data = jsonb_set(raw_user_meta_data, '{email_key}', '"${emailKey}"')
+      where id = '${candidate}';
+    `);
+    expect(repair(candidate).stdout).toBe("f|f|f");
+  });
+
+  it("does not repair missing rows for a deletion-pending account", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    query(`
+      select identity_api.record_password_assurance('${id}', '${sessionId}');
+      select * from identity_api.request_deletion('${id}', '${sessionId}');
+      delete from identity.consents where auth_user_id = '${id}';
+    `);
+    expect(repair(id).stdout).toBe("f|t|f");
+    expect(
+      query(
+        `select count(*) from identity.consents where auth_user_id = '${id}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+
+  it("concurrent repairs converge on one valid projection", async () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    const sql = `select repaired::int, profile_complete, consent_complete from identity_api.repair_auth_projection('${id}');`;
+    const results = await Promise.all([queryAsync(sql), queryAsync(sql)]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(results.map((result) => result.stdout).sort()).toEqual([
+      "0|t|t",
+      "1|t|t",
+    ]);
+    expect(
+      query(`
+        select
+          (select count(*) from identity.accounts where auth_user_id = '${id}'),
+          (select count(*) from identity.profiles where auth_user_id = '${id}'),
+          (select count(*) from identity.consents where auth_user_id = '${id}');
+      `).stdout,
+    ).toBe("1|1|1");
+  });
+
+  it("repairs confirmed Auth as confirmed application state", () => {
+    const id = createAuthUser({ confirmed: true });
+    removeProjection(id);
+    expect(repair(id).stdout).toBe("t|t|t");
+    expect(
+      query(`select state from identity.accounts where auth_user_id = '${id}';`)
+        .stdout,
+    ).toBe("active_confirmed");
+  });
+
+  it("repairs unconfirmed Auth without enabling confirmed participation", () => {
+    const id = createAuthUser();
+    removeProjection(id);
+    expect(repair(id).stdout).toBe("t|t|t");
+    expect(
+      query(`select state from identity.accounts where auth_user_id = '${id}';`)
+        .stdout,
+    ).toBe("active_unconfirmed");
+  });
+
+  it.each(["synchronize_confirmation(uuid)", "repair_auth_projection(uuid)"])(
+    "grants identity_api.%s only to service_role",
+    (signature) => {
+      expect(
+        query(`
+        select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+      `).stdout,
+      ).toBe("f|f|f|t");
+    },
+  );
+
+  it("fixes search_path and uses SECURITY DEFINER for reconciliation RPCs", () => {
+    expect(
+      query(`
+        select p.proname, p.prosecdef, p.proconfig = array['search_path=""']
+        from pg_proc as p
+        join pg_namespace as n on n.oid = p.pronamespace
+        where n.nspname = 'identity_api'
+          and p.proname in ('repair_auth_projection', 'synchronize_confirmation')
+        order by p.proname;
+      `).stdout,
+    ).toBe("repair_auth_projection|t|t\nsynchronize_confirmation|t|t");
+  });
+});

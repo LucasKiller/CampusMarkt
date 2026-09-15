@@ -425,11 +425,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Sync confirms application state only when Auth is confirmed and never creates another identity/profile.
-- [ ] Repair validates bootstrap data, upserts exactly once, and participation remains unavailable on invalid/missing consent.
-- [ ] Concurrent sync/repair callbacks converge on one valid result.
-- [ ] At least 14 new DB/concurrency tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Sync confirms application state only when Auth is confirmed and never creates another identity/profile.
+- [x] Repair validates bootstrap data, upserts exactly once, and participation remains unavailable on invalid/missing consent.
+- [x] Concurrent sync/repair callbacks converge on one valid result.
+- [x] At least 14 new DB/concurrency tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

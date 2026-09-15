@@ -1,6 +1,6 @@
 # Web and Supabase Foundation Specification
 
-**Status:** Approved on 2026-09-14
+**Status:** Verified on 2026-09-15
 
 ## Problem Statement
 
@@ -131,10 +131,10 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| FOUND-01 | P1: Reproducible full-stack startup | Verify | Repaired; verification pending |
-| FOUND-02 | P1: Typed modular application foundation | Verify | Repaired; verification pending |
-| FOUND-03 | P1: Safe Supabase baseline | Verify | Repaired; verification pending |
-| FOUND-04 | P1: Production operations contract | Execute | Repaired (T25-T26; verification pending) |
+| FOUND-01 | P1: Reproducible full-stack startup | Verify | Verified |
+| FOUND-02 | P1: Typed modular application foundation | Verify | Verified |
+| FOUND-03 | P1: Safe Supabase baseline | Verify | Verified |
+| FOUND-04 | P1: Production operations contract | Verify | Verified |
 
 **Coverage:** 4 total, 4 mapped to implementation, 0 pending implementation.
 

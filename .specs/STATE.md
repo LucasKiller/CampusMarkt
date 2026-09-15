@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 6 complete / independent revalidation pending
+- **Phase / Task**: Verify complete / feature closed
 - **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26
 - **In-progress** (file:line): none
-- **Next step**: Run a fresh independent verifier against the Phase 6 repairs and update `validation.md` with its evidence-only result.
+- **Next step**: Specify feature `002-identity-and-accounts` before implementing authentication journeys.
 - **Blockers**: none
-- **Uncommitted files**: none after the T26 commit
+- **Uncommitted files**: none after the validation closure commit
 - **Branch**: main

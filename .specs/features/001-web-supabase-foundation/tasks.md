@@ -5,7 +5,7 @@
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
 **Design:** `.specs/features/001-web-supabase-foundation/design.md`
-**Status:** Verification fixes in progress (iteration 3 of 3)
+**Status:** Done - independently verified on 2026-09-15
 
 ## Test Coverage Matrix
 

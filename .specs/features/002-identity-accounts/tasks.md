@@ -477,11 +477,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Each method chooses the minimum credential and passes owner/session IDs only from typed server identity.
-- [ ] Database/provider errors map to stable internal outcomes without SQL text, inputs, hashes, or credentials.
-- [ ] Public-profile parsing rejects any field outside the four-field DTO.
-- [ ] At least 18 new repository integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] Each method chooses the minimum credential and passes owner/session IDs only from typed server identity.
+- [x] Database/provider errors map to stable internal outcomes without SQL text, inputs, hashes, or credentials.
+- [x] Public-profile parsing rejects any field outside the four-field DTO.
+- [x] At least 18 new repository integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: integration
 **Gate**: Integration

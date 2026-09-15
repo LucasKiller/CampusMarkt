@@ -175,10 +175,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Public profile has exactly public ID, display name, UTC join month, and nullable same-origin avatar URL.
-- [ ] Failure codes cannot carry provider details, secrets, Auth IDs, or email values.
-- [ ] At least 8 new compile/runtime contract tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Public profile has exactly public ID, display name, UTC join month, and nullable same-origin avatar URL.
+- [x] Failure codes cannot carry provider details, secrets, Auth IDs, or email values.
+- [x] At least 8 new compile/runtime contract tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

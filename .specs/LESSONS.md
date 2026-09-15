@@ -38,6 +38,30 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: .specs/features/project-foundation/validation.md:127 (product-planning)
 - last seen: 2026-09-14T19:45:14Z
 
+### L-005 - Allocate integration-test ingress ports through the publishing runtime instead of assuming a host-selected port can be bound by Docker.
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `integration-stack` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: tests/integration/stack/foundation-stack.test.ts:38-50 (integration-stack)
+- last seen: 2026-09-15T00:57:46Z
+
+### L-006 - Negative dependency probes must assert the final readiness boolean and CLI exit code, not only diagnostic strings.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `production-readiness` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: validation.md sensor M3 (production-readiness)
+- last seen: 2026-09-15T00:57:47Z
+
+### L-007 - Validate complete S3 authentication in readiness fixtures instead of matching an access-key substring.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `production-readiness` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: tests/integration/config/production-probes.test.ts:114-118 (production-readiness)
+- last seen: 2026-09-15T00:57:55Z
+
+### L-008 - Public readiness must probe every required service named by the startup contract.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `health-readiness` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: apps/web/src/modules/foundation/readiness.ts:13-27 (health-readiness)
+- last seen: 2026-09-15T00:57:55Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

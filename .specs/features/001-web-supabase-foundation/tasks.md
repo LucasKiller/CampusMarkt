@@ -5,7 +5,7 @@
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
 **Design:** `.specs/features/001-web-supabase-foundation/design.md`
-**Status:** Verification fixes in progress (iteration 1)
+**Status:** Verification fixes in progress (iteration 2)
 
 ## Test Coverage Matrix
 
@@ -60,6 +60,12 @@ T13 -> T14 -> T15 -> T16
 
 ```text
 T17 -> T18 -> T19 -> T20
+```
+
+### Phase 5: Reverification Repairs
+
+```text
+T21 -> T22 -> T23 -> T24
 ```
 
 ## Task Breakdown
@@ -554,10 +560,108 @@ T17 -> T18 -> T19 -> T20
 **Gate**: verify
 **Commit**: `test(security): prove tracked-secret gate`
 
+### T21: Allocate test ingress ports through Docker
+
+**What**: Replace host free-port prediction with Docker-assigned published ports and discover both mappings before public stack assertions.
+**Where**: `tests/integration/stack/`
+**Depends on**: T20
+**Reuses**: Stack harness and Compose ingress configuration
+**Requirement**: FOUND-01, FOUND-02
+
+**Tools**:
+
+- MCP: Web for official Docker Compose port discovery documentation
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] The stack asks Docker to allocate HTTP and HTTPS test ports without a close-before-bind race.
+- [ ] The harness discovers and validates both Docker-published mappings before public requests.
+- [ ] A clean cold `npm run verify` reaches and passes all stack cases in one invocation.
+- [ ] Full gate passes with zero skipped stack tests and no leaked test resources.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `fix(stack): use docker-assigned test ports`
+
+### T22: Include Storage in public readiness
+
+**What**: Probe Auth and Storage as separately named required dependencies and return 503 while either service is unavailable.
+**Where**: `apps/web/src/modules/foundation/`
+**Depends on**: T21
+**Reuses**: Existing readiness route and stack service-failure harness
+**Requirement**: FOUND-01
+
+**Tools**:
+
+- MCP: Web for current Supabase health endpoints when needed
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] Readiness probes both Auth and Storage with bounded requests.
+- [ ] An unavailable service appears by its stable service identity without exposing internal credentials.
+- [ ] Public readiness returns 503 while Storage is stopped or unhealthy and returns 200 after recovery.
+- [ ] Full gate passes with exact Auth and Storage failure/recovery assertions.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `fix(health): require storage readiness`
+
+### T23: Enforce production probe classification and CLI exit
+
+**What**: Assert and enforce aggregate not-ready results plus non-zero CLI exits for every TLS, SMTP, and S3 dependency failure.
+**Where**: `tests/integration/config/`
+**Depends on**: T22
+**Reuses**: Production probe harness and root preflight entry point
+**Requirement**: FOUND-04
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] Every dependency failure asserts `ok: false` on the aggregate result.
+- [ ] The same production probe CLI used by the gate exits non-zero for invalid TLS, SMTP authentication or reachability, and S3 authentication.
+- [ ] The valid fixture asserts `ok: true` and CLI exit zero.
+- [ ] Diagnostics remain bounded and redact all generated credentials.
+- [ ] Full gate kills a scratch mutation that forces `ok: true` despite errors.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `test(config): enforce probe exit contract`
+
+### T24: Validate complete S3 SigV4 authentication
+
+**What**: Replace access-key substring acceptance with complete SigV4 verification and a wrong-secret rejection case in the isolated S3 readiness fixture.
+**Where**: `tests/integration/config/`
+**Depends on**: T23
+**Reuses**: Existing signed S3 probe and isolated HTTPS fixture
+**Requirement**: FOUND-04
+
+**Tools**:
+
+- MCP: Web for official AWS Signature Version 4 verification rules
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] The fixture independently reconstructs and verifies the complete request signature using the expected secret.
+- [ ] A correct access key with a wrong secret is rejected and produces `ok: false` plus non-zero CLI status.
+- [ ] A correctly signed request is accepted and produces `ok: true` plus zero CLI status.
+- [ ] Signature diagnostics never expose the secret or derived signing key.
+- [ ] Verify gate passes once from a clean state with no skips and all 22 acceptance criteria covered.
+
+**Tests**: integration
+**Gate**: verify
+**Commit**: `test(config): verify complete s3 signature`
+
 ## Phase Execution Map
 
 ```text
-Phase 1 -> Phase 2 -> Phase 3 -> Phase 4
+Phase 1 -> Phase 2 -> Phase 3 -> Phase 4 -> Phase 5
 
 Phase 1: T1 -> T2 -> T3 -> T4 -> T5 -> T6 -> T7
 Phase 2: T8 -> T9 -> T10 -> T11 -> T12
@@ -565,6 +669,8 @@ Cross-phase: T12 -> T13
 Phase 3: T13 -> T14 -> T15 -> T16
 Cross-phase: T16 -> T17
 Phase 4: T17 -> T18 -> T19 -> T20
+Cross-phase: T20 -> T21
+Phase 5: T21 -> T22 -> T23 -> T24
 ```
 
 ## Task Granularity Check
@@ -591,6 +697,10 @@ Phase 4: T17 -> T18 -> T19 -> T20
 | T18 | One production dependency probe | Granular |
 | T19 | One database advisor negative path | Granular |
 | T20 | One scanner CLI negative path | Granular |
+| T21 | One Docker port-allocation repair | Granular |
+| T22 | One readiness dependency repair | Granular |
+| T23 | One production probe exit contract | Granular |
+| T24 | One S3 signature verification fixture | Granular |
 
 ## Diagram-Definition Cross-Check
 
@@ -616,6 +726,10 @@ Phase 4: T17 -> T18 -> T19 -> T20
 | T18 | T17 | T17 -> T18 | Match |
 | T19 | T18 | T18 -> T19 | Match |
 | T20 | T19 | T19 -> T20 | Match |
+| T21 | T20 | T20 -> T21 | Match |
+| T22 | T21 | T21 -> T22 | Match |
+| T23 | T22 | T22 -> T23 | Match |
+| T24 | T23 | T23 -> T24 | Match |
 
 ## Test Co-location Validation
 
@@ -641,3 +755,7 @@ Phase 4: T17 -> T18 -> T19 -> T20
 | T18 | Environment tooling | integration | integration | OK |
 | T19 | Migration and RLS | integration | integration | OK |
 | T20 | Security tooling | unit | unit | OK |
+| T21 | Running stack | integration | integration | OK |
+| T22 | Next.js readiness and running stack | e2e/integration | integration | OK |
+| T23 | Environment tooling | integration | integration | OK |
+| T24 | Environment tooling | integration | integration | OK |

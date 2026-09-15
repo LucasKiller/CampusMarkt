@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 5,
+  "next_id": 9,
   "lessons": [
     {
       "id": "L-001",
@@ -76,6 +76,78 @@
       ],
       "created": "2026-09-14T19:45:14Z",
       "last_seen": "2026-09-14T19:45:14Z"
+    },
+    {
+      "id": "L-005",
+      "key": "gate_fail::allocate integration test ingress ports through the publishing runtime instead of assuming a host selected port can be bound by docker",
+      "text": "Allocate integration-test ingress ports through the publishing runtime instead of assuming a host-selected port can be bound by Docker.",
+      "signal": "gate_fail",
+      "scope": "integration-stack",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "tests/integration/stack/foundation-stack.test.ts:38-50 (integration-stack)"
+      ],
+      "created": "2026-09-15T00:57:46Z",
+      "last_seen": "2026-09-15T00:57:46Z"
+    },
+    {
+      "id": "L-006",
+      "key": "surviving_mutant::negative dependency probes must assert the final readiness boolean and cli exit code not only diagnostic strings",
+      "text": "Negative dependency probes must assert the final readiness boolean and CLI exit code, not only diagnostic strings.",
+      "signal": "surviving_mutant",
+      "scope": "production-readiness",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md sensor M3 (production-readiness)"
+      ],
+      "created": "2026-09-15T00:57:47Z",
+      "last_seen": "2026-09-15T00:57:47Z"
+    },
+    {
+      "id": "L-007",
+      "key": "ac_gap::validate complete s3 authentication in readiness fixtures instead of matching an access key substring",
+      "text": "Validate complete S3 authentication in readiness fixtures instead of matching an access-key substring.",
+      "signal": "ac_gap",
+      "scope": "production-readiness",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "tests/integration/config/production-probes.test.ts:114-118 (production-readiness)"
+      ],
+      "created": "2026-09-15T00:57:55Z",
+      "last_seen": "2026-09-15T00:57:55Z"
+    },
+    {
+      "id": "L-008",
+      "key": "ac_gap::public readiness must probe every required service named by the startup contract",
+      "text": "Public readiness must probe every required service named by the startup contract.",
+      "signal": "ac_gap",
+      "scope": "health-readiness",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "apps/web/src/modules/foundation/readiness.ts:13-27 (health-readiness)"
+      ],
+      "created": "2026-09-15T00:57:55Z",
+      "last_seen": "2026-09-15T00:57:55Z"
     }
   ]
 }

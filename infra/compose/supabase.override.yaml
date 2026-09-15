@@ -12,6 +12,13 @@ services:
     ports: !reset []
 
   storage:
+    healthcheck:
+      # Cold volumes can require migrations before the Storage status route responds.
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 45s
+      start_interval: 5s
     volumes:
       - campusmarkt-storage-data:/var/lib/storage
 

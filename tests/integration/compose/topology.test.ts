@@ -8,6 +8,13 @@ const composeFile = resolve(repositoryRoot, "compose.yaml");
 
 type ComposeService = {
   depends_on?: Record<string, { condition?: string }>;
+  healthcheck?: {
+    interval?: string;
+    retries?: number;
+    start_interval?: string;
+    start_period?: string;
+    timeout?: string;
+  };
   ports?: unknown[];
   profiles?: string[];
   volumes?: Array<{ source?: string; target?: string; type?: string }>;
@@ -137,6 +144,18 @@ describe("root Compose topology", () => {
 
     expect(services.storage?.volumes).toContainEqual(expectedMount);
     expect(services.imgproxy?.volumes).toContainEqual(expectedMount);
+  });
+
+  it("allows bounded cold-start time before Storage health failures count", () => {
+    expect(renderedModel().services.storage?.healthcheck).toEqual(
+      expect.objectContaining({
+        interval: "5s",
+        retries: 6,
+        start_interval: "5s",
+        start_period: "45s",
+        timeout: "5s",
+      }),
+    );
   });
 
   it("waits for the gateway health before starting the web service", () => {

@@ -471,10 +471,10 @@ T17 -> T18 -> T19 -> T20
 
 **Done when**:
 
-- [ ] Storage receives a bounded start period and retry window through a CampusMarkt override without editing vendored Supabase files.
-- [ ] Failed startup preserves bounded service health/log diagnostics before teardown.
-- [ ] A cold clean-volume stack startup passes in one gate invocation without a manual retry.
-- [ ] Full gate passes with zero skipped stack tests.
+- [x] Storage receives a bounded start period and retry window through a CampusMarkt override without editing vendored Supabase files.
+- [x] Failed startup preserves bounded service health/log diagnostics before teardown.
+- [x] A cold clean-volume stack startup passes in one gate invocation without a manual retry.
+- [x] Full gate passes with zero skipped stack tests.
 
 **Tests**: integration
 **Gate**: full

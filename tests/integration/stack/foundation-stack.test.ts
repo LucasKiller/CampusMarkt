@@ -10,6 +10,7 @@ import {
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { captureStartupDiagnostic } from "./startup-diagnostics.js";
 
 const repositoryRoot = resolve(import.meta.dirname, "../../..");
 const projectName = `campusmarkt-stack-test-${process.pid}`;
@@ -150,7 +151,7 @@ beforeAll(async () => {
 
   const started = compose(["up", "--detach", "--wait"]);
   if (started.status !== 0) {
-    throw new Error(started.stderr || started.stdout);
+    throw new Error(captureStartupDiagnostic(started, compose));
   }
 }, 300_000);
 
@@ -242,6 +243,39 @@ describe("running foundation stack", () => {
     ]);
     expect(restoredObject.status, restoredObject.stderr).toBe(0);
     expect(restoredObject.stdout).toBe(marker);
+  });
+
+  it("preserves bounded service diagnostics before failed-start cleanup", async () => {
+    const scratch = mkdtempSync(resolve(repositoryRoot, ".stack-health-"));
+    const override = resolve(scratch, "compose.yaml");
+
+    try {
+      writeFileSync(
+        override,
+        'services:\n  storage:\n    healthcheck:\n      test: ["CMD", "false"]\n      interval: 1s\n      timeout: 1s\n      retries: 1\n      start_period: 0s\n',
+      );
+      const failed = compose(
+        ["up", "--detach", "--wait", "--force-recreate", "storage"],
+        [override],
+      );
+      const diagnostic = captureStartupDiagnostic(failed, compose);
+
+      expect(failed.status).not.toBe(0);
+      expect(diagnostic).toContain("storage");
+      expect(diagnostic).toContain("unhealthy");
+      expect(diagnostic.length).toBeLessThanOrEqual(20_000);
+    } finally {
+      const restored = compose([
+        "up",
+        "--detach",
+        "--wait",
+        "--force-recreate",
+        "storage",
+      ]);
+      expect(restored.status, restored.stderr).toBe(0);
+      await waitForResponse("/health/ready", 200);
+      rmSync(scratch, { recursive: true, force: true });
+    }
   });
 
   it("blocks public readiness and names a failed migration", async () => {

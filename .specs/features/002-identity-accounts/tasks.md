@@ -627,11 +627,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Sign-in records assurance for the actual session and maps invalid/unconfirmed/deleting states identically.
-- [ ] Logout-current preserves other sessions; logout-all/reset/deletion deny all sessions on their next server request.
-- [ ] Recovery consumes once, revokes sessions before password update, handles provider failure safely, and never identifies an account.
-- [ ] At least 24 new use-case unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Sign-in records assurance for the actual session and maps invalid/unconfirmed/deleting states identically.
+- [x] Logout-current preserves other sessions; logout-all/reset/deletion deny all sessions on their next server request.
+- [x] Recovery consumes once, revokes sessions before password update, handles provider failure safely, and never identifies an account.
+- [x] At least 24 new use-case unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick
@@ -1100,7 +1100,7 @@ Every production-code task includes its required test layer. T34 and T35 add ind
 
 | Requirement | Planned tasks |
 | --- | --- |
-| IDAC-01 | T1-T2, T4-T6, T8-T10, T14-T22, T23-T26, T31-T36 |
+| IDAC-01 | T1-T2, T4-T6, T8-T10, T14-T21, T23-T26, T31-T36 |
 | IDAC-02 | T1, T3-T4, T6, T10-T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T36 |
 | IDAC-03 | T1-T4, T6, T9-T11, T15-T20, T22-T23, T26, T31-T36 |
 | IDAC-04 | T1-T7, T8, T12-T13, T16, T23, T27-T29, T31, T34-T36 |

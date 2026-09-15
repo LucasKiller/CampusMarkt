@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 3 T15 pending
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7 and Phase 2 T8-T14 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 4 T23 pending
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, and Phase 3 T15-T22 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute T15 to create server-only Supabase clients and the cookie adapter.
+- **Next step**: Execute T23 to add the identity HTTP security adapter.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

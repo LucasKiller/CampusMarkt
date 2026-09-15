@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 1 T1 pending
-- **Completed**: 001-web-supabase-foundation verified; 002 context, specification, BFF approach, design, 36-task plan, tools, and five sequential sub-agent batches approved
+- **Phase / Task**: Execute / Phase 2 T8 pending
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7 contracts and guardrails committed with all Quick gates passing
 - **In-progress** (file:line): none
-- **Next step**: Commit the approved task plan, then dispatch the Phase 1 batch worker for T1-T7.
+- **Next step**: Dispatch the Phase 2 batch worker for T8-T14.
 - **Blockers**: none
-- **Uncommitted files**: approved task-plan artifacts pending their atomic commit
+- **Uncommitted files**: none
 - **Branch**: main

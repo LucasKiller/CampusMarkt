@@ -249,10 +249,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Domain, validation, DTO, API-client, page, and client-component forbidden imports fail with stable diagnostics.
-- [ ] Only server infrastructure modules may import service-role, SMTP, server-only, or image-processing adapters.
-- [ ] At least 10 new positive/negative architecture tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Domain, validation, DTO, API-client, page, and client-component forbidden imports fail with stable diagnostics.
+- [x] Only server infrastructure modules may import service-role, SMTP, server-only, or image-processing adapters.
+- [x] At least 10 new positive/negative architecture tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit + architecture
 **Gate**: Quick

@@ -77,6 +77,29 @@ function applyMigrations() {
   return compose(["run", "--rm", "--no-deps", "migration"]);
 }
 
+function databaseUrl() {
+  const port = compose(["port", "db", "5432"]).stdout.trim().split(":").at(-1);
+  return `postgresql://postgres:${environment.POSTGRES_PASSWORD}@127.0.0.1:${port}/postgres?sslmode=disable`;
+}
+
+function databaseCli(arguments_: string[]) {
+  return spawnSync(
+    process.execPath,
+    [
+      resolve(repositoryRoot, "node_modules/supabase/dist/supabase.js"),
+      "db",
+      ...arguments_,
+      "--db-url",
+      databaseUrl(),
+      "--level",
+      "error",
+      "--fail-on",
+      "error",
+    ],
+    { cwd: repositoryRoot, encoding: "utf8" },
+  );
+}
+
 beforeAll(() => {
   const started = compose(["up", "--detach", "--wait", "db"]);
   if (started.status !== 0) {
@@ -177,50 +200,29 @@ describe("private-by-default migration baseline", () => {
     ).toBe(before);
   });
 
+  it("reports a known isolated advisor violation and exits non-zero", () => {
+    const created = query(
+      "create table public.advisor_violation(id bigint primary key);",
+    );
+    expect(created.status, created.stderr).toBe(0);
+
+    try {
+      const advisors = databaseCli(["advisors", "--type", "security"]);
+      const diagnostic = `${advisors.stderr}${advisors.stdout}`;
+
+      expect(advisors.status).not.toBe(0);
+      expect(diagnostic).toContain("rls_disabled_in_public");
+      expect(diagnostic).toContain("advisor_violation");
+      expect(diagnostic).not.toContain(environment.POSTGRES_PASSWORD);
+    } finally {
+      const removed = query("drop table if exists public.advisor_violation;");
+      expect(removed.status, removed.stderr).toBe(0);
+    }
+  });
+
   it("passes database lint and advisor error checks", () => {
-    const port = compose(["port", "db", "5432"])
-      .stdout.trim()
-      .split(":")
-      .at(-1);
-    const databaseUrl = `postgresql://postgres:${environment.POSTGRES_PASSWORD}@127.0.0.1:${port}/postgres?sslmode=disable`;
-    const cli = resolve(
-      repositoryRoot,
-      "node_modules/supabase/dist/supabase.js",
-    );
-    const lint = spawnSync(
-      process.execPath,
-      [
-        cli,
-        "db",
-        "lint",
-        "--db-url",
-        databaseUrl,
-        "--schema",
-        "public",
-        "--level",
-        "error",
-        "--fail-on",
-        "error",
-      ],
-      { cwd: repositoryRoot, encoding: "utf8" },
-    );
-    const advisors = spawnSync(
-      process.execPath,
-      [
-        cli,
-        "db",
-        "advisors",
-        "--db-url",
-        databaseUrl,
-        "--type",
-        "all",
-        "--level",
-        "error",
-        "--fail-on",
-        "error",
-      ],
-      { cwd: repositoryRoot, encoding: "utf8" },
-    );
+    const lint = databaseCli(["lint", "--schema", "public"]);
+    const advisors = databaseCli(["advisors", "--type", "all"]);
 
     expect(lint.status, lint.stderr || lint.stdout).toBe(0);
     expect(advisors.status, advisors.stderr || advisors.stdout).toBe(0);

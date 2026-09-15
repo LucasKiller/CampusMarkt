@@ -520,10 +520,10 @@ T17 -> T18 -> T19 -> T20
 
 **Done when**:
 
-- [ ] The test creates the violation only in an isolated database or schema and never changes committed migration history.
-- [ ] The configured advisor or lint entry point exits non-zero and reports the expected redacted finding.
-- [ ] Cleanup removes the violation and the clean database gate still passes.
-- [ ] Full gate passes with both negative and clean advisor paths.
+- [x] The test creates the violation only in an isolated database or schema and never changes committed migration history.
+- [x] The configured advisor or lint entry point exits non-zero and reports the expected redacted finding.
+- [x] Cleanup removes the violation and the clean database gate still passes.
+- [x] Full gate passes with both negative and clean advisor paths.
 
 **Tests**: integration
 **Gate**: full

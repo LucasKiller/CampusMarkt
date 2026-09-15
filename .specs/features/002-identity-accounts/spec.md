@@ -221,14 +221,14 @@ CampusMarkt has a verified technical foundation but no user identity journey. Th
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| IDAC-01 | P1: Register and confirm an account | Specify | Pending |
-| IDAC-02 | P1: Sign in and control sessions | Specify | Pending |
-| IDAC-03 | P1: Recover account access | Specify | Pending |
-| IDAC-04 | P1: Maintain a public-safe profile and avatar | Specify | Pending |
-| IDAC-05 | P1: Delete an account safely | Specify | Pending |
-| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Specify | Pending |
+| IDAC-01 | P1: Register and confirm an account | Design | Designed |
+| IDAC-02 | P1: Sign in and control sessions | Design | Designed |
+| IDAC-03 | P1: Recover account access | Design | Designed |
+| IDAC-04 | P1: Maintain a public-safe profile and avatar | Design | Designed |
+| IDAC-05 | P1: Delete an account safely | Design | Designed |
+| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Design | Designed |
 
-**Coverage:** 6 total, 0 mapped to tasks, 6 pending design and task mapping.
+**Coverage:** 6 total, 6 mapped to the approved technical design, 0 mapped to implementation tasks.
 
 ---
 

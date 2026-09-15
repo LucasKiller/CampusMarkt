@@ -50,13 +50,21 @@
 - **Date**: 2026-09-14
 - **Status**: active
 
+### AD-007
+- **Decision**: Browser identity mutations will cross the same-origin Next.js Backend-for-Frontend, while Supabase Auth mutation endpoints remain private to the Compose network; identity business and authorization rules will live in transport-neutral application/domain services rather than routes or pages.
+- **Reason**: CampusMarkt requires exact HttpOnly-cookie, rate-limit, audit, enumeration-resistance, avatar-processing, and deletion behavior that cannot be bypassed through direct public Auth calls, while future clients must be able to reuse the same rules through another transport adapter.
+- **Trade-off**: The web application owns more server orchestration and provider adapters, and future mobile access needs an explicit Bearer/PKCE transport rather than reusing browser cookie routes unchanged.
+- **Scope**: Registration, authentication, recovery, sessions, public identity, profile mutation, avatar, account deletion, and future identity-protected application services.
+- **Date**: 2026-09-15
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Design / technical design in progress
-- **Completed**: 001-web-supabase-foundation verified; 002 context and specification approved
+- **Phase / Task**: Tasks / implementation breakdown in progress
+- **Completed**: 001-web-supabase-foundation verified; 002 context, specification, BFF approach, and technical design approved
 - **In-progress** (file:line): none
-- **Next step**: Create and validate `002-identity-accounts/design.md` from the approved specification and context.
+- **Next step**: Generate and validate `002-identity-accounts/tasks.md` with co-located tests, dependency parity, gates, and requirement traceability.
 - **Blockers**: none
-- **Uncommitted files**: none after the specification approval commit
+- **Uncommitted files**: approved design documents pending their atomic commit
 - **Branch**: main

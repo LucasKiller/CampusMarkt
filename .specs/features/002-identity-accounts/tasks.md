@@ -577,11 +577,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Every invalid/revoked/expired/missing/deleting/unconfirmed path fails closed and clears malformed session state.
-- [ ] Participation requires one complete profile/consent projection; recent auth uses assurance, not refreshed JWT issue time.
-- [ ] Safe return destinations are preserved only through typed local paths and no result is cross-request cached.
-- [ ] At least 20 new DAL unit/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] Every invalid/revoked/expired/missing/deleting/unconfirmed path fails closed and clears malformed session state.
+- [x] Participation requires one complete profile/consent projection; recent auth uses assurance, not refreshed JWT issue time.
+- [x] Safe return destinations are preserved only through typed local paths and no result is cross-request cached.
+- [x] At least 20 new DAL unit/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: unit + integration
 **Gate**: Integration
@@ -1102,7 +1102,7 @@ Every production-code task includes its required test layer. T34 and T35 add ind
 | --- | --- |
 | IDAC-01 | T1-T2, T4-T6, T8-T10, T14-T22, T23-T26, T31-T36 |
 | IDAC-02 | T1, T3-T4, T6, T10-T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T36 |
-| IDAC-03 | T1-T4, T6, T9-T11, T15-T19, T22-T23, T26, T31-T36 |
+| IDAC-03 | T1-T4, T6, T9-T11, T15-T20, T22-T23, T26, T31-T36 |
 | IDAC-04 | T1-T7, T8, T12-T13, T16, T23, T27-T29, T31, T34-T36 |
 | IDAC-05 | T1, T4-T5, T8-T9, T11-T17, T20, T22-T23, T27-T36 |
 | IDAC-06 | T2-T4, T6-T23, T24-T36 |

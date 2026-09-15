@@ -400,11 +400,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Only a live session assured within 10 minutes can create exactly one deletion-pending job.
-- [ ] Profile/avatar lookup disappears in the same transaction and pending accounts cannot mutate.
-- [ ] Queue claims are non-blocking, leases recover, retries retain privacy, and purge due never exceeds 30 days.
-- [ ] At least 18 new DB/lifecycle/concurrency tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Only a live session assured within 10 minutes can create exactly one deletion-pending job.
+- [x] Profile/avatar lookup disappears in the same transaction and pending accounts cannot mutate.
+- [x] Queue claims are non-blocking, leases recover, retries retain privacy, and purge due never exceeds 30 days.
+- [x] At least 18 new DB/lifecycle/concurrency tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

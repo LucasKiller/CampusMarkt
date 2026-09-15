@@ -1687,3 +1687,444 @@ describe("T12 avatar state, private bucket, and cleanup queue", () => {
     ).toBe(`t|${key}`);
   });
 });
+
+describe("T13 deletion-pending lifecycle and purge queue", () => {
+  function assureDeletion(authUserId: string, sessionId: string) {
+    query(
+      `select identity_api.record_password_assurance('${authUserId}', '${sessionId}');`,
+    );
+  }
+
+  function requestDeletion(authUserId: string, sessionId: string) {
+    return query(
+      `select * from identity_api.request_deletion('${authUserId}', '${sessionId}');`,
+    );
+  }
+
+  it("rejects deletion without recent password assurance", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(requestDeletion(id, sessionId).status).not.toBe(0);
+    expect(
+      query(`select state from identity.accounts where auth_user_id = '${id}';`)
+        .stdout,
+    ).toBe("active_confirmed");
+  });
+
+  it("rejects assurance older than ten minutes", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    query(`
+      update identity.session_assurance
+      set password_verified_at = transaction_timestamp() - interval '10 minutes 1 millisecond'
+      where session_id = '${sessionId}';
+    `);
+    expect(requestDeletion(id, sessionId).status).not.toBe(0);
+  });
+
+  it("accepts assurance exactly at the ten-minute boundary", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    expect(
+      query(`
+        begin;
+        update identity.session_assurance
+        set password_verified_at = transaction_timestamp() - interval '10 minutes'
+        where session_id = '${sessionId}';
+        select changed from identity_api.request_deletion('${id}', '${sessionId}');
+        commit;
+      `).stdout,
+    ).toBe("t");
+  });
+
+  it("rejects a mismatched or absent Auth session", () => {
+    const id = createAuthUser({ confirmed: true });
+    const other = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    expect(requestDeletion(other, sessionId).status).not.toBe(0);
+    query(`delete from auth.sessions where id = '${sessionId}';`);
+    expect(requestDeletion(id, sessionId).status).not.toBe(0);
+  });
+
+  it("marks the account pending and creates one bounded purge job", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    expect(
+      query(`
+        select changed, requested_at is not null,
+          purge_due_at = requested_at + interval '30 days'
+        from identity_api.request_deletion('${id}', '${sessionId}');
+        select account.state, job.state, job.attempts,
+          job.purge_due_at = account.purge_due_at
+        from identity.accounts as account
+        join identity.deletion_jobs as job using (auth_user_id)
+        where account.auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t|t|t\ndeletion_pending|pending|0|t");
+  });
+
+  it("treats a repeated deletion request as an idempotent no-op", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    expect(
+      query(`
+        select changed from identity_api.request_deletion('${id}', '${sessionId}');
+        select changed from identity_api.request_deletion('${id}', '${sessionId}');
+        select count(*) from identity.deletion_jobs where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t\nf\n1");
+  });
+
+  it("depublishes the public profile in the request transaction", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const publicId = publicIdFor(id);
+    assureDeletion(id, sessionId);
+    expect(
+      query(`
+        begin;
+        select changed from identity_api.request_deletion('${id}', '${sessionId}');
+        select count(*) from identity_api.get_public_profile('${publicId}');
+        commit;
+      `).stdout,
+    ).toBe("t\n0");
+  });
+
+  it("clears an avatar pointer and queues its object atomically", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const key = avatarKey(publicIdFor(id), 1);
+    query(
+      `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
+    );
+    assureDeletion(id, sessionId);
+    expect(
+      query(`
+        begin;
+        select changed from identity_api.request_deletion('${id}', '${sessionId}');
+        select profile.avatar_object_key is null,
+          exists (
+            select 1 from identity.avatar_cleanup_jobs
+            where object_key = '${key}' and delete_by <= transaction_timestamp() + interval '24 hours'
+          )
+        from identity.profiles as profile where auth_user_id = '${id}';
+        commit;
+      `).stdout,
+    ).toBe("t\nt|t");
+  });
+
+  it("denies avatar mutation while deletion is pending", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(
+        `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${avatarKey(publicIdFor(id), 1)}');`,
+      ).status,
+    ).not.toBe(0);
+    expect(
+      query(
+        `select * from identity_api.remove_avatar('${id}', '${sessionId}');`,
+      ).status,
+    ).not.toBe(0);
+  });
+
+  it("reports a deletion-pending identity as inactive", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      authenticatedQuery(
+        id,
+        sessionId,
+        "select is_active from identity_api.current_identity_status();",
+      ).stdout,
+    ).toBe("f");
+  });
+
+  it("denies issuing and consuming action tokens while deletion is pending", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const issuedBeforeDeletion = tokenHash();
+    query(`
+      select identity_api.issue_action_token(
+        '${id}', 'password_recovery', '${issuedBeforeDeletion}'::bytea
+      );
+    `);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(`
+        select valid from identity_api.stage_action_token(
+          '${issuedBeforeDeletion}'::bytea, 'password_recovery'
+        );
+        select auth_user_id from identity_api.consume_action_token(
+          '${issuedBeforeDeletion}'::bytea, 'password_recovery'
+        );
+      `).stdout,
+    ).toBe("f");
+    expect(
+      query(`
+        select identity_api.issue_action_token(
+          '${id}', 'password_recovery', '${tokenHash()}'::bytea
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("retains the email key so pending registration reuse fails", () => {
+    const emailKey = subjectHash();
+    const id = createAuthUser({ confirmed: true, emailKey });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    const replacementId = crypto.randomUUID();
+    expect(
+      query(`
+        insert into auth.users (
+          instance_id, id, aud, role, email, encrypted_password,
+          email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+          created_at, updated_at
+        ) values (
+          '00000000-0000-0000-0000-000000000000', '${replacementId}',
+          'authenticated', 'authenticated', '${replacementId}@example.test', '',
+          transaction_timestamp(),
+          '{"provider":"email","providers":["email"]}'::jsonb,
+          '{"email_key":"${emailKey}","display_name":"Grace Hopper","adult_declared":true,"terms_version":"2026-09-15","privacy_version":"2026-09-15","accepted_at":"2026-09-15T12:00:00.000Z"}'::jsonb,
+          transaction_timestamp(), transaction_timestamp()
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("never schedules purge later than thirty days", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(`
+        select purge_due_at > requested_at,
+          purge_due_at <= requested_at + interval '30 days',
+          next_attempt_at <= purge_due_at
+        from identity.deletion_jobs where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t|t|t");
+  });
+
+  it("serializes concurrent requests to one state transition and job", async () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    const sql = `select changed::int from identity_api.request_deletion('${id}', '${sessionId}');`;
+    const results = await Promise.all([queryAsync(sql), queryAsync(sql)]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(results.map((result) => Number(result.stdout)).sort()).toEqual([
+      0, 1,
+    ]);
+    expect(
+      query(
+        `select count(*) from identity.deletion_jobs where auth_user_id = '${id}';`,
+      ).stdout,
+    ).toBe("1");
+  });
+
+  it("claims the earliest due deletion job with a bounded lease", () => {
+    query("delete from identity.deletion_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(`
+        select auth_user_id, attempts, lease_until > transaction_timestamp(), state
+        from identity_api.claim_deletion_job('deletion-worker', 300);
+      `).stdout,
+    ).toBe(`${id}|1|t|processing`);
+  });
+
+  it("lets concurrent workers claim distinct deletion jobs", async () => {
+    query("delete from identity.deletion_jobs;");
+    const first = createAuthUser({ confirmed: true });
+    const second = createAuthUser({ confirmed: true });
+    const firstSession = createAuthSession(first);
+    const secondSession = createAuthSession(second);
+    assureDeletion(first, firstSession);
+    assureDeletion(second, secondSession);
+    requestDeletion(first, firstSession);
+    requestDeletion(second, secondSession);
+    const results = await Promise.all([
+      queryAsync(
+        "select auth_user_id from identity_api.claim_deletion_job('purger-one', 300);",
+      ),
+      queryAsync(
+        "select auth_user_id from identity_api.claim_deletion_job('purger-two', 300);",
+      ),
+    ]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(new Set(results.map((result) => result.stdout)).size).toBe(2);
+  });
+
+  it("recovers an expired deletion-job lease", () => {
+    query("delete from identity.deletion_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    query(`
+      update identity.deletion_jobs set state = 'processing',
+        worker_id = 'expired-purger',
+        lease_until = transaction_timestamp() - interval '1 second'
+      where auth_user_id = '${id}';
+    `);
+    expect(
+      query(`
+        select auth_user_id, worker_id, attempts
+        from identity_api.claim_deletion_job('recovery-purger', 300);
+      `).stdout,
+    ).toBe(`${id}|recovery-purger|1`);
+  });
+
+  it("persists only a bounded redacted retry code", () => {
+    query("delete from identity.deletion_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    query(
+      "select * from identity_api.claim_deletion_job('retry-purger', 300);",
+    );
+    expect(
+      query(`
+        select identity_api.retry_deletion_job(
+          '${id}', 'storage_unavailable', transaction_timestamp() + interval '5 minutes'
+        );
+        select state, worker_id is null, lease_until is null, last_error_code
+        from identity.deletion_jobs where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t\nretry|t|t|storage_unavailable");
+  });
+
+  it("clamps deletion retry scheduling to the purge deadline", () => {
+    query("delete from identity.deletion_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(`
+        select identity_api.retry_deletion_job(
+          '${id}', 'auth_unavailable', transaction_timestamp() + interval '60 days'
+        );
+        select next_attempt_at = purge_due_at from identity.deletion_jobs
+        where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t\nt");
+  });
+
+  it("refuses to complete a deletion job while the account still exists", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    expect(
+      query(`
+        select identity_api.complete_deletion_job('${id}');
+        select count(*) from identity.deletion_jobs where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("f\n1");
+  });
+
+  it("treats completion after account absence as idempotent success", () => {
+    const id = crypto.randomUUID();
+    expect(
+      query(`
+        select identity_api.complete_deletion_job('${id}');
+        select identity_api.complete_deletion_job('${id}');
+      `).stdout,
+    ).toBe("t\nt");
+  });
+
+  it.each(["public", "anon", "authenticated"])(
+    "denies %s direct deletion-queue access",
+    (role) => {
+      expect(
+        query(`
+          select has_table_privilege('${role}', 'identity.deletion_jobs', 'select'),
+            has_table_privilege('${role}', 'identity.deletion_jobs', 'insert'),
+            has_table_privilege('${role}', 'identity.deletion_jobs', 'update'),
+            has_table_privilege('${role}', 'identity.deletion_jobs', 'delete');
+        `).stdout,
+      ).toBe("f|f|f|f");
+    },
+  );
+
+  it.each([
+    "request_deletion(uuid,uuid)",
+    "claim_deletion_job(text,integer)",
+    "complete_deletion_job(uuid)",
+    "retry_deletion_job(uuid,text,timestamp with time zone)",
+  ])("grants identity_api.%s only to service_role", (signature) => {
+    expect(
+      query(`
+        select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+
+  it("forces queue RLS and creates claim and account indexes", () => {
+    expect(
+      query(`
+        select c.relrowsecurity, c.relforcerowsecurity,
+          exists (
+            select 1 from pg_indexes where schemaname = 'identity'
+              and indexname = 'deletion_jobs_due_idx'
+          ),
+          exists (
+            select 1 from pg_indexes where schemaname = 'identity'
+              and indexname = 'deletion_jobs_expired_lease_idx'
+          )
+        from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'identity' and c.relname = 'deletion_jobs';
+      `).stdout,
+    ).toBe("t|t|t|t");
+  });
+
+  it("enforces the thirty-day deadline constraint", () => {
+    const id = createAuthUser({ confirmed: true });
+    expect(
+      query(`
+        insert into identity.deletion_jobs (
+          auth_user_id, state, requested_at, purge_due_at, next_attempt_at
+        ) values (
+          '${id}', 'pending', transaction_timestamp(),
+          transaction_timestamp() + interval '30 days 1 millisecond',
+          transaction_timestamp()
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("cascades the queue row only when the Auth identity is purged", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    assureDeletion(id, sessionId);
+    requestDeletion(id, sessionId);
+    query(`delete from auth.users where id = '${id}';`);
+    expect(
+      query(
+        `select count(*) from identity.deletion_jobs where auth_user_id = '${id}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+});

@@ -502,11 +502,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Admin/user methods expose no raw provider response or secret and preserve confirmed/unconfirmed semantics.
-- [ ] Duplicate, invalid, disabled, expired, revoked, absent, and dependency failures map to bounded internal codes.
-- [ ] Current/all-session and Auth-user delete operations are safe to retry.
-- [ ] At least 16 new gateway unit/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] Admin/user methods expose no raw provider response or secret and preserve confirmed/unconfirmed semantics.
+- [x] Duplicate, invalid, disabled, expired, revoked, absent, and dependency failures map to bounded internal codes.
+- [x] Current/all-session and Auth-user delete operations are safe to retry.
+- [x] At least 16 new gateway unit/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: unit + integration
 **Gate**: Integration

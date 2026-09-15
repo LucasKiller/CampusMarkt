@@ -118,6 +118,10 @@ function tokenHash() {
   return `\\x${crypto.randomUUID().replaceAll("-", "").repeat(2)}`;
 }
 
+function subjectHash() {
+  return crypto.randomUUID().replaceAll("-", "").repeat(2);
+}
+
 function applyMigrations() {
   return compose(["run", "--rm", "--no-deps", "migration"]);
 }
@@ -625,6 +629,321 @@ describe("T9 one-time identity action tokens", () => {
         delete from auth.users where id = '${id}';
         select count(*) from identity.action_tokens where auth_user_id = '${id}';
       `).stdout,
+    ).toBe("0");
+  });
+});
+
+describe("T10 atomic abuse limits and redacted audit", () => {
+  it("allows ten sign-in identity attempts and rejects the eleventh", () => {
+    const subject = subjectHash();
+    const ip = subjectHash();
+    query(`
+      do $block$
+      begin
+        for attempt in 1..10 loop
+          perform * from identity_api.consume_rate_limits('sign_in', '${subject}', '${ip}');
+        end loop;
+      end
+      $block$;
+    `);
+    expect(
+      query(`
+        select allowed, retry_after_seconds between 1 and 900
+        from identity_api.consume_rate_limits('sign_in', '${subject}', '${ip}');
+      `).stdout,
+    ).toBe("f|t");
+  });
+
+  it("allows one hundred sign-in IP attempts and rejects the next", () => {
+    const ip = subjectHash();
+    query(`
+      do $block$
+      begin
+        for attempt in 1..100 loop
+          perform * from identity_api.consume_rate_limits(
+            'sign_in', md5(attempt::text) || md5(attempt::text), '${ip}'
+          );
+        end loop;
+      end
+      $block$;
+    `);
+    expect(
+      query(`
+        select allowed, retry_after_seconds between 1 and 900
+        from identity_api.consume_rate_limits('sign_in', '${subjectHash()}', '${ip}');
+      `).stdout,
+    ).toBe("f|t");
+  });
+
+  it.each(["registration", "confirmation_resend", "recovery"])(
+    "allows three %s identity requests and rejects the fourth",
+    (action) => {
+      const subject = subjectHash();
+      const ip = subjectHash();
+      query(`
+        do $block$
+        begin
+          for attempt in 1..3 loop
+            perform * from identity_api.consume_rate_limits('${action}', '${subject}', '${ip}');
+          end loop;
+        end
+        $block$;
+      `);
+      expect(
+        query(`
+          select allowed, retry_after_seconds between 1 and 3600
+          from identity_api.consume_rate_limits('${action}', '${subject}', '${ip}');
+        `).stdout,
+      ).toBe("f|t");
+    },
+  );
+
+  it.each(["registration", "confirmation_resend", "recovery"])(
+    "allows thirty %s IP requests and rejects the next",
+    (action) => {
+      const ip = subjectHash();
+      query(`
+        do $block$
+        begin
+          for attempt in 1..30 loop
+            perform * from identity_api.consume_rate_limits(
+              '${action}', md5(attempt::text) || md5(attempt::text), '${ip}'
+            );
+          end loop;
+        end
+        $block$;
+      `);
+      expect(
+        query(`
+          select allowed, retry_after_seconds between 1 and 3600
+          from identity_api.consume_rate_limits('${action}', '${subjectHash()}', '${ip}');
+        `).stdout,
+      ).toBe("f|t");
+    },
+  );
+
+  it("consumes both counters even when one limit denies", () => {
+    const subject = subjectHash();
+    const ip = subjectHash();
+    query(`
+      do $block$
+      begin
+        for attempt in 1..3 loop
+          perform * from identity_api.consume_rate_limits('registration', '${subject}', '${subjectHash()}');
+        end loop;
+      end
+      $block$;
+    `);
+    expect(
+      query(`
+        select allowed from identity_api.consume_rate_limits('registration', '${subject}', '${ip}');
+        select attempts from identity.rate_limit_buckets
+        where action = 'registration' and subject_kind = 'ip' and subject_hash = '${ip}';
+      `).stdout,
+    ).toBe("f\n1");
+  });
+
+  it("returns the longest applicable retry duration", () => {
+    const subject = subjectHash();
+    const ip = subjectHash();
+    query(`
+      insert into identity.rate_limit_buckets (
+        action, subject_kind, subject_hash, window_started_at, attempts, expires_at
+      ) values
+        ('registration', 'identity', '${subject}', date_trunc('hour', transaction_timestamp()), 3,
+          transaction_timestamp() + interval '500 seconds'),
+        ('registration', 'ip', '${ip}', date_trunc('hour', transaction_timestamp()), 30,
+          transaction_timestamp() + interval '1000 seconds');
+    `);
+    expect(
+      query(`
+        select allowed, retry_after_seconds
+        from identity_api.consume_rate_limits('registration', '${subject}', '${ip}');
+      `).stdout,
+    ).toBe("f|1000");
+  });
+
+  it("serializes concurrent attempts at the identity threshold", async () => {
+    const subject = subjectHash();
+    query(`
+      do $block$
+      begin
+        for attempt in 1..9 loop
+          perform * from identity_api.consume_rate_limits(
+            'sign_in', '${subject}', md5(attempt::text) || md5(attempt::text)
+          );
+        end loop;
+      end
+      $block$;
+    `);
+    const results = await Promise.all([
+      queryAsync(
+        `select allowed::int from identity_api.consume_rate_limits('sign_in', '${subject}', '${subjectHash()}');`,
+      ),
+      queryAsync(
+        `select allowed::int from identity_api.consume_rate_limits('sign_in', '${subject}', '${subjectHash()}');`,
+      ),
+    ]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(results.map((result) => Number(result.stdout)).sort()).toEqual([
+      0, 1,
+    ]);
+    expect(
+      query(`
+        select attempts from identity.rate_limit_buckets
+        where action = 'sign_in' and subject_kind = 'identity'
+          and subject_hash = '${subject}';
+      `).stdout,
+    ).toBe("11");
+  });
+
+  it("rejects an unsupported limiter action without buckets", () => {
+    const subject = subjectHash();
+    expect(
+      query(`
+        select * from identity_api.consume_rate_limits(
+          'avatar', '${subject}', '${subjectHash()}'
+        );
+      `).status,
+    ).not.toBe(0);
+    expect(
+      query(
+        `select count(*) from identity.rate_limit_buckets where subject_hash = '${subject}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+
+  it("rejects malformed subject hashes", () => {
+    expect(
+      query(`
+        select * from identity_api.consume_rate_limits(
+          'sign_in', 'raw@example.test', '${subjectHash()}'
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("grants the limiter only to service_role", () => {
+    expect(
+      query(`
+        select has_function_privilege('public', 'identity_api.consume_rate_limits(text,text,text)', 'execute'),
+          has_function_privilege('anon', 'identity_api.consume_rate_limits(text,text,text)', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.consume_rate_limits(text,text,text)', 'execute'),
+          has_function_privilege('service_role', 'identity_api.consume_rate_limits(text,text,text)', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+
+  it("persists every allowlisted security-event field", () => {
+    const id = createAuthUser();
+    const subject = subjectHash();
+    const ip = subjectHash();
+    const correlation = crypto.randomUUID();
+    query(`
+      select identity_api.append_security_event(
+        '${id}', '${subject}', '${ip}', 'sign_in', 'succeeded', '${correlation}'
+      );
+    `);
+    expect(
+      query(`
+        select auth_user_id, subject_hash, ip_hash, event_type, outcome,
+          correlation_id, occurred_at is not null
+        from identity.security_events where correlation_id = '${correlation}';
+      `).stdout,
+    ).toBe(`${id}|${subject}|${ip}|sign_in|succeeded|${correlation}|t`);
+  });
+
+  it("requires a pseudonymous subject, IP, or linked account", () => {
+    expect(
+      query(`
+        select identity_api.append_security_event(
+          null, null, null, 'sign_in', 'denied', '${crypto.randomUUID()}'
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it.each([
+    ["unknown", "succeeded"],
+    ["sign_in", "provider said raw details"],
+  ])("rejects non-allowlisted audit values %s/%s", (eventType, outcome) => {
+    expect(
+      query(`
+        select identity_api.append_security_event(
+          null, '${subjectHash()}', null, '${eventType}', '${outcome}', '${crypto.randomUUID()}'
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("rejects raw email text in audit hash fields", () => {
+    expect(
+      query(`
+        select identity_api.append_security_event(
+          null, 'person@example.test', null, 'recovery', 'accepted', '${crypto.randomUUID()}'
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("grants audit append only to service_role and no table writes", () => {
+    expect(
+      query(`
+        select has_function_privilege(
+            'service_role', 'identity_api.append_security_event(uuid,text,text,text,text,uuid)', 'execute'
+          ),
+          has_function_privilege(
+            'authenticated', 'identity_api.append_security_event(uuid,text,text,text,text,uuid)', 'execute'
+          ),
+          has_table_privilege('service_role', 'identity.security_events', 'insert'),
+          has_table_privilege('service_role', 'identity.security_events', 'update'),
+          has_table_privilege('service_role', 'identity.security_events', 'delete');
+      `).stdout,
+    ).toBe("t|f|f|f|f");
+  });
+
+  it.each(["rate_limit_buckets", "security_events"])(
+    "forces RLS and denies browser access to identity.%s",
+    (table) => {
+      expect(
+        query(`
+          select c.relrowsecurity, c.relforcerowsecurity,
+            has_table_privilege('anon', 'identity.${table}', 'select'),
+            has_table_privilege('authenticated', 'identity.${table}', 'insert')
+          from pg_class c join pg_namespace n on n.oid = c.relnamespace
+          where n.nspname = 'identity' and c.relname = '${table}';
+        `).stdout,
+      ).toBe("t|t|f|f");
+    },
+  );
+
+  it("indexes user-linked events and investigation order", () => {
+    expect(
+      query(`
+        select count(*)
+        from pg_indexes
+        where schemaname = 'identity'
+          and indexname in (
+            'security_events_auth_user_occurred_idx',
+            'security_events_type_occurred_idx',
+            'rate_limit_buckets_expiry_idx'
+          );
+      `).stdout,
+    ).toBe("3");
+  });
+
+  it("cascades user-linked events during account purge", () => {
+    const id = createAuthUser();
+    query(`
+      select identity_api.append_security_event(
+        '${id}', null, null, 'account_deletion', 'accepted', '${crypto.randomUUID()}'
+      );
+      delete from auth.users where id = '${id}';
+    `);
+    expect(
+      query(
+        `select count(*) from identity.security_events where auth_user_id = '${id}';`,
+      ).stdout,
     ).toBe("0");
   });
 });

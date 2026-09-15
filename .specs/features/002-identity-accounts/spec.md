@@ -221,12 +221,12 @@ CampusMarkt has a verified technical foundation but no user identity journey. Th
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| IDAC-01 | P1: Register and confirm an account | Tasks | In progress: T1-T2, T4-T6, T8-T9 complete; planned T10, T14-T26, T31-T36 |
-| IDAC-02 | P1: Sign in and control sessions | Tasks | In progress: T1, T3-T6 complete; planned T10-T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T36 |
-| IDAC-03 | P1: Recover account access | Tasks | In progress: T1-T6, T9 complete; planned T10-T11, T15-T19, T22-T23, T26, T31-T36 |
+| IDAC-01 | P1: Register and confirm an account | Tasks | In progress: T1-T2, T4-T6, T8-T10 complete; planned T14-T26, T31-T36 |
+| IDAC-02 | P1: Sign in and control sessions | Tasks | In progress: T1, T3-T6, T10 complete; planned T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T36 |
+| IDAC-03 | P1: Recover account access | Tasks | In progress: T1-T6, T9-T10 complete; planned T11, T15-T19, T22-T23, T26, T31-T36 |
 | IDAC-04 | P1: Maintain a public-safe profile and avatar | Tasks | In progress: T1-T8 complete; planned T12-T13, T16, T23, T27-T29, T31, T34-T36 |
 | IDAC-05 | P1: Delete an account safely | Tasks | In progress: T1, T4-T5, T8-T9 complete; planned T11-T17, T20, T22-T23, T27-T36 |
-| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Tasks | In progress: T2-T4, T6-T9 complete; planned T10-T36 |
+| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Tasks | In progress: T2-T4, T6-T10 complete; planned T11-T36 |
 
 **Coverage:** 6 total, 6 mapped to the approved design and implementation tasks; execution evidence pending.
 

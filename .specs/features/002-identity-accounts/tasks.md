@@ -325,11 +325,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Fixed windows enforce 10/15m, 3/1h, 100/15m, and 30/1h with the longest retry duration.
-- [ ] Both counters are consumed in one fixed-lock-order transaction and concurrency cannot exceed the limit.
-- [ ] Audit allows only bounded types/outcomes/hashes/correlation IDs and cascades user-linked events on purge.
-- [ ] At least 18 new DB/concurrency/grant tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Fixed windows enforce 10/15m, 3/1h, 100/15m, and 30/1h with the longest retry duration.
+- [x] Both counters are consumed in one fixed-lock-order transaction and concurrency cannot exceed the limit.
+- [x] Audit allows only bounded types/outcomes/hashes/correlation IDs and cascades user-linked events on purge.
+- [x] At least 18 new DB/concurrency/grant tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

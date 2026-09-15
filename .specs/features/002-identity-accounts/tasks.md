@@ -300,11 +300,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Digests are unique/purpose-bound; lifetimes are exactly 24 hours and 30 minutes; raw tokens have no column.
-- [ ] Concurrent/wrong-purpose/expired/used callbacks yield at most one successful transition.
-- [ ] Reissue invalidates earlier unused tokens and deletion cascades token data.
-- [ ] At least 16 new DB tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Digests are unique/purpose-bound; lifetimes are exactly 24 hours and 30 minutes; raw tokens have no column.
+- [x] Concurrent/wrong-purpose/expired/used callbacks yield at most one successful transition.
+- [x] Reissue invalidates earlier unused tokens and deletion cascades token data.
+- [x] At least 16 new DB tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

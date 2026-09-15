@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
@@ -71,6 +71,51 @@ function query(sql: string) {
     sql,
   );
   return { ...result, stdout: result.stdout.trim() };
+}
+
+function queryAsync(sql: string) {
+  return new Promise<{ status: number | null; stdout: string; stderr: string }>(
+    (resolvePromise) => {
+      const child = spawn(
+        docker,
+        [
+          ...composePrefix,
+          "exec",
+          "--no-TTY",
+          "db",
+          "psql",
+          "--username",
+          "postgres",
+          "--dbname",
+          "postgres",
+          "--quiet",
+          "--tuples-only",
+          "--no-align",
+          "--set",
+          "ON_ERROR_STOP=1",
+        ],
+        { cwd: repositoryRoot, env: environment },
+      );
+      let stdout = "";
+      let stderr = "";
+      child.stdout.setEncoding("utf8");
+      child.stderr.setEncoding("utf8");
+      child.stdout.on("data", (chunk: string) => {
+        stdout += chunk;
+      });
+      child.stderr.on("data", (chunk: string) => {
+        stderr += chunk;
+      });
+      child.on("close", (status) => {
+        resolvePromise({ status, stdout: stdout.trim(), stderr });
+      });
+      child.stdin.end(sql);
+    },
+  );
+}
+
+function tokenHash() {
+  return `\\x${crypto.randomUUID().replaceAll("-", "").repeat(2)}`;
 }
 
 function applyMigrations() {
@@ -325,5 +370,261 @@ describe("T8 account, profile, and consent persistence", () => {
           (select count(*) from identity.consents where auth_user_id = '${id}');
       `).stdout,
     ).toBe("0|0|0");
+  });
+});
+
+describe("T9 one-time identity action tokens", () => {
+  it("stores a digest and never defines a raw-token column", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);
+        select encode(token_hash, 'hex'),
+          exists (
+            select 1 from information_schema.columns
+            where table_schema = 'identity' and table_name = 'action_tokens'
+              and column_name in ('token', 'raw_token')
+          )
+        from identity.action_tokens where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe(`${hash.slice(2)}|f`);
+  });
+
+  it.each([
+    ["email_confirmation", 86_400],
+    ["password_recovery", 1_800],
+  ])("uses the exact %s lifetime", (purpose, seconds) => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', '${purpose}', '${hash}'::bytea);
+        select extract(epoch from (expires_at - created_at))::bigint
+        from identity.action_tokens where token_hash = '${hash}'::bytea;
+      `).stdout,
+    ).toBe(String(seconds));
+  });
+
+  it("rejects an unsupported token purpose", () => {
+    const id = createAuthUser();
+    expect(
+      query(`
+        select identity_api.issue_action_token(
+          '${id}', 'magic_link', '${tokenHash()}'::bytea
+        );
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("rejects a duplicate digest", () => {
+    const first = createAuthUser();
+    const second = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${first}', 'email_confirmation', '${hash}'::bytea);
+        select identity_api.issue_action_token('${second}', 'password_recovery', '${hash}'::bytea);
+      `).status,
+    ).not.toBe(0);
+  });
+
+  it("reissue invalidates the earlier unused token of the same purpose", () => {
+    const id = createAuthUser();
+    const oldHash = tokenHash();
+    const newHash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${oldHash}'::bytea);
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${newHash}'::bytea);
+        select count(*) filter (where invalidated_at is not null),
+               count(*) filter (where invalidated_at is null)
+        from identity.action_tokens where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("1|1");
+  });
+
+  it("reissue does not invalidate the other purpose", () => {
+    const id = createAuthUser();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${tokenHash()}'::bytea);
+        select identity_api.issue_action_token('${id}', 'password_recovery', '${tokenHash()}'::bytea);
+        select count(*) from identity.action_tokens
+        where auth_user_id = '${id}' and invalidated_at is null;
+      `).stdout,
+    ).toBe("2");
+  });
+
+  it("stages a valid token without returning account data", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);
+        select valid, purpose
+        from identity_api.stage_action_token('${hash}'::bytea, 'email_confirmation');
+      `).stdout,
+    ).toBe("t|email_confirmation");
+  });
+
+  it("staging rejects the wrong purpose without consuming the token", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);
+        select valid from identity_api.stage_action_token('${hash}'::bytea, 'password_recovery');
+        select used_at is null from identity.action_tokens where token_hash = '${hash}'::bytea;
+      `).stdout,
+    ).toBe("f\nt");
+  });
+
+  it("staging rejects a token at its exact expiry boundary", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    query(`
+      select identity_api.issue_action_token('${id}', 'password_recovery', '${hash}'::bytea);
+      update identity.action_tokens set expires_at = transaction_timestamp()
+      where token_hash = '${hash}'::bytea;
+    `);
+    expect(
+      query(`
+        select valid from identity_api.stage_action_token(
+          '${hash}'::bytea, 'password_recovery'
+        );
+      `).stdout,
+    ).toBe("f");
+  });
+
+  it("consumes a valid token exactly once", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'password_recovery', '${hash}'::bytea);
+        select * from identity_api.consume_action_token('${hash}'::bytea, 'password_recovery');
+        select count(*) from identity_api.consume_action_token('${hash}'::bytea, 'password_recovery');
+      `).stdout,
+    ).toBe(`${id}\n0`);
+  });
+
+  it("a wrong-purpose consume leaves the correct transition available", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);
+        select count(*) from identity_api.consume_action_token('${hash}'::bytea, 'password_recovery');
+        select * from identity_api.consume_action_token('${hash}'::bytea, 'email_confirmation');
+      `).stdout,
+    ).toBe(`0\n${id}`);
+  });
+
+  it("an expired token cannot be consumed", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    query(`
+      select identity_api.issue_action_token('${id}', 'password_recovery', '${hash}'::bytea);
+      update identity.action_tokens set expires_at = transaction_timestamp()
+      where token_hash = '${hash}'::bytea;
+    `);
+    expect(
+      query(`
+        select count(*) from identity_api.consume_action_token(
+          '${hash}'::bytea, 'password_recovery'
+        );
+      `).stdout,
+    ).toBe("0");
+  });
+
+  it("concurrent callbacks produce one successful transition", async () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    query(
+      `select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);`,
+    );
+    const sql = `select count(*) from identity_api.consume_action_token('${hash}'::bytea, 'email_confirmation');`;
+    const results = await Promise.all([queryAsync(sql), queryAsync(sql)]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(
+      results
+        .map((result) => Number(result.stdout))
+        .reduce((sum, count) => sum + count, 0),
+    ).toBe(1);
+  });
+
+  it("explicit invalidation prevents later consumption", () => {
+    const id = createAuthUser();
+    const hash = tokenHash();
+    expect(
+      query(`
+        select identity_api.issue_action_token('${id}', 'email_confirmation', '${hash}'::bytea);
+        select identity_api.invalidate_action_token('${hash}'::bytea, 'email_confirmation');
+        select count(*) from identity_api.consume_action_token('${hash}'::bytea, 'email_confirmation');
+      `).stdout,
+    ).toBe("t\n0");
+  });
+
+  it("expiry cleanup removes expired tokens and preserves active ones", () => {
+    query("select identity_api.prune_expired_action_tokens();");
+    const id = createAuthUser();
+    const expiredHash = tokenHash();
+    const activeHash = tokenHash();
+    query(`
+      select identity_api.issue_action_token('${id}', 'email_confirmation', '${expiredHash}'::bytea);
+      select identity_api.issue_action_token('${id}', 'password_recovery', '${activeHash}'::bytea);
+      update identity.action_tokens set expires_at = transaction_timestamp()
+      where token_hash = '${expiredHash}'::bytea;
+    `);
+    expect(
+      query(`
+        select identity_api.prune_expired_action_tokens();
+        select encode(token_hash, 'hex') from identity.action_tokens
+        where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe(`1\n${activeHash.slice(2)}`);
+  });
+
+  it.each([
+    "issue_action_token(uuid,text,bytea)",
+    "stage_action_token(bytea,text)",
+    "consume_action_token(bytea,text)",
+    "invalidate_action_token(bytea,text)",
+    "prune_expired_action_tokens()",
+  ])("grants identity_api.%s only to service_role", (signature) => {
+    expect(
+      query(`
+        select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+               has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+               has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+               has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+
+  it("forces RLS and denies browser roles direct token access", () => {
+    expect(
+      query(`
+        select c.relrowsecurity, c.relforcerowsecurity,
+          has_table_privilege('anon', 'identity.action_tokens', 'select'),
+          has_table_privilege('authenticated', 'identity.action_tokens', 'insert')
+        from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'identity' and c.relname = 'action_tokens';
+      `).stdout,
+    ).toBe("t|t|f|f");
+  });
+
+  it("deleting the Auth identity cascades all action tokens", () => {
+    const id = createAuthUser();
+    query(
+      `select identity_api.issue_action_token('${id}', 'email_confirmation', '${tokenHash()}'::bytea);`,
+    );
+    expect(
+      query(`
+        delete from auth.users where id = '${id}';
+        select count(*) from identity.action_tokens where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("0");
   });
 });

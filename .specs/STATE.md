@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 5 / T24
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23
-- **In-progress** (file:line): T24 / `tests/integration/config/production-probes.test.ts`
-- **Next step**: Implement T24 by independently verifying complete S3 SigV4 authentication and wrong-secret rejection.
+- **Phase / Task**: Phase 5 complete / independent revalidation pending
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24
+- **In-progress** (file:line): none
+- **Next step**: Run a fresh independent verifier against the Phase 5 repairs and update `validation.md` with its evidence-only result.
 - **Blockers**: none
-- **Uncommitted files**: none after the T23 commit
+- **Uncommitted files**: none after the T24 commit
 - **Branch**: main

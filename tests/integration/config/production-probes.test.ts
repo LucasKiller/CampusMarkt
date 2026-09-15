@@ -1,7 +1,9 @@
 import { createServer as createHttpsServer } from "node:https";
 import { createServer as createTlsServer, type TLSSocket } from "node:tls";
 import { spawn, spawnSync } from "node:child_process";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import type { IncomingMessage } from "node:http";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
@@ -17,6 +19,7 @@ const smtpUser = "probe-user";
 const smtpPassword = "generated-probe-password";
 const s3AccessKey = "generated-probe-access";
 const s3SecretKey = "generated-probe-secret";
+const s3Region = "eu-central-1";
 const repositoryRoot = resolve(import.meta.dirname, "../../..");
 const probeCli = resolve(repositoryRoot, "scripts/config/probe-production.ts");
 
@@ -141,9 +144,78 @@ function smtpServer(expectedPassword = smtpPassword) {
   });
 }
 
-async function fixtures(
-  options: { hangTls?: boolean; rejectS3?: boolean } = {},
-) {
+function sha256(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function hmacSha256(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest();
+}
+
+function validS3Signature(request: IncomingMessage) {
+  const authorization = request.headers.authorization;
+  const amzDate = request.headers["x-amz-date"];
+  const payloadHash = request.headers["x-amz-content-sha256"];
+  const host = request.headers.host;
+  if (
+    !authorization ||
+    typeof amzDate !== "string" ||
+    typeof payloadHash !== "string" ||
+    !host ||
+    request.method !== "HEAD" ||
+    !/^\d{8}T\d{6}Z$/u.test(amzDate) ||
+    payloadHash !== sha256("")
+  ) {
+    return false;
+  }
+
+  const parsed =
+    /^AWS4-HMAC-SHA256 Credential=([^/\s]+)\/(\d{8})\/([^/\s]+)\/s3\/aws4_request, SignedHeaders=([^,\s]+), Signature=([a-f0-9]{64})$/u.exec(
+      authorization,
+    );
+  if (!parsed) return false;
+  const [, accessKey, date, region, signedHeaders, suppliedSignature] = parsed;
+  if (
+    accessKey !== s3AccessKey ||
+    date !== amzDate.slice(0, 8) ||
+    region !== s3Region ||
+    signedHeaders !== "host;x-amz-content-sha256;x-amz-date"
+  ) {
+    return false;
+  }
+
+  const endpoint = new URL(request.url ?? "", `https://${host}`);
+  if (endpoint.search) return false;
+  const canonicalHeaders = `host:${host.trim()}\nx-amz-content-sha256:${payloadHash.trim()}\nx-amz-date:${amzDate.trim()}\n`;
+  const canonicalRequest = [
+    request.method,
+    endpoint.pathname,
+    "",
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+  const scope = `${date}/${region}/s3/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    scope,
+    sha256(canonicalRequest),
+  ].join("\n");
+  const dateKey = hmacSha256(`AWS4${s3SecretKey}`, date);
+  const regionKey = hmacSha256(dateKey, region);
+  const serviceKey = hmacSha256(regionKey, "s3");
+  const signingKey = hmacSha256(serviceKey, "aws4_request");
+  const expectedSignature = createHmac("sha256", signingKey)
+    .update(stringToSign)
+    .digest();
+  return timingSafeEqual(
+    expectedSignature,
+    Buffer.from(suppliedSignature, "hex"),
+  );
+}
+
+async function fixtures(options: { hangTls?: boolean } = {}) {
   const tls = createHttpsServer(
     { key, cert: certificate },
     (_request, response) => {
@@ -156,10 +228,7 @@ async function fixtures(
   const s3 = createHttpsServer(
     { key, cert: certificate },
     (request, response) => {
-      const authenticated = request.headers.authorization?.includes(
-        `Credential=${s3AccessKey}/`,
-      );
-      response.writeHead(options.rejectS3 || !authenticated ? 403 : 200).end();
+      response.writeHead(validS3Signature(request) ? 200 : 403).end();
     },
   );
   const [tlsPort, smtpPort, s3Port] = await Promise.all([
@@ -178,7 +247,7 @@ async function fixtures(
     GLOBAL_S3_ENDPOINT: `https://localhost:${s3Port}`,
     AWS_ACCESS_KEY_ID: s3AccessKey,
     AWS_SECRET_ACCESS_KEY: "generated-probe-secret",
-    REGION: "eu-central-1",
+    REGION: s3Region,
     PRODUCTION_PROBE_CA_FILE: certificatePath,
     PRODUCTION_PROBE_TIMEOUT_MS: "500",
   };
@@ -279,17 +348,19 @@ describe("production dependency probes", () => {
     }
   });
 
-  it("requires authenticated S3 bucket reachability and redacts secrets", async () => {
-    const setup = await fixtures({ rejectS3: true });
+  it("rejects a correct S3 access key signed with the wrong secret", async () => {
+    const setup = await fixtures();
     try {
+      const wrongSecret = "generated-wrong-s3-secret";
+      setup.environment.AWS_SECRET_ACCESS_KEY = wrongSecret;
       const result = await probeProductionDependencies(setup.environment);
       expect(result.ok).toBe(false);
       expect(result.errors).toContain("S3 authentication failed.");
-      expectBoundedRedacted(result.errors.join("\n"));
+      expectBoundedRedacted(result.errors.join("\n"), [wrongSecret]);
       const cli = await runProbeCli(setup.environment);
       expect(cli.status).not.toBe(0);
       expect(cli.stderr).toContain("S3 authentication failed.");
-      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`, [wrongSecret]);
     } finally {
       await setup.close();
     }

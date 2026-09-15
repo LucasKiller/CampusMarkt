@@ -648,11 +648,11 @@ T21 -> T22 -> T23 -> T24
 
 **Done when**:
 
-- [ ] The fixture independently reconstructs and verifies the complete request signature using the expected secret.
-- [ ] A correct access key with a wrong secret is rejected and produces `ok: false` plus non-zero CLI status.
-- [ ] A correctly signed request is accepted and produces `ok: true` plus zero CLI status.
-- [ ] Signature diagnostics never expose the secret or derived signing key.
-- [ ] Verify gate passes once from a clean state with no skips and all 22 acceptance criteria covered.
+- [x] The fixture independently reconstructs and verifies the complete request signature using the expected secret.
+- [x] A correct access key with a wrong secret is rejected and produces `ok: false` plus non-zero CLI status.
+- [x] A correctly signed request is accepted and produces `ok: true` plus zero CLI status.
+- [x] Signature diagnostics never expose the secret or derived signing key.
+- [x] Verify gate passes once from a clean state with no skips and all 22 acceptance criteria covered.
 
 **Tests**: integration
 **Gate**: verify

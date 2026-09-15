@@ -199,10 +199,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Client uses same-origin credentials and parses only the approved success/failure envelopes.
-- [ ] Malformed/unknown provider payloads become bounded client failures and no token persistence API exists.
-- [ ] At least 10 new API-client unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Client uses same-origin credentials and parses only the approved success/failure envelopes.
+- [x] Malformed/unknown provider payloads become bounded client failures and no token persistence API exists.
+- [x] At least 10 new API-client unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

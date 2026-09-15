@@ -375,11 +375,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Only service credentials access the private `profile-avatars` bucket; browser roles cannot read or write directly.
-- [ ] Concurrent replacements expose one winning version and queue every prior/losing key before 24 hours.
-- [ ] Removal clears the public pointer immediately and repeated cleanup treats absence as success.
-- [ ] At least 18 new DB/Storage/grant/concurrency tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped.
+- [x] Only service credentials access the private `profile-avatars` bucket; browser roles cannot read or write directly.
+- [x] Concurrent replacements expose one winning version and queue every prior/losing key before 24 hours.
+- [x] Removal clears the public pointer immediately and repeated cleanup treats absence as success.
+- [x] At least 18 new DB/Storage/grant/concurrency tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped.
 
 **Tests**: database integration
 **Gate**: Database

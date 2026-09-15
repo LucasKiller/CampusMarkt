@@ -6,6 +6,8 @@ x-migration-service: &migration-service
   depends_on:
     auth:
       condition: service_healthy
+    storage:
+      condition: service_healthy
   environment:
     PGHOST: db
     PGPORT: ${POSTGRES_PORT:-5432}

@@ -122,6 +122,16 @@ function subjectHash() {
   return crypto.randomUUID().replaceAll("-", "").repeat(2);
 }
 
+function publicIdFor(authUserId: string) {
+  return query(
+    `select public_id from identity.accounts where auth_user_id = '${authUserId}';`,
+  ).stdout;
+}
+
+function avatarKey(publicId: string, version: number) {
+  return `profiles/${publicId}/${version}-${crypto.randomUUID().replaceAll("-", "")}.webp`;
+}
+
 function applyMigrations() {
   return compose(["run", "--rm", "--no-deps", "migration"]);
 }
@@ -205,7 +215,14 @@ function authenticatedQuery(
 }
 
 beforeAll(() => {
-  const started = compose(["up", "--detach", "--wait", "db", "auth"]);
+  const started = compose([
+    "up",
+    "--detach",
+    "--wait",
+    "db",
+    "auth",
+    "storage",
+  ]);
   if (started.status !== 0) {
     throw new Error(started.stderr || started.stdout);
   }
@@ -1315,5 +1332,358 @@ describe("T11 session assurance and immediate revocation", () => {
         `select count(*) from identity.session_assurance where auth_user_id = '${id}';`,
       ).stdout,
     ).toBe("0");
+  });
+});
+
+describe("T12 avatar state, private bucket, and cleanup queue", () => {
+  it("creates one private WebP-only avatar bucket", () => {
+    expect(
+      query(`
+        select id, public, file_size_limit, array_to_string(allowed_mime_types, ',')
+        from storage.buckets where id = 'profile-avatars';
+      `).stdout,
+    ).toBe("profile-avatars|f|4194304|image/webp");
+  });
+
+  it.each(["anon", "authenticated"])(
+    "prevents %s from reading the private bucket directly",
+    (role) => {
+      expect(
+        query(`
+          set role ${role};
+          select count(*) from storage.buckets where id = 'profile-avatars';
+        `).stdout,
+      ).toBe("0");
+    },
+  );
+
+  it.each(["anon", "authenticated"])(
+    "prevents %s from writing avatar objects directly",
+    (role) => {
+      const insertion = query(`
+        set role ${role};
+        insert into storage.objects (bucket_id, name)
+        values ('profile-avatars', 'profiles/forbidden/1-file.webp');
+      `);
+      expect(insertion.status).not.toBe(0);
+    },
+  );
+
+  it("allows service_role to resolve the private bucket", () => {
+    expect(
+      query(`
+        set role service_role;
+        select count(*) from storage.buckets where id = 'profile-avatars';
+      `).stdout,
+    ).toBe("1");
+  });
+
+  it("swaps an avatar only at the expected version", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const key = avatarKey(publicIdFor(id), 1);
+    expect(
+      query(`
+        select swapped, avatar_version, previous_object_key is null
+        from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');
+        select avatar_version, avatar_object_key from identity.profiles
+        where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe(`t|1|t\n1|${key}`);
+  });
+
+  it("queues the superseded derivative within 24 hours", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const publicId = publicIdFor(id);
+    const oldKey = avatarKey(publicId, 1);
+    const newKey = avatarKey(publicId, 2);
+    query(`
+      select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${oldKey}');
+      select * from identity_api.swap_avatar('${id}', '${sessionId}', 1, '${newKey}');
+    `);
+    expect(
+      query(`
+        select object_key, delete_by <= transaction_timestamp() + interval '24 hours',
+          state, attempts
+        from identity.avatar_cleanup_jobs where object_key = '${oldKey}';
+      `).stdout,
+    ).toBe(`${oldKey}|t|pending|0`);
+  });
+
+  it("queues a losing candidate and preserves the winning pointer", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const publicId = publicIdFor(id);
+    const winner = avatarKey(publicId, 1);
+    const loser = avatarKey(publicId, 1);
+    query(
+      `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${winner}');`,
+    );
+    expect(
+      query(`
+        select swapped, avatar_version, previous_object_key
+        from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${loser}');
+        select avatar_object_key from identity.profiles where auth_user_id = '${id}';
+        select count(*) from identity.avatar_cleanup_jobs where object_key = '${loser}';
+      `).stdout,
+    ).toBe(`f|1|${winner}\n${winner}\n1`);
+  });
+
+  it("serializes concurrent replacements to one visible winner", async () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const publicId = publicIdFor(id);
+    const first = avatarKey(publicId, 1);
+    const second = avatarKey(publicId, 1);
+    const results = await Promise.all([
+      queryAsync(
+        `select swapped::int from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${first}');`,
+      ),
+      queryAsync(
+        `select swapped::int from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${second}');`,
+      ),
+    ]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(results.map((result) => Number(result.stdout)).sort()).toEqual([
+      0, 1,
+    ]);
+    expect(
+      query(`
+        select avatar_object_key in ('${first}', '${second}'), avatar_version,
+          (select count(*) from identity.avatar_cleanup_jobs
+            where object_key in ('${first}', '${second}'))
+        from identity.profiles where auth_user_id = '${id}';
+      `).stdout,
+    ).toBe("t|1|1");
+  });
+
+  it("rejects a candidate outside the owner's immutable path", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const other = createAuthUser({ confirmed: true });
+    const key = avatarKey(publicIdFor(other), 1);
+    expect(
+      query(
+        `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
+      ).status,
+    ).not.toBe(0);
+    expect(
+      query(
+        `select count(*) from identity.avatar_cleanup_jobs where object_key = '${key}';`,
+      ).stdout,
+    ).toBe("0");
+  });
+
+  it.each([
+    "profiles/not-a-uuid/1-file.webp",
+    "profiles/00000000-0000-0000-0000-000000000000/1-file.gif",
+  ])("rejects malformed immutable key %s", (key) => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(
+      query(
+        `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
+      ).status,
+    ).not.toBe(0);
+  });
+
+  it("denies avatar replacement for a deletion-pending account", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const key = avatarKey(publicIdFor(id), 1);
+    query(`
+      update identity.accounts set state = 'deletion_pending',
+        deletion_requested_at = transaction_timestamp(),
+        purge_due_at = transaction_timestamp() + interval '30 days'
+      where auth_user_id = '${id}';
+    `);
+    expect(
+      query(
+        `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
+      ).status,
+    ).not.toBe(0);
+    expect(
+      query(
+        `select avatar_object_key is null from identity.profiles where auth_user_id = '${id}';`,
+      ).stdout,
+    ).toBe("t");
+  });
+
+  it("removes the public pointer immediately and queues the derivative", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const publicId = publicIdFor(id);
+    const key = avatarKey(publicId, 1);
+    query(
+      `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
+    );
+    expect(
+      query(`
+        select changed, avatar_version, previous_object_key
+        from identity_api.remove_avatar('${id}', '${sessionId}');
+        select avatar_object_key is null from identity.profiles where auth_user_id = '${id}';
+        select count(*) from identity_api.get_public_profile('${publicId}')
+          where avatar_url is null;
+        select count(*) from identity.avatar_cleanup_jobs where object_key = '${key}';
+      `).stdout,
+    ).toBe(`t|2|${key}\nt\n1\n1`);
+  });
+
+  it("treats repeated avatar removal as an idempotent no-op", () => {
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    expect(
+      query(`
+        select changed, avatar_version, previous_object_key is null
+        from identity_api.remove_avatar('${id}', '${sessionId}');
+        select changed, avatar_version, previous_object_key is null
+        from identity_api.remove_avatar('${id}', '${sessionId}');
+      `).stdout,
+    ).toBe("f|0|t\nf|0|t");
+  });
+
+  it("claims the earliest due job with a bounded lease", () => {
+    query("delete from identity.avatar_cleanup_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const sessionId = createAuthSession(id);
+    const key = avatarKey(publicIdFor(id), 1);
+    query(`
+      select * from identity_api.swap_avatar('${id}', '${sessionId}', 99, '${key}');
+    `);
+    expect(
+      query(`
+        select object_key, attempts, lease_until > transaction_timestamp(), state
+        from identity_api.claim_avatar_cleanup_job('worker-a', 300);
+      `).stdout,
+    ).toBe(`${key}|1|t|processing`);
+  });
+
+  it("concurrent cleanup workers claim distinct jobs without waiting", async () => {
+    query("delete from identity.avatar_cleanup_jobs;");
+    const first = createAuthUser({ confirmed: true });
+    const second = createAuthUser({ confirmed: true });
+    query(`
+      select * from identity_api.swap_avatar(
+        '${first}', '${createAuthSession(first)}', 9, '${avatarKey(publicIdFor(first), 1)}'
+      );
+      select * from identity_api.swap_avatar(
+        '${second}', '${createAuthSession(second)}', 9, '${avatarKey(publicIdFor(second), 1)}'
+      );
+    `);
+    const results = await Promise.all([
+      queryAsync(
+        "select id from identity_api.claim_avatar_cleanup_job('worker-one', 300);",
+      ),
+      queryAsync(
+        "select id from identity_api.claim_avatar_cleanup_job('worker-two', 300);",
+      ),
+    ]);
+    expect(results.map((result) => result.status)).toEqual([0, 0]);
+    expect(new Set(results.map((result) => result.stdout)).size).toBe(2);
+  });
+
+  it("recovers an expired processing lease", () => {
+    query("delete from identity.avatar_cleanup_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const key = avatarKey(publicIdFor(id), 1);
+    query(`
+      select * from identity_api.swap_avatar(
+        '${id}', '${createAuthSession(id)}', 9, '${key}'
+      );
+      update identity.avatar_cleanup_jobs set state = 'processing',
+        worker_id = 'expired-worker',
+        lease_until = transaction_timestamp() - interval '1 second'
+      where object_key = '${key}';
+    `);
+    expect(
+      query(`
+        select object_key, worker_id, attempts
+        from identity_api.claim_avatar_cleanup_job('recovery-worker', 300)
+        where object_key = '${key}';
+      `).stdout,
+    ).toBe(`${key}|recovery-worker|1`);
+  });
+
+  it("treats completing an absent cleanup job as success", () => {
+    const jobId = "9223372036854775800";
+    expect(
+      query(`
+        select identity_api.complete_avatar_cleanup_job(${jobId});
+        select identity_api.complete_avatar_cleanup_job(${jobId});
+      `).stdout,
+    ).toBe("t\nt");
+  });
+
+  it("retries a claimed job without exposing a stored dependency error", () => {
+    query("delete from identity.avatar_cleanup_jobs;");
+    const id = createAuthUser({ confirmed: true });
+    const key = avatarKey(publicIdFor(id), 1);
+    query(`
+      select * from identity_api.swap_avatar(
+        '${id}', '${createAuthSession(id)}', 9, '${key}'
+      );
+    `);
+    const jobId = query(
+      "select id from identity_api.claim_avatar_cleanup_job('retry-worker', 300);",
+    ).stdout;
+    expect(
+      query(`
+        select identity_api.retry_avatar_cleanup_job(
+          ${jobId}, 'storage_unavailable', transaction_timestamp() + interval '5 minutes'
+        );
+        select state, worker_id is null, lease_until is null, last_error_code
+        from identity.avatar_cleanup_jobs where id = ${jobId};
+      `).stdout,
+    ).toBe("t\nretry|t|t|storage_unavailable");
+  });
+
+  it.each([
+    "swap_avatar(uuid,uuid,bigint,text)",
+    "remove_avatar(uuid,uuid)",
+    "claim_avatar_cleanup_job(text,integer)",
+    "complete_avatar_cleanup_job(bigint)",
+    "retry_avatar_cleanup_job(bigint,text,timestamp with time zone)",
+  ])("grants identity_api.%s only to service_role", (signature) => {
+    expect(
+      query(`
+        select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+          has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+
+  it("forces cleanup RLS and indexes its nullable account foreign key", () => {
+    expect(
+      query(`
+        select c.relrowsecurity, c.relforcerowsecurity,
+          has_table_privilege('authenticated', 'identity.avatar_cleanup_jobs', 'select'),
+          exists (
+            select 1 from pg_indexes where schemaname = 'identity'
+              and indexname = 'avatar_cleanup_jobs_auth_user_id_idx'
+          )
+        from pg_class c join pg_namespace n on n.oid = c.relnamespace
+        where n.nspname = 'identity' and c.relname = 'avatar_cleanup_jobs';
+      `).stdout,
+    ).toBe("t|t|f|t");
+  });
+
+  it("keeps queued object cleanup after account purge", () => {
+    const id = createAuthUser({ confirmed: true });
+    const key = avatarKey(publicIdFor(id), 1);
+    query(`
+      select * from identity_api.swap_avatar(
+        '${id}', '${createAuthSession(id)}', 9, '${key}'
+      );
+      delete from auth.users where id = '${id}';
+    `);
+    expect(
+      query(`
+        select auth_user_id is null, object_key
+        from identity.avatar_cleanup_jobs where object_key = '${key}';
+      `).stdout,
+    ).toBe(`t|${key}`);
   });
 });

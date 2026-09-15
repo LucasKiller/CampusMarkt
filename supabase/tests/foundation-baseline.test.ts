@@ -107,7 +107,14 @@ function databaseCli(arguments_: string[]) {
 }
 
 beforeAll(() => {
-  const started = compose(["up", "--detach", "--wait", "db", "auth"]);
+  const started = compose([
+    "up",
+    "--detach",
+    "--wait",
+    "db",
+    "auth",
+    "storage",
+  ]);
   if (started.status !== 0) {
     throw new Error(started.stderr || started.stdout);
   }

@@ -1,6 +1,6 @@
 import { createServer as createHttpsServer } from "node:https";
 import { createServer as createTlsServer, type TLSSocket } from "node:tls";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -17,6 +17,8 @@ const smtpUser = "probe-user";
 const smtpPassword = "generated-probe-password";
 const s3AccessKey = "generated-probe-access";
 const s3SecretKey = "generated-probe-secret";
+const repositoryRoot = resolve(import.meta.dirname, "../../..");
+const probeCli = resolve(repositoryRoot, "scripts/config/probe-production.ts");
 
 const generated = spawnSync(
   "openssl",
@@ -66,6 +68,48 @@ async function close(server: ClosableServer) {
   await new Promise<void>((resolveClose, reject) =>
     server.close((error) => (error ? reject(error) : resolveClose())),
   );
+}
+
+function runProbeCli(environment: ProductionProbeEnvironment) {
+  return new Promise<{ status: number | null; stdout: string; stderr: string }>(
+    (resolveResult, reject) => {
+      const child = spawn(
+        process.execPath,
+        ["--experimental-strip-types", probeCli],
+        {
+          cwd: repositoryRoot,
+          env: { ...process.env, ...environment },
+          stdio: ["ignore", "pipe", "pipe"],
+        },
+      );
+      let stdout = "";
+      let stderr = "";
+      const timer = setTimeout(() => child.kill(), 10_000);
+      child.stdout.on("data", (chunk) => (stdout += chunk.toString()));
+      child.stderr.on("data", (chunk) => (stderr += chunk.toString()));
+      child.once("error", reject);
+      child.once("close", (status) => {
+        clearTimeout(timer);
+        resolveResult({ status, stdout, stderr });
+      });
+    },
+  );
+}
+
+function expectBoundedRedacted(
+  output: string,
+  additionalCredentials: string[] = [],
+) {
+  expect(output.length).toBeLessThan(4_000);
+  for (const credential of [
+    smtpUser,
+    smtpPassword,
+    s3AccessKey,
+    s3SecretKey,
+    ...additionalCredentials,
+  ]) {
+    expect(output).not.toContain(credential);
+  }
 }
 
 function smtpServer(expectedPassword = smtpPassword) {
@@ -158,6 +202,12 @@ describe("production dependency probes", () => {
         ok: true,
         errors: [],
       });
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).toBe(0);
+      expect(cli.stdout).toContain(
+        "Production dependencies are reachable and authenticated.",
+      );
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }
@@ -172,7 +222,12 @@ describe("production dependency probes", () => {
           "127.0.0.1",
         );
       const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
       expect(result.errors).toContain("TLS certificate validation failed.");
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.stderr).toContain("TLS certificate validation failed.");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }
@@ -182,7 +237,9 @@ describe("production dependency probes", () => {
     const setup = await fixtures({ hangTls: true });
     try {
       const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
       expect(result.errors).toContain("TLS dependency timed out.");
+      expectBoundedRedacted(result.errors.join("\n"));
     } finally {
       await setup.close();
     }
@@ -191,12 +248,16 @@ describe("production dependency probes", () => {
   it("requires successful SMTP authentication without exposing credentials", async () => {
     const setup = await fixtures();
     try {
-      setup.environment.SMTP_PASS = "generated-wrong-smtp-password";
+      const wrongPassword = "generated-wrong-smtp-password";
+      setup.environment.SMTP_PASS = wrongPassword;
       const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
       expect(result.errors).toContain("SMTP authentication failed.");
-      expect(result.errors.join("\n")).not.toContain(
-        setup.environment.SMTP_PASS,
-      );
+      expectBoundedRedacted(result.errors.join("\n"), [wrongPassword]);
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.stderr).toContain("SMTP authentication failed.");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`, [wrongPassword]);
     } finally {
       await setup.close();
     }
@@ -207,7 +268,9 @@ describe("production dependency probes", () => {
     try {
       setup.environment.SMTP_PORT = "1";
       const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
       expect(result.errors).toContain("SMTP dependency is unreachable.");
+      expectBoundedRedacted(result.errors.join("\n"));
       expect(result.errors.join("\n")).not.toContain(
         setup.environment.SMTP_HOST,
       );
@@ -220,9 +283,13 @@ describe("production dependency probes", () => {
     const setup = await fixtures({ rejectS3: true });
     try {
       const result = await probeProductionDependencies(setup.environment);
+      expect(result.ok).toBe(false);
       expect(result.errors).toContain("S3 authentication failed.");
-      expect(result.errors.join("\n")).not.toContain(s3AccessKey);
-      expect(result.errors.join("\n")).not.toContain(s3SecretKey);
+      expectBoundedRedacted(result.errors.join("\n"));
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.stderr).toContain("S3 authentication failed.");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }

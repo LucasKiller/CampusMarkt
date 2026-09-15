@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 5 / T23
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22
-- **In-progress** (file:line): T23 / `tests/integration/config/production-probes.test.ts`
-- **Next step**: Implement T23 by enforcing aggregate failure classification and the production probe CLI exit contract.
+- **Phase / Task**: Phase 5 / T24
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23
+- **In-progress** (file:line): T24 / `tests/integration/config/production-probes.test.ts`
+- **Next step**: Implement T24 by independently verifying complete S3 SigV4 authentication and wrong-secret rejection.
 - **Blockers**: none
-- **Uncommitted files**: none after the T22 commit
+- **Uncommitted files**: none after the T23 commit
 - **Branch**: main

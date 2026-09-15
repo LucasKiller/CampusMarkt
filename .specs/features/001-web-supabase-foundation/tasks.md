@@ -623,11 +623,11 @@ T21 -> T22 -> T23 -> T24
 
 **Done when**:
 
-- [ ] Every dependency failure asserts `ok: false` on the aggregate result.
-- [ ] The same production probe CLI used by the gate exits non-zero for invalid TLS, SMTP authentication or reachability, and S3 authentication.
-- [ ] The valid fixture asserts `ok: true` and CLI exit zero.
-- [ ] Diagnostics remain bounded and redact all generated credentials.
-- [ ] Full gate kills a scratch mutation that forces `ok: true` despite errors.
+- [x] Every dependency failure asserts `ok: false` on the aggregate result.
+- [x] The same production probe CLI used by the gate exits non-zero for invalid TLS, SMTP authentication or reachability, and S3 authentication.
+- [x] The valid fixture asserts `ok: true` and CLI exit zero.
+- [x] Diagnostics remain bounded and redact all generated credentials.
+- [x] Full gate kills a scratch mutation that forces `ok: true` despite errors.
 
 **Tests**: integration
 **Gate**: full

@@ -52,11 +52,11 @@
 
 ## Handoff
 
-- **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Verify complete / feature closed
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26
+- **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
+- **Phase / Task**: Design / technical design in progress
+- **Completed**: 001-web-supabase-foundation verified; 002 context and specification approved
 - **In-progress** (file:line): none
-- **Next step**: Specify feature `002-identity-and-accounts` before implementing authentication journeys.
+- **Next step**: Create and validate `002-identity-accounts/design.md` from the approved specification and context.
 - **Blockers**: none
-- **Uncommitted files**: none after the validation closure commit
+- **Uncommitted files**: none after the specification approval commit
 - **Branch**: main

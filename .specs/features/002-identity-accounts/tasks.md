@@ -103,10 +103,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] State transitions fail closed for unconfirmed, revoked, missing, deletion-pending, and expired identities.
-- [ ] Exact 24-hour, 30-minute, 30-day, 10-minute, and 24-hour cleanup boundaries are represented without framework clocks.
-- [ ] At least 18 new requirement-derived unit tests pass with no baseline test deletion.
-- [ ] Quick gate passes.
+- [x] State transitions fail closed for unconfirmed, revoked, missing, deletion-pending, and expired identities.
+- [x] Exact 24-hour, 30-minute, 30-day, 10-minute, and 24-hour cleanup boundaries are represented without framework clocks.
+- [x] At least 18 new requirement-derived unit tests pass with no baseline test deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

@@ -602,11 +602,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Rate checks precede Auth/SMTP mutation and all enumeration-sensitive states share one accepted result.
-- [ ] Valid registration yields one unconfirmed Auth/account/profile/consent identity; failure/retry/race paths never duplicate it.
-- [ ] Confirmation is one-time, does not auto-sign-in, and partial Auth/application sync repairs idempotently.
-- [ ] At least 22 new use-case unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Rate checks precede Auth/SMTP mutation and all enumeration-sensitive states share one accepted result.
+- [x] Valid registration yields one unconfirmed Auth/account/profile/consent identity; failure/retry/race paths never duplicate it.
+- [x] Confirmation is one-time, does not auto-sign-in, and partial Auth/application sync repairs idempotently.
+- [x] At least 22 new use-case unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

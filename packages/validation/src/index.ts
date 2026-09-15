@@ -9,3 +9,4 @@ export function isValidationBoundary(
 }
 
 export * from "./identity/account/index.js";
+export * from "./identity/security/index.js";

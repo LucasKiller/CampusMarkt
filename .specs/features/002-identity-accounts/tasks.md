@@ -151,10 +151,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] External, protocol-relative, backslash, control-character, alternate-host/port, malformed, and loop redirects use the safe fallback.
-- [ ] Token/public-ID/crop schemas reject malformed, unbounded, unknown, and non-finite values.
-- [ ] At least 20 new security-input unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] External, protocol-relative, backslash, control-character, alternate-host/port, malformed, and loop redirects use the safe fallback.
+- [x] Token/public-ID/crop schemas reject malformed, unbounded, unknown, and non-finite values.
+- [x] At least 20 new security-input unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

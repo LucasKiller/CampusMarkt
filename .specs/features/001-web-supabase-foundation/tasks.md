@@ -679,10 +679,10 @@ T25 -> T26
 
 **Done when**:
 
-- [ ] TLS timeout through the real CLI exits non-zero within the configured bound and returns `ok: false`.
-- [ ] Unreachable SMTP through the real CLI exits non-zero within the configured bound and returns `ok: false`.
-- [ ] Both diagnostics name the failing dependency without leaking generated credentials or hosts.
-- [ ] Full gate kills selective mutations that preserve exit zero for either failure class.
+- [x] TLS timeout through the real CLI exits non-zero within the configured bound and returns `ok: false`.
+- [x] Unreachable SMTP through the real CLI exits non-zero within the configured bound and returns `ok: false`.
+- [x] Both diagnostics name the failing dependency without leaking generated credentials or hosts.
+- [x] Full gate kills selective mutations that preserve exit zero for either failure class.
 
 **Tests**: integration
 **Gate**: full

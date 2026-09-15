@@ -74,29 +74,38 @@ async function close(server: ClosableServer) {
 }
 
 function runProbeCli(environment: ProductionProbeEnvironment) {
-  return new Promise<{ status: number | null; stdout: string; stderr: string }>(
-    (resolveResult, reject) => {
-      const child = spawn(
-        process.execPath,
-        ["--experimental-strip-types", probeCli],
-        {
-          cwd: repositoryRoot,
-          env: { ...process.env, ...environment },
-          stdio: ["ignore", "pipe", "pipe"],
-        },
-      );
-      let stdout = "";
-      let stderr = "";
-      const timer = setTimeout(() => child.kill(), 10_000);
-      child.stdout.on("data", (chunk) => (stdout += chunk.toString()));
-      child.stderr.on("data", (chunk) => (stderr += chunk.toString()));
-      child.once("error", reject);
-      child.once("close", (status) => {
-        clearTimeout(timer);
-        resolveResult({ status, stdout, stderr });
+  const startedAt = performance.now();
+  return new Promise<{
+    status: number | null;
+    stdout: string;
+    stderr: string;
+    durationMs: number;
+  }>((resolveResult, reject) => {
+    const child = spawn(
+      process.execPath,
+      ["--experimental-strip-types", probeCli],
+      {
+        cwd: repositoryRoot,
+        env: { ...process.env, ...environment },
+        stdio: ["ignore", "pipe", "pipe"],
+      },
+    );
+    let stdout = "";
+    let stderr = "";
+    const timer = setTimeout(() => child.kill(), 10_000);
+    child.stdout.on("data", (chunk) => (stdout += chunk.toString()));
+    child.stderr.on("data", (chunk) => (stderr += chunk.toString()));
+    child.once("error", reject);
+    child.once("close", (status) => {
+      clearTimeout(timer);
+      resolveResult({
+        status,
+        stdout,
+        stderr,
+        durationMs: performance.now() - startedAt,
       });
-    },
-  );
+    });
+  });
 }
 
 function expectBoundedRedacted(
@@ -309,6 +318,15 @@ describe("production dependency probes", () => {
       expect(result.ok).toBe(false);
       expect(result.errors).toContain("TLS dependency timed out.");
       expectBoundedRedacted(result.errors.join("\n"));
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.durationMs).toBeLessThan(2_000);
+      expect(cli.stderr).toContain("TLS dependency timed out.");
+      expect(cli.stdout).not.toContain(
+        "Production dependencies are reachable and authenticated.",
+      );
+      expect(`${cli.stdout}${cli.stderr}`).not.toContain("localhost");
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }
@@ -343,6 +361,17 @@ describe("production dependency probes", () => {
       expect(result.errors.join("\n")).not.toContain(
         setup.environment.SMTP_HOST,
       );
+      const cli = await runProbeCli(setup.environment);
+      expect(cli.status).not.toBe(0);
+      expect(cli.durationMs).toBeLessThan(2_000);
+      expect(cli.stderr).toContain("SMTP dependency is unreachable.");
+      expect(cli.stdout).not.toContain(
+        "Production dependencies are reachable and authenticated.",
+      );
+      expect(`${cli.stdout}${cli.stderr}`).not.toContain(
+        setup.environment.SMTP_HOST,
+      );
+      expectBoundedRedacted(`${cli.stdout}${cli.stderr}`);
     } finally {
       await setup.close();
     }

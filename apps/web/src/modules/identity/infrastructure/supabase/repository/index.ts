@@ -40,6 +40,10 @@ type ActionTokenInput = {
 
 type TokenLookup = Omit<ActionTokenInput, "authUserId">;
 
+type AssuranceLookup = ServerIdentity & {
+  maxAgeSeconds: number;
+};
+
 type SecurityEvent = {
   authUserId: string | null;
   subjectHash: string | null;
@@ -103,6 +107,93 @@ function parsePublicProfile(value: unknown): PublicProfile | null | undefined {
   };
 }
 
+function parseAccountLookup(value: unknown) {
+  if (value === null) {
+    return null;
+  }
+  if (
+    !isRecord(value) ||
+    Object.keys(value).sort().join("|") !== "auth_user_id|state" ||
+    typeof value.auth_user_id !== "string" ||
+    !["active_confirmed", "active_unconfirmed"].includes(String(value.state))
+  ) {
+    return undefined;
+  }
+  return { authUserId: value.auth_user_id, state: value.state as string };
+}
+
+function parseAvatarCleanupJob(value: unknown) {
+  if (value === null) {
+    return null;
+  }
+  if (
+    !isRecord(value) ||
+    typeof value.id !== "number" ||
+    (value.auth_user_id !== null && typeof value.auth_user_id !== "string") ||
+    typeof value.object_key !== "string" ||
+    typeof value.attempts !== "number" ||
+    typeof value.delete_by !== "string" ||
+    typeof value.lease_until !== "string" ||
+    value.state !== "processing" ||
+    typeof value.worker_id !== "string"
+  ) {
+    return undefined;
+  }
+  return {
+    id: value.id,
+    authUserId: value.auth_user_id,
+    objectKey: value.object_key,
+    attempts: value.attempts,
+    deleteBy: value.delete_by,
+    leaseUntil: value.lease_until,
+    state: value.state,
+    workerId: value.worker_id,
+  };
+}
+
+function parseDeletionJob(value: unknown) {
+  if (value === null) {
+    return null;
+  }
+  if (
+    !isRecord(value) ||
+    typeof value.auth_user_id !== "string" ||
+    typeof value.attempts !== "number" ||
+    typeof value.requested_at !== "string" ||
+    typeof value.purge_due_at !== "string" ||
+    typeof value.lease_until !== "string" ||
+    value.state !== "processing" ||
+    typeof value.worker_id !== "string"
+  ) {
+    return undefined;
+  }
+  return {
+    authUserId: value.auth_user_id,
+    attempts: value.attempts,
+    requestedAt: value.requested_at,
+    purgeDueAt: value.purge_due_at,
+    leaseUntil: value.lease_until,
+    state: value.state,
+    workerId: value.worker_id,
+  };
+}
+
+async function callAndParse<T>(
+  client: IdentityRpcClient,
+  functionName: string,
+  arguments_: Record<string, unknown>,
+  parser: (value: unknown) => T | undefined,
+): Promise<IdentityRepositoryResult<T>> {
+  const result = await call(client, functionName, arguments_);
+  if (!result.ok) {
+    return result;
+  }
+  const value = parser(result.value);
+  return value === undefined
+    ? { ok: false, code: "INVALID_PROVIDER_RESPONSE" }
+    : { ok: true, value };
+}
+
 export function createIdentityRepository({ user, service }: RepositoryClients) {
   return {
     isCurrentSessionActive: () => call(user, "current_session_is_active"),
@@ -110,7 +201,7 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
 
     async readPublicProfile(publicId: string) {
       const result = await call(user, "get_public_profile", {
-        p_public_id: publicId,
+        requested_public_id: publicId,
       });
       if (!result.ok) {
         return result;
@@ -123,46 +214,51 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
 
     consumeRateLimits(input: RateLimitInput) {
       return call(service, "consume_rate_limits", {
-        p_action: input.action,
-        p_subject_hash: input.subjectHash,
-        p_ip_hash: input.ipHash,
+        requested_action: input.action,
+        requested_subject_hash: input.subjectHash,
+        requested_ip_hash: input.ipHash,
       });
     },
 
     issueActionToken(input: ActionTokenInput) {
       return call(service, "issue_action_token", {
-        p_auth_user_id: input.authUserId,
-        p_purpose: input.purpose,
-        p_token_hash: input.tokenHash,
+        requested_auth_user_id: input.authUserId,
+        requested_purpose: input.purpose,
+        requested_token_hash: input.tokenHash,
       });
     },
 
     stageActionToken(input: TokenLookup) {
       return call(service, "stage_action_token", {
-        p_purpose: input.purpose,
-        p_token_hash: input.tokenHash,
+        requested_purpose: input.purpose,
+        requested_token_hash: input.tokenHash,
       });
     },
 
     consumeActionToken(input: TokenLookup) {
       return call(service, "consume_action_token", {
-        p_purpose: input.purpose,
-        p_token_hash: input.tokenHash,
+        requested_purpose: input.purpose,
+        requested_token_hash: input.tokenHash,
+      });
+    },
+
+    invalidateActionToken(input: TokenLookup) {
+      return call(service, "invalidate_action_token", {
+        requested_purpose: input.purpose,
+        requested_token_hash: input.tokenHash,
       });
     },
 
     recordPasswordAssurance(identity: ServerIdentity) {
       return call(service, "record_password_assurance", {
-        p_auth_user_id: identity.authUserId,
-        p_session_id: identity.sessionId,
+        requested_auth_user_id: identity.authUserId,
+        requested_session_id: identity.sessionId,
       });
     },
 
-    updateDisplayName(identity: ServerIdentity, displayName: string) {
-      return call(service, "update_display_name", {
-        p_auth_user_id: identity.authUserId,
-        p_session_id: identity.sessionId,
-        p_display_name: displayName,
+    updateDisplayName(displayName: string) {
+      return call(user, "update_display_name", {
+        requested_display_name: displayName,
       });
     },
 
@@ -172,53 +268,143 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
       candidateKey: string,
     ) {
       return call(service, "swap_avatar", {
-        p_auth_user_id: identity.authUserId,
-        p_session_id: identity.sessionId,
-        p_expected_version: expectedVersion,
-        p_candidate_key: candidateKey,
+        requested_auth_user_id: identity.authUserId,
+        requested_session_id: identity.sessionId,
+        expected_avatar_version: expectedVersion,
+        candidate_object_key: candidateKey,
       });
     },
 
     removeAvatar(identity: ServerIdentity) {
       return call(service, "remove_avatar", {
-        p_auth_user_id: identity.authUserId,
-        p_session_id: identity.sessionId,
+        requested_auth_user_id: identity.authUserId,
+        requested_session_id: identity.sessionId,
       });
     },
 
     requestDeletion(identity: ServerIdentity) {
       return call(service, "request_deletion", {
-        p_auth_user_id: identity.authUserId,
-        p_session_id: identity.sessionId,
+        requested_auth_user_id: identity.authUserId,
+        requested_session_id: identity.sessionId,
       });
     },
 
     revokeUserSessions(authUserId: string) {
       return call(service, "revoke_user_sessions", {
-        p_auth_user_id: authUserId,
+        requested_auth_user_id: authUserId,
       });
     },
 
     synchronizeConfirmation(authUserId: string) {
       return call(service, "synchronize_confirmation", {
-        p_auth_user_id: authUserId,
+        requested_auth_user_id: authUserId,
       });
     },
 
     repairAuthProjection(authUserId: string) {
       return call(service, "repair_auth_projection", {
-        p_auth_user_id: authUserId,
+        requested_auth_user_id: authUserId,
       });
+    },
+
+    findRegistrationByEmailKey(emailKey: string) {
+      return callAndParse(
+        service,
+        "find_registration_by_email_key",
+        { requested_email_key: emailKey },
+        parseAccountLookup,
+      );
+    },
+
+    findRecoveryByEmailKey(emailKey: string) {
+      return callAndParse(
+        service,
+        "find_recovery_by_email_key",
+        { requested_email_key: emailKey },
+        parseAccountLookup,
+      );
+    },
+
+    isPasswordAssuranceRecent(input: AssuranceLookup) {
+      return call(service, "password_assurance_is_recent", {
+        requested_auth_user_id: input.authUserId,
+        requested_session_id: input.sessionId,
+        requested_max_age_seconds: input.maxAgeSeconds,
+      });
+    },
+
+    claimAvatarCleanupJob(workerId: string, leaseSeconds: number) {
+      return callAndParse(
+        service,
+        "claim_avatar_cleanup_job",
+        {
+          requested_worker_id: workerId,
+          requested_lease_seconds: leaseSeconds,
+        },
+        parseAvatarCleanupJob,
+      );
+    },
+
+    completeAvatarCleanupJob(jobId: number) {
+      return call(service, "complete_avatar_cleanup_job", {
+        requested_job_id: jobId,
+      });
+    },
+
+    retryAvatarCleanupJob(
+      jobId: number,
+      errorCode: string,
+      nextAttemptAt: string,
+    ) {
+      return call(service, "retry_avatar_cleanup_job", {
+        requested_job_id: jobId,
+        requested_error_code: errorCode,
+        requested_next_attempt_at: nextAttemptAt,
+      });
+    },
+
+    claimDeletionJob(workerId: string, leaseSeconds: number) {
+      return callAndParse(
+        service,
+        "claim_deletion_job",
+        {
+          requested_worker_id: workerId,
+          requested_lease_seconds: leaseSeconds,
+        },
+        parseDeletionJob,
+      );
+    },
+
+    completeDeletionJob(authUserId: string) {
+      return call(service, "complete_deletion_job", {
+        requested_auth_user_id: authUserId,
+      });
+    },
+
+    retryDeletionJob(
+      authUserId: string,
+      errorCode: string,
+      nextAttemptAt: string,
+    ) {
+      return call(service, "retry_deletion_job", {
+        requested_auth_user_id: authUserId,
+        requested_error_code: errorCode,
+        requested_next_attempt_at: nextAttemptAt,
+      });
+    },
+
+    pruneExpiredActionTokens() {
+      return call(service, "prune_expired_action_tokens");
     },
 
     appendSecurityEvent(event: SecurityEvent) {
       return call(service, "append_security_event", {
-        p_auth_user_id: event.authUserId,
-        p_subject_hash: event.subjectHash,
-        p_ip_hash: event.ipHash,
-        p_event_type: event.eventType,
-        p_outcome: event.outcome,
-        p_correlation_id: event.correlationId,
+        requested_auth_user_id: event.authUserId,
+        requested_subject_hash: event.subjectHash,
+        requested_ip_hash: event.ipHash,
+        requested_event_type: event.eventType,
+        requested_outcome: event.outcome,
+        requested_correlation_id: event.correlationId,
       });
     },
   };

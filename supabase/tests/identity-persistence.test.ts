@@ -2423,4 +2423,216 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
       `).stdout,
     ).toBe("repair_auth_projection|t|t\nsynchronize_confirmation|t|t");
   });
+
+  describe("repository RPC composition", () => {
+    it("exposes every repository RPC with its exact effective argument names", () => {
+      expect(
+        query(`
+          select p.proname || '(' || pg_get_function_arguments(p.oid) || ')'
+          from pg_proc as p
+          join pg_namespace as n on n.oid = p.pronamespace
+          where n.nspname = 'identity_api'
+            and p.proname in (
+              'append_security_event', 'claim_avatar_cleanup_job',
+              'claim_deletion_job', 'complete_avatar_cleanup_job',
+              'complete_deletion_job', 'consume_action_token',
+              'consume_rate_limits', 'current_identity_status',
+              'current_session_is_active', 'find_recovery_by_email_key',
+              'find_registration_by_email_key', 'get_public_profile',
+              'invalidate_action_token', 'issue_action_token',
+              'password_assurance_is_recent', 'prune_expired_action_tokens',
+              'record_password_assurance', 'remove_avatar',
+              'repair_auth_projection', 'request_deletion',
+              'retry_avatar_cleanup_job', 'retry_deletion_job',
+              'revoke_user_sessions', 'stage_action_token', 'swap_avatar',
+              'synchronize_confirmation', 'update_display_name'
+            )
+          order by p.proname;
+        `).stdout,
+      ).toBe(
+        [
+          "append_security_event(requested_auth_user_id uuid, requested_subject_hash text, requested_ip_hash text, requested_event_type text, requested_outcome text, requested_correlation_id uuid)",
+          "claim_avatar_cleanup_job(requested_worker_id text, requested_lease_seconds integer)",
+          "claim_deletion_job(requested_worker_id text, requested_lease_seconds integer)",
+          "complete_avatar_cleanup_job(requested_job_id bigint)",
+          "complete_deletion_job(requested_auth_user_id uuid)",
+          "consume_action_token(requested_token_hash bytea, requested_purpose text)",
+          "consume_rate_limits(requested_action text, requested_subject_hash text, requested_ip_hash text)",
+          "current_identity_status()",
+          "current_session_is_active()",
+          "find_recovery_by_email_key(requested_email_key text)",
+          "find_registration_by_email_key(requested_email_key text)",
+          "get_public_profile(requested_public_id uuid)",
+          "invalidate_action_token(requested_token_hash bytea, requested_purpose text)",
+          "issue_action_token(requested_auth_user_id uuid, requested_purpose text, requested_token_hash bytea)",
+          "password_assurance_is_recent(requested_auth_user_id uuid, requested_session_id uuid, requested_max_age_seconds integer)",
+          "prune_expired_action_tokens()",
+          "record_password_assurance(requested_auth_user_id uuid, requested_session_id uuid)",
+          "remove_avatar(requested_auth_user_id uuid, requested_session_id uuid)",
+          "repair_auth_projection(requested_auth_user_id uuid)",
+          "request_deletion(requested_auth_user_id uuid, requested_session_id uuid)",
+          "retry_avatar_cleanup_job(requested_job_id bigint, requested_error_code text, requested_next_attempt_at timestamp with time zone)",
+          "retry_deletion_job(requested_auth_user_id uuid, requested_error_code text, requested_next_attempt_at timestamp with time zone)",
+          "revoke_user_sessions(requested_auth_user_id uuid)",
+          "stage_action_token(requested_token_hash bytea, requested_purpose text)",
+          "swap_avatar(requested_auth_user_id uuid, requested_session_id uuid, expected_avatar_version bigint, candidate_object_key text)",
+          "synchronize_confirmation(requested_auth_user_id uuid)",
+          "update_display_name(requested_display_name text)",
+        ].join("\n"),
+      );
+    });
+
+    it("returns only the actionable registration and recovery lookup DTOs", () => {
+      const registrationEmailKey = "a".repeat(64);
+      const recoveryEmailKey = "b".repeat(64);
+      const registrationId = createAuthUser({ emailKey: registrationEmailKey });
+      const recoveryId = createAuthUser({
+        confirmed: true,
+        emailKey: recoveryEmailKey,
+      });
+
+      expect(
+        query(`
+          set role service_role;
+          select auth_user_id, state
+          from identity_api.find_registration_by_email_key('${registrationEmailKey}');
+          select auth_user_id, state
+          from identity_api.find_recovery_by_email_key('${recoveryEmailKey}');
+        `).stdout,
+      ).toBe(
+        `${registrationId}|active_unconfirmed\n${recoveryId}|active_confirmed`,
+      );
+      expect(
+        query(`
+          set role service_role;
+          select count(*)
+          from identity_api.find_registration_by_email_key('${recoveryEmailKey}');
+          select count(*)
+          from identity_api.find_recovery_by_email_key('${registrationEmailKey}');
+        `).stdout,
+      ).toBe("0\n0");
+    });
+
+    it("checks password assurance against the requested bounded age", () => {
+      const id = createAuthUser({ confirmed: true });
+      const sessionId = createAuthSession(id);
+      query(
+        `select identity_api.record_password_assurance('${id}', '${sessionId}');`,
+      );
+
+      expect(
+        query(`
+          set role service_role;
+          select identity_api.password_assurance_is_recent(
+            '${id}', '${sessionId}', 600
+          );
+          reset role;
+          update identity.session_assurance
+          set password_verified_at = transaction_timestamp() - interval '121 seconds'
+          where session_id = '${sessionId}';
+          set role service_role;
+          select identity_api.password_assurance_is_recent(
+            '${id}', '${sessionId}', 120
+          );
+        `).stdout,
+      ).toBe("t\nf");
+    });
+
+    it("updates only the authenticated owner's bounded display-name DTO", () => {
+      const id = createAuthUser({ confirmed: true, displayName: "Ada" });
+      const sessionId = createAuthSession(id);
+      const otherId = createAuthUser({
+        confirmed: true,
+        displayName: "Grace",
+      });
+
+      expect(
+        authenticatedQuery(
+          id,
+          sessionId,
+          "select changed::int, display_name from identity_api.update_display_name('Ada Byron');",
+        ).stdout,
+      ).toBe("1|Ada Byron");
+      expect(
+        query(
+          `select display_name from identity.profiles where auth_user_id = '${id}';`,
+        ).stdout,
+      ).toBe("Ada Byron");
+      expect(
+        query(
+          `select display_name from identity.profiles where auth_user_id = '${otherId}';`,
+        ).stdout,
+      ).toBe("Grace");
+    });
+
+    it.each([" A ", "<b>Ada</b>"])(
+      "rejects invalid display name %j without changing the profile",
+      (displayName) => {
+        const id = createAuthUser({ confirmed: true, displayName: "Ada" });
+        const sessionId = createAuthSession(id);
+
+        expect(
+          authenticatedQuery(
+            id,
+            sessionId,
+            `select * from identity_api.update_display_name('${displayName}');`,
+          ).status,
+        ).not.toBe(0);
+        expect(
+          query(
+            `select display_name from identity.profiles where auth_user_id = '${id}';`,
+          ).stdout,
+        ).toBe("Ada");
+      },
+    );
+
+    it.each([
+      "find_registration_by_email_key(text)",
+      "find_recovery_by_email_key(text)",
+      "password_assurance_is_recent(uuid, uuid, integer)",
+    ])("grants identity_api.%s only to service_role", (signature) => {
+      expect(
+        query(`
+          select has_function_privilege('public', 'identity_api.${signature}', 'execute'),
+            has_function_privilege('anon', 'identity_api.${signature}', 'execute'),
+            has_function_privilege('authenticated', 'identity_api.${signature}', 'execute'),
+            has_function_privilege('service_role', 'identity_api.${signature}', 'execute');
+        `).stdout,
+      ).toBe("f|f|f|t");
+    });
+
+    it("grants owner display-name mutation only to authenticated requests", () => {
+      expect(
+        query(`
+          select has_function_privilege('public', 'identity_api.update_display_name(text)', 'execute'),
+            has_function_privilege('anon', 'identity_api.update_display_name(text)', 'execute'),
+            has_function_privilege('authenticated', 'identity_api.update_display_name(text)', 'execute'),
+            has_function_privilege('service_role', 'identity_api.update_display_name(text)', 'execute');
+        `).stdout,
+      ).toBe("f|f|t|f");
+    });
+
+    it("pins search_path and uses SECURITY DEFINER for composition RPCs", () => {
+      expect(
+        query(`
+          select p.proname, p.prosecdef, p.proconfig = array['search_path=""']
+          from pg_proc as p
+          join pg_namespace as n on n.oid = p.pronamespace
+          where n.nspname = 'identity_api'
+            and p.proname in (
+              'find_recovery_by_email_key',
+              'find_registration_by_email_key',
+              'password_assurance_is_recent',
+              'update_display_name'
+            )
+          order by p.proname;
+        `).stdout,
+      ).toBe(
+        "find_recovery_by_email_key|t|t\n" +
+          "find_registration_by_email_key|t|t\n" +
+          "password_assurance_is_recent|t|t\n" +
+          "update_display_name|t|t",
+      );
+    });
+  });
 });

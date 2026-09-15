@@ -44,9 +44,9 @@ describe("security to identity RPC contract", () => {
     expect(test.calls[0]).toEqual({
       functionName: "consume_rate_limits",
       arguments_: {
-        p_action: "sign_in",
-        p_subject_hash: expect.stringMatching(/^[0-9a-f]{64}$/u),
-        p_ip_hash: expect.stringMatching(/^[0-9a-f]{64}$/u),
+        requested_action: "sign_in",
+        requested_subject_hash: expect.stringMatching(/^[0-9a-f]{64}$/u),
+        requested_ip_hash: expect.stringMatching(/^[0-9a-f]{64}$/u),
       },
     });
   });
@@ -66,8 +66,8 @@ describe("security to identity RPC contract", () => {
     expect(test.calls[1]).toEqual({
       functionName: "append_security_event",
       arguments_: expect.objectContaining({
-        p_event_type: "recovery",
-        p_outcome: "accepted",
+        requested_event_type: "recovery",
+        requested_outcome: "accepted",
       }),
     });
   });

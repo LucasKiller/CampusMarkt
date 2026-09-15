@@ -575,10 +575,10 @@ T21 -> T22 -> T23 -> T24
 
 **Done when**:
 
-- [ ] The stack asks Docker to allocate HTTP and HTTPS test ports without a close-before-bind race.
-- [ ] The harness discovers and validates both Docker-published mappings before public requests.
-- [ ] A clean cold `npm run verify` reaches and passes all stack cases in one invocation.
-- [ ] Full gate passes with zero skipped stack tests and no leaked test resources.
+- [x] The stack asks Docker to allocate HTTP and HTTPS test ports without a close-before-bind race.
+- [x] The harness discovers and validates both Docker-published mappings before public requests.
+- [x] A clean cold `npm run verify` reaches and passes all stack cases in one invocation.
+- [x] Full gate passes with zero skipped stack tests and no leaked test resources.
 
 **Tests**: integration
 **Gate**: full

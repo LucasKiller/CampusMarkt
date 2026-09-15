@@ -1,4 +1,3 @@
-import { createServer } from "node:net";
 import {
   copyFileSync,
   mkdirSync,
@@ -18,6 +17,8 @@ const docker = process.platform === "win32" ? "docker.exe" : "docker";
 const composeFiles = [resolve(repositoryRoot, "compose.yaml")];
 let baseUrl = "";
 let environment: NodeJS.ProcessEnv;
+let httpMapping = "";
+let httpsMapping = "";
 
 function exampleEnvironment(): NodeJS.ProcessEnv {
   const contents = readFileSync(
@@ -33,22 +34,6 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
     });
 
   return { ...process.env, ...Object.fromEntries(entries) };
-}
-
-async function availablePort() {
-  return await new Promise<number>((resolvePort, reject) => {
-    const server = createServer();
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => {
-      const address = server.address();
-      if (!address || typeof address === "string") {
-        server.close();
-        reject(new Error("Could not allocate a stack test port."));
-        return;
-      }
-      server.close(() => resolvePort(address.port));
-    });
-  });
 }
 
 function compose(arguments_: string[], additionalFiles: string[] = []) {
@@ -74,6 +59,29 @@ function compose(arguments_: string[], additionalFiles: string[] = []) {
       maxBuffer: 1024 * 1024,
     },
   );
+}
+
+function publishedMapping(containerPort: number) {
+  const result = compose(["port", "caddy", String(containerPort)]);
+  const mapping = result.stdout.trim().split(/\r?\n/u)[0] ?? "";
+  const port = Number(mapping.slice(mapping.lastIndexOf(":") + 1));
+  if (result.status !== 0 || !mapping || !Number.isInteger(port) || port <= 0) {
+    throw new Error(
+      `Could not discover Docker-published port ${containerPort}: ${result.stderr || result.stdout}`,
+    );
+  }
+  return { mapping, port };
+}
+
+function refreshPublishedMappings() {
+  const http = publishedMapping(80);
+  const https = publishedMapping(443);
+  if (http.port === https.port) {
+    throw new Error("Docker assigned the same host port to HTTP and HTTPS.");
+  }
+  httpMapping = http.mapping;
+  httpsMapping = https.mapping;
+  baseUrl = `http://127.0.0.1:${http.port}`;
 }
 
 function query(sql: string) {
@@ -134,25 +142,24 @@ async function statusOrZero(path: string) {
 }
 
 beforeAll(async () => {
-  const port = await availablePort();
-  baseUrl = `http://127.0.0.1:${port}`;
   environment = {
     ...exampleEnvironment(),
-    CADDY_HTTP_PORT: String(port),
-    CADDY_HTTPS_PORT: String(port + 1),
+    CADDY_HTTP_PORT: "0",
+    CADDY_HTTPS_PORT: "0",
     CADDY_SITE_ADDRESS: "http://127.0.0.1",
     POSTGRES_PASSWORD: "foundation-stack-postgres-password",
-    NEXT_PUBLIC_SUPABASE_URL: baseUrl,
+    NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_foundation_test",
-    SUPABASE_PUBLIC_URL: baseUrl,
-    API_EXTERNAL_URL: `${baseUrl}/auth/v1`,
-    SITE_URL: baseUrl,
+    SUPABASE_PUBLIC_URL: "http://127.0.0.1",
+    API_EXTERNAL_URL: "http://127.0.0.1/auth/v1",
+    SITE_URL: "http://127.0.0.1",
   };
 
   const started = compose(["up", "--detach", "--wait"]);
   if (started.status !== 0) {
     throw new Error(captureStartupDiagnostic(started, compose));
   }
+  refreshPublishedMappings();
 }, 300_000);
 
 afterAll(() => {
@@ -160,6 +167,14 @@ afterAll(() => {
 });
 
 describe("running foundation stack", () => {
+  it("uses Docker-assigned HTTP and HTTPS host ports", () => {
+    expect(environment.CADDY_HTTP_PORT).toBe("0");
+    expect(environment.CADDY_HTTPS_PORT).toBe("0");
+    expect(httpMapping).toMatch(/^127\.0\.0\.1:\d+$/u);
+    expect(httpsMapping).toMatch(/^127\.0\.0\.1:\d+$/u);
+    expect(httpMapping).not.toBe(httpsMapping);
+  });
+
   it("keeps liveness independent from Supabase readiness", async () => {
     const stopped = compose(["stop", "api-gw"]);
     expect(stopped.status, stopped.stderr).toBe(0);
@@ -227,6 +242,7 @@ describe("running foundation stack", () => {
     expect(stopped.status, stopped.stderr).toBe(0);
     const restarted = compose(["start"]);
     expect(restarted.status, restarted.stderr).toBe(0);
+    refreshPublishedMappings();
     await waitForResponse("/health/ready", 200);
 
     expect(

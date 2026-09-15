@@ -5,7 +5,7 @@
 Implement these tasks with the `tlc-spec-driven` skill: activate it by name and follow its Execute flow and Critical Rules. If the skill cannot be activated, stop and tell the user.
 
 **Design:** `.specs/features/001-web-supabase-foundation/design.md`
-**Status:** Verification fixes in progress (iteration 2)
+**Status:** Verification fixes in progress (iteration 3 of 3)
 
 ## Test Coverage Matrix
 
@@ -66,6 +66,12 @@ T17 -> T18 -> T19 -> T20
 
 ```text
 T21 -> T22 -> T23 -> T24
+```
+
+### Phase 6: Final Sensor Repairs
+
+```text
+T25 -> T26
 ```
 
 ## Task Breakdown
@@ -658,10 +664,58 @@ T21 -> T22 -> T23 -> T24
 **Gate**: verify
 **Commit**: `test(config): verify complete s3 signature`
 
+### T25: Exercise CLI timeout and reachability exits
+
+**What**: Add real production-probe CLI subprocess assertions for TLS timeout and unreachable SMTP, including bounded redacted failures.
+**Where**: `tests/integration/config/`
+**Depends on**: T24
+**Reuses**: Existing hanging TLS fixture, unreachable SMTP fixture, and CLI runner
+**Requirement**: FOUND-04
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] TLS timeout through the real CLI exits non-zero within the configured bound and returns `ok: false`.
+- [ ] Unreachable SMTP through the real CLI exits non-zero within the configured bound and returns `ok: false`.
+- [ ] Both diagnostics name the failing dependency without leaking generated credentials or hosts.
+- [ ] Full gate kills selective mutations that preserve exit zero for either failure class.
+
+**Tests**: integration
+**Gate**: full
+**Commit**: `test(config): cover cli reachability failures`
+
+### T26: Exercise unreachable and hanging S3 exits
+
+**What**: Add real S3 unreachable and bounded-timeout fixtures with aggregate and CLI exit assertions.
+**Where**: `tests/integration/config/`
+**Depends on**: T25
+**Reuses**: Verified SigV4 fixture and production-probe CLI runner
+**Requirement**: FOUND-04
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`, `supabase`
+
+**Done when**:
+
+- [ ] Unreachable S3 produces `ok: false`, non-zero CLI exit, and a redacted reachability diagnostic.
+- [ ] A hanging S3 endpoint times out within the configured bound with `ok: false` and non-zero CLI exit.
+- [ ] A scratch mutation that accepts unreachable S3 is killed by the focused integration suite.
+- [ ] Verify gate passes once from a clean state with no skips and all sensor gaps closed.
+
+**Tests**: integration
+**Gate**: verify
+**Commit**: `test(config): cover s3 reachability failures`
+
 ## Phase Execution Map
 
 ```text
-Phase 1 -> Phase 2 -> Phase 3 -> Phase 4 -> Phase 5
+Phase 1 -> Phase 2 -> Phase 3 -> Phase 4 -> Phase 5 -> Phase 6
 
 Phase 1: T1 -> T2 -> T3 -> T4 -> T5 -> T6 -> T7
 Phase 2: T8 -> T9 -> T10 -> T11 -> T12
@@ -671,6 +725,8 @@ Cross-phase: T16 -> T17
 Phase 4: T17 -> T18 -> T19 -> T20
 Cross-phase: T20 -> T21
 Phase 5: T21 -> T22 -> T23 -> T24
+Cross-phase: T24 -> T25
+Phase 6: T25 -> T26
 ```
 
 ## Task Granularity Check
@@ -701,6 +757,8 @@ Phase 5: T21 -> T22 -> T23 -> T24
 | T22 | One readiness dependency repair | Granular |
 | T23 | One production probe exit contract | Granular |
 | T24 | One S3 signature verification fixture | Granular |
+| T25 | One CLI timeout/reachability coverage repair | Granular |
+| T26 | One S3 reachability/timeout coverage repair | Granular |
 
 ## Diagram-Definition Cross-Check
 
@@ -730,6 +788,8 @@ Phase 5: T21 -> T22 -> T23 -> T24
 | T22 | T21 | T21 -> T22 | Match |
 | T23 | T22 | T22 -> T23 | Match |
 | T24 | T23 | T23 -> T24 | Match |
+| T25 | T24 | T24 -> T25 | Match |
+| T26 | T25 | T25 -> T26 | Match |
 
 ## Test Co-location Validation
 
@@ -759,3 +819,5 @@ Phase 5: T21 -> T22 -> T23 -> T24
 | T22 | Next.js readiness and running stack | e2e/integration | integration | OK |
 | T23 | Environment tooling | integration | integration | OK |
 | T24 | Environment tooling | integration | integration | OK |
+| T25 | Environment tooling | integration | integration | OK |
+| T26 | Environment tooling | integration | integration | OK |

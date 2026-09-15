@@ -62,6 +62,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: apps/web/src/modules/foundation/readiness.ts:13-27 (health-readiness)
 - last seen: 2026-09-15T00:57:55Z
 
+### L-009 - Execute the real readiness CLI for every negative dependency class because object-level tests do not prove process exit behavior.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `production-readiness` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: validation.md sensor M14-M15 (production-readiness)
+- last seen: 2026-09-15T02:16:47Z
+
+### L-010 - Every external dependency probe needs an unreachable or timeout fixture in addition to an authentication failure fixture.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `production-readiness` · harmful: 0
+- features: 001-web-supabase-foundation
+- evidence: validation.md sensor M16 (production-readiness)
+- last seen: 2026-09-15T02:16:48Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

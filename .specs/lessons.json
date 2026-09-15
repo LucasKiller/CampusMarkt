@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 9,
+  "next_id": 11,
   "lessons": [
     {
       "id": "L-001",
@@ -148,6 +148,42 @@
       ],
       "created": "2026-09-15T00:57:55Z",
       "last_seen": "2026-09-15T00:57:55Z"
+    },
+    {
+      "id": "L-009",
+      "key": "surviving_mutant::execute the real readiness cli for every negative dependency class because object level tests do not prove process exit behavior",
+      "text": "Execute the real readiness CLI for every negative dependency class because object-level tests do not prove process exit behavior.",
+      "signal": "surviving_mutant",
+      "scope": "production-readiness",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md sensor M14-M15 (production-readiness)"
+      ],
+      "created": "2026-09-15T02:16:47Z",
+      "last_seen": "2026-09-15T02:16:47Z"
+    },
+    {
+      "id": "L-010",
+      "key": "surviving_mutant::every external dependency probe needs an unreachable or timeout fixture in addition to an authentication failure fixture",
+      "text": "Every external dependency probe needs an unreachable or timeout fixture in addition to an authentication failure fixture.",
+      "signal": "surviving_mutant",
+      "scope": "production-readiness",
+      "status": "candidate",
+      "features": [
+        "001-web-supabase-foundation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md sensor M16 (production-readiness)"
+      ],
+      "created": "2026-09-15T02:16:48Z",
+      "last_seen": "2026-09-15T02:16:48Z"
     }
   ]
 }

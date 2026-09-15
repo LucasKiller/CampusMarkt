@@ -127,10 +127,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Email/password/name bounds, Unicode NFC, whitespace, control-character, markup, consent, and unknown-field cases match the spec.
-- [ ] Password values never appear in validation errors or serialized fixtures.
-- [ ] At least 20 new boundary/invalid/property unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Email/password/name bounds, Unicode NFC, whitespace, control-character, markup, consent, and unknown-field cases match the spec.
+- [x] Password values never appear in validation errors or serialized fixtures.
+- [x] At least 20 new boundary/invalid/property unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

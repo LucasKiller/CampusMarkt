@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -30,6 +30,12 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
 }
 
 const environment = exampleEnvironment();
+const migrationCount = readdirSync(
+  resolve(repositoryRoot, "supabase/migrations"),
+  {
+    withFileTypes: true,
+  },
+).filter((entry) => entry.isFile() && entry.name.endsWith(".sql")).length;
 const composePrefix = [
   "compose",
   "--project-name",
@@ -121,7 +127,7 @@ describe("private-by-default migration baseline", () => {
     ).toBe("foundation_canary");
     expect(
       query("select count(*) from app_migrations.schema_migrations;").stdout,
-    ).toBe("1");
+    ).toBe(String(migrationCount));
   });
 
   it("does not apply the same migration twice", () => {
@@ -129,7 +135,7 @@ describe("private-by-default migration baseline", () => {
     expect(migration.status, migration.stderr).toBe(0);
     expect(
       query("select count(*) from app_migrations.schema_migrations;").stdout,
-    ).toBe("1");
+    ).toBe(String(migrationCount));
   });
 
   it("enables RLS on the canary without adding a policy", () => {

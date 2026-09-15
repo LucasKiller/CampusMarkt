@@ -4,3 +4,7 @@ services:
     ports:
       - target: 5432
         host_ip: 127.0.0.1
+
+networks:
+  default:
+    name: !reset null

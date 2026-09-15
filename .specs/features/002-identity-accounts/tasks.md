@@ -275,11 +275,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Auth insert atomically creates exactly one constrained account/profile/consent set and no invalid partial identity.
-- [ ] Public RPC returns only four approved fields for confirmed active profiles; other states are identical not-found.
-- [ ] Base tables deny anon/authenticated direct access and all foreign-key/RLS lookup columns are indexed.
-- [ ] At least 20 new DB tests pass with no baseline deletion.
-- [ ] Database gate passes and its Compose project is stopped in teardown.
+- [x] Auth insert atomically creates exactly one constrained account/profile/consent set and no invalid partial identity.
+- [x] Public RPC returns only four approved fields for confirmed active profiles; other states are identical not-found.
+- [x] Base tables deny anon/authenticated direct access and all foreign-key/RLS lookup columns are indexed.
+- [x] At least 20 new DB tests pass with no baseline deletion.
+- [x] Database gate passes and its Compose project is stopped in teardown.
 
 **Tests**: database integration
 **Gate**: Database

@@ -1,4 +1,11 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { randomBytes } from "node:crypto";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -10,6 +17,7 @@ import {
 } from "./scan-secrets.ts";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
+const scannerCli = resolve(import.meta.dirname, "scan-secrets.ts");
 
 function entry(contents: string, path = "fixture.env") {
   return { path, contents };
@@ -112,6 +120,57 @@ describe("tracked-file secret scanning", () => {
       rmSync(scratch, { recursive: true, force: true });
     }
 
+    expect(
+      spawnSync("git", ["status", "--porcelain=v1"], {
+        cwd: repositoryRoot,
+        encoding: "utf8",
+      }).stdout,
+    ).toBe(before);
+  });
+
+  it("makes the tracked-file CLI fail with a redacted isolated Git finding", () => {
+    const before = spawnSync("git", ["status", "--porcelain=v1"], {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+    }).stdout;
+    const scratch = mkdtempSync(resolve(tmpdir(), "campusmarkt-secret-cli-"));
+    const fixture = ".env.production";
+    const credential = randomBytes(24).toString("hex");
+
+    try {
+      const initialized = spawnSync("git", ["init", "--quiet"], {
+        cwd: scratch,
+        encoding: "utf8",
+      });
+      expect(initialized.status, initialized.stderr).toBe(0);
+      writeFileSync(resolve(scratch, fixture), `SMTP_PASS=${credential}\n`);
+      const tracked = spawnSync("git", ["add", "--", fixture], {
+        cwd: scratch,
+        encoding: "utf8",
+      });
+      expect(tracked.status, tracked.stderr).toBe(0);
+      expect(
+        spawnSync("git", ["ls-files"], {
+          cwd: scratch,
+          encoding: "utf8",
+        }).stdout.trim(),
+      ).toBe(fixture);
+
+      const result = spawnSync(
+        process.execPath,
+        ["--experimental-strip-types", scannerCli],
+        { cwd: scratch, encoding: "utf8" },
+      );
+
+      expect(result.status).not.toBe(0);
+      expect(result.stderr).toContain(`${fixture}: smtp-password`);
+      expect(result.stderr).not.toContain(credential);
+      expect(result.stdout).toBe("");
+    } finally {
+      rmSync(scratch, { recursive: true, force: true });
+    }
+
+    expect(existsSync(scratch)).toBe(false);
     expect(
       spawnSync("git", ["status", "--porcelain=v1"], {
         cwd: repositoryRoot,

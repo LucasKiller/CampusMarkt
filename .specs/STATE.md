@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 4 / T20 - tracked-secret CLI negative path
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19
+- **Phase / Task**: Phase 4 complete / independent revalidation pending
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20
 - **In-progress** (file:line): none
-- **Next step**: Implement T20 isolated tracked-secret CLI coverage, run the final verify gate, and commit it atomically.
+- **Next step**: Run a fresh independent verifier against the Phase 4 repairs and update `validation.md` with its evidence-only result.
 - **Blockers**: none
-- **Uncommitted files**: none after the T19 commit
+- **Uncommitted files**: none after the T20 commit
 - **Branch**: main

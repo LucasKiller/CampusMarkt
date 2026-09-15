@@ -544,11 +544,11 @@ T17 -> T18 -> T19 -> T20
 
 **Done when**:
 
-- [ ] A temporary Git repository tracks an environment file containing a generated forbidden credential.
-- [ ] The same scanner CLI used by the root gate exits non-zero and names the file and detection rule.
-- [ ] Output does not contain the generated credential value.
-- [ ] Scratch files are removed and the real repository remains unchanged.
-- [ ] Verify gate passes with no skips and all security tests retained.
+- [x] A temporary Git repository tracks an environment file containing a generated forbidden credential.
+- [x] The same scanner CLI used by the root gate exits non-zero and names the file and detection rule.
+- [x] Output does not contain the generated credential value.
+- [x] Scratch files are removed and the real repository remains unchanged.
+- [x] Verify gate passes with no skips and all security tests retained.
 
 **Tests**: unit
 **Gate**: verify

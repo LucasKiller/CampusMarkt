@@ -599,10 +599,10 @@ T21 -> T22 -> T23 -> T24
 
 **Done when**:
 
-- [ ] Readiness probes both Auth and Storage with bounded requests.
-- [ ] An unavailable service appears by its stable service identity without exposing internal credentials.
-- [ ] Public readiness returns 503 while Storage is stopped or unhealthy and returns 200 after recovery.
-- [ ] Full gate passes with exact Auth and Storage failure/recovery assertions.
+- [x] Readiness probes both Auth and Storage with bounded requests.
+- [x] An unavailable service appears by its stable service identity without exposing internal credentials.
+- [x] Public readiness returns 503 while Storage is stopped or unhealthy and returns 200 after recovery.
+- [x] Full gate passes with exact Auth and Storage failure/recovery assertions.
 
 **Tests**: integration
 **Gate**: full

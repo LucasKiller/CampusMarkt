@@ -155,7 +155,7 @@ beforeAll(async () => {
     SITE_URL: "http://127.0.0.1",
   };
 
-  const started = compose(["up", "--detach", "--wait"]);
+  const started = compose(["up", "--detach", "--wait", "--build"]);
   if (started.status !== 0) {
     throw new Error(captureStartupDiagnostic(started, compose));
   }
@@ -175,8 +175,8 @@ describe("running foundation stack", () => {
     expect(httpMapping).not.toBe(httpsMapping);
   });
 
-  it("keeps liveness independent from Supabase readiness", async () => {
-    const stopped = compose(["stop", "api-gw"]);
+  it("keeps liveness independent from Auth readiness", async () => {
+    const stopped = compose(["stop", "auth"]);
     expect(stopped.status, stopped.stderr).toBe(0);
 
     try {
@@ -186,10 +186,27 @@ describe("running foundation stack", () => {
       expect(await live.json()).toEqual({ status: "live" });
       expect(await ready.json()).toEqual({
         status: "not_ready",
-        unavailable: ["supabase"],
+        unavailable: ["auth"],
       });
     } finally {
-      const restarted = compose(["start", "api-gw"]);
+      const restarted = compose(["start", "auth"]);
+      expect(restarted.status, restarted.stderr).toBe(0);
+      await waitForResponse("/health/ready", 200);
+    }
+  });
+
+  it("reports Storage unavailability and recovers public readiness", async () => {
+    const stopped = compose(["stop", "storage"]);
+    expect(stopped.status, stopped.stderr).toBe(0);
+
+    try {
+      const ready = await waitForResponse("/health/ready", 503);
+      expect(await ready.json()).toEqual({
+        status: "not_ready",
+        unavailable: ["storage"],
+      });
+    } finally {
+      const restarted = compose(["start", "storage"]);
       expect(restarted.status, restarted.stderr).toBe(0);
       await waitForResponse("/health/ready", 200);
     }

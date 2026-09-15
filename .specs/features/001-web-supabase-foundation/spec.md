@@ -131,7 +131,7 @@ CampusMarkt has product rules but no executable application foundation. The firs
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| FOUND-01 | P1: Reproducible full-stack startup | Execute | Partially repaired (T21 complete; T22 pending) |
+| FOUND-01 | P1: Reproducible full-stack startup | Execute | Repaired (T21-T22; verification pending) |
 | FOUND-02 | P1: Typed modular application foundation | Execute | Repaired (T21; verification pending) |
 | FOUND-03 | P1: Safe Supabase baseline | Verify | Repaired; verification pending |
 | FOUND-04 | P1: Production operations contract | Verify | Needs Fix (T23-T24) |

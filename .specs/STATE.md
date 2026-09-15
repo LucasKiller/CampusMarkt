@@ -53,10 +53,10 @@
 ## Handoff
 
 - **Feature**: 001-web-supabase-foundation / `.specs/features/001-web-supabase-foundation/`
-- **Phase / Task**: Phase 5 / T22
-- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21
-- **In-progress** (file:line): T22 / `apps/web/src/modules/foundation/readiness.ts`
-- **Next step**: Implement T22 by requiring separately named Auth and Storage readiness with public failure/recovery coverage.
+- **Phase / Task**: Phase 5 / T23
+- **Completed**: T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22
+- **In-progress** (file:line): T23 / `tests/integration/config/production-probes.test.ts`
+- **Next step**: Implement T23 by enforcing aggregate failure classification and the production probe CLI exit contract.
 - **Blockers**: none
-- **Uncommitted files**: none after the T21 commit
+- **Uncommitted files**: none after the T22 commit
 - **Branch**: main

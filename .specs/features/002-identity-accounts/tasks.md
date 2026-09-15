@@ -223,12 +223,12 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Lockfile pins compatible dependencies and the Node 24 production build resolves native image processing.
-- [ ] Root unit/integration scripts include the new web identity and identity-integration test locations so later gates cannot silently skip them.
-- [ ] Internal URL, service key, HMAC pepper, action origin, policy versions, SMTP, worker, and 30-day timebox are validated/redacted.
-- [ ] Production rejects placeholders, weak/missing secrets, non-HTTPS or mismatched origins, and timeboxes above 30 days.
-- [ ] At least 16 new config/workspace tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Lockfile pins compatible dependencies and the Node 24 production build resolves native image processing.
+- [x] Root unit/integration scripts include the new web identity and identity-integration test locations so later gates cannot silently skip them.
+- [x] Internal URL, service key, HMAC pepper, action origin, policy versions, SMTP, worker, and 30-day timebox are validated/redacted.
+- [x] Production rejects placeholders, weak/missing secrets, non-HTTPS or mismatched origins, and timeboxes above 30 days.
+- [x] At least 16 new config/workspace tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

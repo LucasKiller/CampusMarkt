@@ -2,6 +2,8 @@ import { availableParallelism, totalmem } from "node:os";
 import { statfsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
+import { validateIdentityEnvironment } from "./identity/environment.ts";
+
 export type DeploymentMode = "local" | "production";
 export type DeploymentEnvironment = Record<string, string | undefined>;
 
@@ -69,6 +71,8 @@ const SERVER_SECRET_VARIABLES = [
   "SUPABASE_SECRET_KEY",
   "SMTP_PASS",
   "AWS_SECRET_ACCESS_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "IDENTITY_HASH_PEPPER",
 ] as const;
 
 function hasValue(environment: DeploymentEnvironment, name: string) {
@@ -142,6 +146,10 @@ export function validateDeployment(input: {
   }
 
   validateBrowserSeparation(input.environment, errors);
+
+  errors.push(
+    ...validateIdentityEnvironment(input.mode, input.environment).errors,
+  );
 
   if (input.mode === "production") {
     for (const name of PRODUCTION_REQUIRED) {

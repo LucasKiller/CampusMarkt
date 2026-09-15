@@ -17,7 +17,7 @@ describe("validation public boundary", () => {
     expect(isValidationBoundary(null)).toBe(false);
   });
 
-  it("exports one public entry point without runtime dependencies", () => {
+  it("exports one public entry point with only the pinned schema dependency", () => {
     const manifest = JSON.parse(
       readFileSync(resolve(import.meta.dirname, "../package.json"), "utf8"),
     ) as {
@@ -26,6 +26,6 @@ describe("validation public boundary", () => {
     };
 
     expect(manifest.exports).toEqual({ ".": "./src/index.ts" });
-    expect(manifest.dependencies).toBeUndefined();
+    expect(manifest.dependencies).toEqual({ zod: "4.6.5" });
   });
 });

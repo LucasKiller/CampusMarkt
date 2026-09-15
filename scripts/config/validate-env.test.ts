@@ -13,6 +13,16 @@ const generatedLocalEnvironment: DeploymentEnvironment = {
   SUPABASE_PUBLISHABLE_KEY: "sb_publishable_generated_local",
   NEXT_PUBLIC_SUPABASE_URL: "http://localhost:8080",
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_generated_local",
+  SUPABASE_INTERNAL_URL: "http://api-gw:8000",
+  SUPABASE_SERVICE_ROLE_KEY: "role-key-with-at-least-thirty-two-characters",
+  IDENTITY_HASH_PEPPER: "pepper-with-at-least-thirty-two-characters",
+  IDENTITY_ACTION_BASE_URL: "http://localhost:3000",
+  SITE_URL: "http://localhost:3000",
+  CURRENT_TERMS_VERSION: "terms-2026-09",
+  CURRENT_PRIVACY_VERSION: "privacy-2026-09",
+  IDENTITY_WORKER_ID: "identity-worker-local",
+  IDENTITY_WORKER_BATCH_SIZE: "25",
+  GOTRUE_SESSIONS_TIMEBOX: "720h",
 };
 
 const productionEnvironment: DeploymentEnvironment = {
@@ -21,6 +31,7 @@ const productionEnvironment: DeploymentEnvironment = {
   SUPABASE_PUBLIC_URL: "https://markt.example.edu",
   API_EXTERNAL_URL: "https://markt.example.edu/auth/v1",
   SITE_URL: "https://markt.example.edu",
+  IDENTITY_ACTION_BASE_URL: "https://markt.example.edu",
   CADDY_SITE_ADDRESS: "markt.example.edu",
   SMTP_ADMIN_EMAIL: "operator@example.edu",
   SMTP_HOST: "smtp.example.edu",

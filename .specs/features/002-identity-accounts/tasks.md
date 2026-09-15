@@ -552,11 +552,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Raw email/IP never persist and spoofed forwarding headers cannot select a different trusted IP.
-- [ ] Denial returns the longest retry and proves Auth/SMTP/account callbacks were not invoked.
-- [ ] Audit accepts allowlisted values only and redacts passwords, tokens, full emails, keys, images, and provider text.
-- [ ] At least 18 new application unit tests pass with no baseline deletion.
-- [ ] Quick gate passes.
+- [x] Raw email/IP never persist and spoofed forwarding headers cannot select a different trusted IP.
+- [x] Denial returns the longest retry and proves Auth/SMTP/account callbacks were not invoked.
+- [x] Audit accepts allowlisted values only and redacts passwords, tokens, full emails, keys, images, and provider text.
+- [x] At least 18 new application unit tests pass with no baseline deletion.
+- [x] Quick gate passes.
 
 **Tests**: unit
 **Gate**: Quick

@@ -13,5 +13,8 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120_000,
     url: "http://127.0.0.1:3100",
+    env: {
+      E2E_TEST: "true",
+    },
   },
 });

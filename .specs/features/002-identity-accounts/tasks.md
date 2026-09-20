@@ -702,10 +702,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Valid/invalid/unconfirmed/deleting/rate-limited sign-in and redirect attacks have exact HTTP coverage.
-- [ ] Cookie flags, restart persistence, current logout, all logout, and next-request revocation are browser/integration tested in separate contexts.
-- [ ] At least 18 new route integration tests and 6 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Valid/invalid/unconfirmed/deleting/rate-limited sign-in and redirect attacks have exact HTTP coverage.
+- [x] Cookie flags, restart persistence, current logout, all logout, and next-request revocation are browser/integration tested in separate contexts.
+- [x] At least 18 new route integration tests and 6 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

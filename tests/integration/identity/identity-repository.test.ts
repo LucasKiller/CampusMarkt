@@ -469,6 +469,36 @@ describe("identity RPC repository", () => {
     ]);
   });
 
+  it("calls pruning RPCs through the service client", async () => {
+    const test = repository(5);
+
+    await expect(test.repository.pruneExpiredActionTokens()).resolves.toEqual({
+      ok: true,
+      value: 5,
+    });
+    await expect(
+      test.repository.pruneExpiredRateLimitBuckets(),
+    ).resolves.toEqual({
+      ok: true,
+      value: 5,
+    });
+    await expect(test.repository.pruneStaleSessionAssurance()).resolves.toEqual(
+      {
+        ok: true,
+        value: 5,
+      },
+    );
+
+    expect(test.service.calls).toEqual([
+      { functionName: "prune_expired_action_tokens", arguments_: undefined },
+      {
+        functionName: "prune_expired_rate_limit_buckets",
+        arguments_: undefined,
+      },
+      { functionName: "prune_stale_session_assurance", arguments_: undefined },
+    ]);
+  });
+
   it("maps provider failures to one stable result without leaking details", async () => {
     const test = repository(null, {
       message: "SQL included private@example.test and secret-key",

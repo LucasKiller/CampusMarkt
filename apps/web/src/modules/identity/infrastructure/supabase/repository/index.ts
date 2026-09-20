@@ -404,6 +404,14 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
       return call(service, "prune_expired_action_tokens");
     },
 
+    pruneExpiredRateLimitBuckets() {
+      return call(service, "prune_expired_rate_limit_buckets");
+    },
+
+    pruneStaleSessionAssurance() {
+      return call(service, "prune_stale_session_assurance");
+    },
+
     appendSecurityEvent(event: SecurityEvent) {
       return call(service, "append_security_event", {
         requested_auth_user_id: event.authUserId,

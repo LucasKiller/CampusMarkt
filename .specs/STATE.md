@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 4 complete (T23-T30), Phase 5 pending (T31)
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T30 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 5 in progress (T31 complete, T32 pending)
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T30, Phase 5 T31 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute Phase 5 T31 to implement identity cleanup and reconciliation worker.
+- **Next step**: Execute Phase 5 T32 to wire identity Auth, SMTP, worker, and environment in Compose.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

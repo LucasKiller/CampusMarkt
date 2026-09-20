@@ -851,11 +851,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Claims commit before external calls; retries use capped jittered backoff and lease recovery without duplicate visible state.
-- [ ] Deletion removes Storage first and Auth last; absence is success; feature-owned rows disappear without touching future data.
-- [ ] Diagnostics/exit codes expose backlog/deadline/service names but no subject, token, email, IP, key, or provider details.
-- [ ] At least 20 new operations integration tests pass with no baseline deletion.
-- [ ] Operations gate passes and every Compose project/process is stopped.
+- [x] Claims commit before external calls; retries use capped jittered backoff and lease recovery without duplicate visible state.
+- [x] Deletion removes Storage first and Auth last; absence is success; feature-owned rows disappear without touching future data.
+- [x] Diagnostics/exit codes expose backlog/deadline/service names but no subject, token, email, IP, key, or provider details.
+- [x] At least 20 new operations integration tests pass with no baseline deletion.
+- [x] Operations gate passes and every Compose project/process is stopped.
 
 **Tests**: operations integration
 **Gate**: Operations

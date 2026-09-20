@@ -973,11 +973,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Commands are executable/verified and state that no VPS/deploy/account action occurs without separate authorization.
-- [ ] Preflight fails on unsafe Auth/SMTP/action-origin/worker/deadline settings and prints names/codes only.
-- [ ] Legal-review and future-feature deletion-participant launch blockers remain explicit.
-- [ ] At least 14 new operations/docs/config tests pass with no baseline deletion.
-- [ ] Full gate passes, test counts are recorded, and all servers/Compose projects are stopped.
+- [x] Commands are executable/verified and state that no VPS/deploy/account action occurs without separate authorization.
+- [x] Preflight fails on unsafe Auth/SMTP/action-origin/worker/deadline settings and prints names/codes only.
+- [x] Legal-review and future-feature deletion-participant launch blockers remain explicit.
+- [x] At least 14 new operations/docs/config tests pass with no baseline deletion.
+- [x] Full gate passes, test counts are recorded, and all servers/Compose projects are stopped.
 
 **Tests**: operations integration
 **Gate**: Full

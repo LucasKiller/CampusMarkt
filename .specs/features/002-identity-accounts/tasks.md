@@ -726,10 +726,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Existing/absent/deleting emails have indistinguishable accepted responses and delivery/token failures leak nothing.
-- [ ] Valid, expired, malformed, reused, wrong-purpose, boundary-time, provider-failure, and concurrent resets have exact coverage.
-- [ ] At least 16 new route integration tests and 5 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Existing/absent/deleting emails have indistinguishable accepted responses and delivery/token failures leak nothing.
+- [x] Valid, expired, malformed, reused, wrong-purpose, boundary-time, provider-failure, and concurrent resets have exact coverage.
+- [x] At least 16 new route integration tests and 5 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

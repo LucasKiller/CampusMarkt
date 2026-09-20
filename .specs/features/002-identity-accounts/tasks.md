@@ -876,10 +876,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Rendered local/production Compose carries exact session/email/secret/worker settings without exposing internal ports or secret values.
-- [ ] Local mail capture is test-only; production requires TLS SMTP and strong secrets; worker is bounded and not a persistent web dependency.
-- [ ] At least 16 new compose/config tests pass with no baseline deletion.
-- [ ] Stack gate passes and the stack is stopped afterward.
+- [x] Rendered local/production Compose carries exact session/email/secret/worker settings without exposing internal ports or secret values.
+- [x] Local mail capture is test-only; production requires TLS SMTP and strong secrets; worker is bounded and not a persistent web dependency.
+- [x] At least 16 new compose/config tests pass with no baseline deletion.
+- [x] Stack gate passes and the stack is stopped afterward.
 
 **Tests**: integration + stack
 **Gate**: Stack

@@ -1,0 +1,62 @@
+services:
+  auth:
+    environment:
+      GOTRUE_SESSIONS_TIMEBOX: ${GOTRUE_SESSIONS_TIMEBOX:-720h}
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "false"
+      GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
+      GOTRUE_SMS_AUTOCONFIRM: "false"
+
+  web:
+    environment:
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY:?SERVICE_ROLE_KEY is required}
+      IDENTITY_HASH_PEPPER: ${IDENTITY_HASH_PEPPER:?IDENTITY_HASH_PEPPER is required}
+      IDENTITY_ACTION_BASE_URL: ${IDENTITY_ACTION_BASE_URL:-http://localhost:3000}
+      CURRENT_TERMS_VERSION: ${CURRENT_TERMS_VERSION:-2026-09-15}
+      CURRENT_PRIVACY_VERSION: ${CURRENT_PRIVACY_VERSION:-2026-09-15}
+      SMTP_HOST: ${SMTP_HOST:-mail}
+      SMTP_PORT: ${SMTP_PORT:-2500}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-admin@campusmarkt.local}
+      SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-CampusMarkt}
+      SMTP_TLS_MODE: ${SMTP_TLS_MODE:-none}
+
+  mail:
+    image: inbucket/inbucket:3.0.3
+    profiles: ["local", "test"]
+    restart: unless-stopped
+    expose:
+      - "2500"
+      - "9000"
+    networks:
+      default:
+        aliases:
+          - mail
+          - supabase-mail
+
+  identity-worker:
+    image: node:24.11.0-alpine3.22
+    restart: "no"
+    profiles: ["operations"]
+    depends_on:
+      api-gw:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - ../../../:/app:ro
+    working_dir: /app
+    environment:
+      SUPABASE_INTERNAL_URL: http://api-gw:8000
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY:?SERVICE_ROLE_KEY is required}
+      IDENTITY_WORKER_ID: ${IDENTITY_WORKER_ID:-compose-worker}
+      IDENTITY_WORKER_BATCH_SIZE: ${IDENTITY_WORKER_BATCH_SIZE:-25}
+      GOTRUE_SESSIONS_TIMEBOX: ${GOTRUE_SESSIONS_TIMEBOX:-720h}
+    entrypoint:
+      [
+        "node",
+        "--experimental-strip-types",
+        "scripts/identity/worker.ts",
+        "--once",
+      ]

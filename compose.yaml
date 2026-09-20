@@ -26,6 +26,7 @@ include:
   - path:
       - ./infra/supabase/docker-compose.yml
       - ./infra/compose/supabase.override.yaml
+      - ./infra/compose/identity/compose.yaml
 
 services:
   caddy:

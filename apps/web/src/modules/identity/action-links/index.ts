@@ -19,6 +19,10 @@ type ActionTokenRepository = {
     purpose: Purpose;
     tokenHash: string;
   }): Promise<PortResult>;
+  consumeActionToken?(input: {
+    purpose: Purpose;
+    tokenHash: string;
+  }): Promise<PortResult>;
 };
 
 type Mail = {
@@ -171,6 +175,35 @@ export function createActionLinkService({
         },
         headers: { "Referrer-Policy": "no-referrer" } as const,
       };
+    },
+
+    async consume(input: { purpose: Purpose; rawToken: string }) {
+      if (!repository.consumeActionToken) {
+        return { status: "unavailable" as const };
+      }
+      try {
+        const hash = await tokenHash(input.rawToken);
+        const result = await repository.consumeActionToken({
+          purpose: input.purpose,
+          tokenHash: hash,
+        });
+        if (!result.ok) return { status: "unavailable" as const };
+        if (
+          result.value &&
+          typeof result.value === "object" &&
+          "auth_user_id" in result.value &&
+          typeof (result.value as { auth_user_id: unknown }).auth_user_id ===
+            "string"
+        ) {
+          return {
+            status: "consumed" as const,
+            authUserId: (result.value as { auth_user_id: string }).auth_user_id,
+          };
+        }
+        return { status: "invalid_link" as const };
+      } catch {
+        return { status: "invalid_link" as const };
+      }
     },
   };
 }

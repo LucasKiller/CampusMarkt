@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-import { IdentityApiClientError, createIdentityApiClient } from "./index.js";
+import { IdentityApiClientError, createIdentityApiClient } from "./index.ts";
 
 const CORRELATION_ID = "018f47a0-1234-7abc-8def-0123456789ab";
 const PUBLIC_ID = "018f47a0-1234-7abc-8def-0123456789ab";

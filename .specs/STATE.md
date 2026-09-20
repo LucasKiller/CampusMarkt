@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 4 T24 pending
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, and Phase 4 T23 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 4 T24 complete, T25 pending
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T24 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute T24 to deliver the registration and confirmation journey.
+- **Next step**: Execute T25 to deliver sign-in and logout journeys.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

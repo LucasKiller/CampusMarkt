@@ -8,5 +8,5 @@ export function isValidationBoundary(
   return value === VALIDATION_BOUNDARY;
 }
 
-export * from "./identity/account/index.js";
-export * from "./identity/security/index.js";
+export * from "./identity/account/index.ts";
+export * from "./identity/security/index.ts";

@@ -678,10 +678,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] All registration/resend/confirmation endpoint outcomes, 429 behavior, generic responses, and token staging are integration-tested.
-- [ ] Form supports paste/password managers, current consent/18+ controls, focusable field/error summary, pending dedupe, and never repopulates passwords.
-- [ ] At least 16 new route integration tests and 5 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] All registration/resend/confirmation endpoint outcomes, 429 behavior, generic responses, and token staging are integration-tested.
+- [x] Form supports paste/password managers, current consent/18+ controls, focusable field/error summary, pending dedupe, and never repopulates passwords.
+- [x] At least 16 new route integration tests and 5 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

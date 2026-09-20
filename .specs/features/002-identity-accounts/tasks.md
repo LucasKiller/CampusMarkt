@@ -924,11 +924,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Captured mail drives real confirmation/recovery at exact expiry/reuse bounds without exposing raw tokens in diagnostics.
-- [ ] Multiple sessions, restart persistence, current/all logout, reset/deletion revocation, repair, avatar races, and idempotent purge pass.
-- [ ] SMTP/Auth/Storage outages yield bounded failures and recovery without false completion.
-- [ ] At least 24 new real-stack tests pass with no baseline deletion.
-- [ ] Stack gate passes and teardown removes the isolated project/processes.
+- [x] Captured mail drives real confirmation/recovery at exact expiry/reuse bounds without exposing raw tokens in diagnostics.
+- [x] Multiple sessions, restart persistence, current/all logout, reset/deletion revocation, repair, avatar races, and idempotent purge pass.
+- [x] SMTP/Auth/Storage outages yield bounded failures and recovery without false completion.
+- [x] At least 24 new real-stack tests pass with no baseline deletion.
+- [x] Stack gate passes and teardown removes the isolated project/processes.
 
 **Tests**: stack integration
 **Gate**: Stack

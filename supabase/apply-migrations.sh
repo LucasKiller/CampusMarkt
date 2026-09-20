@@ -37,3 +37,6 @@ for migration in "$migrations_directory"/*.sql; do
       --command "insert into app_migrations.schema_migrations (version) values ('$version');"
   fi
 done
+
+psql -X --command "NOTIFY pgrst, 'reload schema';" || true
+

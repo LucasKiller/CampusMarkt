@@ -74,6 +74,38 @@ export function createAdminSupabaseClient(
   });
 }
 
+export function createAnonSupabaseClient(
+  environment: SupabaseEnvironment = process.env,
+) {
+  const internalUrl = required(environment, "SUPABASE_INTERNAL_URL");
+  const publishableKey = required(environment, "SUPABASE_PUBLISHABLE_KEY");
+
+  return createClient(internalUrl, publishableKey, {
+    auth: {
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      persistSession: false,
+    },
+  });
+}
+
+export function createUserTokenSupabaseClient(
+  token: string,
+  environment: SupabaseEnvironment = process.env,
+) {
+  const internalUrl = required(environment, "SUPABASE_INTERNAL_URL");
+  const publishableKey = required(environment, "SUPABASE_PUBLISHABLE_KEY");
+
+  return createClient(internalUrl, publishableKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+}
+
 export {
   AUTH_COOKIE_NAME,
   MAX_AUTH_COOKIE_AGE_SECONDS,

@@ -26,6 +26,8 @@ export function getIdentityInfrastructureConfig(): IdentityInfrastructureConfig 
       "test-service-role-key-with-at-least-32-chars",
     supabasePublishableKey:
       process.env.SUPABASE_PUBLISHABLE_KEY?.trim() ||
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+      process.env.ANON_KEY?.trim() ||
       "test-publishable-key-with-at-least-32-chars",
     identityHashPepper:
       process.env.IDENTITY_HASH_PEPPER?.trim() ||

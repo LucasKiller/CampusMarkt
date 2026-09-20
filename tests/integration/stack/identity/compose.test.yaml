@@ -1,0 +1,5 @@
+services:
+  mail:
+    ports:
+      - target: 9000
+        host_ip: 127.0.0.1

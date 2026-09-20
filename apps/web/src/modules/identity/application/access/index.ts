@@ -5,7 +5,11 @@ import {
 
 type PortResult = { ok: boolean; value?: unknown; code?: string };
 type Identity = { authUserId: string; sessionId: string };
-type RequestContext = { trustedClientIp: string; correlationId: string };
+type RequestContext = {
+  trustedClientIp: string;
+  correlationId: string;
+  onSessionEstablished?: (token: string) => void;
+};
 
 type AccessSecurity = {
   fingerprintIdentity(identity: string): string;
@@ -32,7 +36,7 @@ type AccessAuth = {
 };
 
 type AccessSession = {
-  requireActiveIdentity(): Promise<Identity>;
+  requireActiveIdentity(identityHint?: Identity): Promise<Identity>;
   requireRecentAuthentication(): Promise<Identity>;
   safeReturnPath(value: unknown): string;
 };
@@ -63,7 +67,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function boundedSession(value: unknown): Identity | null {
+function boundedSession(
+  value: unknown,
+): (Identity & { accessToken?: string }) | null {
   if (
     !isRecord(value) ||
     typeof value.authUserId !== "string" ||
@@ -71,7 +77,13 @@ function boundedSession(value: unknown): Identity | null {
   ) {
     return null;
   }
-  return { authUserId: value.authUserId, sessionId: value.sessionId };
+  const token =
+    typeof value.accessToken === "string" ? value.accessToken : undefined;
+  return {
+    authUserId: value.authUserId,
+    sessionId: value.sessionId,
+    accessToken: token,
+  };
 }
 
 function actionableRecoveryUser(result: PortResult) {
@@ -93,7 +105,10 @@ function allowedValue(value: unknown) {
   if (value.status === "denied") return { status: "denied" as const };
   if (value.status === "unavailable") return { status: "unavailable" as const };
   if (value.status === "signed_in" && typeof value.redirectTo === "string") {
-    return { status: "signed_in" as const, redirectTo: value.redirectTo };
+    return {
+      status: "signed_in" as const,
+      redirectTo: value.redirectTo,
+    };
   }
   return { status: "unavailable" as const };
 }
@@ -166,7 +181,7 @@ export function createAccessService({
           }
 
           try {
-            const active = await session.requireActiveIdentity();
+            const active = await session.requireActiveIdentity(actual);
             if (
               active.authUserId !== actual.authUserId ||
               active.sessionId !== actual.sessionId
@@ -179,10 +194,16 @@ export function createAccessService({
             return { status: "denied" };
           }
 
-          const assured = await repository.recordPasswordAssurance(actual);
+          const assured = await repository.recordPasswordAssurance({
+            authUserId: actual.authUserId,
+            sessionId: actual.sessionId,
+          });
           if (!assured.ok) {
             await compensateSession();
             return { status: "unavailable" };
+          }
+          if (actual.accessToken && context.onSessionEstablished) {
+            context.onSessionEstablished(actual.accessToken);
           }
           return {
             status: "signed_in",

@@ -38,6 +38,8 @@ export function createSessionsHandler(
       const origin = canonicalOrigin ?? getCanonicalOrigin(request);
       const resolvedService = service ?? getAccessService(origin);
 
+      let sessionToken: string | undefined;
+
       const response = await handleIdentityJsonMutation(
         request,
         { canonicalOrigin: origin },
@@ -46,6 +48,9 @@ export function createSessionsHandler(
           const result = await resolvedService.signIn(body, {
             trustedClientIp,
             correlationId,
+            onSessionEstablished(token) {
+              sessionToken = token;
+            },
           });
 
           if (result.status === "invalid") {
@@ -94,8 +99,9 @@ export function createSessionsHandler(
       // If sign in succeeded, attach the auth cookie
       if (response.status === 200) {
         const isProduction = process.env.NODE_ENV === "production";
+        const token = sessionToken || "authenticated-session";
         const cookieAttributes = [
-          `${AUTH_COOKIE_NAME}=authenticated-session`,
+          `${AUTH_COOKIE_NAME}=${token}`,
           "Path=/",
           `Max-Age=${MAX_AUTH_COOKIE_AGE_SECONDS}`,
           "HttpOnly",

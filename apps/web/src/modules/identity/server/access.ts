@@ -10,8 +10,15 @@ import {
 } from "../infrastructure/supabase/client/cookies";
 import { getIdentityInfrastructureConfig } from "../infrastructure/environment";
 import { createSupabaseAuthGateway } from "../infrastructure/supabase/auth/index";
-import { createAdminSupabaseClient } from "../infrastructure/supabase/client/index";
-import { createIdentityRepository } from "../infrastructure/supabase/repository/index";
+import {
+  createAdminSupabaseClient,
+  createAnonSupabaseClient,
+  createUserTokenSupabaseClient,
+} from "../infrastructure/supabase/client/index";
+import {
+  createIdentityRepository,
+  type IdentityRpcClient,
+} from "../infrastructure/supabase/repository/index";
 import { createIdentitySecurity } from "../security/index";
 import { createIdentitySessionDal } from "./session/index";
 import { getActionLinkService } from "./registration";
@@ -71,6 +78,7 @@ export async function resolveCookieSession() {
         authUserId,
         sessionId,
         expiresAt,
+        token,
       },
     };
   } catch {
@@ -87,8 +95,36 @@ export function getSessionDal(canonicalOrigin?: string) {
     SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
   };
   const adminClient = createAdminSupabaseClient(env);
+  const userProxy: IdentityRpcClient = {
+    async rpc(
+      functionName: string,
+      args?: Record<string, unknown>,
+      options?: { token?: string },
+    ) {
+      const token = options?.token;
+      const session = token
+        ? { ok: true as const, value: { token } }
+        : await resolveCookieSession();
+      if (
+        session.ok &&
+        typeof (session.value as { token?: string }).token === "string"
+      ) {
+        const userClient = createUserTokenSupabaseClient(
+          (session.value as { token: string }).token,
+          env,
+        );
+        return (
+          userClient.schema("identity_api") as unknown as IdentityRpcClient
+        ).rpc(functionName, args);
+      }
+      return (
+        adminClient.schema("identity_api") as unknown as IdentityRpcClient
+      ).rpc(functionName, args);
+    },
+  };
+
   const repository = createIdentityRepository({
-    user: adminClient,
+    user: userProxy,
     service: adminClient,
   });
 
@@ -127,9 +163,23 @@ export function getAccessService(canonicalOrigin?: string) {
     service: adminClient,
   });
   const auth = createSupabaseAuthGateway({
-    userClient: adminClient as unknown as Parameters<
-      typeof createSupabaseAuthGateway
-    >[0]["userClient"],
+    userClient: {
+      auth: {
+        signInWithPassword(input) {
+          const client = createAnonSupabaseClient(env);
+          return client.auth.signInWithPassword(input);
+        },
+        refreshSession(input) {
+          const client = createAnonSupabaseClient(env);
+          return client.auth.refreshSession(input);
+        },
+        async signOut(input) {
+          const client = createAnonSupabaseClient(env);
+          const { error } = await client.auth.signOut(input);
+          return { data: null, error };
+        },
+      },
+    },
     adminClient,
   });
   const security = createIdentitySecurity({

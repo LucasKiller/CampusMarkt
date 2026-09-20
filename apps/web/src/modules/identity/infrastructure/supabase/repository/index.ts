@@ -61,14 +61,35 @@ async function call(
   client: IdentityRpcClient,
   functionName: string,
   arguments_?: Record<string, unknown>,
+  options?: { token?: string },
 ): Promise<IdentityRepositoryResult<unknown>> {
   try {
-    const { data, error } = await client.rpc(functionName, arguments_);
+    const target =
+      typeof (
+        client as unknown as { schema?: (schema: string) => IdentityRpcClient }
+      ).schema === "function"
+        ? (
+            client as unknown as {
+              schema: (schema: string) => IdentityRpcClient;
+            }
+          ).schema("identity_api")
+        : client;
+    const { data, error } = await (
+      target as {
+        rpc(
+          functionName: string,
+          arguments_?: Record<string, unknown>,
+          options?: { token?: string },
+        ): PromiseLike<{ data: unknown; error: unknown }>;
+      }
+    ).rpc(functionName, arguments_, options);
     if (error) {
+      console.error(`[RPC Error: ${functionName}]`, error);
       return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
     }
     return { ok: true, value: firstRow(data) };
-  } catch {
+  } catch (err) {
+    console.error(`[RPC Exception: ${functionName}]`, err);
     return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
   }
 }
@@ -204,7 +225,13 @@ async function callAndParse<T>(
 export function createIdentityRepository({ user, service }: RepositoryClients) {
   return {
     isCurrentSessionActive: () => call(user, "current_session_is_active"),
-    getCurrentIdentityStatus: () => call(user, "current_identity_status"),
+    getCurrentIdentityStatus: (tokenHint?: string) =>
+      call(
+        user,
+        "current_identity_status",
+        undefined,
+        tokenHint ? { token: tokenHint } : undefined,
+      ),
 
     async readPublicProfile(publicId: string) {
       const result = await call(user, "get_public_profile", {

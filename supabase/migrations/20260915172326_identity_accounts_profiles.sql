@@ -1,5 +1,5 @@
-create schema identity;
-create schema identity_api;
+create schema if not exists identity;
+create schema if not exists identity_api;
 
 revoke all on schema identity from public, anon, authenticated;
 revoke all on schema identity_api from public, anon, authenticated, service_role;

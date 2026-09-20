@@ -10,7 +10,7 @@ type SessionAuth = {
 
 type SessionRepository = {
   isCurrentSessionActive(): Promise<PortResult>;
-  getCurrentIdentityStatus(): Promise<PortResult>;
+  getCurrentIdentityStatus(tokenHint?: string): Promise<PortResult>;
   isPasswordAssuranceRecent(input: {
     authUserId: string;
     sessionId: string;
@@ -170,7 +170,35 @@ export function createIdentitySessionDal({
     } as AuthenticatedIdentity & { inactive?: true };
   }
 
-  async function requireActiveIdentity() {
+  async function requireActiveIdentity(identityHint?: {
+    authUserId: string;
+    sessionId: string;
+    accessToken?: string;
+  }) {
+    if (identityHint) {
+      let statusResult: PortResult;
+      try {
+        statusResult = await repository.getCurrentIdentityStatus(
+          identityHint.accessToken,
+        );
+      } catch {
+        throw new IdentityAuthorizationError("DEPENDENCY_UNAVAILABLE");
+      }
+      if (!statusResult.ok) {
+        throw new IdentityAuthorizationError("DEPENDENCY_UNAVAILABLE");
+      }
+      const status = parseIdentityStatus(statusResult.value);
+      if (!status || !status.isActive || !status.emailConfirmed) {
+        throw new IdentityAuthorizationError("ACCESS_DENIED");
+      }
+      return {
+        authUserId: identityHint.authUserId,
+        sessionId: identityHint.sessionId,
+        emailConfirmed: status.emailConfirmed,
+        profileComplete: status.profileComplete,
+        consentComplete: status.consentComplete,
+      };
+    }
     const identity = await getOptionalIdentity();
     if (!identity) {
       throw new IdentityAuthorizationError("AUTHENTICATION_REQUIRED");

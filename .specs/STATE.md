@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 4 T28 complete, T29 pending
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T28 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 4 T29 complete, T30 pending
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T29 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute T29 to deliver avatar upload, removal, and display UI.
+- **Next step**: Execute T30 to deliver reauthentication and account deletion journey.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

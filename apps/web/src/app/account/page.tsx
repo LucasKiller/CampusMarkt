@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { cookies } from "next/headers";
 import { getSessionDal } from "../../modules/identity/server/access";
+import { AvatarManager } from "./avatar/avatar-manager";
 import { ProfileEditor } from "./profile/profile-editor";
 import { SecurityControls } from "./security/security-controls";
 
@@ -62,9 +63,17 @@ export default async function AccountPage() {
         <div className="info-card" style={{ marginBottom: "1.5rem" }}>
           <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>Public Profile</h2>
           <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
-            Update your public display name.
+            Update your public avatar and display name.
           </p>
 
+          <AvatarManager />
+          <hr
+            style={{
+              margin: "1.5rem 0",
+              border: "none",
+              borderTop: "1px solid #e2e8f0",
+            }}
+          />
           <ProfileEditor />
         </div>
 

@@ -800,10 +800,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Multipart limit/origin/owner/version errors and dependency failures retain the previous avatar and expose stable errors.
-- [ ] Crop preview, pending state, fallback, replacement/removal, broken-source handling, keyboard/focus, and responsive layout work.
-- [ ] At least 16 new route integration tests and 6 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Multipart limit/origin/owner/version errors and dependency failures retain the previous avatar and expose stable errors.
+- [x] Crop preview, pending state, fallback, replacement/removal, broken-source handling, keyboard/focus, and responsive layout work.
+- [x] At least 16 new route integration tests and 6 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

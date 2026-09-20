@@ -654,10 +654,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Cross-origin, absent/malformed browser origin, unsupported content, oversized body, and untrusted correlation inputs are rejected before use cases.
-- [ ] Stable status/envelopes never expose provider details and every mutation/no-profile response has the required cache/privacy headers.
-- [ ] At least 18 new HTTP-helper unit/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] Cross-origin, absent/malformed browser origin, unsupported content, oversized body, and untrusted correlation inputs are rejected before use cases.
+- [x] Stable status/envelopes never expose provider details and every mutation/no-profile response has the required cache/privacy headers.
+- [x] At least 18 new HTTP-helper unit/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: unit + integration
 **Gate**: Integration

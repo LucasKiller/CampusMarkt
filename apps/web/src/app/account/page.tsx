@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { cookies } from "next/headers";
 import { getSessionDal } from "../../modules/identity/server/access";
+import { ProfileEditor } from "./profile/profile-editor";
 import { SecurityControls } from "./security/security-controls";
 
 export const metadata: Metadata = {
@@ -57,6 +58,15 @@ export default async function AccountPage() {
         <p className="auth-subtitle">
           Manage your session and account settings.
         </p>
+
+        <div className="info-card" style={{ marginBottom: "1.5rem" }}>
+          <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>Public Profile</h2>
+          <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
+            Update your public display name.
+          </p>
+
+          <ProfileEditor />
+        </div>
 
         <div className="info-card">
           <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>

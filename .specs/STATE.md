@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 4 T26 complete, T27 pending
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T26 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 4 T27 complete, T28 pending
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T27 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute T27 to deliver public and owner profile journeys.
+- **Next step**: Execute T28 to implement secure avatar processing and private media access.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

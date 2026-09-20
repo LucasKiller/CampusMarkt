@@ -750,11 +750,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Visitor/owner/non-owner responses expose only the safe DTO; absent/unconfirmed/deleting IDs share one 404.
-- [ ] Owner update accepts exact Unicode bounds, rejects crafted/private fields, and non-owner/session-invalid mutation changes nothing.
-- [ ] Fallback initials/neutral icon and last-successful-write display-name behavior are visible and tested.
-- [ ] At least 14 new route integration tests and 5 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Visitor/owner/non-owner responses expose only the safe DTO; absent/unconfirmed/deleting IDs share one 404.
+- [x] Owner update accepts exact Unicode bounds, rejects crafted/private fields, and non-owner/session-invalid mutation changes nothing.
+- [x] Fallback initials/neutral icon and last-successful-write display-name behavior are visible and tested.
+- [x] At least 14 new route integration tests and 5 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

@@ -824,11 +824,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Older-than/equal-to 10-minute assurance requires password reauthentication and rotates without leaving an unintended session.
-- [ ] Explicit confirmation changes state once, clears cookies, revokes sessions, hides profile/avatar immediately, and blocks all pending-account paths.
-- [ ] Partial Auth revocation failure still denies through DB state and reports only a bounded outcome.
-- [ ] At least 18 new route integration tests and 6 browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Older-than/equal-to 10-minute assurance requires password reauthentication and rotates without leaving an unintended session.
+- [x] Explicit confirmation changes state once, clears cookies, revokes sessions, hides profile/avatar immediately, and blocks all pending-account paths.
+- [x] Partial Auth revocation failure still denies through DB state and reports only a bounded outcome.
+- [x] At least 18 new route integration tests and 6 browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: integration + e2e
 **Gate**: Browser

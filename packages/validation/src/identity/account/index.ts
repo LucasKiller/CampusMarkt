@@ -189,3 +189,28 @@ export function parseRegistration(
     },
   };
 }
+
+export function parseDeletionConfirmation(
+  input: unknown,
+): ParseResult<{ confirmation: "DELETE" }> {
+  if (!isRecord(input)) {
+    return {
+      ok: false,
+      fieldErrors: { _form: ["Confirmation must be an object."] },
+    };
+  }
+
+  if (input.confirmation !== "DELETE") {
+    return {
+      ok: false,
+      fieldErrors: {
+        confirmation: ["Type DELETE to confirm account deletion."],
+      },
+    };
+  }
+
+  return {
+    ok: true,
+    value: { confirmation: "DELETE" },
+  };
+}

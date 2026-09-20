@@ -88,6 +88,31 @@ export default async function AccountPage() {
 
           <SecurityControls />
         </div>
+
+        <div className="info-card" style={{ marginTop: "1.5rem" }}>
+          <h2 style={{ marginTop: 0, fontSize: "1.25rem", color: "#b91c1c" }}>
+            Delete Account
+          </h2>
+          <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
+            Permanently remove your account, public profile, and all active
+            sessions.
+          </p>
+
+          <div style={{ marginTop: "1rem" }}>
+            <a
+              href="/account/delete"
+              className="btn-secondary"
+              style={{
+                display: "inline-block",
+                borderColor: "#b91c1c",
+                color: "#b91c1c",
+                textDecoration: "none",
+              }}
+            >
+              Delete account
+            </a>
+          </div>
+        </div>
       </section>
 
       <footer>

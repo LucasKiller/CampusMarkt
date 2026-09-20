@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   normalizePrimaryEmail,
   parseCredentials,
+  parseDeletionConfirmation,
   parseDisplayName,
   parseRegistration,
 } from "./index.js";
@@ -217,4 +218,42 @@ describe("registration input", () => {
       fieldErrors: { _form: ["Registration must be an object."] },
     });
   });
+});
+
+describe("deletion confirmation validation", () => {
+  it("accepts valid DELETE confirmation", () => {
+    expect(parseDeletionConfirmation({ confirmation: "DELETE" })).toEqual({
+      ok: true,
+      value: { confirmation: "DELETE" },
+    });
+  });
+
+  it.each([
+    { confirmation: "delete" },
+    { confirmation: "Delete" },
+    { confirmation: "DELETE " },
+    { confirmation: "" },
+    { confirmation: "CONFIRM" },
+    {},
+    { other: "DELETE" },
+  ])("rejects invalid confirmation %j", (input) => {
+    expect(parseDeletionConfirmation(input)).toEqual({
+      ok: false,
+      fieldErrors: {
+        confirmation: ["Type DELETE to confirm account deletion."],
+      },
+    });
+  });
+
+  it.each([null, undefined, "DELETE", 123, []])(
+    "rejects non-object input %j",
+    (input) => {
+      expect(parseDeletionConfirmation(input)).toEqual({
+        ok: false,
+        fieldErrors: {
+          _form: ["Confirmation must be an object."],
+        },
+      });
+    },
+  );
 });

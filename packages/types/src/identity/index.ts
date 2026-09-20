@@ -57,6 +57,8 @@ export type ProfileMutationResult =
 export type DeletionResult =
   { status: "deletion_pending" } | { status: "reauthentication_required" };
 
+export type ReauthenticateResult = { status: "reauthenticated" };
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u;
 const JOINED_MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/u;

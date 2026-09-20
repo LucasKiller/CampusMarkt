@@ -775,11 +775,11 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] JPEG/PNG/WebP magic/decode/type, 5 MB, pixel/dimension, animation, EXIF, crop, and malformed cases are enforced.
-- [ ] Output is exactly one 512x512 metadata-free WebP and sources/temp files are removed in all paths.
-- [ ] CAS races preserve the winner/old avatar and queue losing/superseded keys; media is 404 immediately when profile is hidden.
-- [ ] At least 24 new image/Storage/integration tests pass with no baseline deletion.
-- [ ] Integration gate passes.
+- [x] JPEG/PNG/WebP magic/decode/type, 5 MB, pixel/dimension, animation, EXIF, crop, and malformed cases are enforced.
+- [x] Output is exactly one 512x512 metadata-free WebP and sources/temp files are removed in all paths.
+- [x] CAS races preserve the winner/old avatar and queue losing/superseded keys; media is 404 immediately when profile is hidden.
+- [x] At least 24 new image/Storage/integration tests pass with no baseline deletion.
+- [x] Integration gate passes.
 
 **Tests**: integration
 **Gate**: Integration

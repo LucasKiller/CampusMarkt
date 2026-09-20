@@ -99,11 +99,18 @@ function parsePublicProfile(value: unknown): PublicProfile | null | undefined {
     return undefined;
   }
 
+  const avatarUrl =
+    typeof value.avatar_url === "string"
+      ? value.avatar_url.endsWith(".webp")
+        ? value.avatar_url
+        : `${value.avatar_url}.webp`
+      : null;
+
   return {
     publicId: value.public_id,
     displayName: value.display_name,
     joinedMonth: value.joined_month,
-    avatarUrl: value.avatar_url,
+    avatarUrl,
   };
 }
 

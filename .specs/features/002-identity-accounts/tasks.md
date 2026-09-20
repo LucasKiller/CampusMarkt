@@ -949,10 +949,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Requirement-to-browser matrix has evidence for every observable happy/error/privacy/accessibility/session/deletion outcome.
-- [ ] Separate contexts prove owner/non-owner and logout scope; no horizontal overflow, broken image, password echo, email leak, or external redirect occurs.
-- [ ] At least 20 new acceptance browser tests pass with no baseline deletion.
-- [ ] Browser gate passes and Playwright stops its server.
+- [x] Requirement-to-browser matrix has evidence for every observable happy/error/privacy/accessibility/session/deletion outcome.
+- [x] Separate contexts prove owner/non-owner and logout scope; no horizontal overflow, broken image, password echo, email leak, or external redirect occurs.
+- [x] At least 20 new acceptance browser tests pass with no baseline deletion.
+- [x] Browser gate passes and Playwright stops its server.
 
 **Tests**: e2e
 **Gate**: Browser

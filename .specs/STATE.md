@@ -61,10 +61,10 @@
 ## Handoff
 
 - **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Execute / Phase 5 in progress (T34 complete, T35 next)
-- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T30, Phase 5 T31-T34 committed with all assigned gates passing
+- **Phase / Task**: Execute / Phase 5 in progress (T35 complete, T36 next)
+- **Completed**: 001-web-supabase-foundation verified; 002 Phase 1 T1-T7, Phase 2 T8-T14, Phase 3 T15-T22, Phase 4 T23-T30, Phase 5 T31-T35 committed with all assigned gates passing
 - **In-progress** (file:line): none
-- **Next step**: Execute Phase 5 T35 to complete acceptance-level browser coverage under `apps/web/tests/identity-acceptance/`.
+- **Next step**: Execute Phase 5 T36 to document and gate identity operations under `docs/operations/identity/`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

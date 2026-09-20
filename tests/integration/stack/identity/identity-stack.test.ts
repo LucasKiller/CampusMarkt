@@ -166,7 +166,7 @@ beforeAll(async () => {
     CADDY_HTTP_PORT: "0",
     CADDY_HTTPS_PORT: "0",
     CADDY_SITE_ADDRESS: "http://127.0.0.1",
-    POSTGRES_PASSWORD: "identity-stack-postgres-password",
+    POSTGRES_PASSWORD: "identity-stack-test-postgres-password",
     NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_identity_stack_test",
     SUPABASE_PUBLIC_URL: "http://127.0.0.1",

@@ -182,4 +182,102 @@ describe("Caddy ingress boundary", () => {
     expect(volumes).toHaveProperty("caddy-data");
     expect(volumes).toHaveProperty("caddy-config");
   });
+
+  describe("direct public Auth mutation blocking", () => {
+    const configuration = readFileSync(caddyfile, "utf8");
+    const denyMatcher = configuration.match(
+      /@auth_denied path ([\s\S]*?)\r?\n\r?\n\s*handle @auth_denied/u,
+    );
+    const deniedPaths =
+      denyMatcher?.[1]?.replaceAll("\\", "").trim().split(/\s+/u) ?? [];
+
+    it("declares fixed 403 access denial for blocked Auth mutations", () => {
+      expect(configuration).toMatch(
+        /handle @auth_denied\s*\{\s*respond "Access denied" 403\s*\}/u,
+      );
+    });
+
+    it("evaluates Auth denial before proxying to the gateway", () => {
+      const denyIndex = configuration.indexOf("handle @auth_denied");
+      const proxyIndex = configuration.indexOf("handle @supa_api");
+      expect(denyIndex).toBeGreaterThan(0);
+      expect(proxyIndex).toBeGreaterThan(denyIndex);
+    });
+
+    it("denies direct public signup paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/signup");
+      expect(deniedPaths).toContain("/auth/v1/signup/*");
+    });
+
+    it("denies direct public token grant paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/token");
+      expect(deniedPaths).toContain("/auth/v1/token/*");
+    });
+
+    it("denies direct public recovery paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/recover");
+      expect(deniedPaths).toContain("/auth/v1/recover/*");
+      expect(deniedPaths).toContain("/auth/v1/recovery");
+      expect(deniedPaths).toContain("/auth/v1/recovery/*");
+    });
+
+    it("denies direct public user mutation paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/user");
+      expect(deniedPaths).toContain("/auth/v1/user/*");
+    });
+
+    it("denies direct public verification paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/verify");
+      expect(deniedPaths).toContain("/auth/v1/verify/*");
+    });
+
+    it("denies direct public settings and admin paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/settings");
+      expect(deniedPaths).toContain("/auth/v1/settings/*");
+      expect(deniedPaths).toContain("/auth/v1/admin");
+      expect(deniedPaths).toContain("/auth/v1/admin/*");
+    });
+
+    it("denies direct public logout and session termination bypass", () => {
+      expect(deniedPaths).toContain("/auth/v1/logout");
+      expect(deniedPaths).toContain("/auth/v1/logout/*");
+    });
+
+    it("denies direct public OAuth, callback, and SSO paths", () => {
+      expect(deniedPaths).toContain("/auth/v1/authorize");
+      expect(deniedPaths).toContain("/auth/v1/authorize/*");
+      expect(deniedPaths).toContain("/auth/v1/callback");
+      expect(deniedPaths).toContain("/auth/v1/callback/*");
+      expect(deniedPaths).toContain("/auth/v1/sso");
+      expect(deniedPaths).toContain("/auth/v1/sso/*");
+    });
+
+    it("denies direct public magiclink and OTP endpoints", () => {
+      expect(deniedPaths).toContain("/auth/v1/magiclink");
+      expect(deniedPaths).toContain("/auth/v1/magiclink/*");
+      expect(deniedPaths).toContain("/auth/v1/otp");
+      expect(deniedPaths).toContain("/auth/v1/otp/*");
+    });
+
+    it("denies direct public reauthentication and MFA factors endpoints", () => {
+      expect(deniedPaths).toContain("/auth/v1/reauthenticate");
+      expect(deniedPaths).toContain("/auth/v1/reauthenticate/*");
+      expect(deniedPaths).toContain("/auth/v1/factors");
+      expect(deniedPaths).toContain("/auth/v1/factors/*");
+    });
+
+    it("does not deny Auth health or JWKS discovery paths", () => {
+      expect(deniedPaths).not.toContain("/auth/v1/health");
+      expect(deniedPaths).not.toContain("/auth/v1/.well-known/jwks.json");
+    });
+
+    it("overwrites client forwarding headers with the trusted remote host", () => {
+      expect(configuration).toMatch(
+        /reverse_proxy api-gw:8000\s*\{\s*header_up X-Forwarded-For \{remote_host\}\s*header_up X-Real-IP \{remote_host\}\s*\}/u,
+      );
+      expect(configuration).toMatch(
+        /reverse_proxy web:3000\s*\{\s*header_up X-Forwarded-For \{remote_host\}\s*header_up X-Real-IP \{remote_host\}\s*\}/u,
+      );
+    });
+  });
 });

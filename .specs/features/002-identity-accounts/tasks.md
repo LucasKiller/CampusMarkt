@@ -900,10 +900,10 @@ T31 -> T32 -> T33 -> T34 -> T35 -> T36
 
 **Done when**:
 
-- [ ] Health/JWKS and documented non-Auth APIs remain reachable while every listed Auth bypass returns the fixed deny response.
-- [ ] Internal BFF Auth operations still work and Caddy overwrites trusted client-IP forwarding headers.
-- [ ] At least 12 new ingress integration/stack tests pass with no baseline deletion.
-- [ ] Stack gate passes and the stack is stopped afterward.
+- [x] Health/JWKS and documented non-Auth APIs remain reachable while every listed Auth bypass returns the fixed deny response.
+- [x] Internal BFF Auth operations still work and Caddy overwrites trusted client-IP forwarding headers.
+- [x] At least 12 new ingress integration/stack tests pass with no baseline deletion.
+- [x] Stack gate passes and the stack is stopped afterward.
 
 **Tests**: integration + stack
 **Gate**: Stack

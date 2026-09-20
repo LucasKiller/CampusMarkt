@@ -1,17 +1,45 @@
 {$CADDY_SITE_ADDRESS:http://localhost} {
+	@auth_denied path \
+ /auth/v1/signup /auth/v1/signup/* \
+ /auth/v1/token /auth/v1/token/* \
+ /auth/v1/recover /auth/v1/recover/* \
+ /auth/v1/recovery /auth/v1/recovery/* \
+ /auth/v1/user /auth/v1/user/* \
+ /auth/v1/verify /auth/v1/verify/* \
+ /auth/v1/settings /auth/v1/settings/* \
+ /auth/v1/admin /auth/v1/admin/* \
+ /auth/v1/logout /auth/v1/logout/* \
+ /auth/v1/authorize /auth/v1/authorize/* \
+ /auth/v1/callback /auth/v1/callback/* \
+ /auth/v1/magiclink /auth/v1/magiclink/* \
+ /auth/v1/otp /auth/v1/otp/* \
+ /auth/v1/reauthenticate /auth/v1/reauthenticate/* \
+ /auth/v1/factors /auth/v1/factors/* \
+ /auth/v1/sso /auth/v1/sso/*
+
+	handle @auth_denied {
+		respond "Access denied" 403
+	}
+
 	@supa_api path \
-		/auth/v1 /auth/v1/* \
-		/rest/v1 /rest/v1/* \
-		/realtime/v1 /realtime/v1/* \
-		/storage/v1 /storage/v1/* \
-		/functions/v1 /functions/v1/* \
-		/graphql/v1 /graphql/v1/*
+ /auth/v1 /auth/v1/* \
+ /rest/v1 /rest/v1/* \
+ /realtime/v1 /realtime/v1/* \
+ /storage/v1 /storage/v1/* \
+ /functions/v1 /functions/v1/* \
+ /graphql/v1 /graphql/v1/*
 
 	handle @supa_api {
-		reverse_proxy api-gw:8000
+		reverse_proxy api-gw:8000 {
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Real-IP {remote_host}
+		}
 	}
 
 	handle {
-		reverse_proxy web:3000
+		reverse_proxy web:3000 {
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Real-IP {remote_host}
+		}
 	}
 }

@@ -8,11 +8,11 @@ CampusMarkt has a verified technical foundation but no user identity journey. Th
 
 ## Goals
 
-- [ ] Let an adult user register with a primary email and password, confirm the email, and sign in safely.
-- [ ] Provide bounded, revocable browser sessions, current-device and all-device sign-out, and secure account recovery.
-- [ ] Give each account one owner-managed public profile with a display name and optional processed avatar.
-- [ ] Enforce privacy, ownership, rate limits, idempotency, lifecycle, and audit contracts at server and data boundaries.
-- [ ] Let a user delete the account and ensure identity-owned public and private data follows the approved lifecycle.
+- [x] Let an adult user register with a primary email and password, confirm the email, and sign in safely.
+- [x] Provide bounded, revocable browser sessions, current-device and all-device sign-out, and secure account recovery.
+- [x] Give each account one owner-managed public profile with a display name and optional processed avatar.
+- [x] Enforce privacy, ownership, rate limits, idempotency, lifecycle, and audit contracts at server and data boundaries.
+- [x] Let a user delete the account and ensure identity-owned public and private data follows the approved lifecycle.
 
 ## Out of Scope
 
@@ -221,21 +221,21 @@ CampusMarkt has a verified technical foundation but no user identity journey. Th
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| IDAC-01 | P1: Register and confirm an account | Tasks | In progress: T1-T2, T4-T6, T8-T10, T14-T21, T23-T26, T31-T33 complete; planned T34-T36 |
-| IDAC-02 | P1: Sign in and control sessions | Tasks | In progress: T1, T3-T6, T10-T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T33 complete; planned T34-T36 |
-| IDAC-03 | P1: Recover account access | Tasks | In progress: T1-T6, T9-T11, T15-T20, T22-T23, T26, T31-T33 complete; planned T34-T36 |
-| IDAC-04 | P1: Maintain a public-safe profile and avatar | Tasks | In progress: T1-T8, T12-T13, T16, T23, T27-T29, T31 complete; planned T34-T36 |
-| IDAC-05 | P1: Delete an account safely | Tasks | In progress: T1, T4-T5, T8-T9, T11-T17, T20, T22-T23, T27-T32 complete; planned T33-T36 |
-| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Tasks | In progress: T2-T33 complete; planned T34-T36 |
+| IDAC-01 | P1: Register and confirm an account | Verified | ✅ Verified (T1-T2, T4-T6, T8-T10, T14-T21, T23-T26, T31-T36) |
+| IDAC-02 | P1: Sign in and control sessions | Verified | ✅ Verified (T1, T3-T6, T10-T11, T15-T17, T19-T20, T22-T23, T25, T30, T32-T36) |
+| IDAC-03 | P1: Recover account access | Verified | ✅ Verified (T1-T6, T9-T11, T15-T20, T22-T23, T26, T31-T36) |
+| IDAC-04 | P1: Maintain a public-safe profile and avatar | Verified | ✅ Verified (T1-T8, T12-T13, T16, T23, T27-T29, T31, T34-T36) |
+| IDAC-05 | P1: Delete an account safely | Verified | ✅ Verified (T1, T4-T5, T8-T9, T11-T17, T20, T22-T23, T27-T36) |
+| IDAC-06 | P1: Enforce identity abuse and audit boundaries | Verified | ✅ Verified (T2-T36) |
 
-**Coverage:** 6 total, 6 mapped to the approved design and implementation tasks; execution evidence pending.
+**Coverage:** 6 total, 6 verified; 54/54 acceptance criteria and 8/8 edge cases validated in `validation.md`.
 
 ---
 
 ## Success Criteria
 
-- [ ] A new user can register, confirm, sign in, retain a bounded session, sign out, and recover access through independently tested browser journeys.
-- [ ] Visitor, owner, non-owner, unconfirmed, expired-session, and deletion-pending access tests enforce the exact public/private boundary.
-- [ ] Public profile and Storage responses expose only the approved display name, join month/year, and processed avatar derivative.
-- [ ] Every identity endpoint rejects its specified invalid, duplicate, replayed, concurrent, rate-limited, and dependency-failure cases without leaking account existence or secrets.
-- [ ] Account deletion immediately removes public visibility and authentication, completes identity-owned purge within 30 days, and is safe to retry.
+- [x] A new user can register, confirm, sign in, retain a bounded session, sign out, and recover access through independently tested browser journeys.
+- [x] Visitor, owner, non-owner, unconfirmed, expired-session, and deletion-pending access tests enforce the exact public/private boundary.
+- [x] Public profile and Storage responses expose only the approved display name, join month/year, and processed avatar derivative.
+- [x] Every identity endpoint rejects its specified invalid, duplicate, replayed, concurrent, rate-limited, and dependency-failure cases without leaking account existence or secrets.
+- [x] Account deletion immediately removes public visibility and authentication, completes identity-owned purge within 30 days, and is safe to retry.

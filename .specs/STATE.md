@@ -60,11 +60,11 @@
 
 ## Handoff
 
-- **Feature**: 002-identity-accounts / `.specs/features/002-identity-accounts/`
-- **Phase / Task**: Verification complete -> Feature 002 DONE (PASS ✅)
-- **Completed**: 001-web-supabase-foundation verified; 002-identity-accounts verified (T1-T36 complete, 54/54 ACs, 8/8 edge cases, 5/5 sensor mutants killed, 1,075 total automated tests passing)
-- **In-progress** (file:line): none
-- **Next step**: Begin Feature 003 (`003-university-verification`) Specification phase.
+- **Feature**: 003-university-verification / `.specs/features/003-university-verification/`
+- **Phase / Task**: Tasks phase complete (16 granular tasks across 4 phases validated) -> Approval / Execute next
+- **Completed**: 001-web-supabase-foundation verified; 002-identity-accounts verified; 003-university-verification spec.md (0 errors), design.md, and tasks.md (0 errors) validated
+- **In-progress** (file:line): `.specs/features/003-university-verification/tasks.md`
+- **Next step**: User approval of spec, design, and tasks; then begin Phase 1 (T1).
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/features/003-university-verification/` (spec.md, design.md, tasks.md), `.gitignore`
 - **Branch**: main

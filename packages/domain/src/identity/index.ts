@@ -126,3 +126,5 @@ export function avatarFallback(displayName: string): AvatarFallback {
     ? { kind: "initials", value: initials }
     : { kind: "neutral" };
 }
+
+export * from "./university.ts";

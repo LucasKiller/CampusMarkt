@@ -27,6 +27,9 @@ export interface ApiFailure {
   correlationId: string;
 }
 
+import type { UniversityBadge } from "./university.ts";
+import { isUniversityBadge } from "./university.ts";
+
 export type ApiEnvelope<T> = ApiSuccess<T> | ApiFailure;
 
 export interface PublicProfile {
@@ -34,6 +37,7 @@ export interface PublicProfile {
   displayName: string;
   joinedMonth: string;
   avatarUrl: string | null;
+  universityBadge?: UniversityBadge | null;
 }
 
 export interface GenericAcceptedResult {
@@ -100,17 +104,16 @@ function isFieldErrors(value: unknown): value is FieldErrors {
 export function isPublicProfile(value: unknown): value is PublicProfile {
   if (
     !isRecord(value) ||
-    !hasExactKeys(value, [
-      "publicId",
-      "displayName",
-      "joinedMonth",
-      "avatarUrl",
-    ])
+    !hasExactKeys(
+      value,
+      ["publicId", "displayName", "joinedMonth", "avatarUrl"],
+      ["universityBadge"],
+    )
   ) {
     return false;
   }
 
-  return (
+  const baseValid =
     typeof value.publicId === "string" &&
     UUID_PATTERN.test(value.publicId) &&
     typeof value.displayName === "string" &&
@@ -118,8 +121,17 @@ export function isPublicProfile(value: unknown): value is PublicProfile {
     JOINED_MONTH_PATTERN.test(value.joinedMonth) &&
     (value.avatarUrl === null ||
       (typeof value.avatarUrl === "string" &&
-        AVATAR_URL_PATTERN.test(value.avatarUrl)))
-  );
+        AVATAR_URL_PATTERN.test(value.avatarUrl)));
+
+  if (!baseValid) {
+    return false;
+  }
+
+  if (value.universityBadge !== undefined && value.universityBadge !== null) {
+    return isUniversityBadge(value.universityBadge);
+  }
+
+  return true;
 }
 
 export function isApiSuccess(value: unknown): value is ApiSuccess<unknown> {
@@ -160,3 +172,5 @@ export function isApiFailure(value: unknown): value is ApiFailure {
       value.retryAfterSeconds > 0)
   );
 }
+
+export * from "./university.ts";

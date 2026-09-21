@@ -107,8 +107,8 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: UNIV-01, UNIV-02, UNIV-03
 **Done when**:
-- [ ] Allowlisted transport types cover initiation, confirmation, status, and public badge.
-- [ ] DTO parse tests assert strict schema conformity and reject unexpected fields.
+- [x] Allowlisted transport types cover initiation, confirmation, status, and public badge.
+- [x] DTO parse tests assert strict schema conformity and reject unexpected fields.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(university): define transport contracts and badge types`

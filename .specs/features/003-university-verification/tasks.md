@@ -94,9 +94,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: UNIV-01, UNIV-06
 **Done when**:
-- [ ] Validates `@tu-braunschweig.de` and `@tu-bs.de` emails, normalizes casing/whitespace.
-- [ ] Rejects unsupported domains, control characters, header injection, and malformed inputs.
-- [ ] Validation unit tests pass.
+- [x] Validates `@tu-braunschweig.de` and `@tu-bs.de` emails, normalizes casing/whitespace.
+- [x] Rejects unsupported domains, control characters, header injection, and malformed inputs.
+- [x] Validation unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(university): implement institutional email validation`

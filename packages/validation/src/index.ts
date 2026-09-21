@@ -10,3 +10,4 @@ export function isValidationBoundary(
 
 export * from "./identity/account/index.ts";
 export * from "./identity/security/index.ts";
+export * from "./identity/university/index.ts";

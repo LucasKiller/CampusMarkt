@@ -146,9 +146,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: UNIV-01, UNIV-06
 **Done when**:
-- [ ] Function checks unconfirmed/deletion-pending accounts and denies initiation.
-- [ ] Uniqueness check rejects initiation if hash is currently active on another account.
-- [ ] 24-hour token expiry set and pending row persisted.
+- [x] Function checks unconfirmed/deletion-pending accounts and denies initiation.
+- [x] Uniqueness check rejects initiation if hash is currently active on another account.
+- [x] 24-hour token expiry set and pending row persisted.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(university): add initiate verification rpc`

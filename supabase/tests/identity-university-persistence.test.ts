@@ -259,3 +259,145 @@ describe("T5 university_verifications persistence and RLS", () => {
     expect(invalidVerified.status).not.toBe(0);
   });
 });
+
+describe("T6 initiate_university_verification RPC", () => {
+  it("denies initiation for unconfirmed accounts", () => {
+    const userId = createAuthUser({ confirmed: false });
+    const emailHash = "1".repeat(64);
+    const tokenHashHex = "\\x" + "1".repeat(64);
+
+    const result = query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain("account is unavailable");
+  });
+
+  it("denies initiation for deletion-pending accounts", () => {
+    const userId = createAuthUser({ confirmed: true });
+    // Mark account deletion_pending
+    query(`
+      update identity.accounts
+      set state = 'deletion_pending',
+          deletion_requested_at = transaction_timestamp(),
+          purge_due_at = transaction_timestamp() + interval '30 days'
+      where auth_user_id = '${userId}';
+    `);
+
+    const emailHash = "2".repeat(64);
+    const tokenHashHex = "\\x" + "2".repeat(64);
+    const result = query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain("account is unavailable");
+  });
+
+  it("denies initiation when institutional email is active on another account", () => {
+    const userA = createAuthUser({ confirmed: true });
+    const userB = createAuthUser({ confirmed: true });
+    const emailHash = "3".repeat(64);
+
+    // userA is verified and active (unexpired)
+    query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        verified_at, expires_at
+      ) values (
+        '${userA}', 'tu-braunschweig', '${emailHash}', 'verified',
+        transaction_timestamp(), transaction_timestamp() + interval '180 days'
+      );
+    `);
+
+    // userB tries to initiate with same email hash
+    const tokenHashHex = "\\x" + "3".repeat(64);
+    const result = query(`
+      select identity_api.initiate_university_verification(
+        '${userB}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain("institutional email is already verified");
+  });
+
+  it("allows initiation when institutional email on another account is expired", () => {
+    const userA = createAuthUser({ confirmed: true });
+    const userB = createAuthUser({ confirmed: true });
+    const emailHash = "4".repeat(64);
+
+    // userA was verified but is now expired
+    query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        verified_at, expires_at
+      ) values (
+        '${userA}', 'tu-braunschweig', '${emailHash}', 'verified',
+        transaction_timestamp() - interval '200 days', transaction_timestamp() - interval '20 days'
+      );
+    `);
+
+    // userB can initiate with this email hash
+    const tokenHashHex = "\\x" + "4".repeat(64);
+    const result = query(`
+      select identity_api.initiate_university_verification(
+        '${userB}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+      select status, university_id from identity.university_verifications where auth_user_id = '${userB}';
+    `);
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain("pending|tu-braunschweig");
+  });
+
+  it("persists pending row with 24-hour token expiry and allows re-initiation by same user", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "5".repeat(64);
+    const tokenHashHex1 = "\\x" + "5".repeat(64);
+    const tokenHashHex2 = "\\x" + "6".repeat(64);
+
+    const init1 = query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex1}'::bytea
+      );
+      select
+        status,
+        university_id,
+        token_hash = '${tokenHashHex1}'::bytea,
+        token_expires_at > transaction_timestamp() + interval '23 hours' and
+        token_expires_at <= transaction_timestamp() + interval '24 hours'
+      from identity.university_verifications
+      where auth_user_id = '${userId}';
+    `);
+    expect(init1.status, init1.stderr).toBe(0);
+    expect(init1.stdout).toContain("pending|tu-braunschweig|t|t");
+
+    // Re-initiating overwrites token
+    const init2 = query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex2}'::bytea
+      );
+      select
+        status,
+        token_hash = '${tokenHashHex2}'::bytea
+      from identity.university_verifications
+      where auth_user_id = '${userId}';
+    `);
+    expect(init2.status, init2.stderr).toBe(0);
+    expect(init2.stdout).toContain("pending|t");
+  });
+
+  it("grants initiate_university_verification only to service_role", () => {
+    expect(
+      query(`
+        select
+          has_function_privilege('public', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute'),
+          has_function_privilege('anon', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute'),
+          has_function_privilege('service_role', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+});

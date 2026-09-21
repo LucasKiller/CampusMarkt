@@ -133,9 +133,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: UNIV-01, UNIV-02, UNIV-05
 **Done when**:
-- [ ] Table `identity.university_verifications` created with RLS enabled and forced.
-- [ ] Cascade from `identity.accounts` configured for account deletion.
-- [ ] Migration applies cleanly and passes DB tests.
+- [x] Table `identity.university_verifications` created with RLS enabled and forced.
+- [x] Cascade from `identity.accounts` configured for account deletion.
+- [x] Migration applies cleanly and passes DB tests.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(university): add verifications table migration`

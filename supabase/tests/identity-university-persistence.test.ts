@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
@@ -71,6 +71,48 @@ function query(sql: string) {
     sql,
   );
   return { ...result, stdout: result.stdout.trim() };
+}
+
+function queryAsync(sql: string) {
+  return new Promise<{ status: number | null; stdout: string; stderr: string }>(
+    (resolvePromise) => {
+      const child = spawn(
+        docker,
+        [
+          ...composePrefix,
+          "exec",
+          "--no-TTY",
+          "db",
+          "psql",
+          "--username",
+          "postgres",
+          "--dbname",
+          "postgres",
+          "--quiet",
+          "--tuples-only",
+          "--no-align",
+          "--set",
+          "ON_ERROR_STOP=1",
+        ],
+        { cwd: repositoryRoot, env: environment },
+      );
+      let stdout = "";
+      let stderr = "";
+      child.stdout.setEncoding("utf8");
+      child.stderr.setEncoding("utf8");
+      child.stdout.on("data", (chunk: string) => {
+        stdout += chunk;
+      });
+      child.stderr.on("data", (chunk: string) => {
+        stderr += chunk;
+      });
+      child.on("close", (status) => {
+        resolvePromise({ status, stdout: stdout.trim(), stderr });
+      });
+      child.stdin.write(sql);
+      child.stdin.end();
+    },
+  );
 }
 
 function applyMigrations() {
@@ -397,6 +439,223 @@ describe("T6 initiate_university_verification RPC", () => {
           has_function_privilege('anon', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute'),
           has_function_privilege('authenticated', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute'),
           has_function_privilege('service_role', 'identity_api.initiate_university_verification(uuid,text,text,bytea)', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+  });
+});
+
+describe("T7 confirm and disconnect RPCs", () => {
+  it("confirms verification, sets 180-day expiry, and clears token", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "a1".repeat(32);
+    const tokenHashHex = "\\x" + "b1".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+
+    const confirm = query(`
+      select auth_user_id, university_id, status, expires_at > transaction_timestamp() + interval '179 days'
+      from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
+    `);
+    expect(confirm.status, confirm.stderr).toBe(0);
+    expect(confirm.stdout).toBe(`${userId}|tu-braunschweig|verified|t`);
+
+    // Verify token hash is cleared
+    const row = query(`
+      select status, token_hash is null, token_expires_at is null, verified_at is not null
+      from identity.university_verifications
+      where auth_user_id = '${userId}';
+    `);
+    expect(row.stdout).toBe("verified|t|t|t");
+  });
+
+  it("rejects confirmation for expired token", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "a2".repeat(32);
+    const tokenHashHex = "\\x" + "b2".repeat(32);
+
+    // Insert pending with expired token
+    query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        token_hash, token_expires_at
+      ) values (
+        '${userId}', 'tu-braunschweig', '${emailHash}', 'pending',
+        '${tokenHashHex}'::bytea, transaction_timestamp() - interval '1 hour'
+      );
+    `);
+
+    const confirm = query(`
+      select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
+    `);
+    expect(confirm.status).not.toBe(0);
+    expect(confirm.stderr).toContain("verification token is expired");
+  });
+
+  it("rejects confirmation for unknown or already consumed token", () => {
+    const unknownTokenHex = "\\x" + "99".repeat(32);
+    const confirm = query(`
+      select * from identity_api.confirm_university_verification('${unknownTokenHex}'::bytea);
+    `);
+    expect(confirm.status).not.toBe(0);
+    expect(confirm.stderr).toContain(
+      "verification token is invalid or expired",
+    );
+  });
+
+  it("rejects confirmation and cancels pending verification if account is deletion-pending", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "a3".repeat(32);
+    const tokenHashHex = "\\x" + "b3".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+
+    // Mark account deletion-pending
+    query(`
+      update identity.accounts
+      set state = 'deletion_pending',
+          deletion_requested_at = transaction_timestamp(),
+          purge_due_at = transaction_timestamp() + interval '30 days'
+      where auth_user_id = '${userId}';
+    `);
+
+    const confirm = query(`
+      select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
+    `);
+    expect(confirm.status).not.toBe(0);
+    expect(confirm.stderr).toContain("account is unavailable");
+
+    // Pending verification record was not confirmed
+    const row = query(`
+      select status from identity.university_verifications where auth_user_id = '${userId}';
+    `);
+    expect(row.stdout).toBe("pending");
+  });
+
+  it("rejects confirmation if another account verified same email hash while in-flight", () => {
+    const userA = createAuthUser({ confirmed: true });
+    const userB = createAuthUser({ confirmed: true });
+    const emailHash = "a4".repeat(32);
+    const tokenHashHexB = "\\x" + "b4".repeat(32);
+
+    // userB initiates verification
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userB}', 'tu-braunschweig', '${emailHash}', '${tokenHashHexB}'::bytea
+      );
+    `);
+
+    // Meanwhile userA becomes verified with same hash
+    query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        verified_at, expires_at
+      ) values (
+        '${userA}', 'tu-braunschweig', '${emailHash}', 'verified',
+        transaction_timestamp(), transaction_timestamp() + interval '180 days'
+      );
+    `);
+
+    // Now userB attempts to confirm
+    const confirm = query(`
+      select * from identity_api.confirm_university_verification('${tokenHashHexB}'::bytea);
+    `);
+    expect(confirm.status).not.toBe(0);
+    expect(confirm.stderr).toContain("institutional email is already verified");
+  });
+
+  it("serializes concurrent confirmations so exactly one succeeds", async () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "a5".repeat(32);
+    const tokenHashHex = "\\x" + "b5".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+
+    const results = await Promise.all([
+      queryAsync(
+        `select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);`,
+      ),
+      queryAsync(
+        `select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);`,
+      ),
+    ]);
+
+    const successes = results.filter((r) => r.status === 0);
+    const failures = results.filter((r) => r.status !== 0);
+
+    expect(successes).toHaveLength(1);
+    expect(failures).toHaveLength(1);
+  });
+
+  it("disconnects verification and allows email reuse", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "a6".repeat(32);
+    const tokenHashHex = "\\x" + "b6".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+      select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
+    `);
+
+    // Verify it is verified
+    const before = query(`
+      select count(*) from identity.university_verifications where auth_user_id = '${userId}';
+    `);
+    expect(before.stdout).toBe("1");
+
+    // Disconnect
+    const disconnect = query(`
+      select identity_api.disconnect_university_verification('${userId}');
+    `);
+    expect(disconnect.status, disconnect.stderr).toBe(0);
+
+    const after = query(`
+      select count(*) from identity.university_verifications where auth_user_id = '${userId}';
+    `);
+    expect(after.stdout).toBe("0");
+
+    // Now another user can initiate with this email hash immediately
+    const userOther = createAuthUser({ confirmed: true });
+    const tokenOther = "\\x" + "b7".repeat(32);
+    const reuse = query(`
+      select identity_api.initiate_university_verification(
+        '${userOther}', 'tu-braunschweig', '${emailHash}', '${tokenOther}'::bytea
+      );
+    `);
+    expect(reuse.status, reuse.stderr).toBe(0);
+  });
+
+  it("grants confirm and disconnect RPCs only to service_role", () => {
+    expect(
+      query(`
+        select
+          has_function_privilege('public', 'identity_api.confirm_university_verification(bytea)', 'execute'),
+          has_function_privilege('anon', 'identity_api.confirm_university_verification(bytea)', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.confirm_university_verification(bytea)', 'execute'),
+          has_function_privilege('service_role', 'identity_api.confirm_university_verification(bytea)', 'execute');
+      `).stdout,
+    ).toBe("f|f|f|t");
+
+    expect(
+      query(`
+        select
+          has_function_privilege('public', 'identity_api.disconnect_university_verification(uuid)', 'execute'),
+          has_function_privilege('anon', 'identity_api.disconnect_university_verification(uuid)', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.disconnect_university_verification(uuid)', 'execute'),
+          has_function_privilege('service_role', 'identity_api.disconnect_university_verification(uuid)', 'execute');
       `).stdout,
     ).toBe("f|f|f|t");
   });

@@ -159,9 +159,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: UNIV-02, UNIV-04, UNIV-05
 **Done when**:
-- [ ] Confirmation validates token, sets 180-day expiry, and clears token hash.
-- [ ] Disconnect deletes verification record for authenticated owner.
-- [ ] Database integration tests cover success, expiry, collision, and race conditions.
+- [x] Confirmation validates token, sets 180-day expiry, and clears token hash.
+- [x] Disconnect deletes verification record for authenticated owner.
+- [x] Database integration tests cover success, expiry, collision, and race conditions.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(university): add confirm and disconnect rpcs`

@@ -268,9 +268,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: UNIV-01, UNIV-02, UNIV-03, UNIV-04, UNIV-05, UNIV-06
 **Done when**:
-- [ ] Complete live stack journey passes in isolated test compose environment.
-- [ ] Proves initiation -> Inbucket delivery -> confirmation -> badge visible.
-- [ ] Proves account deletion cascades verification purge.
+- [x] Complete live stack journey passes in isolated test compose environment.
+- [x] Proves initiation -> Inbucket delivery -> confirmation -> badge visible.
+- [x] Proves account deletion cascades verification purge.
 **Tests**: stack
 **Gate**: Stack
 **Commit**: `test(university): prove live stack verification journeys`

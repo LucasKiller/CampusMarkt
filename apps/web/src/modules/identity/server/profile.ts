@@ -83,6 +83,21 @@ export function createProfileService(ports?: {
             },
           };
         }
+        if (publicId === "77777777-6666-4555-8444-333333333333") {
+          return {
+            status: "found" as const,
+            profile: {
+              publicId,
+              displayName: "Carl Friedrich Gauss",
+              joinedMonth: "2026-09",
+              avatarUrl: null,
+              universityBadge: {
+                universityId: "tu-braunschweig",
+                badgeLabel: "TU Braunschweig",
+              },
+            },
+          };
+        }
         if (publicId === "00000000-0000-4000-8000-000000000000") {
           return { status: "not_found" as const };
         }

@@ -255,9 +255,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: UNIV-03, UNIV-04
 **Done when**:
-- [ ] Profile renders TU Braunschweig badge when verified.
-- [ ] Badge is omitted when unverified, expired, or pending.
-- [ ] Browser E2E tests pass.
+- [x] Profile renders TU Braunschweig badge when verified.
+- [x] Badge is omitted when unverified, expired, or pending.
+- [x] Browser E2E tests pass.
 **Tests**: e2e
 **Gate**: Browser
 **Commit**: `feat(university): add trust badge to public profile page`

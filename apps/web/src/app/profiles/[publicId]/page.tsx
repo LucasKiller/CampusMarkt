@@ -118,6 +118,28 @@ export default async function PublicProfilePage({ params }: PageProps) {
             {profile.displayName}
           </h1>
 
+          {profile.universityBadge && (
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.375rem",
+                backgroundColor: "#e6f4ea",
+                color: "#137333",
+                padding: "0.25rem 0.625rem",
+                borderRadius: "16px",
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                margin: "0.25rem 0 0.5rem 0",
+              }}
+              data-testid="university-trust-badge"
+              aria-label={`Verified ${profile.universityBadge.badgeLabel}`}
+            >
+              <span aria-hidden="true">🎓</span>
+              <span>{profile.universityBadge.badgeLabel}</span>
+            </div>
+          )}
+
           <p style={{ color: "#526b59", margin: "0.25rem 0" }}>
             Member since {formatMonth(profile.joinedMonth)}
           </p>

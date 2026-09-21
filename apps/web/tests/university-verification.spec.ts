@@ -331,3 +331,41 @@ test.describe("university verification account journeys", () => {
     );
   });
 });
+
+test.describe("public profile trust badge display", () => {
+  const verifiedPublicId = "77777777-6666-4555-8444-333333333333";
+  const unverifiedPublicId = "99999999-8888-4777-8666-555555555555";
+
+  for (const width of [360, 1280]) {
+    test(`renders public profile with verified badge without horizontal overflow at ${width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 800 });
+
+      await page.goto(`/profiles/${verifiedPublicId}`);
+
+      await expect(
+        page.getByRole("heading", { name: "Carl Friedrich Gauss" }),
+      ).toBeVisible();
+
+      const badge = page.getByTestId("university-trust-badge");
+      await expect(badge).toBeVisible();
+      await expect(badge).toContainText("TU Braunschweig");
+
+      const dimensions = await page.evaluate(() => ({
+        clientWidth: document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+      }));
+      expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
+    });
+  }
+
+  test("omits badge when user is unverified or expired", async ({ page }) => {
+    await page.goto(`/profiles/${unverifiedPublicId}`);
+
+    await expect(
+      page.getByRole("heading", { name: "Ada Lovelace" }),
+    ).toBeVisible();
+    await expect(page.getByTestId("university-trust-badge")).not.toBeVisible();
+  });
+});

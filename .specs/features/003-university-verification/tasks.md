@@ -214,9 +214,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: UNIV-01, UNIV-02, UNIV-06
 **Done when**:
-- [ ] Endpoints validate same-origin request, payload syntax, and authentication.
-- [ ] Returns 202 on initiation, 200 on confirmation, 400 on invalid domain, 409 on collision, 429 on rate limit.
-- [ ] Route integration tests pass.
+- [x] Endpoints validate same-origin request, payload syntax, and authentication.
+- [x] Returns 202 on initiation, 200 on confirmation, 400 on invalid domain, 409 on collision, 429 on rate limit.
+- [x] Route integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(university): add verification api endpoints`

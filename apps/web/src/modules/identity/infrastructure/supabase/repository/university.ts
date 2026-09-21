@@ -4,7 +4,6 @@ export interface IdentityRpcClient {
   rpc(
     functionName: string,
     arguments_?: Record<string, unknown>,
-    options?: { token?: string },
   ): PromiseLike<{ data: unknown; error: unknown }>;
   schema?(schema: string): unknown;
   from?(table: string): unknown;

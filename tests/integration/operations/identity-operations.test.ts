@@ -253,3 +253,59 @@ describe("identity preflight configuration validation and redaction", () => {
     expect(combinedErrors).not.toContain(rawPepper);
   });
 });
+
+describe("university verification operational runbook verification", () => {
+  const uniRunbookPath = resolve(
+    repositoryRoot,
+    "docs/operations/identity/university-verification.md",
+  );
+
+  it("provides the university verification operations runbook file", () => {
+    expect(existsSync(uniRunbookPath)).toBe(true);
+  });
+
+  it("runbook prominently states that no VPS, deploy, or external action occurs without authorization", () => {
+    const content = readFileSync(uniRunbookPath, "utf8");
+    expect(content).toContain("separate, explicit user authorization");
+    expect(content).toContain("does not authorize external deployment");
+  });
+
+  it("documents supported institutions and 6-month validity", () => {
+    const content = readFileSync(uniRunbookPath, "utf8");
+    expect(content).toContain("TU Braunschweig");
+    expect(content).toContain("tu-braunschweig.de");
+    expect(content).toContain("6 months");
+    expect(content).toContain("180 days");
+  });
+
+  it("documents data minimization with HMAC-SHA-256 and discarding of plaintext emails", () => {
+    const content = readFileSync(uniRunbookPath, "utf8");
+    expect(content).toContain("HMAC-SHA-256");
+    expect(content).toContain("IDENTITY_HASH_PEPPER");
+    expect(content).toContain("discarded immediately");
+  });
+
+  it("runbook documents executable commands that exist in package.json", () => {
+    const content = readFileSync(uniRunbookPath, "utf8");
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+    const scripts = packageJson.scripts || {};
+
+    const commandMatches = content.matchAll(/```console\r?\n([\s\S]*?)```/gu);
+    const documentedCommands: string[] = [];
+    for (const match of commandMatches) {
+      for (const line of match[1].split(/\r?\n/u)) {
+        if (line.startsWith("$ ")) {
+          documentedCommands.push(line.slice(2).trim());
+        }
+      }
+    }
+
+    expect(documentedCommands.length).toBeGreaterThanOrEqual(2);
+    for (const cmd of documentedCommands) {
+      if (cmd.startsWith("npm run ")) {
+        const scriptName = cmd.replace("npm run ", "").split(" ")[0];
+        expect(scripts[scriptName]).toBeDefined();
+      }
+    }
+  });
+});

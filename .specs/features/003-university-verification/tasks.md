@@ -281,9 +281,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: UNIV-01, UNIV-06
 **Done when**:
-- [ ] Runbook documents operational procedures, configuration, and verification commands.
-- [ ] Docs verification script passes.
-- [ ] Full gate (`npm run verify`) passes cleanly.
+- [x] Runbook documents operational procedures, configuration, and verification commands.
+- [x] Docs verification script passes.
+- [x] Full gate (`npm run verify`) passes cleanly.
 **Tests**: operations integration
 **Gate**: Full
 **Commit**: `docs(university): add operational runbook and complete feature gates`

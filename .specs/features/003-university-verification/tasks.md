@@ -119,8 +119,8 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: UNIV-03, UNIV-06
 **Done when**:
-- [ ] Architecture tests assert import directions and verify secret separation.
-- [ ] Architecture test gate passes.
+- [x] Architecture tests assert import directions and verify secret separation.
+- [x] Architecture test gate passes.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(university): add architectural boundary tests`

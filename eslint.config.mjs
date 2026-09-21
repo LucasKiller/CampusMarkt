@@ -119,6 +119,12 @@ export default tseslint.config(
     },
   },
   {
+    files: ["packages/**/*.ts"],
+    rules: {
+      "no-restricted-syntax": ["error", ...identitySecretRestrictions],
+    },
+  },
+  {
     files: ["apps/web/src/app/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [

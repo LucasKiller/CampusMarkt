@@ -227,9 +227,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: UNIV-04, UNIV-05
 **Done when**:
-- [ ] GET endpoint returns current status (none, pending, verified, expired) with expiry time.
-- [ ] DELETE endpoint disconnects verification and returns 200.
-- [ ] Route integration tests pass.
+- [x] GET endpoint returns current status (none, pending, verified, expired) with expiry time.
+- [x] DELETE endpoint disconnects verification and returns 200.
+- [x] Route integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(university): add disconnect and status endpoints`

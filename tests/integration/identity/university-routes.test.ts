@@ -4,6 +4,7 @@ vi.mock("server-only", () => ({}));
 
 import { createUniversityVerificationHandler } from "../../../apps/web/src/app/api/identity/university-verifications/route.ts";
 import { createUniversityConfirmationHandler } from "../../../apps/web/src/app/api/identity/university-verifications/confirm/route.ts";
+import { createUniversityVerificationMeHandler } from "../../../apps/web/src/app/api/identity/me/university-verification/route.ts";
 
 const canonicalOrigin = "https://markt.example.test";
 const authUserId = "11111111-1111-4111-8111-111111111111";
@@ -417,6 +418,171 @@ describe("university verification routes integration", () => {
       const json = await res.json();
       expect(json.ok).toBe(false);
       expect(json.code).toBe("CONFLICT");
+    });
+  });
+
+  describe("GET /api/identity/me/university-verification", () => {
+    it("returns status for authenticated user", async () => {
+      const mockService = {
+        initiateVerification: vi.fn(),
+        confirmVerification: vi.fn(),
+        disconnectVerification: vi.fn(),
+        getVerificationStatus: vi.fn(async () => ({
+          ok: true as const,
+          value: {
+            status: "verified" as const,
+            universityId: "tu-braunschweig",
+            badgeLabel: "TU Braunschweig",
+            expiresAt: "2027-03-21T10:00:00.000Z",
+            daysRemaining: 180,
+          },
+        })),
+      };
+
+      const handler = createUniversityVerificationMeHandler(
+        mockService as never,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = new Request(
+        `${canonicalOrigin}/api/identity/me/university-verification`,
+        {
+          method: "GET",
+          headers: { origin: canonicalOrigin },
+        },
+      );
+
+      const res = await handler.GET(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.ok).toBe(true);
+      expect(json.data).toEqual({
+        status: "verified",
+        universityId: "tu-braunschweig",
+        badgeLabel: "TU Braunschweig",
+        expiresAt: "2027-03-21T10:00:00.000Z",
+        daysRemaining: 180,
+      });
+      expect(mockService.getVerificationStatus).toHaveBeenCalledWith(
+        authUserId,
+      );
+    });
+
+    it("rejects unauthenticated request with 401", async () => {
+      const mockService = {
+        initiateVerification: vi.fn(),
+        confirmVerification: vi.fn(),
+        disconnectVerification: vi.fn(),
+        getVerificationStatus: vi.fn(),
+      };
+
+      const handler = createUniversityVerificationMeHandler(
+        mockService as never,
+        mockSessionDal(null),
+        canonicalOrigin,
+      );
+
+      const req = new Request(
+        `${canonicalOrigin}/api/identity/me/university-verification`,
+        { method: "GET" },
+      );
+
+      const res = await handler.GET(req);
+      expect(res.status).toBe(401);
+      const json = await res.json();
+      expect(json.ok).toBe(false);
+      expect(json.code).toBe("UNAUTHENTICATED");
+    });
+  });
+
+  describe("DELETE /api/identity/me/university-verification", () => {
+    it("disconnects verification for authenticated owner", async () => {
+      const mockService = {
+        initiateVerification: vi.fn(),
+        confirmVerification: vi.fn(),
+        disconnectVerification: vi.fn(async () => ({
+          status: "disconnected" as const,
+        })),
+        getVerificationStatus: vi.fn(),
+      };
+
+      const handler = createUniversityVerificationMeHandler(
+        mockService as never,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = new Request(
+        `${canonicalOrigin}/api/identity/me/university-verification`,
+        {
+          method: "DELETE",
+          headers: { origin: canonicalOrigin },
+        },
+      );
+
+      const res = await handler.DELETE(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.ok).toBe(true);
+      expect(json.data).toEqual({ status: "disconnected" });
+      expect(mockService.disconnectVerification).toHaveBeenCalledWith(
+        authUserId,
+        expect.objectContaining({
+          trustedClientIp: "127.0.0.1",
+        }),
+      );
+    });
+
+    it("rejects DELETE without origin with 403", async () => {
+      const mockService = {
+        initiateVerification: vi.fn(),
+        confirmVerification: vi.fn(),
+        disconnectVerification: vi.fn(),
+        getVerificationStatus: vi.fn(),
+      };
+
+      const handler = createUniversityVerificationMeHandler(
+        mockService as never,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = new Request(
+        `${canonicalOrigin}/api/identity/me/university-verification`,
+        { method: "DELETE" },
+      );
+
+      const res = await handler.DELETE(req);
+      expect(res.status).toBe(403);
+      expect(mockService.disconnectVerification).not.toHaveBeenCalled();
+    });
+
+    it("rejects unauthenticated DELETE with 401", async () => {
+      const mockService = {
+        initiateVerification: vi.fn(),
+        confirmVerification: vi.fn(),
+        disconnectVerification: vi.fn(),
+        getVerificationStatus: vi.fn(),
+      };
+
+      const handler = createUniversityVerificationMeHandler(
+        mockService as never,
+        mockSessionDal(null),
+        canonicalOrigin,
+      );
+
+      const req = new Request(
+        `${canonicalOrigin}/api/identity/me/university-verification`,
+        {
+          method: "DELETE",
+          headers: { origin: canonicalOrigin },
+        },
+      );
+
+      const res = await handler.DELETE(req);
+      expect(res.status).toBe(401);
+      expect(mockService.disconnectVerification).not.toHaveBeenCalled();
     });
   });
 });

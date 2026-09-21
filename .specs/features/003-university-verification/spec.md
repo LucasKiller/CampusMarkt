@@ -1,6 +1,6 @@
 # University Verification Specification
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Problem Statement
 
@@ -8,13 +8,13 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 
 ## Goals
 
-- [ ] Let a confirmed registered user submit an institutional email address for supported universities (starting with TU Braunschweig).
-- [ ] Deliver a one-time verification link with a bounded 24-hour lifetime to the institutional address.
-- [ ] Issue a visible trust badge on the user's public profile upon verification confirmation.
-- [ ] Enforce 1:1 uniqueness so that one institutional identity cannot verify multiple active CampusMarkt accounts simultaneously.
-- [ ] Automatically expire verifications after 6 months (180 days) with a seamless reverification path.
-- [ ] Protect student privacy by storing only a pseudonymous HMAC-SHA-256 hash at rest and never exposing the institutional address in public profiles, APIs, or logs.
-- [ ] Integrate with the account deletion lifecycle to purge verification records when an account is deleted.
+- [x] Let a confirmed registered user submit an institutional email address for supported universities (starting with TU Braunschweig).
+- [x] Deliver a one-time verification link with a bounded 24-hour lifetime to the institutional address.
+- [x] Issue a visible trust badge on the user's public profile upon verification confirmation.
+- [x] Enforce 1:1 uniqueness so that one institutional identity cannot verify multiple active CampusMarkt accounts simultaneously.
+- [x] Automatically expire verifications after 6 months (180 days) with a seamless reverification path.
+- [x] Protect student privacy by storing only a pseudonymous HMAC-SHA-256 hash at rest and never exposing the institutional address in public profiles, APIs, or logs.
+- [x] Integrate with the account deletion lifecycle to purge verification records when an account is deleted.
 
 ## Out of Scope
 

@@ -58,13 +58,24 @@
 - **Date**: 2026-09-15
 - **Status**: active
 
+### AD-008
+- **Decision**: University verification records store only normalized pseudonymous HMAC-SHA-256 identity hashes using `IDENTITY_HASH_PEPPER`, discard plaintext institutional email addresses immediately upon confirmation, enforce 180-day (6-month) validity at query time, and cascade purge upon parent account deletion.
+- **Reason**: Enforces strict data minimization, prevents institutional email exposure across public profiles, APIs, and logs, guarantees 1:1 uniqueness against multi-account badge farming, and respects the semester-aligned academic cycle.
+- **Trade-off**: Plaintext institutional email is never recoverable from platform storage; expired verifications require initiating a fresh one-time email loop.
+- **Scope**: University verification, identity domain, database schema/RPCs, public profile trust badges, and account deletion lifecycle.
+- **Date**: 2026-09-21
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: 003-university-verification / `.specs/features/003-university-verification/`
-- **Phase / Task**: Tasks phase complete (16 granular tasks across 4 phases validated) -> Approval / Execute next
-- **Completed**: 001-web-supabase-foundation verified; 002-identity-accounts verified; 003-university-verification spec.md (0 errors), design.md, and tasks.md (0 errors) validated
-- **In-progress** (file:line): `.specs/features/003-university-verification/tasks.md`
-- **Next step**: User approval of spec, design, and tasks; then begin Phase 1 (T1).
+- **Phase / Task**: Feature Complete & Verified (T1-T16 complete, 31/31 ACs validated, 3/3 discrimination mutants killed, PASS validation.md)
+- **Completed**:
+  - `001-web-supabase-foundation` verified.
+  - `002-identity-accounts` verified.
+  - `003-university-verification` verified (Phase 1-4, T1-T16, validation.md PASS). Horizon 2 complete.
+- **In-progress** (file:line): None
+- **Next step**: Specify Feature `004-listing-creation-management` under Horizon 3 (Goods Marketplace).
 - **Blockers**: none
-- **Uncommitted files**: `.specs/features/003-university-verification/` (spec.md, design.md, tasks.md), `.gitignore`
+- **Uncommitted files**: none
 - **Branch**: main

@@ -6,6 +6,7 @@ import { getSessionDal } from "../../modules/identity/server/access";
 import { AvatarManager } from "./avatar/avatar-manager";
 import { ProfileEditor } from "./profile/profile-editor";
 import { SecurityControls } from "./security/security-controls";
+import { UniversityVerificationSection } from "./university-verification-section";
 
 export const metadata: Metadata = {
   title: "Account · CampusMarkt",
@@ -77,7 +78,9 @@ export default async function AccountPage() {
           <ProfileEditor />
         </div>
 
-        <div className="info-card">
+        <UniversityVerificationSection />
+
+        <div className="info-card" style={{ marginTop: "1.5rem" }}>
           <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>
             Session & Security
           </h2>

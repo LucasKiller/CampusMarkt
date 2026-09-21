@@ -242,9 +242,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: UNIV-01, UNIV-04, UNIV-05
 **Done when**:
-- [ ] Renders current status in Account settings with accessible form controls.
-- [ ] Handles submit, error summary, reverify prompt, and disconnect modal.
-- [ ] Browser E2E tests verify interaction and responsive layout (360px & 1280px).
+- [x] Renders current status in Account settings with accessible form controls.
+- [x] Handles submit, error summary, reverify prompt, and disconnect modal.
+- [x] Browser E2E tests verify interaction and responsive layout (360px & 1280px).
 **Tests**: e2e
 **Gate**: Browser
 **Commit**: `feat(university): add account verification settings ui`

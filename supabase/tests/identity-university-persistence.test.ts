@@ -660,3 +660,144 @@ describe("T7 confirm and disconnect RPCs", () => {
     ).toBe("f|f|f|t");
   });
 });
+
+describe("T8 public profile trust badge projection", () => {
+  it("projects university_id and badge_label for actively verified user", () => {
+    const userId = createAuthUser({
+      confirmed: true,
+      displayName: "Carl Gauss",
+    });
+    const publicId = query(
+      `select public_id from identity.accounts where auth_user_id = '${userId}';`,
+    ).stdout;
+
+    const emailHash = "c1".repeat(32);
+    const tokenHashHex = "\\x" + "d1".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+      select * from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
+    `);
+
+    const profile = query(`
+      select
+        public_id,
+        display_name,
+        joined_month,
+        avatar_url is null as avatar_is_null,
+        university_id,
+        badge_label
+      from identity_api.get_public_profile('${publicId}');
+    `);
+
+    expect(profile.status, profile.stderr).toBe(0);
+    expect(profile.stdout).toMatch(
+      new RegExp(
+        `^${publicId}\\|Carl Gauss\\|\\d{4}-\\d{2}\\|t\\|tu-braunschweig\\|TU Braunschweig$`,
+        "u",
+      ),
+    );
+  });
+
+  it("projects null university_id and badge_label for unverified user", () => {
+    const userId = createAuthUser({
+      confirmed: true,
+      displayName: "Normal User",
+    });
+    const publicId = query(
+      `select public_id from identity.accounts where auth_user_id = '${userId}';`,
+    ).stdout;
+
+    const profile = query(`
+      select
+        public_id,
+        display_name,
+        university_id is null,
+        badge_label is null
+      from identity_api.get_public_profile('${publicId}');
+    `);
+
+    expect(profile.status, profile.stderr).toBe(0);
+    expect(profile.stdout).toBe(`${publicId}|Normal User|t|t`);
+  });
+
+  it("projects null university_id and badge_label when verification is pending", () => {
+    const userId = createAuthUser({
+      confirmed: true,
+      displayName: "Pending User",
+    });
+    const publicId = query(
+      `select public_id from identity.accounts where auth_user_id = '${userId}';`,
+    ).stdout;
+
+    const emailHash = "c2".repeat(32);
+    const tokenHashHex = "\\x" + "d2".repeat(32);
+
+    query(`
+      select identity_api.initiate_university_verification(
+        '${userId}', 'tu-braunschweig', '${emailHash}', '${tokenHashHex}'::bytea
+      );
+    `);
+
+    const profile = query(`
+      select
+        public_id,
+        display_name,
+        university_id is null,
+        badge_label is null
+      from identity_api.get_public_profile('${publicId}');
+    `);
+
+    expect(profile.status, profile.stderr).toBe(0);
+    expect(profile.stdout).toBe(`${publicId}|Pending User|t|t`);
+  });
+
+  it("projects null university_id and badge_label when verification is expired", () => {
+    const userId = createAuthUser({
+      confirmed: true,
+      displayName: "Expired Student",
+    });
+    const publicId = query(
+      `select public_id from identity.accounts where auth_user_id = '${userId}';`,
+    ).stdout;
+
+    const emailHash = "c3".repeat(32);
+
+    query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        verified_at, expires_at
+      ) values (
+        '${userId}', 'tu-braunschweig', '${emailHash}', 'verified',
+        transaction_timestamp() - interval '181 days',
+        transaction_timestamp() - interval '1 day'
+      );
+    `);
+
+    const profile = query(`
+      select
+        public_id,
+        display_name,
+        university_id is null,
+        badge_label is null
+      from identity_api.get_public_profile('${publicId}');
+    `);
+
+    expect(profile.status, profile.stderr).toBe(0);
+    expect(profile.stdout).toBe(`${publicId}|Expired Student|t|t`);
+  });
+
+  it("grants get_public_profile execution to anon, authenticated, and service_role", () => {
+    expect(
+      query(`
+        select
+          has_function_privilege('public', 'identity_api.get_public_profile(uuid)', 'execute'),
+          has_function_privilege('anon', 'identity_api.get_public_profile(uuid)', 'execute'),
+          has_function_privilege('authenticated', 'identity_api.get_public_profile(uuid)', 'execute'),
+          has_function_privilege('service_role', 'identity_api.get_public_profile(uuid)', 'execute');
+      `).stdout,
+    ).toBe("f|t|t|t");
+  });
+});

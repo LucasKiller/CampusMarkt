@@ -172,9 +172,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: UNIV-03, UNIV-04
 **Done when**:
-- [ ] Active verification projects university ID and label.
-- [ ] Expired, pending, or revoked verification projects null badge.
-- [ ] Database tests assert exact public profile projection.
+- [x] Active verification projects university ID and label.
+- [x] Expired, pending, or revoked verification projects null badge.
+- [x] Database tests assert exact public profile projection.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(university): extend public profile rpc with trust badge`

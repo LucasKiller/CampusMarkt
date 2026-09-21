@@ -106,8 +106,11 @@ function parsePublicProfile(value: unknown): PublicProfile | null | undefined {
     return undefined;
   }
 
-  const expected = ["avatar_url", "display_name", "joined_month", "public_id"];
-  if (Object.keys(value).sort().join("|") !== expected.join("|")) {
+  const keys = Object.keys(value).sort().join("|");
+  const baseExpected = "avatar_url|display_name|joined_month|public_id";
+  const badgeExpected =
+    "avatar_url|badge_label|display_name|joined_month|public_id|university_id";
+  if (keys !== baseExpected && keys !== badgeExpected) {
     return undefined;
   }
 
@@ -115,7 +118,13 @@ function parsePublicProfile(value: unknown): PublicProfile | null | undefined {
     typeof value.public_id !== "string" ||
     typeof value.display_name !== "string" ||
     typeof value.joined_month !== "string" ||
-    (value.avatar_url !== null && typeof value.avatar_url !== "string")
+    (value.avatar_url !== null && typeof value.avatar_url !== "string") ||
+    (value.university_id !== undefined &&
+      value.university_id !== null &&
+      typeof value.university_id !== "string") ||
+    (value.badge_label !== undefined &&
+      value.badge_label !== null &&
+      typeof value.badge_label !== "string")
   ) {
     return undefined;
   }
@@ -127,12 +136,26 @@ function parsePublicProfile(value: unknown): PublicProfile | null | undefined {
         : `${value.avatar_url}.webp`
       : null;
 
-  return {
+  const profile: PublicProfile = {
     publicId: value.public_id,
     displayName: value.display_name,
     joinedMonth: value.joined_month,
     avatarUrl,
   };
+
+  if (
+    typeof value.university_id === "string" &&
+    typeof value.badge_label === "string"
+  ) {
+    profile.universityBadge = {
+      universityId: value.university_id,
+      badgeLabel: value.badge_label,
+    };
+  } else if ("university_id" in value) {
+    profile.universityBadge = null;
+  }
+
+  return profile;
 }
 
 function parseAccountLookup(value: unknown) {
@@ -453,3 +476,5 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
 }
 
 export type IdentityRepository = ReturnType<typeof createIdentityRepository>;
+
+export * from "./university";

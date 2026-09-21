@@ -187,9 +187,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: UNIV-01, UNIV-02
 **Done when**:
-- [ ] Repository implements typed methods for initiation, confirmation, and disconnect.
-- [ ] Email template renders action link and 24-hour expiration notice.
-- [ ] Repository integration tests pass.
+- [x] Repository implements typed methods for initiation, confirmation, and disconnect.
+- [x] Email template renders action link and 24-hour expiration notice.
+- [x] Repository integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(university): add verification repository and email template`

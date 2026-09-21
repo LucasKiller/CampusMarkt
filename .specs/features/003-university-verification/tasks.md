@@ -200,10 +200,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: UNIV-01, UNIV-02, UNIV-04, UNIV-05, UNIV-06
 **Done when**:
-- [ ] Enforces dual rate limits (3/hr per account, 30/hr per IP) before email dispatch.
-- [ ] Records audit events with pseudonymous hashes.
-- [ ] Handles SMTP delivery failures gracefully with 503.
-- [ ] Application unit tests pass.
+- [x] Enforces dual rate limits (3/hr per account, 30/hr per IP) before email dispatch.
+- [x] Records audit events with pseudonymous hashes.
+- [x] Handles SMTP delivery failures gracefully with 503.
+- [x] Application unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(university): implement verification application service`

@@ -163,10 +163,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: SRCH-03, SRCH-05
 **Done when**:
-- [ ] Computes relevance rank using `ts_rank_cd`.
-- [ ] Supports price sorting and chronological sorting.
-- [ ] Implements deterministic keyset pagination for search results.
-- [ ] Database test confirms sorting order and pagination behavior.
+- [x] Computes relevance rank using `ts_rank_cd`.
+- [x] Supports price sorting and chronological sorting.
+- [x] Implements deterministic keyset pagination for search results.
+- [x] Database test confirms sorting order and pagination behavior.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(search): add search sorting and keyset pagination`

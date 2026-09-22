@@ -280,9 +280,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: LIST-02
 **Done when**:
-- [ ] Renders user listings with cover image, title, price, status badge, and area.
-- [ ] Provides direct navigation to manage view and create new listing.
-- [ ] Component tests pass.
+- [x] Renders user listings with cover image, title, price, status badge, and area.
+- [x] Provides direct navigation to manage view and create new listing.
+- [x] Component tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): implement my listings dashboard ui`

@@ -177,10 +177,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: SRCH-01, SRCH-02, SRCH-03
 **Done when**:
-- [ ] Tests verify title weight > description weight.
-- [ ] Tests verify multi-facet intersections (category + area + price).
-- [ ] Tests verify university verified seller filter.
-- [ ] Database tests pass cleanly.
+- [x] Tests verify title weight > description weight.
+- [x] Tests verify multi-facet intersections (category + area + price).
+- [x] Tests verify university verified seller filter.
+- [x] Database tests pass cleanly.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `test(search): add database persistence tests for search`

@@ -175,9 +175,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: FEED-01, FEED-02, FEED-03
 **Done when**:
-- [ ] Tests prove zero duplicate or skipped listings across pages.
-- [ ] Tests verify filtering by category, area, and type.
-- [ ] Database tests pass cleanly.
+- [x] Tests prove zero duplicate or skipped listings across pages.
+- [x] Tests verify filtering by category, area, and type.
+- [x] Database tests pass cleanly.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `test(feed): add database persistence tests for feed queries`

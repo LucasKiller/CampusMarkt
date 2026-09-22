@@ -233,10 +233,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: LIST-02, LIST-03
 **Done when**:
-- [ ] `GET /api/listings/mine` lists all listings for the authenticated user.
-- [ ] `PATCH /api/listings/[id]` updates mutable fields; rejects non-owner with 403.
-- [ ] `POST /api/listings/[id]/status` transitions status; rejects invalid transitions with 409.
-- [ ] Route integration tests cover all status codes and responses.
+- [x] `GET /api/listings/mine` lists all listings for the authenticated user.
+- [x] `PATCH /api/listings/[id]` updates mutable fields; rejects non-owner with 403.
+- [x] `POST /api/listings/[id]/status` transitions status; rejects invalid transitions with 409.
+- [x] Route integration tests cover all status codes and responses.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(listings): implement listing management and status routes`

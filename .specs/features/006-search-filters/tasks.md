@@ -92,10 +92,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: SRCH-02, SRCH-05
 **Done when**:
-- [ ] Trims query to max 100 characters.
-- [ ] Rejects inverted price ranges (`minPrice > maxPrice`) with actionable error.
-- [ ] Validates categories, pickup areas, conditions, and types against allowed enums.
-- [ ] Unit tests cover all valid and invalid inputs.
+- [x] Trims query to max 100 characters.
+- [x] Rejects inverted price ranges (`minPrice > maxPrice`) with actionable error.
+- [x] Validates categories, pickup areas, conditions, and types against allowed enums.
+- [x] Unit tests cover all valid and invalid inputs.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): implement search query validation schema`

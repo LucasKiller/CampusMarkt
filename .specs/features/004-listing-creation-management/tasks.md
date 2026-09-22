@@ -137,10 +137,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: LIST-01, LIST-04
 **Done when**:
-- [ ] Migration creates `marketplace` and `marketplace_api` schemas.
-- [ ] Tables have primary keys, checks, foreign keys cascading on account deletion.
-- [ ] Tables have RLS enabled and forced.
-- [ ] Database test confirms schema creation and constraint integrity.
+- [x] Migration creates `marketplace` and `marketplace_api` schemas.
+- [x] Tables have primary keys, checks, foreign keys cascading on account deletion.
+- [x] Tables have RLS enabled and forced.
+- [x] Database test confirms schema creation and constraint integrity.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(listings): add marketplace listings tables migration`

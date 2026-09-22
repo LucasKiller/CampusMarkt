@@ -194,9 +194,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: LIST-01, LIST-02, LIST-04
 **Done when**:
-- [ ] Repository abstracts `create_listing`, `update_listing`, `transition_listing_status`, and queries.
-- [ ] Handles DB error mappings to domain errors.
-- [ ] Integration tests pass against repository adapter.
+- [x] Repository abstracts `create_listing`, `update_listing`, `transition_listing_status`, and queries.
+- [x] Handles DB error mappings to domain errors.
+- [x] Integration tests pass against repository adapter.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(listings): implement listing repository and storage adapter`

@@ -250,10 +250,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: FEED-01, FEED-02, FEED-04
 **Done when**:
-- [ ] Responsive card renders cleanly on 360px mobile and 1280px desktop viewports.
-- [ ] Renders trust badge for verified sellers and reserved tag for items under negotiation.
-- [ ] Renders accessible placeholder for zero-image `WANTED` listings.
-- [ ] Component unit tests pass.
+- [x] Responsive card renders cleanly on 360px mobile and 1280px desktop viewports.
+- [x] Renders trust badge for verified sellers and reserved tag for items under negotiation.
+- [x] Renders accessible placeholder for zero-image `WANTED` listings.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): implement listing card and feed filter components`

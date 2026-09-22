@@ -66,16 +66,25 @@
 - **Date**: 2026-09-21
 - **Status**: active
 
+### AD-009
+- **Decision**: Listing media uses pre-signed direct upload to Supabase Storage `listing-media` with owner-scoped RLS policies; listing creation, mutable updates, and status transitions occur via atomic PostgreSQL RPCs (`marketplace_api`) with strict account confirmation checks, price invariants, and `listing_type` immutability.
+- **Reason**: Prevents memory bloat and streaming bottlenecks through the Next.js server runtime, leverages PostgreSQL transactional integrity for multi-image links, and keeps business and lifecycle transition guards at the database/service layer.
+- **Trade-off**: Uploaded media for abandoned listing creation drafts requires periodic background orphan cleanup.
+- **Scope**: Marketplace inventory, listing creation/editing, image media upload, and lifecycle state management.
+- **Date**: 2026-09-22
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 003-university-verification / `.specs/features/003-university-verification/`
-- **Phase / Task**: Feature Complete & Verified (T1-T16 complete, 31/31 ACs validated, 3/3 discrimination mutants killed, PASS validation.md)
+- **Feature**: 004-listing-creation-management / `.specs/features/004-listing-creation-management/`
+- **Phase / Task**: Tasks Phase complete (T1-T16 designed & validated) -> Ready for Execute
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
-  - `003-university-verification` verified (Phase 1-4, T1-T16, validation.md PASS). Horizon 2 complete.
-- **In-progress** (file:line): None
-- **Next step**: Specify Feature `004-listing-creation-management` under Horizon 3 (Goods Marketplace).
+  - `003-university-verification` verified.
+  - `004-listing-creation-management`: `context.md`, `spec.md`, `design.md`, and `tasks.md` complete and validated.
+- **In-progress** (file:line): `.specs/features/004-listing-creation-management/tasks.md`
+- **Next step**: Execute Batch 1 (Phases 1-2: T1-T8) sequentially.
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/features/004-listing-creation-management/`
 - **Branch**: main

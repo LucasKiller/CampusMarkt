@@ -148,10 +148,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: FEED-01, FEED-02, FEED-05
 **Done when**:
-- [ ] RPC filters `status IN ('active', 'reserved')` and applies keyset condition.
-- [ ] Aggregates primary cover image (`position = 0`), seller `display_name`, and active TU Braunschweig badge.
-- [ ] Excludes `sold` and `archived` items and all private email/hash fields.
-- [ ] Database test confirms deterministic ordering and projection.
+- [x] RPC filters `status IN ('active', 'reserved')` and applies keyset condition.
+- [x] Aggregates primary cover image (`position = 0`), seller `display_name`, and active TU Braunschweig badge.
+- [x] Excludes `sold` and `archived` items and all private email/hash fields.
+- [x] Database test confirms deterministic ordering and projection.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(feed): implement get public feed keyset rpc`

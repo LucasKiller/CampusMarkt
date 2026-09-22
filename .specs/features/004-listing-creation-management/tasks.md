@@ -79,11 +79,11 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: LIST-01, LIST-03
 **Done when**:
-- [ ] Domain defines categories, pickup areas, conditions, and types.
-- [ ] Price rules enforce integer cents bounds for `SELL` (€0.50–€10,000.00), null/0 for `GIVE_AWAY`, optional max budget for `WANTED`.
-- [ ] Image count rules enforce 1–8 images for `SELL`/`GIVE_AWAY` and 0–8 for `WANTED`.
-- [ ] Status transition state machine defines valid paths and guards against invalid transitions.
-- [ ] Unit tests cover all branches and edge cases.
+- [x] Domain defines categories, pickup areas, conditions, and types.
+- [x] Price rules enforce integer cents bounds for `SELL` (€0.50–€10,000.00), null/0 for `GIVE_AWAY`, optional max budget for `WANTED`.
+- [x] Image count rules enforce 1–8 images for `SELL`/`GIVE_AWAY` and 0–8 for `WANTED`.
+- [x] Status transition state machine defines valid paths and guards against invalid transitions.
+- [x] Unit tests cover all branches and edge cases.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): define listing domain invariants and state machine`

@@ -83,15 +83,15 @@
 ## Handoff
 
 - **Feature**: 005-marketplace-feed-listing-details / `.specs/features/005-marketplace-feed-listing-details/`
-- **Phase / Task**: Tasks Phase complete (T1-T16 designed & validated) -> Ready for Execute
+- **Phase / Task**: Feature Complete & Verified (T1-T16 complete, 17/17 ACs validated, 3/3 discrimination mutants killed, PASS validation.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
   - `003-university-verification` verified.
   - `004-listing-creation-management` verified.
-  - `005-marketplace-feed-listing-details`: `context.md`, `spec.md`, `design.md`, and `tasks.md` complete and validated.
-- **In-progress** (file:line): `.specs/features/005-marketplace-feed-listing-details/tasks.md`
-- **Next step**: Execute Batch 1 (Phases 1-2: T1-T8) sequentially.
+  - `005-marketplace-feed-listing-details` verified (Phases 1-4, T1-T16, validation.md PASS).
+- **In-progress** (file:line): None
+- **Next step**: Specify Feature `006-search-filters` under Horizon 3 (Goods Marketplace).
 - **Blockers**: none
-- **Uncommitted files**: `.specs/features/005-marketplace-feed-listing-details/`
+- **Uncommitted files**: none
 - **Branch**: main

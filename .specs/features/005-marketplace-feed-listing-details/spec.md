@@ -1,6 +1,6 @@
 # Marketplace Feed and Listing Details Specification
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Problem Statement
 
@@ -8,14 +8,14 @@ CampusMarkt visitors and registered users need an intuitive, fast, and accessibl
 
 ## Goals
 
-- [ ] Provide a public marketplace feed displaying recent active and reserved physical goods listings in Braunschweig.
-- [ ] Implement deterministic keyset pagination on `(created_at, id)` to prevent duplicate or skipped listings during concurrent inserts.
-- [ ] Support feed filtering by intent (`SELL`, `GIVE_AWAY`, `WANTED`), category (7 canonical categories), and pickup area (10 Braunschweig zones).
-- [ ] Project seller public profile display name and active TU Braunschweig verification badge on each listing card and details view.
-- [ ] Provide a dedicated public listing details view displaying high-resolution image galleries, description, condition, and coarse pickup area.
-- [ ] Clearly demarcate `reserved` listings with a prominent visual badge while excluding `sold` and `archived` listings from the public feed.
-- [ ] Stream the initial feed view via Next.js React Server Components for rapid First Contentful Paint and SEO, with client-side infinite scroll.
-- [ ] Protect seller privacy by ensuring primary account emails, institutional verification emails, and internal hashes are never exposed in public queries or DOM.
+- [x] Provide a public marketplace feed displaying recent active and reserved physical goods listings in Braunschweig.
+- [x] Implement deterministic keyset pagination on `(created_at, id)` to prevent duplicate or skipped listings during concurrent inserts.
+- [x] Support feed filtering by intent (`SELL`, `GIVE_AWAY`, `WANTED`), category (7 canonical categories), and pickup area (10 Braunschweig zones).
+- [x] Project seller public profile display name and active TU Braunschweig verification badge on each listing card and details view.
+- [x] Provide a dedicated public listing details view displaying high-resolution image galleries, description, condition, and coarse pickup area.
+- [x] Clearly demarcate `reserved` listings with a prominent visual badge while excluding `sold` and `archived` listings from the public feed.
+- [x] Stream the initial feed view via Next.js React Server Components for rapid First Contentful Paint and SEO, with client-side infinite scroll.
+- [x] Protect seller privacy by ensuring primary account emails, institutional verification emails, and internal hashes are never exposed in public queries or DOM.
 
 ## Out of Scope
 
@@ -130,8 +130,8 @@ CampusMarkt visitors and registered users need an intuitive, fast, and accessibl
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| FEED-01 | Public feed listing retrieval with deterministic ordering and projection | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API / UI | pending |
-| FEED-02 | Keyset cursor pagination and filtering by category, area, and intent | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Domain / RPC / API | pending |
-| FEED-03 | Detailed listing view with image gallery, condition, and seller profile | P1: AC1, AC2, AC3, AC4, AC5 | Application / API / UI | pending |
-| FEED-04 | Responsive feed card and details view on mobile (360px) and desktop (1280px) | Edge cases 4, 5, 6, 8 | UI Components | pending |
-| FEED-05 | Public boundary protection and zero PII leakage | P1: AC6, Edge case 7 | Security / Data Boundary | pending |
+| FEED-01 | Public feed listing retrieval with deterministic ordering and projection | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API / UI | verified |
+| FEED-02 | Keyset cursor pagination and filtering by category, area, and intent | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Domain / RPC / API | verified |
+| FEED-03 | Detailed listing view with image gallery, condition, and seller profile | P1: AC1, AC2, AC3, AC4, AC5 | Application / API / UI | verified |
+| FEED-04 | Responsive feed card and details view on mobile (360px) and desktop (1280px) | Edge cases 4, 5, 6, 8 | UI Components | verified |
+| FEED-05 | Public boundary protection and zero PII leakage | P1: AC6, Edge case 7 | Security / Data Boundary | verified |

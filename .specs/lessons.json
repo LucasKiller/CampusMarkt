@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 11,
+  "next_id": 12,
   "lessons": [
     {
       "id": "L-001",
@@ -184,6 +184,24 @@
       ],
       "created": "2026-09-15T02:16:48Z",
       "last_seen": "2026-09-15T02:16:48Z"
+    },
+    {
+      "id": "L-011",
+      "key": "gate_fail::preserve existing landing page hero branding elements when adding feed components to prevent breaking shell test assertions",
+      "text": "Preserve existing landing page hero branding elements when adding feed components to prevent breaking shell test assertions",
+      "signal": "gate_fail",
+      "scope": "apps/web",
+      "status": "candidate",
+      "features": [
+        "005-marketplace-feed-listing-details"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "apps/web/tests/shell.spec.ts:15 (apps/web)"
+      ],
+      "created": "2026-09-22T22:58:19Z",
+      "last_seen": "2026-09-22T22:58:19Z"
     }
   ]
 }

@@ -74,6 +74,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md sensor M16 (production-readiness)
 - last seen: 2026-09-15T02:16:48Z
 
+### L-011 - Preserve existing landing page hero branding elements when adding feed components to prevent breaking shell test assertions
+- signal: `gate_fail` · recurrence: 1 feature(s) · scope: `apps/web` · harmful: 0
+- features: 005-marketplace-feed-listing-details
+- evidence: apps/web/tests/shell.spec.ts:15 (apps/web)
+- last seen: 2026-09-22T22:58:19Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

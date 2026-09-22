@@ -135,9 +135,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: FEED-01, FEED-02
 **Done when**:
-- [ ] Migration adds `listings_feed_keyset_idx` on `(created_at desc, id desc) where status in ('active', 'reserved')`.
-- [ ] Migration adds filter indexes for `category`, `pickup_area`, and `listing_type`.
-- [ ] Migration verified syntactically.
+- [x] Migration adds `listings_feed_keyset_idx` on `(created_at desc, id desc) where status in ('active', 'reserved')`.
+- [x] Migration adds filter indexes for `category`, `pickup_area`, and `listing_type`.
+- [x] Migration verified syntactically.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(feed): add composite partial indexes for feed queries`

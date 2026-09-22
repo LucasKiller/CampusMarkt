@@ -207,9 +207,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: LIST-01, LIST-02, LIST-03
 **Done when**:
-- [ ] Service enforces account status and rate limits.
-- [ ] Emits structured audit events (`listing.created`, `listing.updated`, etc.).
-- [ ] Unit and integration tests cover happy and error paths.
+- [x] Service enforces account status and rate limits.
+- [x] Emits structured audit events (`listing.created`, `listing.updated`, etc.).
+- [x] Unit and integration tests cover happy and error paths.
 **Tests**: unit + integration
 **Gate**: Integration
 **Commit**: `feat(listings): implement listing application service`

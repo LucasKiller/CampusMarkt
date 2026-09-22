@@ -79,9 +79,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: SRCH-01, SRCH-02, SRCH-03
 **Done when**:
-- [ ] DTOs define full search filter shape including facets and sort options.
-- [ ] Type predicates assert valid search request and response shapes.
-- [ ] Unit tests verify parsing and rejection of invalid data.
+- [x] DTOs define full search filter shape including facets and sort options.
+- [x] Type predicates assert valid search request and response shapes.
+- [x] Unit tests verify parsing and rejection of invalid data.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): define search transport dtos and type predicates`

@@ -162,9 +162,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: FEED-03, FEED-05
 **Done when**:
-- [ ] RPC retrieves all ordered media (positions 0 to 7), full description, condition, category, area, price, and seller profile.
-- [ ] Returns active TU Braunschweig badge if and only if verification is active.
-- [ ] Database test proves details retrieval and 404/empty handling for invalid IDs.
+- [x] RPC retrieves all ordered media (positions 0 to 7), full description, condition, category, area, price, and seller profile.
+- [x] Returns active TU Braunschweig badge if and only if verification is active.
+- [x] Database test proves details retrieval and 404/empty handling for invalid IDs.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(feed): implement get public listing details rpc`

@@ -177,9 +177,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: LIST-04
 **Done when**:
-- [ ] Storage bucket `listing-media` is configured.
-- [ ] RLS policies permit authenticated users to upload to their designated path prefix.
-- [ ] Storage policies verified in database tests.
+- [x] Storage bucket `listing-media` is configured.
+- [x] RLS policies permit authenticated users to upload to their designated path prefix.
+- [x] Storage policies verified in database tests.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(listings): add listing media storage bucket with rls`

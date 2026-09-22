@@ -235,4 +235,51 @@ describe("marketplace listings migrations structure and schema integrity", () =>
       );
     });
   });
+
+  describe("listing-media storage bucket and RLS policies", () => {
+    const storageMigrationFile = resolve(
+      migrationsDir,
+      "20260922103000_marketplace_storage_media.sql",
+    );
+
+    it("includes listing-media storage migration file", () => {
+      const files = readdirSync(migrationsDir);
+      expect(files).toContain("20260922103000_marketplace_storage_media.sql");
+    });
+
+    it("configures listing-media bucket with 5MB limit and allowed MIME types", () => {
+      const sql = readFileSync(storageMigrationFile, "utf8");
+
+      expect(sql).toMatch(/'listing-media'/i);
+      expect(sql).toMatch(/5242880/i); // 5MB
+      expect(sql).toMatch(
+        /array\['image\/jpeg',\s*'image\/png',\s*'image\/webp'\]/i,
+      );
+    });
+
+    it("configures public read access policy for listing media", () => {
+      const sql = readFileSync(storageMigrationFile, "utf8");
+
+      expect(sql).toMatch(/create policy "Public can view listing media"/i);
+      expect(sql).toMatch(/on storage\.objects for select/i);
+      expect(sql).toMatch(/bucket_id = 'listing-media'/i);
+    });
+
+    it("configures authenticated owner upload and mutate policies with path prefix checks", () => {
+      const sql = readFileSync(storageMigrationFile, "utf8");
+
+      expect(sql).toMatch(
+        /create policy "Authenticated users can upload listing media"/i,
+      );
+      expect(sql).toMatch(/on storage\.objects for insert/i);
+      expect(sql).toMatch(/to authenticated/i);
+      expect(sql).toMatch(/storage\.foldername\(name\)/i);
+      expect(sql).toMatch(
+        /create policy "Authenticated users can update own listing media"/i,
+      );
+      expect(sql).toMatch(
+        /create policy "Authenticated users can delete own listing media"/i,
+      );
+    });
+  });
 });

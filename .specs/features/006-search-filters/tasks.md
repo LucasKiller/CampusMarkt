@@ -252,9 +252,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: SRCH-01, SRCH-04
 **Done when**:
-- [ ] Search input supports debounced submission and keyboard enter.
-- [ ] Clear button resets the search term.
-- [ ] Component unit tests pass.
+- [x] Search input supports debounced submission and keyboard enter.
+- [x] Clear button resets the search term.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): implement search bar component`

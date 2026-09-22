@@ -1,6 +1,6 @@
 # Listing Creation and Management Specification
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Problem Statement
 
@@ -8,15 +8,15 @@ CampusMarkt users need a trustworthy, structured way to publish and manage physi
 
 ## Goals
 
-- [ ] Allow authenticated registered users to create physical goods listings for `SELL`, `GIVE_AWAY`, and `WANTED` intents.
-- [ ] Require at least 1 image (up to 8) for `SELL` and `GIVE_AWAY` listings, while allowing optional images (0 to 8) for `WANTED` listings.
-- [ ] Support 7 canonical physical goods categories tailored to student and household goods.
-- [ ] Support 10 coarse neighborhood and campus pickup zones in Braunschweig without exposing private home addresses.
-- [ ] Enforce price rules: explicit euro cents for `SELL`, strictly zero/null for `GIVE_AWAY`, and optional max budget for `WANTED`.
-- [ ] Enable listing owners to edit mutable listing details while keeping `listing_type` immutable after creation.
-- [ ] Provide lifecycle state transitions for owners between `ACTIVE`, `RESERVED`, `SOLD`, and soft-delete `ARCHIVED`.
-- [ ] Integrate image storage via Supabase Storage (`listing-media`) with owner RLS, cover photo ordering, and orphan cleanup.
-- [ ] Display inline guidance for prohibited and unsupported content at creation time.
+- [x] Allow authenticated registered users to create physical goods listings for `SELL`, `GIVE_AWAY`, and `WANTED` intents.
+- [x] Require at least 1 image (up to 8) for `SELL` and `GIVE_AWAY` listings, while allowing optional images (0 to 8) for `WANTED` listings.
+- [x] Support 7 canonical physical goods categories tailored to student and household goods.
+- [x] Support 10 coarse neighborhood and campus pickup zones in Braunschweig without exposing private home addresses.
+- [x] Enforce price rules: explicit euro cents for `SELL`, strictly zero/null for `GIVE_AWAY`, and optional max budget for `WANTED`.
+- [x] Enable listing owners to edit mutable listing details while keeping `listing_type` immutable after creation.
+- [x] Provide lifecycle state transitions for owners between `ACTIVE`, `RESERVED`, `SOLD`, and soft-delete `ARCHIVED`.
+- [x] Integrate image storage via Supabase Storage (`listing-media`) with owner RLS, cover photo ordering, and orphan cleanup.
+- [x] Display inline guidance for prohibited and unsupported content at creation time.
 
 ## Out of Scope
 
@@ -151,8 +151,8 @@ CampusMarkt users need a trustworthy, structured way to publish and manage physi
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| LIST-01 | Create listing with validated intent, pricing, and images | P1: AC1, AC2, AC3, AC4, AC5, AC6, AC7, AC8 | Domain / API / UI | pending |
-| LIST-02 | Manage and edit listing details with intent immutability | P1: AC1, AC2, AC3, AC4, AC5 | Application / API / UI | pending |
-| LIST-03 | Transition listing lifecycle states (active, reserved, sold, archived) | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Domain / DB RPC / UI | pending |
-| LIST-04 | Media upload, positioning, cover selection, and cascade cleanup | P2: AC1, AC2, AC3, AC4, AC5 | Storage / API / UI | pending |
-| LIST-05 | Prohibited content guidance and boundary sanitization | P1: AC8, Edge cases 5, 6 | Validation / UI | pending |
+| LIST-01 | Create listing with validated intent, pricing, and images | P1: AC1, AC2, AC3, AC4, AC5, AC6, AC7, AC8 | Domain / API / UI | verified |
+| LIST-02 | Manage and edit listing details with intent immutability | P1: AC1, AC2, AC3, AC4, AC5 | Application / API / UI | verified |
+| LIST-03 | Transition listing lifecycle states (active, reserved, sold, archived) | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Domain / DB RPC / UI | verified |
+| LIST-04 | Media upload, positioning, cover selection, and cascade cleanup | P2: AC1, AC2, AC3, AC4, AC5 | Storage / API / UI | verified |
+| LIST-05 | Prohibited content guidance and boundary sanitization | P1: AC8, Edge cases 5, 6 | Validation / UI | verified |

@@ -80,18 +80,27 @@
 - **Date**: 2026-09-23
 - **Status**: active
 
+### AD-011
+- **Decision**: Marketplace full-text search and multi-facet filtering uses PostgreSQL native full-text search (stored generated `search_vector tsvector` with `'german'` dictionary and GIN index) encapsulated in `marketplace_api.search_listings`, rejecting external search daemons (Typesense/Meilisearch) and `pg_trgm` wildcard similarity.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, Evidence Grade A). Guarantees transactional consistency with zero synchronization lag, protects against Linux OOM-killer crashes on the single budget VPS (AD-006), prevents CPU exhaustion attacks, and cleanly intersects multi-facet relational filters with text search in a single query plan.
+- **Trade-off**: Typo tolerance is limited to dictionary stemming and prefixes rather than fuzzy Levenshtein distance.
+- **Scope**: Search engine, multi-facet filtering, relevance ranking, and search API endpoints.
+- **Date**: 2026-09-23
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 005-marketplace-feed-listing-details / `.specs/features/005-marketplace-feed-listing-details/`
-- **Phase / Task**: Feature Complete & Verified (T1-T16 complete, 17/17 ACs validated, 3/3 discrimination mutants killed, PASS validation.md)
+- **Feature**: 006-search-filters / `.specs/features/006-search-filters/`
+- **Phase / Task**: Tasks Phase complete (T1-T16 designed & validated) -> Ready for Execute
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
   - `003-university-verification` verified.
   - `004-listing-creation-management` verified.
-  - `005-marketplace-feed-listing-details` verified (Phases 1-4, T1-T16, validation.md PASS).
-- **In-progress** (file:line): None
-- **Next step**: Specify Feature `006-search-filters` under Horizon 3 (Goods Marketplace).
+  - `005-marketplace-feed-listing-details` verified.
+  - `006-search-filters`: `context.md`, `spec.md`, `design.md`, and `tasks.md` complete and validated.
+- **In-progress** (file:line): `.specs/features/006-search-filters/tasks.md`
+- **Next step**: Execute Batch 1 (Phases 1-2: T1-T8) sequentially.
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/features/006-search-filters/`
 - **Branch**: main

@@ -221,10 +221,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: SRCH-01, SRCH-02, SRCH-03, SRCH-05
 **Done when**:
-- [ ] Endpoint validates query parameters and returns HTTP 200 with `SearchResultsResponse`.
-- [ ] Sets `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`.
-- [ ] Returns HTTP 400 on inverted price bounds (`minPrice > maxPrice`).
-- [ ] Route integration tests pass.
+- [x] Endpoint validates query parameters and returns HTTP 200 with `SearchResultsResponse`.
+- [x] Sets `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`.
+- [x] Returns HTTP 400 on inverted price bounds (`minPrice > maxPrice`).
+- [x] Route integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(search): implement public search api route handler`

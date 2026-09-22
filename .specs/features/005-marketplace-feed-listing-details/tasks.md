@@ -79,9 +79,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: FEED-01, FEED-02, FEED-03
 **Done when**:
-- [ ] Feed transport types define allowlisted public fields only (no emails, hashes, or user IDs).
-- [ ] Details DTO includes ordered images and seller trust badge.
-- [ ] Unit tests verify shape parsing and rejection of invalid data.
+- [x] Feed transport types define allowlisted public fields only (no emails, hashes, or user IDs).
+- [x] Details DTO includes ordered images and seller trust badge.
+- [x] Unit tests verify shape parsing and rejection of invalid data.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): define feed transport dtos and type predicates`

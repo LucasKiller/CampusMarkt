@@ -106,9 +106,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: SRCH-03, SRCH-04
 **Done when**:
-- [ ] Serializes and parses search filters to/from URL search params bidirectionally.
-- [ ] Selects `relevance` sort when query is non-empty, `newest` when query is empty.
-- [ ] Unit tests verify roundtrip serialization and sanitization.
+- [x] Serializes and parses search filters to/from URL search params bidirectionally.
+- [x] Selects `relevance` sort when query is non-empty, `newest` when query is empty.
+- [x] Unit tests verify roundtrip serialization and sanitization.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): implement search domain utilities and url serializer`

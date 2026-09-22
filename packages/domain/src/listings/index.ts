@@ -37,6 +37,14 @@ export type PickupArea = (typeof PICKUP_AREAS)[number];
 export const ITEM_CONDITIONS = ["NEW", "LIKE_NEW", "GOOD", "FAIR"] as const;
 export type ItemCondition = (typeof ITEM_CONDITIONS)[number];
 
+export const SEARCH_SORT_OPTIONS = [
+  "relevance",
+  "newest",
+  "price_asc",
+  "price_desc",
+] as const;
+export type SearchSortOption = (typeof SEARCH_SORT_OPTIONS)[number];
+
 export const PRICE_LIMITS_CENTS = {
   min: 50,
   max: 1_000_000,
@@ -237,3 +245,4 @@ export function transitionListingStatus(
 }
 
 export * from "./feed.ts";
+export * from "./search.ts";

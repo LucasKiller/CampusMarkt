@@ -173,6 +173,7 @@ export default async function HomePage(props: HomePageProps) {
           Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites
           Leben und tausche dich lokal aus.
         </p>
+        <p className="promise">Buy. Sell. Give away. Find what you need.</p>
 
         <ul
           className="exchange-types"

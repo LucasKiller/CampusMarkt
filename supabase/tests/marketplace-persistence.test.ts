@@ -129,4 +129,50 @@ describe("marketplace listings migrations structure and schema integrity", () =>
       /grant select, insert, update, delete on table marketplace\.listing_media to service_role;/i,
     );
   });
+
+  describe("create_listing RPC migration", () => {
+    const rpcMigrationFile = resolve(
+      migrationsDir,
+      "20260922101000_marketplace_create_listing_rpc.sql",
+    );
+
+    it("includes create_listing RPC migration file", () => {
+      const files = readdirSync(migrationsDir);
+      expect(files).toContain(
+        "20260922101000_marketplace_create_listing_rpc.sql",
+      );
+    });
+
+    it("verifies account state is active_confirmed and not deletion-pending", () => {
+      const sql = readFileSync(rpcMigrationFile, "utf8");
+
+      expect(sql).toMatch(
+        /select state, deletion_requested_at into v_account/i,
+      );
+      expect(sql).toMatch(
+        /if v_account\.state <> 'active_confirmed' or v_account\.deletion_requested_at is not null then/i,
+      );
+    });
+
+    it("atomically creates listing and inserts up to 8 media records", () => {
+      const sql = readFileSync(rpcMigrationFile, "utf8");
+
+      expect(sql).toMatch(/insert into marketplace\.listings/i);
+      expect(sql).toMatch(/insert into marketplace\.listing_media/i);
+      expect(sql).toMatch(/v_media_count < 1 or v_media_count > 8/i);
+    });
+
+    it("secures RPC with SECURITY DEFINER, empty search_path, and explicit grants", () => {
+      const sql = readFileSync(rpcMigrationFile, "utf8");
+
+      expect(sql).toMatch(/security definer/i);
+      expect(sql).toMatch(/set search_path = ''/i);
+      expect(sql).toMatch(
+        /revoke all on function marketplace_api\.create_listing/i,
+      );
+      expect(sql).toMatch(
+        /grant execute on function marketplace_api\.create_listing.*to authenticated, service_role;/i,
+      );
+    });
+  });
 });

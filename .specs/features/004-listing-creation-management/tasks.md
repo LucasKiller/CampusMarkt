@@ -151,9 +151,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: LIST-01, LIST-04
 **Done when**:
-- [ ] RPC verifies caller account state is `active_confirmed` and not deletion-pending.
-- [ ] Inserts listing and up to 8 media records atomically inside transaction.
-- [ ] Database test proves valid creation and rejection of invalid accounts.
+- [x] RPC verifies caller account state is `active_confirmed` and not deletion-pending.
+- [x] Inserts listing and up to 8 media records atomically inside transaction.
+- [x] Database test proves valid creation and rejection of invalid accounts.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(listings): add create listing rpc`

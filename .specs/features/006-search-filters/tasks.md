@@ -235,9 +235,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: SRCH-01, SRCH-02, SRCH-05
 **Done when**:
-- [ ] Tests verify valid searches return 200 with result items.
-- [ ] Tests verify invalid price range returns 400.
-- [ ] Integration tests pass cleanly.
+- [x] Tests verify valid searches return 200 with result items.
+- [x] Tests verify invalid price range returns 400.
+- [x] Integration tests pass cleanly.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `test(search): add integration tests for search api routes`

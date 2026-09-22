@@ -94,9 +94,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: LIST-01, LIST-02, LIST-03, LIST-04
 **Done when**:
-- [ ] Transport types define allowlisted request and response shapes.
-- [ ] Type predicates assert valid listing entities and status responses.
-- [ ] Unit tests verify parse guards and rejection of extraneous fields.
+- [x] Transport types define allowlisted request and response shapes.
+- [x] Type predicates assert valid listing entities and status responses.
+- [x] Unit tests verify parse guards and rejection of extraneous fields.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): define transport dtos and type predicates`

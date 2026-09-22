@@ -149,10 +149,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: SRCH-01, SRCH-02, SRCH-05
 **Done when**:
-- [ ] RPC parses text search with `websearch_to_tsquery` without syntax exceptions.
-- [ ] Filters by categories, pickup areas, conditions, types, price range, and verified sellers.
-- [ ] Excludes `sold` and `archived` listings and private emails/hashes.
-- [ ] Database test confirms search matching and facet filtering.
+- [x] RPC parses text search with `websearch_to_tsquery` without syntax exceptions.
+- [x] Filters by categories, pickup areas, conditions, types, price range, and verified sellers.
+- [x] Excludes `sold` and `archived` listings and private emails/hashes.
+- [x] Database test confirms search matching and facet filtering.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(search): implement search listings rpc`

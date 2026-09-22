@@ -106,9 +106,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: FEED-01, FEED-04
 **Done when**:
-- [ ] Formats price in euros (€X.XX), free for giveaway, or max budget for wanted.
-- [ ] Maps coarse pickup areas and categories to human-readable German and English labels.
-- [ ] Unit tests cover all formatting variations.
+- [x] Formats price in euros (€X.XX), free for giveaway, or max budget for wanted.
+- [x] Maps coarse pickup areas and categories to human-readable German and English labels.
+- [x] Unit tests cover all formatting variations.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): implement feed domain formatters and helpers`

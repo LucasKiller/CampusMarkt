@@ -92,10 +92,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: FEED-02, FEED-05
 **Done when**:
-- [ ] Serializes and deserializes URL-safe base64 cursors safely.
-- [ ] Rejects malformed cursor strings, invalid ISO dates, or non-UUID ids.
-- [ ] Validates category, area, type, and clamps limit to 1..50.
-- [ ] Unit tests cover all valid and invalid inputs.
+- [x] Serializes and deserializes URL-safe base64 cursors safely.
+- [x] Rejects malformed cursor strings, invalid ISO dates, or non-UUID ids.
+- [x] Validates category, area, type, and clamps limit to 1..50.
+- [x] Unit tests cover all valid and invalid inputs.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): implement keyset cursor encoding and filter validation`

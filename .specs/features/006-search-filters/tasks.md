@@ -135,10 +135,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: SRCH-01, SRCH-02
 **Done when**:
-- [ ] Migration adds `search_vector` column with weighted title ('A') and description ('B').
-- [ ] Migration creates GIN index `listings_search_vector_gin_idx` on active/reserved listings.
-- [ ] Migration adds facet B-tree indexes for `price_cents` and `condition`.
-- [ ] Migration verified syntactically.
+- [x] Migration adds `search_vector` column with weighted title ('A') and description ('B').
+- [x] Migration creates GIN index `listings_search_vector_gin_idx` on active/reserved listings.
+- [x] Migration adds facet B-tree indexes for `price_cents` and `condition`.
+- [x] Migration verified syntactically.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(search): add search vector column and gin index migration`

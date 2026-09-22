@@ -251,11 +251,11 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: LIST-01, LIST-04, LIST-05
 **Done when**:
-- [ ] Responsive form renders on 360px mobile and 1280px desktop viewports.
-- [ ] Price field adapts dynamically to `SELL`, `GIVE_AWAY`, and `WANTED`.
-- [ ] Photo uploader supports up to 8 images with primary cover preview.
-- [ ] Prohibited goods policy guidance is displayed.
-- [ ] Component unit tests pass.
+- [x] Responsive form renders on 360px mobile and 1280px desktop viewports.
+- [x] Price field adapts dynamically to `SELL`, `GIVE_AWAY`, and `WANTED`.
+- [x] Photo uploader supports up to 8 images with primary cover preview.
+- [x] Prohibited goods policy guidance is displayed.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): implement listing creation form ui`

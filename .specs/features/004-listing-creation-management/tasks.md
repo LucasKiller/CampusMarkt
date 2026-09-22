@@ -107,10 +107,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: LIST-01, LIST-02, LIST-05
 **Done when**:
-- [ ] Validates title (5–100 chars), description (10–2000 chars), sanitized against HTML/script tags.
-- [ ] Validates condition, category, pickup area against allowed enums.
-- [ ] Validates image array constraints and storage path formats.
-- [ ] Unit tests pass across all valid and invalid inputs.
+- [x] Validates title (5–100 chars), description (10–2000 chars), sanitized against HTML/script tags.
+- [x] Validates condition, category, pickup area against allowed enums.
+- [x] Validates image array constraints and storage path formats.
+- [x] Unit tests pass across all valid and invalid inputs.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): implement listing validation schemas`

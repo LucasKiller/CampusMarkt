@@ -72,19 +72,26 @@
 - **Trade-off**: Uploaded media for abandoned listing creation drafts requires periodic background orphan cleanup.
 - **Scope**: Marketplace inventory, listing creation/editing, image media upload, and lifecycle state management.
 - **Date**: 2026-09-22
+### AD-010
+- **Decision**: Public marketplace feed and listing discovery uses a deterministic keyset-paginated PostgreSQL RPC (`marketplace_api.get_public_feed`) on `(created_at DESC, id DESC)` over active/reserved listings, coupled with Next.js React Server Component streaming for initial page render and a lightweight route handler for cursor-based infinite scroll.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, Evidence Grade A). Eliminates offset pagination drift (skipped/duplicate items on concurrent inserts), ensures O(1) query performance via partial B-tree indexes, prevents private PII leakage at the database boundary, and keeps a transport-neutral contract ready for future mobile clients.
+- **Trade-off**: Requires database-level composite partial indexes and URL-safe base64 keyset cursor serialization.
+- **Scope**: Discovery feed, listing details view, public query APIs, and client-agnostic feed transport.
+- **Date**: 2026-09-23
 - **Status**: active
 
 ## Handoff
 
-- **Feature**: 004-listing-creation-management / `.specs/features/004-listing-creation-management/`
-- **Phase / Task**: Feature Complete & Verified (T1-T16 complete, 25/25 ACs validated, 3/3 discrimination mutants killed, PASS validation.md)
+- **Feature**: 005-marketplace-feed-listing-details / `.specs/features/005-marketplace-feed-listing-details/`
+- **Phase / Task**: Tasks Phase complete (T1-T16 designed & validated) -> Ready for Execute
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
   - `003-university-verification` verified.
-  - `004-listing-creation-management` verified (Phases 1-4, T1-T16, validation.md PASS).
-- **In-progress** (file:line): None
-- **Next step**: Specify Feature `005-marketplace-feed-listing-details` under Horizon 3 (Goods Marketplace).
+  - `004-listing-creation-management` verified.
+  - `005-marketplace-feed-listing-details`: `context.md`, `spec.md`, `design.md`, and `tasks.md` complete and validated.
+- **In-progress** (file:line): `.specs/features/005-marketplace-feed-listing-details/tasks.md`
+- **Next step**: Execute Batch 1 (Phases 1-2: T1-T8) sequentially.
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/features/005-marketplace-feed-listing-details/`
 - **Branch**: main

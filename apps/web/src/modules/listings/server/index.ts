@@ -9,6 +9,7 @@ import { getIdentityInfrastructureConfig } from "../../identity/infrastructure/e
 import { createAdminSupabaseClient } from "../../identity/infrastructure/supabase/client/index";
 import { createIdentityRepository } from "../../identity/infrastructure/supabase/repository/index";
 import { createListingRepository } from "./repository";
+import { createMarketplaceFeedRepository } from "./feed-repository";
 
 export type { ListingApplicationService };
 
@@ -87,5 +88,20 @@ export function getListingRepository() {
   return createListingRepository({
     service: adminClient,
     storage: adminClient,
+  });
+}
+
+export * from "./feed-repository";
+
+export function getMarketplaceFeedRepository() {
+  const config = getIdentityInfrastructureConfig();
+  const env = {
+    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
+    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
+    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
+  };
+  const adminClient = createAdminSupabaseClient(env);
+  return createMarketplaceFeedRepository({
+    service: adminClient,
   });
 }

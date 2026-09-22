@@ -192,9 +192,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: FEED-01, FEED-02, FEED-03
 **Done when**:
-- [ ] Repository calls `marketplace_api.get_public_feed` and `get_public_listing_details`.
-- [ ] Maps raw database records cleanly into `PublicFeedItem` and `PublicListingDetails`.
-- [ ] Unit and repository integration tests pass.
+- [x] Repository calls `marketplace_api.get_public_feed` and `get_public_listing_details`.
+- [x] Maps raw database records cleanly into `PublicFeedItem` and `PublicListingDetails`.
+- [x] Unit and repository integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(feed): implement marketplace feed repository`

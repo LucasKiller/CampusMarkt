@@ -175,4 +175,64 @@ describe("marketplace listings migrations structure and schema integrity", () =>
       );
     });
   });
+
+  describe("update_listing and transition_listing_status RPC migrations", () => {
+    const manageRpcFile = resolve(
+      migrationsDir,
+      "20260922102000_marketplace_manage_listing_rpc.sql",
+    );
+
+    it("includes manage listing RPC migration file", () => {
+      const files = readdirSync(migrationsDir);
+      expect(files).toContain(
+        "20260922102000_marketplace_manage_listing_rpc.sql",
+      );
+    });
+
+    it("enforces owner equality and locks listing_type from mutation in update_listing", () => {
+      const sql = readFileSync(manageRpcFile, "utf8");
+
+      expect(sql).toMatch(/if v_listing\.owner_id <> p_caller_id then/i);
+      expect(sql).toMatch(/listing intent cannot be changed/i);
+    });
+
+    it("enforces state machine guards and owner equality in transition_listing_status", () => {
+      const sql = readFileSync(manageRpcFile, "utf8");
+
+      expect(sql).toMatch(/if v_listing\.owner_id <> p_caller_id then/i);
+      expect(sql).toMatch(
+        /v_listing\.status = 'active' and p_target_status in \('reserved', 'sold', 'archived'\)/i,
+      );
+      expect(sql).toMatch(
+        /v_listing\.status = 'reserved' and p_target_status in \('active', 'sold', 'archived'\)/i,
+      );
+      expect(sql).toMatch(
+        /v_listing\.status = 'sold' and p_target_status = 'archived'/i,
+      );
+      expect(sql).toMatch(/invalid status transition from/i);
+    });
+
+    it("exposes owner management queries and restricts execution permissions", () => {
+      const sql = readFileSync(manageRpcFile, "utf8");
+
+      expect(sql).toMatch(
+        /create function marketplace_api\.get_owner_listing/i,
+      );
+      expect(sql).toMatch(
+        /create function marketplace_api\.list_owner_listings/i,
+      );
+      expect(sql).toMatch(
+        /revoke all on function marketplace_api\.update_listing/i,
+      );
+      expect(sql).toMatch(
+        /revoke all on function marketplace_api\.transition_listing_status/i,
+      );
+      expect(sql).toMatch(
+        /grant execute on function marketplace_api\.update_listing.*to authenticated, service_role;/i,
+      );
+      expect(sql).toMatch(
+        /grant execute on function marketplace_api\.transition_listing_status.*to authenticated, service_role;/i,
+      );
+    });
+  });
 });

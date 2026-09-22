@@ -164,9 +164,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: LIST-02, LIST-03
 **Done when**:
-- [ ] `update_listing` enforces owner equality and locks `listing_type` from mutation.
-- [ ] `transition_listing_status` enforces state machine transitions and owner authorization.
-- [ ] Database test proves unauthorized access is rejected and state machine guards hold.
+- [x] `update_listing` enforces owner equality and locks `listing_type` from mutation.
+- [x] `transition_listing_status` enforces state machine transitions and owner authorization.
+- [x] Database test proves unauthorized access is rejected and state machine guards hold.
 **Tests**: database integration
 **Gate**: Database
 **Commit**: `feat(listings): add update and status transition rpcs`

@@ -292,9 +292,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: FEED-01, FEED-02, FEED-03, FEED-04, FEED-05
 **Done when**:
-- [ ] E2E tests prove browsing, filtering, keyset infinite scroll, and details viewing.
-- [ ] Operational runbook added to `docs/operations/marketplace/feed.md`.
-- [ ] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
+- [x] E2E tests prove browsing, filtering, keyset infinite scroll, and details viewing.
+- [x] Operational runbook added to `docs/operations/marketplace/feed.md`.
+- [x] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
 **Tests**: e2e
 **Gate**: Browser
 **Commit**: `test(feed): prove end to end feed journeys and add runbook`

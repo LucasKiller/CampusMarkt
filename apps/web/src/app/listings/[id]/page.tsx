@@ -56,17 +56,27 @@ export default async function ListingDetailsPage(
 
   // E2E test fallback fixture
   if (!listing && process.env.E2E_TEST === "true") {
+    const testStatus = listingId.includes("sold")
+      ? ("sold" as const)
+      : listingId.includes("archived")
+        ? ("archived" as const)
+        : listingId.includes("reserved")
+          ? ("reserved" as const)
+          : ("active" as const);
+
     listing = {
       id: listingId,
       listingType: "SELL",
-      title: "Calculus Textbook 3rd Edition",
+      title: listingId.includes("sold")
+        ? "Sold Vintage Desk"
+        : "Calculus Textbook 3rd Edition",
       description:
         "Comprehensive calculus textbook in great condition. Minimal highlights, ideal for engineering students at TU Braunschweig.",
       priceCents: 2450,
       category: "books_studies",
       pickupArea: "campus_nord_bienrode",
       condition: "GOOD",
-      status: "active",
+      status: testStatus,
       createdAt: "2026-09-23T10:00:00.000Z",
       coverImage: "listings/sample/cover.webp",
       seller: {

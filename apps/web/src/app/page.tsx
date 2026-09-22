@@ -46,6 +46,7 @@ export default async function HomePage(props: HomePageProps) {
 
   // E2E test mock fallback if database is empty during CI tests
   if (initialItems.length === 0 && process.env.E2E_TEST === "true") {
+    initialCursor = "test-page-2-cursor";
     initialItems = [
       {
         id: "11111111-2222-3333-4444-555555555555",
@@ -84,6 +85,27 @@ export default async function HomePage(props: HomePageProps) {
           displayName: "Maria WG",
           avatarUrl: null,
           universityBadge: null,
+        },
+      },
+      {
+        id: "33333333-4444-5555-6666-777777777777",
+        listingType: "WANTED",
+        title: "Looking for Bicycle Lock",
+        priceCents: 1500,
+        category: "bicycles_mobility",
+        pickupArea: "innenstadt",
+        condition: "GOOD",
+        status: "active",
+        createdAt: "2026-09-23T08:00:00.000Z",
+        coverImage: null,
+        seller: {
+          publicId: "seller-3",
+          displayName: "Jonas Rad",
+          avatarUrl: null,
+          universityBadge: {
+            universityId: "tu-braunschweig",
+            badgeLabel: "TU Braunschweig",
+          },
         },
       },
     ];

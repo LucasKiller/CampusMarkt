@@ -266,10 +266,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: LIST-02, LIST-03
 **Done when**:
-- [ ] Owner can toggle status between active, reserved, sold, and archived.
-- [ ] Form enables updating title, description, price, condition, area, and photos.
-- [ ] Type indicator shows `listing_type` as locked/immutable.
-- [ ] Component unit tests pass.
+- [x] Owner can toggle status between active, reserved, sold, and archived.
+- [x] Form enables updating title, description, price, condition, area, and photos.
+- [x] Type indicator shows `listing_type` as locked/immutable.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(listings): implement owner listing management ui`

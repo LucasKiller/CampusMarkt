@@ -278,10 +278,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: FEED-03, FEED-04, FEED-05
 **Done when**:
-- [ ] Renders image carousel for up to 8 photos with dot navigation.
-- [ ] Displays inactive notice banner if listing is sold or archived.
-- [ ] Displays seller public profile with TU Braunschweig badge if verified.
-- [ ] Component unit tests pass.
+- [x] Renders image carousel for up to 8 photos with dot navigation.
+- [x] Displays inactive notice banner if listing is sold or archived.
+- [x] Displays seller public profile with TU Braunschweig badge if verified.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): implement public listing details page ui`

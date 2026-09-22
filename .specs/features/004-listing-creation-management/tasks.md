@@ -293,10 +293,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: LIST-01, LIST-02, LIST-03, LIST-04, LIST-05
 **Done when**:
-- [ ] E2E tests prove complete user journeys for `SELL`, `GIVE_AWAY`, and `WANTED`.
-- [ ] Proves status transitions (`active` -> `reserved` -> `sold` -> `archived`).
-- [ ] Operational runbook added to `docs/operations/marketplace/listings.md`.
-- [ ] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
+- [x] E2E tests prove complete user journeys for `SELL`, `GIVE_AWAY`, and `WANTED`.
+- [x] Proves status transitions (`active` -> `reserved` -> `sold` -> `archived`).
+- [x] Operational runbook added to `docs/operations/marketplace/listings.md`.
+- [x] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
 **Tests**: e2e
 **Gate**: Browser
 **Commit**: `test(listings): prove end to end listing journeys and add runbook`

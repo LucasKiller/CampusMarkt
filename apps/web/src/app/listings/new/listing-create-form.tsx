@@ -260,7 +260,8 @@ export function ListingCreateForm() {
         return;
       }
 
-      router.push(`/listings/${data.data.id}/manage`);
+      const targetId = data.data?.id ?? data.data?.listing?.id;
+      router.push(`/listings/${targetId}/manage`);
     } catch {
       setGeneralError(
         "Network connection failed. Please try again in a few moments.",

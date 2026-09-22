@@ -121,8 +121,8 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: LIST-01
 **Done when**:
-- [ ] Architectural boundary assertions verify package isolation.
-- [ ] Architecture tests pass in `npm run test:architecture`.
+- [x] Architectural boundary assertions verify package isolation.
+- [x] Architecture tests pass in `npm run test:architecture`.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(listings): add architectural boundary tests`

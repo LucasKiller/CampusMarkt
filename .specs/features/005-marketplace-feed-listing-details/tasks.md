@@ -218,10 +218,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: FEED-01, FEED-02, FEED-05
 **Done when**:
-- [ ] Endpoint validates query parameters and returns HTTP 200 with `PublicFeedResponse`.
-- [ ] Sets `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`.
-- [ ] Returns HTTP 400 on malformed cursor.
-- [ ] Route integration tests pass.
+- [x] Endpoint validates query parameters and returns HTTP 200 with `PublicFeedResponse`.
+- [x] Sets `Cache-Control: public, s-maxage=30, stale-while-revalidate=60`.
+- [x] Returns HTTP 400 on malformed cursor.
+- [x] Route integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(feed): implement public feed api route handler`

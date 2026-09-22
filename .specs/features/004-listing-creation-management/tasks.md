@@ -220,9 +220,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: LIST-01, LIST-04
 **Done when**:
-- [ ] Upload intent returns signed storage path for valid image MIME types.
-- [ ] `POST /api/listings` validates payload, creates listing, and returns HTTP 201.
-- [ ] Integration tests verify endpoints, auth guards (401), and validation errors (400).
+- [x] Upload intent returns signed storage path for valid image MIME types.
+- [x] `POST /api/listings` validates payload, creates listing, and returns HTTP 201.
+- [x] Integration tests verify endpoints, auth guards (401), and validation errors (400).
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(listings): implement upload intent and listing creation routes`

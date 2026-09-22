@@ -232,10 +232,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: FEED-03, FEED-05
 **Done when**:
-- [ ] Returns HTTP 200 with `PublicListingDetails` for valid IDs.
-- [ ] Returns HTTP 404 for non-existent listings.
-- [ ] Returns inactive state for sold or archived listings.
-- [ ] Route integration tests pass.
+- [x] Returns HTTP 200 with `PublicListingDetails` for valid IDs.
+- [x] Returns HTTP 404 for non-existent listings.
+- [x] Returns inactive state for sold or archived listings.
+- [x] Route integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(feed): implement public listing details api route`

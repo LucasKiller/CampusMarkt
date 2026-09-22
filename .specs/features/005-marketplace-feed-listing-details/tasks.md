@@ -264,10 +264,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: FEED-01, FEED-02, FEED-04
 **Done when**:
-- [ ] Server Component renders page 0 HTML instantly for fast FCP and SEO.
-- [ ] Client component uses IntersectionObserver to fetch subsequent pages via cursor.
-- [ ] Empty state renders when filters yield zero listings.
-- [ ] Component unit tests pass.
+- [x] Server Component renders page 0 HTML instantly for fast FCP and SEO.
+- [x] Client component uses IntersectionObserver to fetch subsequent pages via cursor.
+- [x] Empty state renders when filters yield zero listings.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(feed): implement public feed page with server component streaming`

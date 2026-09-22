@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
-import { getMarketplaceFeedService } from "../modules/listings/server/index";
-import { MarketplaceFeed } from "../components/marketplace/feed";
+import { getMarketplaceFeedService } from "../../modules/listings/server/index";
+import { MarketplaceFeed } from "../../components/marketplace/feed";
 import type { PublicFeedItem } from "@campusmarkt/types";
 
 export const metadata: Metadata = {
-  title: "CampusMarkt · Dein lokaler Marktplatz für Braunschweig",
+  title: "Inserate · CampusMarkt Braunschweig",
   description:
-    "Finde, kaufe, verschenke und suche nützliche Dinge in deiner Nachbarschaft in Braunschweig.",
+    "Entdecke alle aktuellen Inserate für Möbel, Elektronik, Bücher und mehr in Braunschweig.",
 };
 
-const exchangeTypes = ["Kaufen", "Verkaufen", "Verschenken", "Suchen"];
-
-interface HomePageProps {
+interface ListingsPageProps {
   searchParams?: Promise<{
     cursor?: string;
     category?: string;
@@ -20,7 +18,7 @@ interface HomePageProps {
   }>;
 }
 
-export default async function HomePage(props: HomePageProps) {
+export default async function ListingsPage(props: ListingsPageProps) {
   const searchParams = props.searchParams ? await props.searchParams : {};
   const feedService = getMarketplaceFeedService();
 
@@ -41,7 +39,7 @@ export default async function HomePage(props: HomePageProps) {
       initialCursor = result.data.nextCursor;
     }
   } catch (err) {
-    console.error("[HomePage: getPublicFeed]", err);
+    console.error("[ListingsPage: getPublicFeed]", err);
   }
 
   // E2E test mock fallback if database is empty during CI tests
@@ -66,24 +64,6 @@ export default async function HomePage(props: HomePageProps) {
             universityId: "tu-braunschweig",
             badgeLabel: "TU Braunschweig",
           },
-        },
-      },
-      {
-        id: "22222222-3333-4444-5555-666666666666",
-        listingType: "GIVE_AWAY",
-        title: "Free Desk Lamp",
-        priceCents: null,
-        category: "furniture",
-        pickupArea: "campus_tu_altgebaeude",
-        condition: "FAIR",
-        status: "reserved",
-        createdAt: "2026-09-23T09:00:00.000Z",
-        coverImage: null,
-        seller: {
-          publicId: "seller-2",
-          displayName: "Maria WG",
-          avatarUrl: null,
-          universityBadge: null,
         },
       },
     ];
@@ -127,61 +107,26 @@ export default async function HomePage(props: HomePageProps) {
       </header>
 
       <section
-        className="hero"
-        aria-labelledby="hero-title"
-        style={{ paddingBlock: "clamp(2rem, 5vh, 4rem)", textAlign: "center" }}
-      >
-        <p className="eyebrow" style={{ marginBottom: "0.5rem" }}>
-          Lokal. Einfach. Für alle.
-        </p>
-        <h1
-          id="hero-title"
-          style={{ marginInline: "auto", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-        >
-          Dein Marktplatz für Braunschweig
-        </h1>
-        <p
-          className="lede"
-          style={{
-            marginInline: "auto",
-            maxWidth: "36rem",
-            marginBottom: "1rem",
-          }}
-        >
-          Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites
-          Leben und tausche dich lokal aus.
-        </p>
-
-        <ul
-          className="exchange-types"
-          aria-label="Möglichkeiten auf CampusMarkt"
-          style={{ justifyContent: "center" }}
-        >
-          {exchangeTypes.map((exchangeType) => (
-            <li key={exchangeType}>{exchangeType}</li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Discovery Feed Section */}
-      <section
-        aria-label="Marktplatz Inserate"
+        aria-label="Alle Inserate"
         style={{
           width: "min(100%, 76rem)",
           marginInline: "auto",
-          paddingBottom: "3rem",
+          paddingBlock: "2rem 4rem",
         }}
       >
-        <h2
+        <h1
           style={{
-            fontSize: "1.4rem",
-            fontWeight: 700,
-            marginBottom: "1rem",
+            fontSize: "1.75rem",
+            fontWeight: 800,
+            marginBottom: "0.5rem",
             color: "#0f172a",
           }}
         >
-          Aktuelle Inserate in Braunschweig
-        </h2>
+          Alle Inserate
+        </h1>
+        <p style={{ color: "#64748b", marginBottom: "1.5rem" }}>
+          Stöbere durch Angebote und Gesuche in Braunschweig.
+        </p>
 
         <MarketplaceFeed
           initialItems={initialItems}

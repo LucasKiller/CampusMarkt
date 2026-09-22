@@ -12,6 +12,9 @@ import {
   type SupportedLocale,
 } from "@campusmarkt/domain";
 
+export { MarketplaceFeed } from "./marketplace-feed";
+export type { MarketplaceFeedProps } from "./marketplace-feed";
+
 export interface TrustBadgeProps {
   badge: NonNullable<PublicListingSeller["universityBadge"]>;
 }

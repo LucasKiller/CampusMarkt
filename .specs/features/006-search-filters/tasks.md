@@ -195,9 +195,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: SRCH-01, SRCH-02, SRCH-03
 **Done when**:
-- [ ] Repository calls `marketplace_api.search_listings`.
-- [ ] Maps database records to `SearchResultsResponse`.
-- [ ] Unit and repository integration tests pass.
+- [x] Repository calls `marketplace_api.search_listings`.
+- [x] Maps database records to `SearchResultsResponse`.
+- [x] Unit and repository integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(search): implement marketplace search repository`

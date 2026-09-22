@@ -208,9 +208,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: SRCH-01, SRCH-02, SRCH-05
 **Done when**:
-- [ ] Service enforces rate limiting and sanitizes search parameters.
-- [ ] Emits structured search telemetry (`search.queried`).
-- [ ] Unit tests cover happy and error paths.
+- [x] Service enforces rate limiting and sanitizes search parameters.
+- [x] Emits structured search telemetry (`search.queried`).
+- [x] Unit tests cover happy and error paths.
 **Tests**: unit + integration
 **Gate**: Integration
 **Commit**: `feat(search): implement marketplace search application service`

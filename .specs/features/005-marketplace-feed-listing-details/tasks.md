@@ -205,9 +205,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: FEED-01, FEED-02, FEED-03
 **Done when**:
-- [ ] Service decodes cursors, enforces page limits, and encodes `nextCursor`.
-- [ ] Emits structured telemetry for feed query metrics.
-- [ ] Unit tests cover happy and error paths.
+- [x] Service decodes cursors, enforces page limits, and encodes `nextCursor`.
+- [x] Emits structured telemetry for feed query metrics.
+- [x] Unit tests cover happy and error paths.
 **Tests**: unit + integration
 **Gate**: Integration
 **Commit**: `feat(feed): implement marketplace feed application service`

@@ -8,7 +8,9 @@ test.describe("Marketplace Favorites E2E Journeys (T16)", () => {
     await page.goto("/");
 
     // Locate favorite button on a listing card
-    const firstFavoriteBtn = page.locator('[data-testid^="favorite-button-"]').first();
+    const firstFavoriteBtn = page
+      .locator('[data-testid^="favorite-button-"]')
+      .first();
     await expect(firstFavoriteBtn).toBeVisible({ timeout: 10000 });
 
     // Click favorite as unauthenticated guest

@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: FAV-01, FAV-02
 **Done when**:
-- [ ] `FavoriteItemDTO`, `FavoriteToggleResponse`, `UserFavoriteIdsResponse` types defined.
-- [ ] Type predicates `isFavoriteItemDTO` and `isFavoriteToggleResponse` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `favorites.test.ts`.
+- [x] `FavoriteItemDTO`, `FavoriteToggleResponse`, `UserFavoriteIdsResponse` types defined.
+- [x] Type predicates `isFavoriteItemDTO` and `isFavoriteToggleResponse` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `favorites.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): define transport dtos and type predicates`

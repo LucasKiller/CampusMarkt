@@ -142,8 +142,8 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: OFFR-03, OFFR-04
 **Done when**:
-- [ ] `marketplace_api.accept_offer` locks listing row (`SELECT ... FOR UPDATE`), creates reservation, updates listing to `reserved`, sets offer `accepted`, and marks competing offers `superseded` (AD-013).
-- [ ] `marketplace_api.cancel_reservation` marks reservation `cancelled` and atomically restores listing to `active`.
+- [x] `marketplace_api.accept_offer` locks listing row (`SELECT ... FOR UPDATE`), creates reservation, updates listing to `reserved`, sets offer `accepted`, and marks competing offers `superseded` (AD-013).
+- [x] `marketplace_api.cancel_reservation` marks reservation `cancelled` and atomically restores listing to `active`.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(offers): implement accept offer and cancel reservation rpcs`

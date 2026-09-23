@@ -254,9 +254,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: OFFR-04
 **Done when**:
-- [ ] Displays active reservations for buyer and seller with agreed price and coarse pickup area.
-- [ ] Provides cancellation modal with structured reason selector.
-- [ ] Server component test passes.
+- [x] Displays active reservations for buyer and seller with agreed price and coarse pickup area.
+- [x] Provides cancellation modal with structured reason selector.
+- [x] Server component test passes.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement reservations dashboard page`

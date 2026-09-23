@@ -255,10 +255,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: FAV-03
 **Done when**:
-- [ ] Responsive grid rendering saved listings with remove action.
-- [ ] Displays status chips for `reserved` (amber) and `sold` (neutral).
-- [ ] Empty state with CTA button linking to `/feed`.
-- [ ] Server component test passes.
+- [x] Responsive grid rendering saved listings with remove action.
+- [x] Displays status chips for `reserved` (amber) and `sold` (neutral).
+- [x] Empty state with CTA button linking to `/feed`.
+- [x] Server component test passes.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement favorites dashboard page`

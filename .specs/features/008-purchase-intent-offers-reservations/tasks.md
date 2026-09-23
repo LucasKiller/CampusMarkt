@@ -267,13 +267,13 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: OFFR-01, OFFR-02, OFFR-03, OFFR-04
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - Buyer submitting purchase intent and seller accepting to reserve.
   - Buyer making offer, seller countering, and buyer accepting.
   - Reservation cancellation restoring listing to active.
   - Self-purchase prevention.
-- [ ] Operational runbook added to `docs/operations/marketplace/offers-reservations.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/offers-reservations.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(offers): prove end to end negotiation journeys and add runbook`

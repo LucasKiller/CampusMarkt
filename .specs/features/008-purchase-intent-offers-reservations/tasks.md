@@ -129,9 +129,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: OFFR-01, OFFR-02, OFFR-05
 **Done when**:
-- [ ] `marketplace_api.create_offer` checks `auth.uid()`, verifies active listing, rejects self-offer, inserts proposal.
-- [ ] `marketplace_api.counter_offer` verifies authorized participant, links parent offer, transitions previous to `countered`.
-- [ ] Rejects invalid price bounds with descriptive SQL exceptions.
+- [x] `marketplace_api.create_offer` checks `auth.uid()`, verifies active listing, rejects self-offer, inserts proposal.
+- [x] `marketplace_api.counter_offer` verifies authorized participant, links parent offer, transitions previous to `countered`.
+- [x] Rejects invalid price bounds with descriptive SQL exceptions.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(offers): implement create and counter offer rpcs`

@@ -172,9 +172,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: FAV-01, FAV-02, FAV-03
 **Done when**:
-- [ ] `MarketplaceFavoritesRepository` implements calls to `toggle_favorite`, `get_user_favorite_ids`, and `get_user_favorites`.
-- [ ] Maps raw database records to typed `FavoriteItemDTO` models.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] `MarketplaceFavoritesRepository` implements calls to `toggle_favorite`, `get_user_favorite_ids`, and `get_user_favorites`.
+- [x] Maps raw database records to typed `FavoriteItemDTO` models.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement marketplace favorites repository`

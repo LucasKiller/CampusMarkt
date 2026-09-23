@@ -8,9 +8,13 @@ import {
 import { getIdentityInfrastructureConfig } from "../../identity/infrastructure/environment";
 import { createAdminSupabaseClient } from "../../identity/infrastructure/supabase/client/index";
 import { createIdentityRepository } from "../../identity/infrastructure/supabase/repository/index";
-import { createListingRepository } from "./repository";
+import {
+  createListingRepository,
+  type MarketplaceRpcClient,
+} from "./repository";
 import { createMarketplaceFeedRepository } from "./feed-repository";
 import { createMarketplaceSearchRepository } from "./search-repository";
+import { createMarketplaceFavoritesRepository } from "./favorites-repository";
 import {
   createMarketplaceFeedService,
   type MarketplaceFeedService,
@@ -108,6 +112,25 @@ export function getListingRepository() {
 
 export * from "./feed-repository";
 export * from "./search-repository";
+export * from "./favorites-repository";
+
+export function getMarketplaceFavoritesRepository(
+  customClient?: MarketplaceRpcClient,
+) {
+  if (customClient) {
+    return createMarketplaceFavoritesRepository({ service: customClient });
+  }
+  const config = getIdentityInfrastructureConfig();
+  const env = {
+    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
+    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
+    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
+  };
+  const adminClient = createAdminSupabaseClient(env);
+  return createMarketplaceFavoritesRepository({
+    service: adminClient,
+  });
+}
 
 export function getMarketplaceSearchRepository() {
   const config = getIdentityInfrastructureConfig();

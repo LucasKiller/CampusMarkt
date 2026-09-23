@@ -211,9 +211,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: FAV-03
 **Done when**:
-- [ ] `GET /api/marketplace/favorites` returns paginated list of saved items.
-- [ ] Returns HTTP 401 for unauthenticated requests.
-- [ ] Integration tests verify pagination and status representation.
+- [x] `GET /api/marketplace/favorites` returns paginated list of saved items.
+- [x] Returns HTTP 401 for unauthenticated requests.
+- [x] Integration tests verify pagination and status representation.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(favorites): implement favorites dashboard api route`

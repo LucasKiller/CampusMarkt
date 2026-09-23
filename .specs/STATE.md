@@ -85,13 +85,18 @@
 - **Reason**: Decided unanimously by The Jury (Confidence HIGH, Evidence Grade A). Guarantees transactional consistency with zero synchronization lag, protects against Linux OOM-killer crashes on the single budget VPS (AD-006), prevents CPU exhaustion attacks, and cleanly intersects multi-facet relational filters with text search in a single query plan.
 - **Trade-off**: Typo tolerance is limited to dictionary stemming and prefixes rather than fuzzy Levenshtein distance.
 - **Scope**: Search engine, multi-facet filtering, relevance ranking, and search API endpoints.
+### AD-012
+- **Decision**: Private favorites hydration uses a decoupled client-side hydration model with an authenticated `GET /api/marketplace/favorites/ids` micro-endpoint and asynchronous leaf client components, preserving 100% public edge-caching (`s-maxage=30`) for the discovery feed and search RPCs without authorization-dependent cache fragmentation.
+- **Reason**: Decided by The Jury (Confidence HIGH, Evidence Grade A). Protects the single budget VPS (AD-006) from database CPU starvation by keeping high-traffic catalog queries edge-cacheable, eliminates cache invalidation storms when favorites are toggled, and enables instantaneous O(1) in-memory lookups on the client. Dissenting challenges are mitigated via leaf component boundaries, neutral hydration placeholders to prevent FOIC, bounded ID set payloads (max 1,000 IDs), and cross-tab sync.
+- **Trade-off**: Requires client-side state hydration across listing cards rather than server-rendered boolean flags baked into public HTML.
+- **Scope**: Favorites API, feed and search UI components, listing cards, and client state management.
 - **Date**: 2026-09-23
 - **Status**: active
 
 ## Handoff
 
-- **Feature**: 006-search-filters / `.specs/features/006-search-filters/`
-- **Phase / Task**: Validation Phase complete (PASS ✅, 17/17 ACs verified, 3/3 sensor mutants killed)
+- **Feature**: 007-favorites / `.specs/features/007-favorites/`
+- **Phase / Task**: Tasks Phase complete (T1-T16 designed & validated) -> Ready for Execute
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -99,8 +104,9 @@
   - `004-listing-creation-management` verified.
   - `005-marketplace-feed-listing-details` verified.
   - `006-search-filters` verified.
-- **In-progress** (file:line): none
-- **Next step**: Begin Feature `007-favorites` (Specify Phase).
+  - `007-favorites`: `context.md`, `spec.md`, `design.md`, and `tasks.md` complete and validated.
+- **In-progress** (file:line): `.specs/features/007-favorites/tasks.md`
+- **Next step**: Execute Batch 1 (Phases 1-2: T1-T8) sequentially.
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/features/007-favorites/`
 - **Branch**: main

@@ -128,10 +128,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: FAV-01, FAV-04
 **Done when**:
-- [ ] `marketplace_api.toggle_favorite(p_listing_id uuid)` implemented.
-- [ ] Checks `auth.uid()` and rejects unauthenticated callers.
-- [ ] Enforces self-favorite prohibition (`user_id <> seller_id`).
-- [ ] Returns `{ isFavorited: boolean, listingId: uuid }`.
+- [x] `marketplace_api.toggle_favorite(p_listing_id uuid)` implemented.
+- [x] Checks `auth.uid()` and rejects unauthenticated callers.
+- [x] Enforces self-favorite prohibition (`user_id <> seller_id`).
+- [x] Returns `{ isFavorited: boolean, listingId: uuid }`.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(favorites): implement toggle favorite rpc`

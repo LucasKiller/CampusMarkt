@@ -198,9 +198,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: FAV-01, FAV-02
 **Done when**:
-- [ ] `GET /api/marketplace/favorites/ids` returns active user favorite IDs array.
-- [ ] `POST /api/marketplace/favorites/[id]` toggles favorite state.
-- [ ] Integration tests verify authentication checks and rate limit handling.
+- [x] `GET /api/marketplace/favorites/ids` returns active user favorite IDs array.
+- [x] `POST /api/marketplace/favorites/[id]` toggles favorite state.
+- [x] Integration tests verify authentication checks and rate limit handling.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(favorites): implement toggle and ids api routes`

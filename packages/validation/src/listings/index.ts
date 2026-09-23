@@ -518,3 +518,4 @@ export function parseMediaUploadIntentInput(
 
 export * from "./feed.ts";
 export * from "./search.ts";
+export * from "./favorites.ts";

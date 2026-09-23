@@ -69,10 +69,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: FAV-01, FAV-03
 **Done when**:
-- [ ] `validateListingIdParam` validates UUID syntax.
-- [ ] `validateFavoritesPaginationQuery` validates cursor and limit bounds (1-50).
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `favorites.test.ts`.
+- [x] `validateListingIdParam` validates UUID syntax.
+- [x] `validateFavoritesPaginationQuery` validates cursor and limit bounds (1-50).
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `favorites.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement favorites validation schemas`

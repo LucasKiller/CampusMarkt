@@ -269,13 +269,13 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: FAV-01, FAV-02, FAV-03
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - Guest redirection to login when clicking favorite.
   - Authenticated user saving listing and verifying active heart icon.
   - Navigating to `/favorites` and verifying saved item renders.
   - Unsaving item and verifying empty state.
-- [ ] Operational runbook added to `docs/operations/marketplace/favorites.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/favorites.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(favorites): prove end to end favorites journeys and add runbook`

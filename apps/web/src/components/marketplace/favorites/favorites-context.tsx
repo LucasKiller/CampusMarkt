@@ -137,7 +137,7 @@ export function FavoritesProvider({
           },
         );
 
-        if (res.status === 401) {
+        if (res.status === 401 || res.status === 403) {
           // Revert optimistic update and redirect guest
           setFavoriteIds((prev) =>
             reconcileOptimisticFavorite(prev, normalizedId, currentlyFavorited),

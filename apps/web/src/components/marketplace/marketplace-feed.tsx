@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicFeedItem } from "@campusmarkt/types";
 import { EmptyFeedState, FeedFilterBar, ListingCard } from "./feed";
+import { FavoritesProvider } from "./favorites/favorites-context";
 
 export interface MarketplaceFeedProps {
   initialItems: PublicFeedItem[];
@@ -138,95 +139,97 @@ export function MarketplaceFeed({
   }, [nextCursor, isLoadingMore, isFiltering, category, area, type, fetchFeed]);
 
   return (
-    <div className="marketplace-feed-container" style={{ width: "100%" }}>
-      {/* Filter Bar */}
-      <FeedFilterBar
-        selectedCategory={category}
-        selectedArea={area}
-        selectedType={type}
-        onCategoryChange={handleCategoryChange}
-        onAreaChange={handleAreaChange}
-        onTypeChange={handleTypeChange}
-        onReset={handleReset}
-      />
+    <FavoritesProvider>
+      <div className="marketplace-feed-container" style={{ width: "100%" }}>
+        {/* Filter Bar */}
+        <FeedFilterBar
+          selectedCategory={category}
+          selectedArea={area}
+          selectedType={type}
+          onCategoryChange={handleCategoryChange}
+          onAreaChange={handleAreaChange}
+          onTypeChange={handleTypeChange}
+          onReset={handleReset}
+        />
 
-      {error && (
-        <div
-          role="alert"
-          style={{
-            padding: "0.75rem 1rem",
-            marginBottom: "1rem",
-            background: "#fee2e2",
-            border: "1px solid #f87171",
-            color: "#991b1b",
-            borderRadius: "0.5rem",
-            fontSize: "0.9rem",
-          }}
-        >
-          {error}
-        </div>
-      )}
-
-      {isFiltering ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "3rem",
-            color: "#64748b",
-            fontSize: "0.95rem",
-          }}
-        >
-          Inserate werden gefiltert...
-        </div>
-      ) : items.length === 0 ? (
-        <EmptyFeedState onReset={handleReset} />
-      ) : (
-        <>
+        {error && (
           <div
-            className="marketplace-feed-grid"
-            data-testid="marketplace-feed-grid"
+            role="alert"
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-              gap: "1.25rem",
-              width: "100%",
+              padding: "0.75rem 1rem",
+              marginBottom: "1rem",
+              background: "#fee2e2",
+              border: "1px solid #f87171",
+              color: "#991b1b",
+              borderRadius: "0.5rem",
+              fontSize: "0.9rem",
             }}
           >
-            {items.map((item) => (
-              <ListingCard key={item.id} item={item} />
-            ))}
+            {error}
           </div>
+        )}
 
-          {/* Infinite Scroll Sentinel */}
-          {nextCursor && (
+        {isFiltering ? (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "3rem",
+              color: "#64748b",
+              fontSize: "0.95rem",
+            }}
+          >
+            Inserate werden gefiltert...
+          </div>
+        ) : items.length === 0 ? (
+          <EmptyFeedState onReset={handleReset} />
+        ) : (
+          <>
             <div
-              ref={sentinelRef}
-              data-testid="feed-sentinel"
+              className="marketplace-feed-grid"
+              data-testid="marketplace-feed-grid"
               style={{
-                textAlign: "center",
-                padding: "2rem 1rem",
-                color: "#64748b",
-                fontSize: "0.9rem",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                gap: "1.25rem",
+                width: "100%",
               }}
             >
-              {isLoadingMore ? "Weitere Inserate laden..." : ""}
+              {items.map((item) => (
+                <ListingCard key={item.id} item={item} />
+              ))}
             </div>
-          )}
 
-          {!nextCursor && items.length > 0 && (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "2.5rem 1rem",
-                color: "#94a3b8",
-                fontSize: "0.85rem",
-              }}
-            >
-              Alle aktuellen Inserate für Braunschweig geladen.
-            </div>
-          )}
-        </>
-      )}
-    </div>
+            {/* Infinite Scroll Sentinel */}
+            {nextCursor && (
+              <div
+                ref={sentinelRef}
+                data-testid="feed-sentinel"
+                style={{
+                  textAlign: "center",
+                  padding: "2rem 1rem",
+                  color: "#64748b",
+                  fontSize: "0.9rem",
+                }}
+              >
+                {isLoadingMore ? "Weitere Inserate laden..." : ""}
+              </div>
+            )}
+
+            {!nextCursor && items.length > 0 && (
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "2.5rem 1rem",
+                  color: "#94a3b8",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Alle aktuellen Inserate für Braunschweig geladen.
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </FavoritesProvider>
   );
 }

@@ -15,6 +15,7 @@ import {
 import { createMarketplaceFeedRepository } from "./feed-repository";
 import { createMarketplaceSearchRepository } from "./search-repository";
 import { createMarketplaceFavoritesRepository } from "./favorites-repository";
+import { createMarketplaceOffersRepository } from "./offers-repository";
 import {
   createMarketplaceFeedService,
   type MarketplaceFeedService,
@@ -119,6 +120,25 @@ export function getListingRepository() {
 export * from "./feed-repository";
 export * from "./search-repository";
 export * from "./favorites-repository";
+export * from "./offers-repository";
+
+export function getMarketplaceOffersRepository(
+  customClient?: MarketplaceRpcClient,
+) {
+  if (customClient) {
+    return createMarketplaceOffersRepository({ service: customClient });
+  }
+  const config = getIdentityInfrastructureConfig();
+  const env = {
+    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
+    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
+    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
+  };
+  const adminClient = createAdminSupabaseClient(env);
+  return createMarketplaceOffersRepository({
+    service: adminClient,
+  });
+}
 
 export function getMarketplaceFavoritesRepository(
   customClient?: MarketplaceRpcClient,

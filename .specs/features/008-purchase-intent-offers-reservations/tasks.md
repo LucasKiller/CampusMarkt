@@ -172,9 +172,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: OFFR-01, OFFR-02, OFFR-03
 **Done when**:
-- [ ] `MarketplaceOffersRepository` calls `create_offer`, `counter_offer`, `accept_offer`, and `cancel_reservation`.
-- [ ] Maps raw database records to typed `OfferDTO` and `ReservationDTO` models.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] `MarketplaceOffersRepository` calls `create_offer`, `counter_offer`, `accept_offer`, and `cancel_reservation`.
+- [x] Maps raw database records to typed `OfferDTO` and `ReservationDTO` models.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement marketplace offers repository`

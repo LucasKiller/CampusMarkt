@@ -1,8 +1,4 @@
-import type {
-  PublicFeedItem,
-  SearchFilters,
-  SearchResultsResponse,
-} from "@campusmarkt/types";
+import type { PublicFeedItem, SearchResultsResponse } from "@campusmarkt/types";
 import { validateSearchParams } from "@campusmarkt/validation";
 import { resolveSortOption } from "@campusmarkt/domain";
 import type {

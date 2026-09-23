@@ -265,9 +265,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: SRCH-02, SRCH-03, SRCH-04
 **Done when**:
-- [ ] Mobile bottom-sheet drawer traps focus and provides apply/reset buttons.
-- [ ] Supports category, pickup area, condition, price min/max, and verified seller toggle.
-- [ ] Component unit tests pass.
+- [x] Mobile bottom-sheet drawer traps focus and provides apply/reset buttons.
+- [x] Supports category, pickup area, condition, price min/max, and verified seller toggle.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): implement filter drawer and filter bar components`

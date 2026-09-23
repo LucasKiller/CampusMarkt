@@ -90,13 +90,18 @@
 - **Reason**: Decided by The Jury (Confidence HIGH, Evidence Grade A). Protects the single budget VPS (AD-006) from database CPU starvation by keeping high-traffic catalog queries edge-cacheable, eliminates cache invalidation storms when favorites are toggled, and enables instantaneous O(1) in-memory lookups on the client. Dissenting challenges are mitigated via leaf component boundaries, neutral hydration placeholders to prevent FOIC, bounded ID set payloads (max 1,000 IDs), and cross-tab sync.
 - **Trade-off**: Requires client-side state hydration across listing cards rather than server-rendered boolean flags baked into public HTML.
 - **Scope**: Favorites API, feed and search UI components, listing cards, and client state management.
+### AD-013
+- **Decision**: Marketplace listing reservation atomicity and negotiation state transitions are strictly governed by an in-database PostgreSQL atomic RPC (`marketplace_api.accept_offer` / `reserve_listing`) using canonical row locking (`SELECT id FROM marketplace.listings WHERE id = ... FOR UPDATE`) coupled with a declarative partial unique index (`idx_one_active_reservation_per_listing ON marketplace.reservations(listing_id) WHERE status = 'active'`), rejecting optimistic version stamps and external distributed locks (Redis/Redlock).
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 96/100, Evidence Grade A). Guarantees physical impossibility of duplicate active reservations (Marketplace Invariant 5) at the database kernel level, keeps lock duration sub-millisecond to prevent connection pool exhaustion on the single budget VPS (AD-006), and atomically cascades listing status transitions (`ACTIVE` -> `RESERVED`) and competing offer invalidation (`SUPERSEDED`) within a single ACID transaction boundary.
+- **Trade-off**: Requires strict canonical lock acquisition ordering in SQL to eliminate cyclical deadlocks.
+- **Scope**: Offers, purchase intent, counter-offers, reservations, and negotiation database RPCs.
 - **Date**: 2026-09-23
 - **Status**: active
 
 ## Handoff
 
-- **Feature**: 007-favorites / `.specs/features/007-favorites/`
-- **Phase / Task**: Validation Phase complete (PASS ✅)
+- **Feature**: 008-purchase-intent-offers-reservations / `.specs/features/008-purchase-intent-offers-reservations/`
+- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-013, writing context.md & spec.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -104,9 +109,9 @@
   - `004-listing-creation-management` verified.
   - `005-marketplace-feed-listing-details` verified.
   - `006-search-filters` verified.
-  - `007-favorites` verified (T1-T16 complete, 20/20 ACs verified, 3/3 sensor mutants killed, gates PASS).
-- **In-progress** (file:line): None
-- **Next step**: Ready for next roadmap feature.
+  - `007-favorites` verified.
+- **In-progress** (file:line): `.specs/features/008-purchase-intent-offers-reservations/context.md`
+- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

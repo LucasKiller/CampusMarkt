@@ -1,6 +1,6 @@
 # Search and Filters Specification
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Problem Statement
 
@@ -8,14 +8,14 @@ CampusMarkt visitors and registered users need an efficient, precise way to loca
 
 ## Goals
 
-- [ ] Provide full-text keyword search across listing titles and descriptions with German language stemming and weighted relevance ranking.
-- [ ] Support multi-facet filtering by category, coarse pickup area, listing intent (`SELL`, `GIVE_AWAY`, `WANTED`), item condition, and price bounds.
-- [ ] Provide an optional trust filter to restrict results to active TU Braunschweig verified sellers.
-- [ ] Support 4 explicit sort orders: `relevance`, `newest`, `price_asc`, and `price_desc`.
-- [ ] Synchronize search terms, facet filters, and sort orders bidirectionally with URL query parameters for shareability and bookmarking.
-- [ ] Provide responsive search UI controls: desktop search toolbar and mobile-optimized filter drawer with reset/clear actions.
-- [ ] Preserve keyset or deterministic pagination across search results without skipping or duplicating items.
-- [ ] Enforce data minimization and privacy by excluding all private seller data (emails, internal hashes) from search projections.
+- [x] Provide full-text keyword search across listing titles and descriptions with German language stemming and weighted relevance ranking.
+- [x] Support multi-facet filtering by category, coarse pickup area, listing intent (`SELL`, `GIVE_AWAY`, `WANTED`), item condition, and price bounds.
+- [x] Provide an optional trust filter to restrict results to active TU Braunschweig verified sellers.
+- [x] Support 4 explicit sort orders: `relevance`, `newest`, `price_asc`, and `price_desc`.
+- [x] Synchronize search terms, facet filters, and sort orders bidirectionally with URL query parameters for shareability and bookmarking.
+- [x] Provide responsive search UI controls: desktop search toolbar and mobile-optimized filter drawer with reset/clear actions.
+- [x] Preserve keyset or deterministic pagination across search results without skipping or duplicating items.
+- [x] Enforce data minimization and privacy by excluding all private seller data (emails, internal hashes) from search projections.
 
 ## Out of Scope
 
@@ -129,8 +129,8 @@ CampusMarkt visitors and registered users need an efficient, precise way to loca
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| SRCH-01 | Full-text search with German stemming, weighted ranking, and phrase support | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API | pending |
-| SRCH-02 | Multi-facet filtering (category, area, price bounds, condition, intent, trust badge) | P1: AC1, AC2, AC3, AC4, AC5, AC7 | Database RPC / Domain | pending |
-| SRCH-03 | Search result sorting (relevance, newest, price_asc, price_desc) | P1: AC6, Edge cases 3, 5 | Database RPC / API | pending |
-| SRCH-04 | URL state synchronization and responsive search/filter UI | P1: AC1, AC2, AC3, AC4, Edge cases 4, 8 | UI Components / Web | pending |
-| SRCH-05 | Public boundary security, input sanitization, and data minimization | P1: AC6, Edge cases 1, 7 | Security / Application | pending |
+| SRCH-01 | Full-text search with German stemming, weighted ranking, and phrase support | P1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API | verified |
+| SRCH-02 | Multi-facet filtering (category, area, price bounds, condition, intent, trust badge) | P1: AC1, AC2, AC3, AC4, AC5, AC7 | Database RPC / Domain | verified |
+| SRCH-03 | Search result sorting (relevance, newest, price_asc, price_desc) | P1: AC6, Edge cases 3, 5 | Database RPC / API | verified |
+| SRCH-04 | URL state synchronization and responsive search/filter UI | P1: AC1, AC2, AC3, AC4, Edge cases 4, 8 | UI Components / Web | verified |
+| SRCH-05 | Public boundary security, input sanitization, and data minimization | P1: AC6, Edge cases 1, 7 | Security / Application | verified |

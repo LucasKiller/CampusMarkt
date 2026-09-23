@@ -154,10 +154,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: OFFR-03, OFFR-04
 **Done when**:
-- [ ] Verifies partial unique index prevents concurrent duplicate reservations.
-- [ ] Proves competing offers are atomically marked `superseded`.
-- [ ] Proves cancellation restores listing to `active`.
-- [ ] All database tests pass.
+- [x] Verifies partial unique index prevents concurrent duplicate reservations.
+- [x] Proves competing offers are atomically marked `superseded`.
+- [x] Proves cancellation restores listing to `active`.
+- [x] All database tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(offers): add database persistence and concurrency tests`

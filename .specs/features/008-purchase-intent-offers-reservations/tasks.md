@@ -185,9 +185,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: OFFR-01, OFFR-02, OFFR-05
 **Done when**:
-- [ ] `MarketplaceNegotiationService` orchestrates offer creation, counter-proposals, acceptance, and cancellation.
-- [ ] Handles error mappings (`CANNOT_NEGOTIATE_OWN_LISTING`, `LISTING_ALREADY_RESERVED`).
-- [ ] Application service unit tests pass.
+- [x] `MarketplaceNegotiationService` orchestrates offer creation, counter-proposals, acceptance, and cancellation.
+- [x] Handles error mappings (`CANNOT_NEGOTIATE_OWN_LISTING`, `LISTING_ALREADY_RESERVED`).
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement marketplace negotiation application service`

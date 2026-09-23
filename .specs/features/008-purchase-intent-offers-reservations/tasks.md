@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: OFFR-01, OFFR-02, OFFR-03
 **Done when**:
-- [ ] `OfferDTO`, `ReservationDTO`, `OfferStatus`, `ReservationStatus` types defined.
-- [ ] Type predicates `isOfferDTO` and `isReservationDTO` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `offers.test.ts`.
+- [x] `OfferDTO`, `ReservationDTO`, `OfferStatus`, `ReservationStatus` types defined.
+- [x] Type predicates `isOfferDTO` and `isReservationDTO` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `offers.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): define transport dtos and type predicates`

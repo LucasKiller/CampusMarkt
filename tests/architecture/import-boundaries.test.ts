@@ -6,6 +6,9 @@ const root = resolve(import.meta.dirname, "../..");
 const eslint = new ESLint({
   cwd: root,
   overrideConfigFile: resolve(root, "eslint.config.mjs"),
+  overrideConfig: {
+    languageOptions: { parserOptions: { projectService: false } },
+  },
 });
 
 async function lint(source: string, relativePath: string) {

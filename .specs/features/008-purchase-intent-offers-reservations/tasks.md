@@ -198,9 +198,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: OFFR-01, OFFR-02
 **Done when**:
-- [ ] `POST /api/marketplace/offers` creates purchase intent or offer.
-- [ ] `POST /api/marketplace/offers/[id]/counter` proposes counteroffer.
-- [ ] Integration tests verify authentication checks, validation errors, and rate limit handling.
+- [x] `POST /api/marketplace/offers` creates purchase intent or offer.
+- [x] `POST /api/marketplace/offers/[id]/counter` proposes counteroffer.
+- [x] Integration tests verify authentication checks, validation errors, and rate limit handling.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(offers): implement offers creation and counteroffer api routes`

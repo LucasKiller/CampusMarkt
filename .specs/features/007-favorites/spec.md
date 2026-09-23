@@ -140,8 +140,8 @@ CampusMarkt visitors and registered users need a convenient, reliable, and priva
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| FAV-01 | Private listing favorite toggle (save & remove) with self-favorite prohibition | P1 Story 1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API | pending |
-| FAV-02 | Client-side favorite IDs retrieval and state hydration (AD-012) | P1 Story 2: AC1, AC2, AC3, AC4 | API / Web Client | pending |
-| FAV-03 | Dedicated favorites dashboard ("Merkliste" `/favorites`) with status chips | P1 Story 3: AC1, AC2, AC3, AC4, AC5, AC6 | UI Pages / Components | pending |
-| FAV-04 | Database integrity, RLS policies, and cascading lifecycle | P1 Story 4: AC1, AC2, AC3, AC4 | PostgreSQL / Migrations | pending |
-| FAV-05 | Public boundary security, data minimization, and rate limiting | P1 Story 1: AC6, Edge cases 1, 3 | Application / Security | pending |
+| FAV-01 | Private listing favorite toggle (save & remove) with self-favorite prohibition | P1 Story 1: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / API | verified |
+| FAV-02 | Client-side favorite IDs retrieval and state hydration (AD-012) | P1 Story 2: AC1, AC2, AC3, AC4 | API / Web Client | verified |
+| FAV-03 | Dedicated favorites dashboard ("Merkliste" `/favorites`) with status chips | P1 Story 3: AC1, AC2, AC3, AC4, AC5, AC6 | UI Pages / Components | verified |
+| FAV-04 | Database integrity, RLS policies, and cascading lifecycle | P1 Story 4: AC1, AC2, AC3, AC4 | PostgreSQL / Migrations | verified |
+| FAV-05 | Public boundary security, data minimization, and rate limiting | P1 Story 1: AC6, Edge cases 1, 3 | Application / Security | verified |

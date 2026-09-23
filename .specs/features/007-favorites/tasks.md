@@ -83,10 +83,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: FAV-01, FAV-02
 **Done when**:
-- [ ] Helper functions for favorite ID set manipulation and optimistic state reconciliation.
-- [ ] Self-favorite policy assertion `assertCanFavorite(userId, sellerId)`.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `favorites.test.ts`.
+- [x] Helper functions for favorite ID set manipulation and optimistic state reconciliation.
+- [x] Self-favorite policy assertion `assertCanFavorite(userId, sellerId)`.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `favorites.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement domain utilities and invariants`

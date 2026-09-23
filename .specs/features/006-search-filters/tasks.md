@@ -292,10 +292,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: SRCH-01, SRCH-02, SRCH-03, SRCH-04, SRCH-05
 **Done when**:
-- [ ] E2E tests prove searching for keywords, applying filters, and checking results.
-- [ ] Proves mobile filter drawer opening, applying, and clearing.
-- [ ] Operational runbook added to `docs/operations/marketplace/search.md`.
-- [ ] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
+- [x] E2E tests prove searching for keywords, applying filters, and checking results.
+- [x] Proves mobile filter drawer opening, applying, and clearing.
+- [x] Operational runbook added to `docs/operations/marketplace/search.md`.
+- [x] Full gate (`npm run check`, `test:integration`, `test:e2e`) passes.
 **Tests**: e2e
 **Gate**: Browser
 **Commit**: `test(search): prove end to end search journeys and add runbook`

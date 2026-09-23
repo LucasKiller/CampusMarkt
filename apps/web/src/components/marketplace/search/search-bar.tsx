@@ -146,7 +146,7 @@ export function SearchBar({
           aria-label="Suchbegriff"
           style={{
             width: "100%",
-            padding: "0.625rem 2.5rem 0.625rem 2.625rem",
+            padding: "0.625rem 6.5rem 0.625rem 2.625rem",
             fontSize: "0.95rem",
             borderRadius: "0.5rem",
             border: "1px solid #d1d5db",
@@ -166,7 +166,8 @@ export function SearchBar({
             aria-label="Suche zurücksetzen"
             style={{
               position: "absolute",
-              right: "2.75rem",
+              right: "4.75rem",
+              zIndex: 2,
               background: "none",
               border: "none",
               padding: "0.25rem",

@@ -114,10 +114,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: FAV-04
 **Done when**:
-- [ ] `marketplace.favorites` table created with `(user_id, listing_id, created_at)`.
-- [ ] Foreign keys with `ON DELETE CASCADE` to `auth.users` and `marketplace.listings`.
-- [ ] B-tree indexes created on `(user_id, created_at desc)` and `(listing_id)`.
-- [ ] Row-Level Security enabled with owner-only policies.
+- [x] `marketplace.favorites` table created with `(user_id, listing_id, created_at)`.
+- [x] Foreign keys with `ON DELETE CASCADE` to `auth.users` and `marketplace.listings`.
+- [x] B-tree indexes created on `(user_id, created_at desc)` and `(listing_id)`.
+- [x] Row-Level Security enabled with owner-only policies.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(favorites): add marketplace favorites table migration`

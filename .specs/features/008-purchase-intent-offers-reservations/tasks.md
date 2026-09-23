@@ -69,11 +69,11 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: OFFR-01, OFFR-02, OFFR-04
 **Done when**:
-- [ ] `validateCreateOfferInput` validates positive integer cents and message length ($\le 500$).
-- [ ] `validateCounterOfferInput` validates positive counter amount.
-- [ ] `validateCancelReservationInput` validates reason against allowed enums.
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `offers.test.ts`.
+- [x] `validateCreateOfferInput` validates positive integer cents and message length ($\le 500$).
+- [x] `validateCounterOfferInput` validates positive counter amount.
+- [x] `validateCancelReservationInput` validates reason against allowed enums.
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `offers.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement negotiation validation schemas`

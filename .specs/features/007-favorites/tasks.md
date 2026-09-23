@@ -142,9 +142,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: FAV-02, FAV-03, FAV-04
 **Done when**:
-- [ ] `marketplace_api.get_user_favorite_ids()` returns active favorited UUID array.
-- [ ] `marketplace_api.get_user_favorites(p_cursor_created_at, p_cursor_listing_id, p_limit)` returns keyset-paginated records with seller trust badge.
-- [ ] Excludes soft-deleted (`archived`) listings.
+- [x] `marketplace_api.get_user_favorite_ids()` returns active favorited UUID array.
+- [x] `marketplace_api.get_user_favorites(p_cursor_created_at, p_cursor_listing_id, p_limit)` returns keyset-paginated records with seller trust badge.
+- [x] Excludes soft-deleted (`archived`) listings.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(favorites): implement favorites query and hydration rpcs`

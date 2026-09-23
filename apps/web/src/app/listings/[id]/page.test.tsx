@@ -37,12 +37,29 @@ const sampleDetails: PublicListingDetails = {
 };
 
 let mockListingToReturn: PublicListingDetails | null = sampleDetails;
+const mockIdentity = null;
+
+vi.mock("../../../modules/identity/server/access", () => ({
+  getSessionDal: () => ({
+    getOptionalIdentity: async () => mockIdentity,
+  }),
+}));
 
 vi.mock("../../../modules/listings/server/index", () => ({
   getMarketplaceFeedService: () => ({
     getListingDetails: async () => ({
       status: mockListingToReturn ? "success" : "not_found",
       data: mockListingToReturn,
+    }),
+  }),
+  getMarketplaceNegotiationService: () => ({
+    getOffersForListing: async () => ({
+      status: "success",
+      data: [],
+    }),
+    getActiveReservationForListing: async () => ({
+      status: "success",
+      data: null,
     }),
   }),
 }));
@@ -108,6 +125,17 @@ describe("Public Listing Details Page UI (T15)", () => {
         `data-testid="favorite-button-${sampleDetails.id}"`,
       );
       expect(html).toContain("favorite-button-details");
+    });
+
+    it("renders negotiation bar within action toolbar", async () => {
+      mockListingToReturn = sampleDetails;
+      const pageJsx = await ListingDetailsPage({
+        params: Promise.resolve({ id: sampleDetails.id }),
+      });
+      const html = renderToString(pageJsx);
+
+      expect(html).toContain('data-testid="negotiation-bar"');
+      expect(html).toContain('data-testid="cta-buy-now"');
     });
 
     it("displays inactive notice banner when listing is sold", async () => {

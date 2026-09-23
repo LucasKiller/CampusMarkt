@@ -241,9 +241,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: OFFR-01, OFFR-02
 **Done when**:
-- [ ] Buyers see "Kaufanfrage senden" and "Preis vorschlagen" CTAs.
-- [ ] Sellers see active incoming offers with Accept/Decline/Counter actions.
-- [ ] Component unit tests pass.
+- [x] Buyers see "Kaufanfrage senden" and "Preis vorschlagen" CTAs.
+- [x] Sellers see active incoming offers with Accept/Decline/Counter actions.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): integrate negotiation bar into listing details`

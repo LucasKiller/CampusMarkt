@@ -84,10 +84,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: OFFR-02, OFFR-03, OFFR-05
 **Done when**:
-- [ ] Domain state machines validate allowed transitions (`pending -> accepted/declined/withdrawn/countered/superseded`).
-- [ ] Invariant helper `assertCanNegotiate(buyerId, sellerId)`.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `offers.test.ts`.
+- [x] Domain state machines validate allowed transitions (`pending -> accepted/declined/withdrawn/countered/superseded`).
+- [x] Invariant helper `assertCanNegotiate(buyerId, sellerId)`.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `offers.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement domain state machines and invariants`

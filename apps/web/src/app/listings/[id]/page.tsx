@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getMarketplaceFeedService } from "../../../modules/listings/server/index";
 import { ListingGallery } from "../../../components/marketplace/listing-gallery";
 import { TrustBadge } from "../../../components/marketplace/feed";
+import { FavoriteButton } from "../../../components/marketplace/favorites/favorite-button";
 import {
   formatListingPrice,
   formatRelativeTime,
@@ -365,6 +366,22 @@ export default async function ListingDetailsPage(
                 <strong>Übergabeort:</strong>{" "}
                 {getPickupAreaLabel(listing.pickupArea)} (Braunschweig)
               </span>
+            </div>
+
+            {/* Actions Toolbar */}
+            <div
+              className="listing-details-actions"
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                alignItems: "center",
+              }}
+            >
+              <FavoriteButton
+                listingId={listing.id}
+                variant="details"
+                showLabel={true}
+              />
             </div>
 
             {/* Description */}

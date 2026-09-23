@@ -96,6 +96,20 @@ describe("Public Listing Details Page UI (T15)", () => {
       expect(html).not.toContain("inactive-notice-banner");
     });
 
+    it("renders favorite button in details action toolbar", async () => {
+      mockListingToReturn = sampleDetails;
+      const pageJsx = await ListingDetailsPage({
+        params: Promise.resolve({ id: sampleDetails.id }),
+      });
+      const html = renderToString(pageJsx);
+
+      expect(html).toContain("listing-details-actions");
+      expect(html).toContain(
+        `data-testid="favorite-button-${sampleDetails.id}"`,
+      );
+      expect(html).toContain("favorite-button-details");
+    });
+
     it("displays inactive notice banner when listing is sold", async () => {
       mockListingToReturn = {
         ...sampleDetails,

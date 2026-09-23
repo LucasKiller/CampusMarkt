@@ -242,9 +242,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: FAV-01, FAV-02
 **Done when**:
-- [ ] `FavoriteButton` positioned on `ListingCard` image overlay.
-- [ ] `FavoriteButton` added to details view action toolbar.
-- [ ] Card and details unit tests pass without regressions.
+- [x] `FavoriteButton` positioned on `ListingCard` image overlay.
+- [x] `FavoriteButton` added to details view action toolbar.
+- [x] Card and details unit tests pass without regressions.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): integrate favorite button into listing card and details`

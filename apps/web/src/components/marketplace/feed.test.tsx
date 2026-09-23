@@ -108,6 +108,13 @@ describe("ListingCard and feed filter UI components (T13)", () => {
 
       expect(html).toContain("Zu verschenken");
     });
+
+    it("renders favorite button on listing card overlay", () => {
+      const html = renderToString(<ListingCard item={baseItem} />);
+
+      expect(html).toContain(`data-testid="favorite-button-${baseItem.id}"`);
+      expect(html).toContain("favorite-button-card");
+    });
   });
 
   describe("TrustBadge", () => {

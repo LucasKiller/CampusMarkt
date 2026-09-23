@@ -11,6 +11,7 @@ import {
   getListingTypeLabel,
   type SupportedLocale,
 } from "@campusmarkt/domain";
+import { FavoriteButton } from "./favorites/favorite-button";
 
 export { MarketplaceFeed } from "./marketplace-feed";
 export type { MarketplaceFeedProps } from "./marketplace-feed";
@@ -206,47 +207,59 @@ export function ListingCard({ item, locale = "de" }: ListingCardProps) {
               pointerEvents: "none",
             }}
           >
-            {/* Listing Type Tag */}
-            <span
-              className={`listing-type-tag type-${item.listingType.toLowerCase()}`}
+            <div
               style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                padding: "0.2rem 0.5rem",
-                borderRadius: "0.375rem",
-                background:
-                  item.listingType === "GIVE_AWAY"
-                    ? "#15803d"
-                    : item.listingType === "WANTED"
-                      ? "#7c3aed"
-                      : "#0f172a",
-                color: "#ffffff",
-                boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                display: "flex",
+                gap: "0.35rem",
+                alignItems: "center",
+                flexWrap: "wrap",
               }}
             >
-              {getListingTypeLabel(item.listingType, locale)}
-            </span>
-
-            {/* Reserved Tag */}
-            {isReserved && (
+              {/* Listing Type Tag */}
               <span
-                className="reserved-badge"
-                role="status"
+                className={`listing-type-tag type-${item.listingType.toLowerCase()}`}
                 style={{
                   fontSize: "0.75rem",
                   fontWeight: 700,
-                  padding: "0.2rem 0.55rem",
+                  textTransform: "uppercase",
+                  padding: "0.2rem 0.5rem",
                   borderRadius: "0.375rem",
-                  background: "#b45309",
+                  background:
+                    item.listingType === "GIVE_AWAY"
+                      ? "#15803d"
+                      : item.listingType === "WANTED"
+                        ? "#7c3aed"
+                        : "#0f172a",
                   color: "#ffffff",
                   boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
-                  textTransform: "uppercase",
                 }}
               >
-                {locale === "en" ? "Reserved" : "Reserviert"}
+                {getListingTypeLabel(item.listingType, locale)}
               </span>
-            )}
+
+              {/* Reserved Tag */}
+              {isReserved && (
+                <span
+                  className="reserved-badge"
+                  role="status"
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    padding: "0.2rem 0.55rem",
+                    borderRadius: "0.375rem",
+                    background: "#b45309",
+                    color: "#ffffff",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {locale === "en" ? "Reserved" : "Reserviert"}
+                </span>
+              )}
+            </div>
+
+            {/* Favorite Button */}
+            <FavoriteButton listingId={item.id} size="sm" />
           </div>
         </div>
 

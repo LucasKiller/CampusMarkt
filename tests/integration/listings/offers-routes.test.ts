@@ -4,6 +4,9 @@ vi.mock("server-only", () => ({}));
 
 import { createCreateOfferHandler } from "../../../apps/web/src/app/api/marketplace/offers/route.ts";
 import { createCounterOfferHandler } from "../../../apps/web/src/app/api/marketplace/offers/[id]/counter/route.ts";
+import { createAcceptOfferHandler } from "../../../apps/web/src/app/api/marketplace/offers/[id]/accept/route.ts";
+import { createCancelReservationHandler } from "../../../apps/web/src/app/api/marketplace/reservations/[id]/cancel/route.ts";
+import { createGetReservationsHandler } from "../../../apps/web/src/app/api/marketplace/reservations/route.ts";
 import type { MarketplaceNegotiationService } from "../../../apps/web/src/modules/listings/server/index.ts";
 
 const canonicalOrigin = "https://markt.example.test";
@@ -11,6 +14,7 @@ const buyerId = "11111111-1111-4111-8111-111111111111";
 const sellerId = "22222222-2222-4222-8222-222222222222";
 const listingId = "33333333-3333-4333-8333-333333333333";
 const offerId = "44444444-4444-4444-8444-444444444444";
+const reservationId = "55555555-5555-4555-8555-555555555555";
 
 function jsonRequest(
   method: string,
@@ -45,7 +49,7 @@ function mockSessionDal(
     }) as never;
 }
 
-describe("marketplace offers routes integration (T11)", () => {
+describe("marketplace offers routes integration (T11 & T12)", () => {
   describe("POST /api/marketplace/offers", () => {
     it("returns 401 when unauthenticated", async () => {
       const mockService: Partial<MarketplaceNegotiationService> = {
@@ -327,6 +331,245 @@ describe("marketplace offers routes integration (T11)", () => {
       const body = await res.json();
       expect(body.ok).toBe(true);
       expect(body.data).toEqual(counterProposal);
+    });
+  });
+
+  describe("POST /api/marketplace/offers/[id]/accept (T12)", () => {
+    it("returns 401 when unauthenticated", async () => {
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        acceptOffer: vi.fn(),
+      };
+
+      const handler = createAcceptOfferHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(null),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/offers/${offerId}/accept`,
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: offerId }),
+      });
+
+      expect(res.status).toBe(401);
+      expect(mockService.acceptOffer).not.toHaveBeenCalled();
+    });
+
+    it("returns 409 conflict when listing is already reserved", async () => {
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        acceptOffer: vi.fn(async () => ({
+          status: "listing_already_reserved" as const,
+          message: "Listing is already reserved by another accepted offer.",
+        })),
+      };
+
+      const handler = createAcceptOfferHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal({ authUserId: sellerId }),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/offers/${offerId}/accept`,
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: offerId }),
+      });
+
+      expect(res.status).toBe(409);
+      const body = await res.json();
+      expect(body.ok).toBe(false);
+      expect(body.code).toBe("CONFLICT");
+    });
+
+    it("returns 200 on successful acceptance", async () => {
+      const reservationData = {
+        reservationId,
+        listingId,
+        agreedPriceCents: 2000,
+        status: "active" as const,
+      };
+
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        acceptOffer: vi.fn(async () => ({
+          status: "success" as const,
+          data: reservationData,
+        })),
+      };
+
+      const handler = createAcceptOfferHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal({ authUserId: sellerId }),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/offers/${offerId}/accept`,
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: offerId }),
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.ok).toBe(true);
+      expect(body.data).toEqual(reservationData);
+    });
+  });
+
+  describe("POST /api/marketplace/reservations/[id]/cancel (T12)", () => {
+    it("returns 401 when unauthenticated", async () => {
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        cancelReservation: vi.fn(),
+      };
+
+      const handler = createCancelReservationHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(null),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/reservations/${reservationId}/cancel`,
+        { reason: "changed_mind" },
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: reservationId }),
+      });
+
+      expect(res.status).toBe(401);
+      expect(mockService.cancelReservation).not.toHaveBeenCalled();
+    });
+
+    it("returns 400 on invalid cancellation reason", async () => {
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        cancelReservation: vi.fn(async () => ({
+          status: "invalid" as const,
+          fieldErrors: { reason: ["Invalid reason"] },
+        })),
+      };
+
+      const handler = createCancelReservationHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/reservations/${reservationId}/cancel`,
+        { reason: "bad_reason" },
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: reservationId }),
+      });
+
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.ok).toBe(false);
+      expect(body.code).toBe("INVALID_INPUT");
+    });
+
+    it("returns 200 on successful cancellation", async () => {
+      const cancelData = {
+        reservationId,
+        listingId,
+        status: "cancelled" as const,
+      };
+
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        cancelReservation: vi.fn(async () => ({
+          status: "success" as const,
+          data: cancelData,
+        })),
+      };
+
+      const handler = createCancelReservationHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "POST",
+        `${canonicalOrigin}/api/marketplace/reservations/${reservationId}/cancel`,
+        { reason: "scheduling_conflict" },
+      );
+      const res = await handler(req, {
+        params: Promise.resolve({ id: reservationId }),
+      });
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.ok).toBe(true);
+      expect(body.data).toEqual(cancelData);
+    });
+  });
+
+  describe("GET /api/marketplace/reservations (T12)", () => {
+    it("returns 401 when unauthenticated", async () => {
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        getUserReservations: vi.fn(),
+      };
+
+      const handler = createGetReservationsHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(null),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "GET",
+        `${canonicalOrigin}/api/marketplace/reservations`,
+      );
+      const res = await handler(req);
+
+      expect(res.status).toBe(401);
+    });
+
+    it("returns 200 with user reservations on success", async () => {
+      const sampleReservations = [
+        {
+          id: reservationId,
+          listingId,
+          buyerId,
+          sellerId,
+          offerId,
+          agreedPriceCents: 2000,
+          status: "active" as const,
+          createdAt: "2026-09-23T18:00:00.000Z",
+        },
+      ];
+
+      const mockService: Partial<MarketplaceNegotiationService> = {
+        getUserReservations: vi.fn(async () => ({
+          status: "success" as const,
+          data: sampleReservations,
+        })),
+      };
+
+      const handler = createGetReservationsHandler(
+        mockService as MarketplaceNegotiationService,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const req = jsonRequest(
+        "GET",
+        `${canonicalOrigin}/api/marketplace/reservations`,
+      );
+      const res = await handler(req);
+
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.ok).toBe(true);
+      expect(body.data.items).toEqual(sampleReservations);
     });
   });
 });

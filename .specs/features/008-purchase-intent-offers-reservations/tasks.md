@@ -211,9 +211,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: OFFR-03, OFFR-04
 **Done when**:
-- [ ] `POST /api/marketplace/offers/[id]/accept` accepts offer and creates reservation.
-- [ ] `POST /api/marketplace/reservations/[id]/cancel` cancels active reservation and restores listing.
-- [ ] Integration tests verify atomic status changes and competing offer supersession.
+- [x] `POST /api/marketplace/offers/[id]/accept` accepts offer and creates reservation.
+- [x] `POST /api/marketplace/reservations/[id]/cancel` cancels active reservation and restores listing.
+- [x] Integration tests verify atomic status changes and competing offer supersession.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(offers): implement accept offer and cancel reservation api routes`

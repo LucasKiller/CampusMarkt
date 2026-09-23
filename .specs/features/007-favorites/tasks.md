@@ -97,9 +97,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: FAV-01, FAV-05
 **Done when**:
-- [ ] Boundaries enforce that private favorites cannot leak into public unauthenticated projections.
-- [ ] No direct client database calls bypass `marketplace_api` RPCs.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that private favorites cannot leak into public unauthenticated projections.
+- [x] No direct client database calls bypass `marketplace_api` RPCs.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(favorites): add architectural boundary tests`

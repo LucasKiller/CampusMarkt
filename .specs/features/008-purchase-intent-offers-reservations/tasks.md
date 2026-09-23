@@ -115,10 +115,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: OFFR-03, OFFR-04
 **Done when**:
-- [ ] `marketplace.offers` table created with `(id, listing_id, buyer_id, seller_id, amount_cents, status)`.
-- [ ] `marketplace.reservations` table created with `agreed_price_cents` and cascade FKs.
-- [ ] Partial unique index `idx_one_active_reservation_per_listing` on `reservations(listing_id) WHERE status = 'active'`.
-- [ ] RLS policies restrict visibility to participants only (`auth.uid() = buyer_id or auth.uid() = seller_id`).
+- [x] `marketplace.offers` table created with `(id, listing_id, buyer_id, seller_id, amount_cents, status)`.
+- [x] `marketplace.reservations` table created with `agreed_price_cents` and cascade FKs.
+- [x] Partial unique index `idx_one_active_reservation_per_listing` on `reservations(listing_id) WHERE status = 'active'`.
+- [x] RLS policies restrict visibility to participants only (`auth.uid() = buyer_id or auth.uid() = seller_id`).
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(offers): add offers and reservations tables migration`

@@ -228,9 +228,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: OFFR-01, OFFR-02
 **Done when**:
-- [ ] Accessible modal dialog with Buy at Asking Price and Make Offer tabs.
-- [ ] Validates offer price $\le$ asking price with error message.
-- [ ] Component unit tests pass.
+- [x] Accessible modal dialog with Buy at Asking Price and Make Offer tabs.
+- [x] Validates offer price $\le$ asking price with error message.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(offers): implement offer modal component`

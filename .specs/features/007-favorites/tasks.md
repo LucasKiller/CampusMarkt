@@ -228,10 +228,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: FAV-01, FAV-02
 **Done when**:
-- [ ] Accessible heart button with `aria-pressed`, `aria-label`, and SVG icons.
-- [ ] Optimistic toggle update with fallback on error.
-- [ ] Redirects guest visitors to `/login?next=...`.
-- [ ] Component unit tests pass.
+- [x] Accessible heart button with `aria-pressed`, `aria-label`, and SVG icons.
+- [x] Optimistic toggle update with fallback on error.
+- [x] Redirects guest visitors to `/login?next=...`.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement favorite button component`

@@ -98,9 +98,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: OFFR-01, OFFR-05
 **Done when**:
-- [ ] Boundaries enforce that private offers cannot leak into public unauthenticated catalog feeds.
-- [ ] No direct client database calls bypass `marketplace_api` RPCs.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that private offers cannot leak into public unauthenticated catalog feeds.
+- [x] No direct client database calls bypass `marketplace_api` RPCs.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(offers): add architectural boundary tests`

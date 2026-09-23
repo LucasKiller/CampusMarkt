@@ -155,9 +155,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: FAV-04
 **Done when**:
-- [ ] Verifies table schema, indexes, RLS policies, cascades, and RPC logic.
-- [ ] Proves self-favorite rejection and status handling (`reserved`/`sold`).
-- [ ] All database tests pass.
+- [x] Verifies table schema, indexes, RLS policies, cascades, and RPC logic.
+- [x] Proves self-favorite rejection and status handling (`reserved`/`sold`).
+- [x] All database tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(favorites): add database persistence tests`

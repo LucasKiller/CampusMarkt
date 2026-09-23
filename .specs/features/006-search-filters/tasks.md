@@ -278,10 +278,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: SRCH-01, SRCH-02, SRCH-03, SRCH-04
 **Done when**:
-- [ ] Updates browser URL query string on filter changes without full page reload.
-- [ ] Restores active filters and queries directly from URL on page load.
-- [ ] Displays accessible empty state with reset action when 0 items match.
-- [ ] Component unit tests pass.
+- [x] Updates browser URL query string on filter changes without full page reload.
+- [x] Restores active filters and queries directly from URL on page load.
+- [x] Displays accessible empty state with reset action when 0 items match.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(search): implement search page with url synchronization`

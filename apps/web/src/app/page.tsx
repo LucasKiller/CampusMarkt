@@ -133,6 +133,17 @@ export default async function HomePage(props: HomePageProps) {
             Inserat aufgeben
           </a>
           <a
+            href="/search"
+            data-testid="nav-search-link"
+            style={{
+              fontSize: "0.9rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            Suche
+          </a>
+          <a
             href="/account/listings"
             style={{
               fontSize: "0.9rem",

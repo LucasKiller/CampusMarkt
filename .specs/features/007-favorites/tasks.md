@@ -185,9 +185,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: FAV-01, FAV-05
 **Done when**:
-- [ ] `MarketplaceFavoritesService` orchestrates validation, rate limiting (30/min), and telemetry.
-- [ ] Handles error mappings (`CANNOT_FAVORITE_OWN_LISTING`, `LISTING_NOT_FOUND`).
-- [ ] Application service unit tests pass.
+- [x] `MarketplaceFavoritesService` orchestrates validation, rate limiting (30/min), and telemetry.
+- [x] Handles error mappings (`CANNOT_FAVORITE_OWN_LISTING`, `LISTING_NOT_FOUND`).
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(favorites): implement marketplace favorites application service`

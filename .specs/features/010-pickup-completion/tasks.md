@@ -229,9 +229,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: PICK-01
 **Done when**:
-- [ ] Displays recommended campus pickup spots and safety checklist.
-- [ ] Accessible formatting with clear contrast and icons.
-- [ ] Component unit tests pass.
+- [x] Displays recommended campus pickup spots and safety checklist.
+- [x] Accessible formatting with clear contrast and icons.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement safe pickup checklist component`

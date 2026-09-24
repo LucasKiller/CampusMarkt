@@ -10,6 +10,7 @@ import { ListingGallery } from "../../../components/marketplace/listing-gallery"
 import { TrustBadge } from "../../../components/marketplace/feed";
 import { FavoriteButton } from "../../../components/marketplace/favorites/favorite-button";
 import { NegotiationBar } from "../../../components/marketplace/negotiation/negotiation-bar";
+import { MessageButton } from "../../../components/marketplace/messaging/message-button";
 import {
   formatListingPrice,
   formatRelativeTime,
@@ -475,6 +476,13 @@ export default async function ListingDetailsPage(
                 currentUserId={currentUserId}
                 initialOffers={initialOffers}
                 initialReservation={initialReservation}
+              />
+
+              {/* Messaging CTA (MSG-01) */}
+              <MessageButton
+                listingId={listing.id}
+                sellerId={listing.seller.publicId}
+                currentUserId={currentUserId}
               />
             </div>
 

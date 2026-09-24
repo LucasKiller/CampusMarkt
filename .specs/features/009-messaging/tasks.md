@@ -255,10 +255,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: MSG-01, MSG-04
 **Done when**:
-- [ ] Inbox displays active conversations with latest message snippet, timestamp, and unread pill.
-- [ ] Empty state renders with browse link when no conversations exist.
-- [ ] "Nachricht schreiben" CTA button integrated into listing details page.
-- [ ] Component unit tests pass.
+- [x] Inbox displays active conversations with latest message snippet, timestamp, and unread pill.
+- [x] Empty state renders with browse link when no conversations exist.
+- [x] "Nachricht schreiben" CTA button integrated into listing details page.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement inbox page and listing details cta integration`

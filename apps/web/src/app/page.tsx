@@ -117,7 +117,14 @@ export default async function HomePage(props: HomePageProps) {
         <a className="brand" href="/" aria-label="CampusMarkt Startseite">
           CampusMarkt
         </a>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "1rem",
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
           <a
             href="/listings/new"
             style={{

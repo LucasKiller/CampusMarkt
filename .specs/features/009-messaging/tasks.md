@@ -269,14 +269,14 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: MSG-01, MSG-02, MSG-03, MSG-04, MSG-05
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - Buyer clicks "Nachricht schreiben" from listing and initiates conversation.
   - Messages sent by buyer and seller are delivered and displayed.
   - Inbox reflects unread count and latest message snippet.
   - Self-messaging is prohibited.
   - Negotiation card in chat displays active offer/reservation status.
-- [ ] Operational runbook added to `docs/operations/marketplace/messaging.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/messaging.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(messaging): prove end to end messaging journeys and add runbook`

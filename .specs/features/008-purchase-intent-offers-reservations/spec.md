@@ -1,6 +1,6 @@
 # Purchase Intent, Offers, and Reservations Specification
 
-**Status:** Draft
+**Status:** Verified
 
 ## Problem Statement
 
@@ -139,8 +139,8 @@ Marketplace buyers and sellers need a structured, reliable, and mutually binding
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| OFFR-01 | Purchase intent (buy at asking price) and free item interest request | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | pending |
-| OFFR-02 | Structured price negotiation (proposals, counteroffers, decline, withdraw) | P1 Story 2: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / Domain | pending |
-| OFFR-03 | Atomic reservation exclusivity and competing offer supersession (AD-013) | P1 Story 3: AC1, AC2, AC3, AC4 | Database RPC / PostgreSQL | pending |
-| OFFR-04 | Reservation management, cancellation reason, and listing relisting | P1 Story 4: AC1, AC2, AC3, AC4 | UI Pages / Application | pending |
-| OFFR-05 | Public boundary security, self-negotiation prohibition, and rate limits | P1 Story 1: AC3, AC5, P1 Story 2: AC6 | Security / Application | pending |
+| OFFR-01 | Purchase intent (buy at asking price) and free item interest request | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | verified |
+| OFFR-02 | Structured price negotiation (proposals, counteroffers, decline, withdraw) | P1 Story 2: AC1, AC2, AC3, AC4, AC5, AC6 | Database RPC / Domain | verified |
+| OFFR-03 | Atomic reservation exclusivity and competing offer supersession (AD-013) | P1 Story 3: AC1, AC2, AC3, AC4 | Database RPC / PostgreSQL | verified |
+| OFFR-04 | Reservation management, cancellation reason, and listing relisting | P1 Story 4: AC1, AC2, AC3, AC4 | UI Pages / Application | verified |
+| OFFR-05 | Public boundary security, self-negotiation prohibition, and rate limits | P1 Story 1: AC3, AC5, P1 Story 2: AC6 | Security / Application | verified |

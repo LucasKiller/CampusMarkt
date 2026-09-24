@@ -101,7 +101,7 @@
 ## Handoff
 
 - **Feature**: 008-purchase-intent-offers-reservations / `.specs/features/008-purchase-intent-offers-reservations/`
-- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-013, writing context.md & spec.md)
+- **Phase / Task**: Feature 008 completed and independently validated (PASS)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -110,8 +110,9 @@
   - `005-marketplace-feed-listing-details` verified.
   - `006-search-filters` verified.
   - `007-favorites` verified.
-- **In-progress** (file:line): `.specs/features/008-purchase-intent-offers-reservations/context.md`
-- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
+  - `008-purchase-intent-offers-reservations` verified.
+- **In-progress** (file:line): none
+- **Next step**: Proceed to Feature 009 (Messaging) specification.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

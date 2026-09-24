@@ -184,9 +184,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: MSG-01, MSG-02
 **Done when**:
-- [ ] `MarketplaceMessagingService` coordinates conversation creation, message dispatch, and read receipts.
-- [ ] Enforces 30 messages/min rate limit per user.
-- [ ] Application service unit tests pass.
+- [x] `MarketplaceMessagingService` coordinates conversation creation, message dispatch, and read receipts.
+- [x] Enforces 30 messages/min rate limit per user.
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement marketplace messaging application service`

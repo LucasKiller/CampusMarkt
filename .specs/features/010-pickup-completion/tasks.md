@@ -198,10 +198,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: PICK-02, PICK-03
 **Done when**:
-- [ ] Handles completion requests with CSRF origin guards.
-- [ ] Returns HTTP 200 on success with completed receipt.
-- [ ] Returns HTTP 403 on non-seller access and HTTP 409 on conflict.
-- [ ] Integration tests verify all outcomes.
+- [x] Handles completion requests with CSRF origin guards.
+- [x] Returns HTTP 200 on success with completed receipt.
+- [x] Returns HTTP 403 on non-seller access and HTTP 409 on conflict.
+- [x] Integration tests verify all outcomes.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(pickup): implement complete pickup api route handler`

@@ -255,10 +255,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: PICK-04, PICK-05
 **Done when**:
-- [ ] `/account/reservations` has "Aktiv" and "Abgeschlossen" tabs.
-- [ ] Completed tab lists past purchases and sales with partner profile and trust badge.
-- [ ] Sold listings render "Verkauft" banner and disable buy/offer/message actions.
-- [ ] Component unit tests pass.
+- [x] `/account/reservations` has "Aktiv" and "Abgeschlossen" tabs.
+- [x] Completed tab lists past purchases and sales with partner profile and trust badge.
+- [x] Sold listings render "Verkauft" banner and disable buy/offer/message actions.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): integrate completion history into reservations page and sold banner`

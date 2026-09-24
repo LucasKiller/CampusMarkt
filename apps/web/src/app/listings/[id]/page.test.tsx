@@ -138,7 +138,7 @@ describe("Public Listing Details Page UI (T15)", () => {
       expect(html).toContain('data-testid="cta-buy-now"');
     });
 
-    it("displays inactive notice banner when listing is sold", async () => {
+    it("displays prominent sold banner, badge, and hides negotiation CTAs when listing is sold", async () => {
       mockListingToReturn = {
         ...sampleDetails,
         status: "sold",
@@ -148,10 +148,14 @@ describe("Public Listing Details Page UI (T15)", () => {
       });
       const html = renderToString(pageJsx);
 
-      expect(html).toContain("inactive-notice-banner");
+      expect(html).toContain('data-testid="sold-banner"');
+      expect(html).toContain('data-testid="badge-sold"');
+      expect(html).toContain("Verkauft");
       expect(html).toContain(
-        "Dieses Inserat wurde bereits verkauft und ist nicht mehr verfügbar.",
+        "Dieser Artikel wurde erfolgreich verkauft und übergeben.",
       );
+      expect(html).not.toContain('data-testid="negotiation-bar"');
+      expect(html).not.toContain('data-testid="message-button"');
     });
 
     it("displays inactive notice banner when listing is archived", async () => {

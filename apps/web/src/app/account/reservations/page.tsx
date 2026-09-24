@@ -6,6 +6,7 @@ import { getSessionDal } from "../../../modules/identity/server/access";
 import {
   getMarketplaceFeedService,
   getMarketplaceNegotiationService,
+  getMarketplacePickupService,
 } from "../../../modules/listings/server/index";
 import {
   ReservationsView,
@@ -18,7 +19,19 @@ export const metadata: Metadata = {
     "Verwalte deine vereinbarten Übergaben und Reservierungen in Braunschweig.",
 };
 
-export default async function AccountReservationsPage() {
+export default async function AccountReservationsPage(props?: {
+  searchParams?: Promise<{ tab?: string }> | { tab?: string };
+}) {
+  const searchParams = props?.searchParams ? await props.searchParams : {};
+  const tabParam = searchParams.tab;
+  const initialTab =
+    tabParam === "completed"
+      ? "completed"
+      : tabParam === "active"
+        ? "active"
+        : tabParam === "cancelled"
+          ? "cancelled"
+          : "all";
   const dal = getSessionDal();
   let identity = null;
 
@@ -122,6 +135,43 @@ export default async function AccountReservationsPage() {
     console.error("[AccountReservationsPage: getUserReservations]", err);
   }
 
+  try {
+    const pickupService = getMarketplacePickupService();
+    const historyResult = await pickupService.getCompletedTransactions(
+      identity.authUserId,
+    );
+    if (
+      historyResult.status === "success" &&
+      Array.isArray(historyResult.data)
+    ) {
+      for (const tx of historyResult.data) {
+        const existingIndex = items.findIndex((i) => i.id === tx.reservationId);
+        const mappedItem: ReservationDashboardItem = {
+          id: tx.reservationId,
+          listingId: tx.listingId,
+          listingTitle: tx.listingTitle,
+          agreedPriceCents: tx.agreedPriceCents,
+          pickupArea: tx.pickupArea,
+          partnerRole: tx.role === "buyer" ? "seller" : "buyer",
+          partnerId: tx.partner.id,
+          partnerName: tx.partner.displayName,
+          hasUniversityBadge: Boolean(tx.partner.universityBadge),
+          universityBadgeLabel: tx.partner.universityBadge?.badgeLabel ?? null,
+          status: "completed",
+          createdAt: tx.completedAt,
+        };
+
+        if (existingIndex >= 0) {
+          items[existingIndex] = mappedItem;
+        } else {
+          items.push(mappedItem);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[AccountReservationsPage: getCompletedTransactions]", err);
+  }
+
   // E2E test data fallback during CI when DB is unpopulated
   if (items.length === 0 && process.env.E2E_TEST === "true") {
     items.push({
@@ -196,6 +246,7 @@ export default async function AccountReservationsPage() {
         <ReservationsView
           initialReservations={items}
           currentUserId={identity.authUserId}
+          initialTab={initialTab}
         />
       </div>
     </main>

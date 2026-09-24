@@ -4,6 +4,7 @@ import { renderToString } from "react-dom/server";
 
 vi.mock("server-only", () => ({}));
 
+import type { PickupArea } from "@campusmarkt/domain";
 import type { ReservationDTO, PublicListingDetails } from "@campusmarkt/types";
 import AccountReservationsPage from "./page";
 import {
@@ -53,6 +54,25 @@ let mockIdentity: { authUserId: string; emailConfirmed: boolean } | null = {
 
 let mockReservations: ReservationDTO[] = [sampleReservation];
 
+let mockCompletedTransactions: Array<{
+  reservationId: string;
+  listingId: string;
+  listingTitle: string;
+  agreedPriceCents: number;
+  pickupArea: PickupArea;
+  role: "buyer" | "seller";
+  partner: {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+    universityBadge: {
+      universityId: string;
+      badgeLabel: string;
+    } | null;
+  };
+  completedAt: string;
+}> = [];
+
 const mockRedirect = vi.fn();
 vi.mock("next/navigation", () => ({
   redirect: (url: string) => {
@@ -81,6 +101,12 @@ vi.mock("../../../modules/listings/server/index", () => ({
     getUserReservations: async () => ({
       status: "success",
       data: mockReservations,
+    }),
+  }),
+  getMarketplacePickupService: () => ({
+    getCompletedTransactions: async () => ({
+      status: "success",
+      data: mockCompletedTransactions,
     }),
   }),
 }));
@@ -119,6 +145,40 @@ describe("AccountReservationsPage & ReservationsView (T15)", () => {
       expect(html).toContain("Alex Student");
       expect(html).toContain("TU Braunschweig");
       expect(html).toContain("Reservierung stornieren");
+    });
+
+    it("renders completed transactions when returned from pickup service", async () => {
+      mockCompletedTransactions = [
+        {
+          reservationId: "res-completed-1",
+          listingId: "list-completed-1",
+          listingTitle: "Mechanics Textbook",
+          agreedPriceCents: 3500,
+          pickupArea: "campus_nord_bienrode",
+          role: "buyer",
+          partner: {
+            id: "partner-seller-1",
+            displayName: "Maria Seller",
+            avatarUrl: null,
+            universityBadge: {
+              universityId: "tu-braunschweig",
+              badgeLabel: "TU Braunschweig",
+            },
+          },
+          completedAt: "2026-09-24T14:30:00Z",
+        },
+      ];
+
+      const pageJsx = await AccountReservationsPage({
+        searchParams: Promise.resolve({ tab: "completed" }),
+      });
+      const html = renderToString(pageJsx);
+
+      expect(html).toContain("Mechanics Textbook");
+      expect(html).toContain("€35.00");
+      expect(html).toContain("Maria Seller");
+      expect(html).toContain("TU Braunschweig");
+      expect(html).toContain("Abgeschlossen");
     });
   });
 
@@ -192,6 +252,108 @@ describe("AccountReservationsPage & ReservationsView (T15)", () => {
       expect(html).toContain('data-testid="empty-reservations-notice"');
       expect(html).toContain(
         "Keine Reservierungen in dieser Ansicht gefunden.",
+      );
+    });
+
+    it("renders filter tabs including Aktiv and Abgeschlossen with SafePickupChecklist", () => {
+      const html = renderToString(
+        <ReservationsView
+          initialReservations={dashboardItems}
+          currentUserId="seller-1"
+          initialTab="active"
+        />,
+      );
+
+      expect(html).toContain('data-testid="filter-all-btn"');
+      expect(html).toContain('data-testid="filter-active-btn"');
+      expect(html).toContain('data-testid="filter-completed-btn"');
+      expect(html).toContain('data-testid="filter-cancelled-btn"');
+      expect(html).toContain('data-testid="safe-pickup-checklist"');
+      expect(html).toContain("Sichere Übergabe auf dem Campus");
+    });
+
+    it("renders CompleteHandoverButton trigger only for seller on active reservations", () => {
+      // In dashboardItems:
+      // res-1 has partnerRole === "buyer" (current user is seller) -> should show complete trigger
+      const sellerHtml = renderToString(
+        <ReservationsView
+          initialReservations={dashboardItems}
+          currentUserId="seller-1"
+        />,
+      );
+
+      expect(sellerHtml).toContain('data-testid="complete-handover-trigger"');
+      expect(sellerHtml).toContain("Übergabe abschließen");
+
+      // res-buyer has partnerRole === "seller" (current user is buyer) -> should NOT show complete trigger
+      const buyerOnlyItems: ReservationDashboardItem[] = [
+        {
+          id: "res-buyer-only",
+          listingId: "list-b",
+          listingTitle: "Calculus",
+          agreedPriceCents: 1500,
+          pickupArea: "innenstadt",
+          partnerRole: "seller",
+          partnerId: "seller-user",
+          partnerName: "Seller Person",
+          hasUniversityBadge: true,
+          universityBadgeLabel: "TU Braunschweig",
+          status: "active",
+          createdAt: "2026-09-24T12:00:00Z",
+        },
+      ];
+
+      const buyerHtml = renderToString(
+        <ReservationsView
+          initialReservations={buyerOnlyItems}
+          currentUserId="buyer-user"
+        />,
+      );
+
+      expect(buyerHtml).not.toContain(
+        'data-testid="complete-handover-trigger"',
+      );
+    });
+
+    it("renders completed reservation card with completed date, status badge, and partner info", () => {
+      const completedItems: ReservationDashboardItem[] = [
+        {
+          id: "res-completed-1",
+          listingId: "list-comp-1",
+          listingTitle: "Physics Laboratory Manual",
+          agreedPriceCents: 1800,
+          pickupArea: "campus_tu_altgebaeude",
+          partnerRole: "buyer",
+          partnerId: "buyer-partner",
+          partnerName: "Lisa Buyer",
+          hasUniversityBadge: true,
+          universityBadgeLabel: "TU Braunschweig",
+          status: "completed",
+          createdAt: "2026-09-24T15:00:00Z",
+        },
+      ];
+
+      const html = renderToString(
+        <ReservationsView
+          initialReservations={completedItems}
+          currentUserId="seller-1"
+          initialTab="completed"
+        />,
+      );
+
+      expect(html).toContain("Physics Laboratory Manual");
+      expect(html).toContain("€18.00");
+      expect(html).toContain("Lisa Buyer");
+      expect(html).toContain("Abgeschlossen");
+      expect(html).toContain(
+        'data-testid="partner-trust-badge-res-completed-1"',
+      );
+      expect(html).toContain(
+        'data-testid="reservation-completed-date-res-completed-1"',
+      );
+      expect(html).not.toContain('data-testid="complete-handover-trigger"');
+      expect(html).not.toContain(
+        'data-testid="cancel-reservation-btn-res-completed-1"',
       );
     });
   });

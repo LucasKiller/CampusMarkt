@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import type { ReservationCancellationReason } from "@campusmarkt/types";
 import { getPickupAreaLabel, type PickupArea } from "@campusmarkt/domain";
+import { CompleteHandoverButton } from "../../../components/marketplace/pickup/complete-handover-modal";
+import { SafePickupChecklist } from "../../../components/marketplace/pickup/safe-pickup-checklist";
 
 export interface ReservationDashboardItem {
   id: string;
@@ -22,6 +24,7 @@ export interface ReservationDashboardItem {
 export interface ReservationsViewProps {
   initialReservations: ReservationDashboardItem[];
   currentUserId: string;
+  initialTab?: "all" | "active" | "completed" | "cancelled";
 }
 
 export const CANCELLATION_REASONS: Array<{
@@ -48,10 +51,13 @@ export const CANCELLATION_REASONS: Array<{
 
 export function ReservationsView({
   initialReservations,
+  initialTab = "all",
 }: ReservationsViewProps) {
   const [reservations, setReservations] =
     useState<ReservationDashboardItem[]>(initialReservations);
-  const [filter, setFilter] = useState<"all" | "active" | "cancelled">("all");
+  const [filter, setFilter] = useState<
+    "all" | "active" | "completed" | "cancelled"
+  >(initialTab);
   const [cancellingItem, setCancellingItem] =
     useState<ReservationDashboardItem | null>(null);
   const [selectedReason, setSelectedReason] =
@@ -136,7 +142,7 @@ export function ReservationsView({
           marginBottom: "1.5rem",
         }}
       >
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           <button
             type="button"
             data-testid="filter-all-btn"
@@ -173,6 +179,23 @@ export function ReservationsView({
           </button>
           <button
             type="button"
+            data-testid="filter-completed-btn"
+            onClick={() => setFilter("completed")}
+            style={{
+              padding: "0.4rem 0.85rem",
+              fontSize: "0.875rem",
+              fontWeight: filter === "completed" ? 700 : 500,
+              backgroundColor: filter === "completed" ? "#1e293b" : "#ffffff",
+              color: filter === "completed" ? "#ffffff" : "#334155",
+              border: "1px solid #cbd5e1",
+              borderRadius: "0.375rem",
+              cursor: "pointer",
+            }}
+          >
+            {`Abgeschlossen (${reservations.filter((r) => r.status === "completed").length})`}
+          </button>
+          <button
+            type="button"
             data-testid="filter-cancelled-btn"
             onClick={() => setFilter("cancelled")}
             style={{
@@ -190,6 +213,13 @@ export function ReservationsView({
           </button>
         </div>
       </div>
+
+      {/* Safe Pickup Checklist rendered above active reservations view */}
+      {(filter === "active" || filter === "all") && (
+        <div style={{ marginBottom: "1.5rem" }}>
+          <SafePickupChecklist />
+        </div>
+      )}
 
       {/* Success banner */}
       {feedbackSuccess && (
@@ -377,26 +407,68 @@ export function ReservationsView({
                   )}
                 </div>
 
-                {/* Cancel action button */}
-                {item.status === "active" && (
-                  <button
-                    type="button"
-                    data-testid={`cancel-reservation-btn-${item.id}`}
-                    onClick={() => handleOpenCancelModal(item)}
-                    style={{
-                      padding: "0.375rem 0.75rem",
-                      fontSize: "0.8125rem",
-                      fontWeight: 600,
-                      color: "#dc2626",
-                      backgroundColor: "#fff",
-                      border: "1px solid #fecaca",
-                      borderRadius: "0.25rem",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Reservierung stornieren
-                  </button>
-                )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  {/* Complete Handover Button for seller on active reservations */}
+                  {item.status === "active" && item.partnerRole === "buyer" && (
+                    <CompleteHandoverButton
+                      reservationId={item.id}
+                      listingTitle={item.listingTitle}
+                      agreedPriceCents={item.agreedPriceCents}
+                      onCompleted={() => {
+                        setReservations((prev) =>
+                          prev.map((r) =>
+                            r.id === item.id
+                              ? { ...r, status: "completed" as const }
+                              : r,
+                          ),
+                        );
+                        setFeedbackSuccess(
+                          `Übergabe für "${item.listingTitle}" erfolgreich abgeschlossen! Das Inserat wurde als verkauft markiert.`,
+                        );
+                      }}
+                    />
+                  )}
+
+                  {/* Cancel action button */}
+                  {item.status === "active" && (
+                    <button
+                      type="button"
+                      data-testid={`cancel-reservation-btn-${item.id}`}
+                      onClick={() => handleOpenCancelModal(item)}
+                      style={{
+                        padding: "0.375rem 0.75rem",
+                        fontSize: "0.8125rem",
+                        fontWeight: 600,
+                        color: "#dc2626",
+                        backgroundColor: "#fff",
+                        border: "1px solid #fecaca",
+                        borderRadius: "0.25rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Reservierung stornieren
+                    </button>
+                  )}
+
+                  {/* Completed info indicator */}
+                  {item.status === "completed" && item.createdAt && (
+                    <span
+                      data-testid={`reservation-completed-date-${item.id}`}
+                      style={{
+                        fontSize: "0.8125rem",
+                        color: "#64748b",
+                      }}
+                    >
+                      {`Abgeschlossen am ${new Date(item.createdAt).toLocaleDateString("de-DE")}`}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -219,6 +219,7 @@ export default async function ListingDetailsPage(
         {isInactive && (
           <div
             className="inactive-notice-banner"
+            data-testid={isSold ? "sold-banner" : "archived-banner"}
             role="status"
             aria-live="polite"
             style={{
@@ -250,9 +251,24 @@ export default async function ListingDetailsPage(
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
+            {isSold && (
+              <span
+                data-testid="badge-sold"
+                style={{
+                  background: "#b45309",
+                  color: "#ffffff",
+                  padding: "0.2rem 0.5rem",
+                  borderRadius: "0.25rem",
+                  fontSize: "0.75rem",
+                  textTransform: "uppercase",
+                }}
+              >
+                Verkauft
+              </span>
+            )}
             <span>
               {isSold
-                ? "Dieses Inserat wurde bereits verkauft und ist nicht mehr verfügbar."
+                ? "Dieser Artikel wurde erfolgreich verkauft und übergeben."
                 : "Dieses Inserat wurde archiviert und ist nicht mehr verfügbar."}
             </span>
           </div>
@@ -465,25 +481,29 @@ export default async function ListingDetailsPage(
                 />
               </div>
 
-              {/* Negotiation & Purchase CTAs */}
-              <NegotiationBar
-                listingId={listing.id}
-                listingTitle={listing.title}
-                sellerId={listing.seller.publicId}
-                askingPriceCents={listing.priceCents}
-                listingType={listing.listingType}
-                listingStatus={listing.status}
-                currentUserId={currentUserId}
-                initialOffers={initialOffers}
-                initialReservation={initialReservation}
-              />
+              {/* Negotiation & Purchase CTAs - Disabled / hidden on sold listings */}
+              {!isSold && (
+                <>
+                  <NegotiationBar
+                    listingId={listing.id}
+                    listingTitle={listing.title}
+                    sellerId={listing.seller.publicId}
+                    askingPriceCents={listing.priceCents}
+                    listingType={listing.listingType}
+                    listingStatus={listing.status}
+                    currentUserId={currentUserId}
+                    initialOffers={initialOffers}
+                    initialReservation={initialReservation}
+                  />
 
-              {/* Messaging CTA (MSG-01) */}
-              <MessageButton
-                listingId={listing.id}
-                sellerId={listing.seller.publicId}
-                currentUserId={currentUserId}
-              />
+                  {/* Messaging CTA (MSG-01) */}
+                  <MessageButton
+                    listingId={listing.id}
+                    sellerId={listing.seller.publicId}
+                    currentUserId={currentUserId}
+                  />
+                </>
+              )}
             </div>
 
             {/* Description */}

@@ -83,10 +83,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: MSG-01, MSG-05
 **Done when**:
-- [ ] Invariant helper `assertCanMessage(buyerId, sellerId)` rejects self-messaging.
-- [ ] Timeline milestone helper formats read-only transaction events.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `messaging.test.ts`.
+- [x] Invariant helper `assertCanMessage(buyerId, sellerId)` rejects self-messaging.
+- [x] Timeline milestone helper formats read-only transaction events.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `messaging.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement conversation domain invariants and helpers`

@@ -127,10 +127,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: PICK-02, PICK-03
 **Done when**:
-- [ ] Locks listing row first (`SELECT ... FOR UPDATE`), then reservation.
-- [ ] Verifies caller is seller (`auth.uid() = seller_id`).
-- [ ] Atomically transitions reservation to `completed` and listing to `sold`.
-- [ ] Idempotently handles repeated completions.
+- [x] Locks listing row first (`SELECT ... FOR UPDATE`), then reservation.
+- [x] Verifies caller is seller (`auth.uid() = seller_id`).
+- [x] Atomically transitions reservation to `completed` and listing to `sold`.
+- [x] Idempotently handles repeated completions.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(pickup): implement complete_pickup rpc with row locking`

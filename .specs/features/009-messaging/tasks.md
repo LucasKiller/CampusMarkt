@@ -153,10 +153,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: MSG-01, MSG-02, MSG-05
 **Done when**:
-- [ ] Verifies unique index prevents duplicate conversations for same buyer and listing.
-- [ ] Proves non-participants cannot read or send messages.
-- [ ] Verifies cascade deletion when listing is deleted.
-- [ ] All database persistence tests pass.
+- [x] Verifies unique index prevents duplicate conversations for same buyer and listing.
+- [x] Proves non-participants cannot read or send messages.
+- [x] Verifies cascade deletion when listing is deleted.
+- [x] All database persistence tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(messaging): add database persistence and rls tests`

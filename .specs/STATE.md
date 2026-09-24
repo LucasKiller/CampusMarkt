@@ -109,7 +109,7 @@
 ## Handoff
 
 - **Feature**: 009-messaging / `.specs/features/009-messaging/`
-- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-014, writing context.md & spec.md)
+- **Phase / Task**: Feature 009 complete & verified (T1 to T16 complete, independent validation PASS)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -119,8 +119,9 @@
   - `006-search-filters` verified.
   - `007-favorites` verified.
   - `008-purchase-intent-offers-reservations` verified.
-- **In-progress** (file:line): `.specs/features/009-messaging/context.md`
-- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
+  - `009-messaging` verified.
+- **In-progress** (file:line): none
+- **Next step**: Proceed to next roadmap feature per `docs/product/04-roadmap.md`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

@@ -1,6 +1,6 @@
 # Messaging Specification
 
-**Status:** Draft
+**Status:** Verified
 
 ## Problem Statement
 
@@ -160,8 +160,8 @@ So that I know the agreed price and reservation status without having messages r
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| MSG-01 | 1:1 conversation scoping, initialization, and self-message prohibition | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | pending |
-| MSG-02 | Message sending, content validation, participant authorization, rate limit | P1 Story 2: AC1, AC2, AC3, AC4 | Database RPC / API | pending |
-| MSG-03 | Realtime channel delivery, keyset message pagination, and reconnect reconciliation | P1 Story 3: AC1, AC2, AC3, AC4 | Realtime / API / Transport | pending |
-| MSG-04 | Centralized inbox view (`/messages`), unread count tracking, and read receipts | P1 Story 4: AC1, AC2, AC3, AC4 | UI Pages / Application | pending |
-| MSG-05 | Negotiation status card integration, milestone pills, and participant-only RLS boundary | P1 Story 5: AC1, AC2, AC3 | Security / RLS / UI | pending |
+| MSG-01 | 1:1 conversation scoping, initialization, and self-message prohibition | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | verified |
+| MSG-02 | Message sending, content validation, participant authorization, rate limit | P1 Story 2: AC1, AC2, AC3, AC4 | Database RPC / API | verified |
+| MSG-03 | Realtime channel delivery, keyset message pagination, and reconnect reconciliation | P1 Story 3: AC1, AC2, AC3, AC4 | Realtime / API / Transport | verified |
+| MSG-04 | Centralized inbox view (`/messages`), unread count tracking, and read receipts | P1 Story 4: AC1, AC2, AC3, AC4 | UI Pages / Application | verified |
+| MSG-05 | Negotiation status card integration, milestone pills, and participant-only RLS boundary | P1 Story 5: AC1, AC2, AC3 | Security / RLS / UI | verified |

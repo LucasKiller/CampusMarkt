@@ -83,10 +83,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: PICK-01, PICK-02, PICK-03
 **Done when**:
-- [ ] `assertCanCompletePickup(userId, sellerId)` enforces seller-only completion.
-- [ ] `CAMPUS_PICKUP_SPOTS` defines TU Braunschweig recommended meeting spots.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `pickup.test.ts`.
+- [x] `assertCanCompletePickup(userId, sellerId)` enforces seller-only completion.
+- [x] `CAMPUS_PICKUP_SPOTS` defines TU Braunschweig recommended meeting spots.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `pickup.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement pickup domain invariants and guidance constants`

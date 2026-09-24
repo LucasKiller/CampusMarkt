@@ -37,6 +37,11 @@ import {
   type MarketplaceNegotiationService,
   type NegotiationSecurityAudit,
 } from "../application/negotiation";
+import {
+  createMarketplacePickupService,
+  type MarketplacePickupService,
+  type PickupSecurityAudit,
+} from "../application/pickup";
 
 export type {
   ListingApplicationService,
@@ -44,6 +49,7 @@ export type {
   MarketplaceSearchService,
   MarketplaceFavoritesService,
   MarketplaceNegotiationService,
+  MarketplacePickupService,
 };
 
 let cachedListingService: ListingApplicationService | null = null;
@@ -450,6 +456,69 @@ export function getMarketplaceNegotiationService(
 
   if (!customClient) {
     cachedNegotiationService = service;
+  }
+  return service;
+}
+
+let cachedPickupService: MarketplacePickupService | null = null;
+
+export function getMarketplacePickupService(
+  customClient?: MarketplaceRpcClient,
+): MarketplacePickupService {
+  if (cachedPickupService && !customClient) {
+    return cachedPickupService;
+  }
+
+  const repository = getMarketplacePickupRepository(customClient);
+  const config = getIdentityInfrastructureConfig();
+  const env = {
+    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
+    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
+    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
+  };
+  const adminClient = createAdminSupabaseClient(env);
+  const identityRepo = createIdentityRepository({
+    user: adminClient,
+    service: adminClient,
+  });
+
+  const security: PickupSecurityAudit = {
+    async recordTelemetry(event) {
+      if (process.env.NODE_ENV !== "test") {
+        console.info(`[PickupTelemetry: ${event.eventType}]`, {
+          correlationId: event.correlationId,
+          metadata: event.metadata,
+          timestamp: event.timestamp,
+        });
+      }
+    },
+    async checkRateLimit(userId, action) {
+      const res = await identityRepo.consumeRateLimits({
+        action,
+        subjectHash: userId,
+        ipHash: "127.0.0.1",
+      });
+      if (!res.ok) {
+        return { allowed: true };
+      }
+      const val = res.value as {
+        allowed?: boolean;
+        retry_after_seconds?: number;
+      };
+      if (val && val.allowed === false) {
+        return { allowed: false, retryAfterSeconds: val.retry_after_seconds };
+      }
+      return { allowed: true };
+    },
+  };
+
+  const service = createMarketplacePickupService({
+    repository,
+    security,
+  });
+
+  if (!customClient) {
+    cachedPickupService = service;
   }
   return service;
 }

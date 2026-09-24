@@ -185,9 +185,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: PICK-02, PICK-03
 **Done when**:
-- [ ] Coordinates completion validation and rate limiting.
-- [ ] Maps error codes (`FORBIDDEN`, `RESERVATION_NOT_ACTIVE`, `RESERVATION_ALREADY_COMPLETED`).
-- [ ] Application service unit tests pass.
+- [x] Coordinates completion validation and rate limiting.
+- [x] Maps error codes (`FORBIDDEN`, `RESERVATION_NOT_ACTIVE`, `RESERVATION_ALREADY_COMPLETED`).
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement marketplace pickup application service`

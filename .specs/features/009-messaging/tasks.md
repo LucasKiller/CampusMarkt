@@ -140,9 +140,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: MSG-02, MSG-04
 **Done when**:
-- [ ] `marketplace_api.send_message` verifies participant access, inserts message, updates `last_message_at`.
-- [ ] `marketplace_api.mark_conversation_read` marks unread messages with timestamp.
-- [ ] `marketplace_api.get_user_conversations` returns inbox projection with unread counts.
+- [x] `marketplace_api.send_message` verifies participant access, inserts message, updates `last_message_at`.
+- [x] `marketplace_api.mark_conversation_read` marks unread messages with timestamp.
+- [x] `marketplace_api.get_user_conversations` returns inbox projection with unread counts.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(messaging): implement send_message and mark_read rpcs`

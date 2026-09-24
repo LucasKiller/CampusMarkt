@@ -241,10 +241,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: MSG-03, MSG-05
 **Done when**:
-- [ ] Sticky header displays partner name, avatar, and university verification badge.
-- [ ] Negotiation card shows active offer/reservation status with quick action buttons.
-- [ ] Subscribes to Supabase Realtime channel for live message updates.
-- [ ] Component unit tests pass.
+- [x] Sticky header displays partner name, avatar, and university verification badge.
+- [x] Negotiation card shows active offer/reservation status with quick action buttons.
+- [x] Subscribes to Supabase Realtime channel for live message updates.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement conversation thread view with negotiation header`

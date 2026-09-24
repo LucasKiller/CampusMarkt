@@ -97,9 +97,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: PICK-02, PICK-05
 **Done when**:
-- [ ] Boundaries enforce that buyer identity does not leak to public views when listing is sold.
-- [ ] Prohibits introduction of payment or escrow abstractions into pickup code.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that buyer identity does not leak to public views when listing is sold.
+- [x] Prohibits introduction of payment or escrow abstractions into pickup code.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(pickup): add architectural boundary tests for pickup completion`

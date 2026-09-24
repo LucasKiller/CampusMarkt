@@ -172,9 +172,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: PICK-02, PICK-04
 **Done when**:
-- [ ] Repository methods for `completePickup` and `getCompletedTransactions`.
-- [ ] Maps raw database records to typed `TransactionReceiptDTO`.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] Repository methods for `completePickup` and `getCompletedTransactions`.
+- [x] Maps raw database records to typed `TransactionReceiptDTO`.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement marketplace pickup repository`

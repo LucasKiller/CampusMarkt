@@ -197,9 +197,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: MSG-01, MSG-04
 **Done when**:
-- [ ] `GET /api/marketplace/conversations` returns user inbox list.
-- [ ] `POST /api/marketplace/conversations` starts or retrieves conversation.
-- [ ] Integration tests verify authentication, self-messaging rejection, and CSRF protection.
+- [x] `GET /api/marketplace/conversations` returns user inbox list.
+- [x] `POST /api/marketplace/conversations` starts or retrieves conversation.
+- [x] Integration tests verify authentication, self-messaging rejection, and CSRF protection.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(messaging): implement conversations list and creation api routes`

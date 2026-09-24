@@ -171,9 +171,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: MSG-01, MSG-02, MSG-03
 **Done when**:
-- [ ] `MarketplaceMessagingRepository` wraps RPC calls and queries.
-- [ ] Maps database records to typed `ConversationDTO` and `MessageDTO`.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] `MarketplaceMessagingRepository` wraps RPC calls and queries.
+- [x] Maps database records to typed `ConversationDTO` and `MessageDTO`.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement marketplace messaging repository`

@@ -127,9 +127,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: MSG-01
 **Done when**:
-- [ ] Verifies active listing, checks `auth.uid()`, rejects self-messaging.
-- [ ] Atomically retrieves or creates conversation record on conflict.
-- [ ] Returns conversation DTO payload.
+- [x] Verifies active listing, checks `auth.uid()`, rejects self-messaging.
+- [x] Atomically retrieves or creates conversation record on conflict.
+- [x] Returns conversation DTO payload.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(messaging): implement get_or_create_conversation rpc`

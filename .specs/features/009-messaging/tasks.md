@@ -97,9 +97,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: MSG-01, MSG-05
 **Done when**:
-- [ ] Boundaries enforce that private messages never leak into public catalog feeds.
-- [ ] Messaging code does not mutate offer or reservation tables directly.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that private messages never leak into public catalog feeds.
+- [x] Messaging code does not mutate offer or reservation tables directly.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(messaging): add architectural boundary tests for messaging module`

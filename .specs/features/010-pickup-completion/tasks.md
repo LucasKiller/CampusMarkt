@@ -154,10 +154,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: PICK-02, PICK-03
 **Done when**:
-- [ ] Verifies non-sellers cannot execute `complete_pickup`.
-- [ ] Verifies concurrent cancellation fails after completion commits.
-- [ ] Proves listing status transitions to `sold`.
-- [ ] All database persistence tests pass.
+- [x] Verifies non-sellers cannot execute `complete_pickup`.
+- [x] Verifies concurrent cancellation fails after completion commits.
+- [x] Proves listing status transitions to `sold`.
+- [x] All database persistence tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(pickup): add database persistence and race condition tests`

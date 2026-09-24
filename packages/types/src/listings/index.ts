@@ -359,3 +359,4 @@ export * from "./search.ts";
 export * from "./favorites.ts";
 export * from "./offers.ts";
 export * from "./messaging.ts";
+export * from "./pickup.ts";

@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: PICK-01, PICK-02, PICK-04
 **Done when**:
-- [ ] `CompletePickupRequest` and `TransactionReceiptDTO` types defined.
-- [ ] Type predicates `isCompletePickupRequest` and `isTransactionReceiptDTO` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `pickup.test.ts`.
+- [x] `CompletePickupRequest` and `TransactionReceiptDTO` types defined.
+- [x] Type predicates `isCompletePickupRequest` and `isTransactionReceiptDTO` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `pickup.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): define pickup completion dtos and type predicates`

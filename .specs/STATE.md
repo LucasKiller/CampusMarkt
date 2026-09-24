@@ -98,10 +98,18 @@
 - **Date**: 2026-09-23
 - **Status**: active
 
+### AD-014
+- **Decision**: Marketplace private messaging is architected as 1:1 listing-scoped conversations (`UNIQUE (listing_id, buyer_id)`) persisted in PostgreSQL (`marketplace.conversations` and `marketplace.messages`) with participant-only Row Level Security (`auth.uid() IN (buyer_id, seller_id)`). Message dispatch is authored exclusively via authenticated Next.js REST API / PostgreSQL RPC (`marketplace_api.send_message`), while realtime delivery uses Supabase Realtime channel subscription backed by deterministic keyset hydration (`GET /api/marketplace/conversations/[id]/messages?after=<id>`) upon reconnection or visibility recovery. Structured transaction states (offers, reservations) remain completely isolated in their dedicated tables and can only be rendered as read-only event milestones in conversation feeds without mutable chat synthesis.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 93/100, Evidence Grade A). Respects the single budget VPS envelope (AD-006) by avoiding redundant Redis/Socket.io daemons, prevents short polling connection pool starvation on constrained PostgreSQL pools, maintains unified security enforcement at the database boundary without duplicate JWT/ACL middleware, and avoids WAL replication slot / RLS CPU bloat under heavy database CDC by keeping message creation inside an atomic RPC with authenticated channel delivery.
+- **Trade-off**: Requires client-side visibility-aware reconnect handling and keyset cursor reconciliation to bridge campus Wi-Fi disconnects cleanly.
+- **Scope**: Private conversations, messaging transport, conversation scoping, message delivery, and negotiation timeline integration.
+- **Date**: 2026-09-24
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 008-purchase-intent-offers-reservations / `.specs/features/008-purchase-intent-offers-reservations/`
-- **Phase / Task**: Feature 008 completed and independently validated (PASS)
+- **Feature**: 009-messaging / `.specs/features/009-messaging/`
+- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-014, writing context.md & spec.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -111,8 +119,8 @@
   - `006-search-filters` verified.
   - `007-favorites` verified.
   - `008-purchase-intent-offers-reservations` verified.
-- **In-progress** (file:line): none
-- **Next step**: Proceed to Feature 009 (Messaging) specification.
+- **In-progress** (file:line): `.specs/features/009-messaging/context.md`
+- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

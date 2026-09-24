@@ -106,10 +106,18 @@
 - **Date**: 2026-09-24
 - **Status**: active
 
+### AD-015
+- **Decision**: In-person pickup completion is architected as seller-led unilateral completion executed via an atomic PostgreSQL RPC (`marketplace_api.complete_pickup`). Upon in-person exchange and cash/direct payment handover, the seller confirms completion, which acquires canonical row locks (`SELECT id FROM marketplace.listings WHERE id = ... FOR UPDATE` and `marketplace.reservations FOR UPDATE`) and atomically transitions `marketplace.reservations.status = 'completed'` and `marketplace.listings.status = 'sold'` in a single ACID transaction. The buyer receives instant realtime notification / UI receipt and sees the completed purchase in their transaction history. Pre-completion cancellation remains symmetrically available to either party until the completion transaction commits.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 96/100, Evidence Grade A). Rejects mutual two-party handshake and buyer-led confirmation because in a no-escrow cash exchange, buyers leave immediately with physical custody and lack incentive to confirm in-app, which would create systemic transaction abandonment and force background expiration daemons forbidden on the single budget VPS (AD-006). Coupling completion authority to the seller (the physical inventory custodian) ensures listing lifecycle termination mirrors actual physical exchange while PostgreSQL row locking eliminates race conditions against concurrent cancellations.
+- **Trade-off**: Requires clear post-completion dispute escalation guidance and Horizon 5 moderation reporting rather than interactive software escrow gates.
+- **Scope**: Pickup coordination, completion confirmation, reservation lifecycle completion, listing sold transition, and transaction history.
+- **Date**: 2026-09-25
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 009-messaging / `.specs/features/009-messaging/`
-- **Phase / Task**: Feature 009 complete & verified (T1 to T16 complete, independent validation PASS)
+- **Feature**: 010-pickup-completion / `.specs/features/010-pickup-completion/`
+- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-015, writing context.md & spec.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -120,8 +128,8 @@
   - `007-favorites` verified.
   - `008-purchase-intent-offers-reservations` verified.
   - `009-messaging` verified.
-- **In-progress** (file:line): none
-- **Next step**: Proceed to next roadmap feature per `docs/product/04-roadmap.md`.
+- **In-progress** (file:line): `.specs/features/010-pickup-completion/context.md`
+- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

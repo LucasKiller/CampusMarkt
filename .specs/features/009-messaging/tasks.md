@@ -69,10 +69,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: MSG-02, MSG-03
 **Done when**:
-- [ ] `validateSendMessageInput` checks trimmed content non-empty and $\le 2000$ characters.
-- [ ] `validateGetMessagesQuery` validates keyset cursor and limit bounds.
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `messaging.test.ts`.
+- [x] `validateSendMessageInput` checks trimmed content non-empty and $\le 2000$ characters.
+- [x] `validateGetMessagesQuery` validates keyset cursor and limit bounds.
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `messaging.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement message content validation schemas`

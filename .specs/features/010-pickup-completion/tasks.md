@@ -141,9 +141,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: PICK-04
 **Done when**:
-- [ ] Returns completed reservations where `auth.uid() IN (buyer_id, seller_id)`.
-- [ ] Excludes private email addresses and internal hashes.
-- [ ] Orders by `completed_at DESC`.
+- [x] Returns completed reservations where `auth.uid() IN (buyer_id, seller_id)`.
+- [x] Excludes private email addresses and internal hashes.
+- [x] Orders by `completed_at DESC`.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(pickup): implement get_completed_transactions rpc`

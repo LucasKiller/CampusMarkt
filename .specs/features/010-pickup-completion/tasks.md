@@ -242,9 +242,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: PICK-02
 **Done when**:
-- [ ] Seller sees "Übergabe abschließen" button on active reservations.
-- [ ] Accessible confirmation modal with optional completion note input.
-- [ ] Component unit tests pass.
+- [x] Seller sees "Übergabe abschließen" button on active reservations.
+- [x] Accessible confirmation modal with optional completion note input.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement complete handover button and confirmation modal`

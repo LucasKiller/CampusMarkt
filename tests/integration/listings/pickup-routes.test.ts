@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 import { createCompletePickupHandler } from "../../../apps/web/src/app/api/marketplace/reservations/[id]/complete/route.ts";
+import { createGetCompletedHistoryHandler } from "../../../apps/web/src/app/api/marketplace/reservations/history/route.ts";
 import type { MarketplacePickupService } from "../../../apps/web/src/modules/listings/server/index.ts";
 
 const canonicalOrigin = "https://markt.example.test";
@@ -248,5 +249,121 @@ describe("POST /api/marketplace/reservations/[id]/complete (T11)", () => {
     const body = await res.json();
     expect(body.ok).toBe(false);
     expect(body.code).toBe("RATE_LIMITED");
+  });
+});
+
+describe("GET /api/marketplace/reservations/history (T12)", () => {
+  it("returns 401 when unauthenticated", async () => {
+    const mockService: Partial<MarketplacePickupService> = {
+      getCompletedTransactions: vi.fn(),
+    };
+
+    const handler = createGetCompletedHistoryHandler(
+      mockService as MarketplacePickupService,
+      mockSessionDal(null),
+      canonicalOrigin,
+    );
+
+    const req = new Request(
+      `${canonicalOrigin}/api/marketplace/reservations/history`,
+      {
+        method: "GET",
+      },
+    );
+    const res = await handler(req);
+
+    expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.ok).toBe(false);
+    expect(body.code).toBe("UNAUTHENTICATED");
+    expect(mockService.getCompletedTransactions).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 with list of completed transactions excluding private emails", async () => {
+    const mockItems = [
+      {
+        reservationId,
+        listingId,
+        listingTitle: "Vintage Lamp",
+        listingType: "SELL" as const,
+        agreedPriceCents: 2500,
+        status: "completed" as const,
+        pickupArea: "campus_nord_bienrode" as const,
+        completedAt: "2026-09-25T15:00:00.000Z",
+        role: "seller" as const,
+        partner: {
+          id: buyerId,
+          displayName: "Clara",
+          avatarUrl: null,
+          universityBadge: {
+            universityId: "tu-braunschweig",
+            badgeLabel: "TU Braunschweig",
+          },
+        },
+      },
+    ];
+
+    const mockService: Partial<MarketplacePickupService> = {
+      getCompletedTransactions: vi.fn().mockResolvedValue({
+        status: "success",
+        data: mockItems,
+      }),
+    };
+
+    const handler = createGetCompletedHistoryHandler(
+      mockService as MarketplacePickupService,
+      mockSessionDal(),
+      canonicalOrigin,
+    );
+
+    const req = new Request(
+      `${canonicalOrigin}/api/marketplace/reservations/history?limit=10`,
+      {
+        method: "GET",
+      },
+    );
+    const res = await handler(req);
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.ok).toBe(true);
+    expect(body.data.items).toEqual(mockItems);
+    expect(mockService.getCompletedTransactions).toHaveBeenCalledWith(
+      sellerId,
+      { limit: "10" },
+    );
+
+    // Verify privacy: no emails in response
+    const rawJson = JSON.stringify(body);
+    expect(rawJson).not.toContain("@");
+    expect(rawJson).not.toContain("email");
+  });
+
+  it("returns 400 when query validation fails", async () => {
+    const mockService: Partial<MarketplacePickupService> = {
+      getCompletedTransactions: vi.fn().mockResolvedValue({
+        status: "invalid",
+        fieldErrors: { limit: ["Limit must be an integer between 1 and 100."] },
+      }),
+    };
+
+    const handler = createGetCompletedHistoryHandler(
+      mockService as MarketplacePickupService,
+      mockSessionDal(),
+      canonicalOrigin,
+    );
+
+    const req = new Request(
+      `${canonicalOrigin}/api/marketplace/reservations/history?limit=999`,
+      {
+        method: "GET",
+      },
+    );
+    const res = await handler(req);
+
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.ok).toBe(false);
+    expect(body.code).toBe("INVALID_INPUT");
   });
 });

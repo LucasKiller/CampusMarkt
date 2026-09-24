@@ -212,9 +212,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: PICK-04
 **Done when**:
-- [ ] Returns list of user's completed transactions (purchases and sales).
-- [ ] Excludes private email addresses.
-- [ ] Integration tests verify authenticated access.
+- [x] Returns list of user's completed transactions (purchases and sales).
+- [x] Excludes private email addresses.
+- [x] Integration tests verify authenticated access.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(pickup): implement completed transaction history api route`

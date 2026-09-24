@@ -210,10 +210,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: MSG-02, MSG-03, MSG-04
 **Done when**:
-- [ ] Keyset cursor retrieval supported for older and newer messages.
-- [ ] Message posting enforces participant authorization and rate limits.
-- [ ] Read receipt route updates unread status.
-- [ ] Integration tests verify route handlers.
+- [x] Keyset cursor retrieval supported for older and newer messages.
+- [x] Message posting enforces participant authorization and rate limits.
+- [x] Read receipt route updates unread status.
+- [x] Integration tests verify route handlers.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(messaging): implement messages sending and read api routes`

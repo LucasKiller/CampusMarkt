@@ -69,10 +69,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: PICK-02, PICK-04
 **Done when**:
-- [ ] `validateCompletePickupInput` checks optional note length $\le 500$ chars.
-- [ ] Validates reservation ID format.
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `pickup.test.ts`.
+- [x] `validateCompletePickupInput` checks optional note length $\le 500$ chars.
+- [x] Validates reservation ID format.
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `pickup.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(pickup): implement pickup validation schemas`

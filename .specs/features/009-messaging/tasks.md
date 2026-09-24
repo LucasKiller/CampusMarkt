@@ -228,9 +228,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: MSG-02, MSG-03
 **Done when**:
-- [ ] Message bubbles render with distinct styling for current user vs partner.
-- [ ] Composer input handles trimming, character count, and keyboard shortcuts (`Cmd+Enter`).
-- [ ] Component unit tests pass.
+- [x] Message bubbles render with distinct styling for current user vs partner.
+- [x] Composer input handles trimming, character count, and keyboard shortcuts (`Cmd+Enter`).
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): implement conversation message list and composer components`

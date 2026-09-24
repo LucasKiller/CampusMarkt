@@ -114,9 +114,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: PICK-02, PICK-04
 **Done when**:
-- [ ] Columns added with length constraints.
-- [ ] Partial index on completed reservations for history queries.
-- [ ] RLS policies verified for completed state access.
+- [x] Columns added with length constraints.
+- [x] Partial index on completed reservations for history queries.
+- [x] RLS policies verified for completed state access.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(pickup): add pickup completion schema migration`

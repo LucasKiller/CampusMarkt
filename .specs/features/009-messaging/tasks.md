@@ -114,9 +114,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: MSG-01, MSG-02, MSG-05
 **Done when**:
-- [ ] `marketplace.conversations` created with `unique (listing_id, buyer_id)` and `check (buyer_id <> seller_id)`.
-- [ ] `marketplace.messages` created with cascade FKs and content length constraints.
-- [ ] Participant-only RLS policies enabled for both tables.
+- [x] `marketplace.conversations` created with `unique (listing_id, buyer_id)` and `check (buyer_id <> seller_id)`.
+- [x] `marketplace.messages` created with cascade FKs and content length constraints.
+- [x] Participant-only RLS policies enabled for both tables.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(messaging): add conversations and messages tables migration`

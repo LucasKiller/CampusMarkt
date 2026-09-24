@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: MSG-01, MSG-02
 **Done when**:
-- [ ] `ConversationDTO`, `MessageDTO`, and request interfaces defined.
-- [ ] Type predicates `isConversationDTO` and `isMessageDTO` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `messaging.test.ts`.
+- [x] `ConversationDTO`, `MessageDTO`, and request interfaces defined.
+- [x] Type predicates `isConversationDTO` and `isMessageDTO` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `messaging.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(messaging): define conversation and message transport dtos`

@@ -141,9 +141,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: REP-03, REP-05
 **Done when**:
-- [ ] `block_user` enforces no self-block and idempotently records block.
-- [ ] `unblock_user` deletes active block.
-- [ ] `get_blocked_users` returns list of blocked users for caller.
+- [x] `block_user` enforces no self-block and idempotently records block.
+- [x] `unblock_user` deletes active block.
+- [x] `get_blocked_users` returns list of blocked users for caller.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(safety): implement block and unblock user rpcs`

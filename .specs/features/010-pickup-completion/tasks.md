@@ -269,13 +269,13 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: PICK-01, PICK-02, PICK-03, PICK-04, PICK-05
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - Seller completes active reservation after in-person pickup.
   - Listing moves to `sold` and displays sold banner on details page.
   - Completed sale appears in seller's history; completed purchase in buyer's history.
   - Concurrent cancellation is rejected after completion.
-- [ ] Operational runbook added to `docs/operations/marketplace/pickup-completion.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/pickup-completion.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
-**Commit**: `test(pickup): prove end to end pickup completion journeys and add runbook`
+**Commit**: `test(pickup): prove e2e pickup completion journeys and add runbook`

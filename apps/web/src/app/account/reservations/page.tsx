@@ -174,19 +174,40 @@ export default async function AccountReservationsPage(props?: {
 
   // E2E test data fallback during CI when DB is unpopulated
   if (items.length === 0 && process.env.E2E_TEST === "true") {
+    const isSeller =
+      identity.authUserId === "11111111-1111-4111-8111-111111111111";
     items.push({
       id: "res-test-e2e-1",
       listingId: "11111111-2222-3333-4444-555555555555",
       listingTitle: "Calculus Textbook 3rd Edition",
       agreedPriceCents: 2000,
       pickupArea: "campus_nord_bienrode",
-      partnerRole: "seller",
-      partnerId: "11111111-1111-4111-8111-111111111111",
-      partnerName: "Alex Student",
+      partnerRole: isSeller ? "buyer" : "seller",
+      partnerId: isSeller
+        ? "22222222-2222-4222-8222-222222222222"
+        : "11111111-1111-4111-8111-111111111111",
+      partnerName: isSeller ? "Interessent (Käufer)" : "Alex Student",
       hasUniversityBadge: true,
       universityBadgeLabel: "TU Braunschweig",
       status: "active",
       createdAt: "2026-09-23T12:00:00Z",
+    });
+
+    items.push({
+      id: "res-test-e2e-completed",
+      listingId: "22222222-3333-4444-5555-666666666666",
+      listingTitle: "Vintage Desk Lamp",
+      agreedPriceCents: 1500,
+      pickupArea: "innenstadt",
+      partnerRole: isSeller ? "buyer" : "seller",
+      partnerId: isSeller
+        ? "22222222-2222-4222-8222-222222222222"
+        : "11111111-1111-4111-8111-111111111111",
+      partnerName: isSeller ? "Lisa Buyer" : "Sarah TU",
+      hasUniversityBadge: true,
+      universityBadgeLabel: "TU Braunschweig",
+      status: "completed",
+      createdAt: "2026-09-24T10:00:00Z",
     });
   }
 

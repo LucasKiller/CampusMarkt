@@ -69,10 +69,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: REP-01, REP-03
 **Done when**:
-- [ ] `validateCreateReportInput` checks reason enum, details length, targetId.
-- [ ] `validateBlockUserInput` checks blockedId UUID.
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `safety.test.ts`.
+- [x] `validateCreateReportInput` checks reason enum, details length, targetId.
+- [x] `validateBlockUserInput` checks blockedId UUID.
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `safety.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement report and block validation schemas`

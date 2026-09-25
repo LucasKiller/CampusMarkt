@@ -146,8 +146,8 @@ While ensuring the privacy of the buyer is completely protected.
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| PICK-01 | Safe pickup guidance and campus meeting recommendations | P1 Story 1: AC1, AC2, AC3 | UI Components / Domain | pending |
-| PICK-02 | Seller-led handover completion and atomic sold transition (AD-015) | P1 Story 2: AC1, AC2, AC3, AC4 | Database RPC / API | pending |
-| PICK-03 | Concurrency row-level locking, race serialization, and idempotency | P1 Story 3: AC1, AC2, AC3 | Database RPC / PostgreSQL | pending |
-| PICK-04 | Completed transaction history and receipts view (`/account/reservations`) | P1 Story 4: AC1, AC2, AC3 | UI Pages / Application | pending |
-| PICK-05 | Public listing sold state banner and buyer privacy protection | P1 Story 5: AC1, AC2 | UI Pages / Security | pending |
+| PICK-01 | Safe pickup guidance and campus meeting recommendations | P1 Story 1: AC1, AC2, AC3 | UI Components / Domain | verified |
+| PICK-02 | Seller-led handover completion and atomic sold transition (AD-015) | P1 Story 2: AC1, AC2, AC3, AC4 | Database RPC / API | verified |
+| PICK-03 | Concurrency row-level locking, race serialization, and idempotency | P1 Story 3: AC1, AC2, AC3 | Database RPC / PostgreSQL | verified |
+| PICK-04 | Completed transaction history and receipts view (`/account/reservations`) | P1 Story 4: AC1, AC2, AC3 | UI Pages / Application | verified |
+| PICK-05 | Public listing sold state banner and buyer privacy protection | P1 Story 5: AC1, AC2 | UI Pages / Security | verified |

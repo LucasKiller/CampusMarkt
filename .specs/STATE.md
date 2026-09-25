@@ -117,7 +117,7 @@
 ## Handoff
 
 - **Feature**: 010-pickup-completion / `.specs/features/010-pickup-completion/`
-- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-015, writing context.md & spec.md)
+- **Phase / Task**: Feature 010 complete and verified; Horizon 4 closed.
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -128,8 +128,10 @@
   - `007-favorites` verified.
   - `008-purchase-intent-offers-reservations` verified.
   - `009-messaging` verified.
-- **In-progress** (file:line): `.specs/features/010-pickup-completion/context.md`
-- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
+  - `010-pickup-completion` verified.
+- **In-progress** (file:line): none
+- **Next step**: Begin Horizon 5 (Trust, Safety, Localization, and Launch Hardening) starting with `011-reporting-blocking`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main
+

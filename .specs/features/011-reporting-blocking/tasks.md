@@ -127,10 +127,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: REP-01, REP-02
 **Done when**:
-- [ ] Verifies caller authentication.
-- [ ] Rejects self-reporting on user or owned listing.
-- [ ] Rejects duplicate pending report for same target.
-- [ ] Returns report confirmation receipt.
+- [x] Verifies caller authentication.
+- [x] Rejects self-reporting on user or owned listing.
+- [x] Rejects duplicate pending report for same target.
+- [x] Returns report confirmation receipt.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(safety): implement submit_report rpc with self report check`

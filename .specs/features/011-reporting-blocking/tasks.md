@@ -212,10 +212,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: REP-03, REP-05
 **Done when**:
-- [ ] `GET /api/marketplace/blocks` lists blocked users.
-- [ ] `POST /api/marketplace/blocks` blocks user.
-- [ ] `DELETE /api/marketplace/blocks/[id]` unblocks user.
-- [ ] Integration tests verify all outcomes.
+- [x] `GET /api/marketplace/blocks` lists blocked users.
+- [x] `POST /api/marketplace/blocks` blocks user.
+- [x] `DELETE /api/marketplace/blocks/[id]` unblocks user.
+- [x] Integration tests verify all outcomes.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(safety): implement user blocks and unblock api routes`

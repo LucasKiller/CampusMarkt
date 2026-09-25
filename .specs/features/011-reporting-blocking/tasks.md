@@ -185,9 +185,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: REP-01, REP-03, REP-04
 **Done when**:
-- [ ] Enforces 10 actions/min rate limit per user.
-- [ ] Coordinates reporting and blocking flows.
-- [ ] Application service unit tests pass.
+- [x] Enforces 10 actions/min rate limit per user.
+- [x] Coordinates reporting and blocking flows.
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement marketplace safety application service`

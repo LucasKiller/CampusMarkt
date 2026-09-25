@@ -83,10 +83,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: REP-01, REP-03
 **Done when**:
-- [ ] `assertCanReport(reporterId, targetId)` rejects self-reporting.
-- [ ] `assertCanBlock(blockerId, blockedId)` rejects self-blocking.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `safety.test.ts`.
+- [x] `assertCanReport(reporterId, targetId)` rejects self-reporting.
+- [x] `assertCanBlock(blockerId, blockedId)` rejects self-blocking.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `safety.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement safety domain invariants and helpers`

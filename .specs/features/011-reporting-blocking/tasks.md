@@ -172,9 +172,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: REP-01, REP-03, REP-05
 **Done when**:
-- [ ] Repository methods for submitReport, blockUser, unblockUser, getBlockedUsers.
-- [ ] Maps raw database records to typed DTOs.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] Repository methods for submitReport, blockUser, unblockUser, getBlockedUsers.
+- [x] Maps raw database records to typed DTOs.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement marketplace safety repository`

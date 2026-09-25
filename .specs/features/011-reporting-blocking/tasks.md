@@ -243,9 +243,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: REP-03, REP-04
 **Done when**:
-- [ ] Dialog explains bidirectional blocking consequences.
-- [ ] Confirmation triggers block API and provides immediate visual feedback.
-- [ ] Component unit tests pass.
+- [x] Dialog explains bidirectional blocking consequences.
+- [x] Confirmation triggers block API and provides immediate visual feedback.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement block user modal component`

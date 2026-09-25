@@ -114,10 +114,18 @@
 - **Date**: 2026-09-25
 - **Status**: active
 
+### AD-016
+- **Decision**: User blocking and report confidentiality are architected as database-layer security boundaries executed within PostgreSQL RPCs and Row Level Security. Bidirectional user blocks (`marketplace.user_blocks`) are enforced inside `marketplace_api` RPCs (`get_public_feed`, `search_listings`, `send_message`, `create_offer`, `get_or_create_conversation`) using index-backed anti-joins supported by dual composite B-tree indexes (`(blocker_id, blocked_id)` and `(blocked_id, blocker_id)`). Reports (`marketplace.reports`) enforce strict write-only submission with reporter-blind RLS where reported targets have zero `SELECT` visibility across all API surfaces, eliminating covert channel leaks by construction.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 95/100, Evidence Grade A). Satisfies the mandatory AGENTS.md data-boundary rule by preventing blocked content or reporter identities from ever reaching Node.js buffers or HTTP network streams. Protects keyset cursor pagination (`(created_at, id)`, AD-010) and full-text search rankings (AD-011) against post-query page shrinkage and cursor skipping, while avoiding the memory bloat, GC pauses, and overfetching loops that application-layer filtering would impose on the single budget VPS (AD-006).
+- **Trade-off**: Requires composite B-tree indexing on `user_blocks` and integrating anti-join clauses into catalog query plans.
+- **Scope**: User reporting, user blocking, report confidentiality, anti-abuse filtering, and feed/search/messaging privacy boundaries.
+- **Date**: 2026-09-25
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 010-pickup-completion / `.specs/features/010-pickup-completion/`
-- **Phase / Task**: Feature 010 complete and verified; Horizon 4 closed.
+- **Feature**: 011-reporting-blocking / `.specs/features/011-reporting-blocking/`
+- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-016, writing context.md & spec.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -129,8 +137,8 @@
   - `008-purchase-intent-offers-reservations` verified.
   - `009-messaging` verified.
   - `010-pickup-completion` verified.
-- **In-progress** (file:line): none
-- **Next step**: Begin Horizon 5 (Trust, Safety, Localization, and Launch Hardening) starting with `011-reporting-blocking`.
+- **In-progress** (file:line): `.specs/features/011-reporting-blocking/context.md`
+- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

@@ -114,9 +114,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: REP-01, REP-02, REP-03
 **Done when**:
-- [ ] `marketplace.reports` table created with unique pending index.
-- [ ] `marketplace.user_blocks` created with bidirectional indexes `(blocker_id, blocked_id)` and `(blocked_id, blocker_id)`.
-- [ ] RLS policies enforce reporter-only insert and target-blind select.
+- [x] `marketplace.reports` table created with unique pending index.
+- [x] `marketplace.user_blocks` created with bidirectional indexes `(blocker_id, blocked_id)` and `(blocked_id, blocker_id)`.
+- [x] RLS policies enforce reporter-only insert and target-blind select.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(safety): add reports and user_blocks tables migration`

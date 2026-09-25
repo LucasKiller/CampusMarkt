@@ -125,7 +125,7 @@
 ## Handoff
 
 - **Feature**: 011-reporting-blocking / `.specs/features/011-reporting-blocking/`
-- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-016, writing context.md & spec.md)
+- **Phase / Task**: Complete (Validated by Independent Verifier, PASS)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -137,8 +137,9 @@
   - `008-purchase-intent-offers-reservations` verified.
   - `009-messaging` verified.
   - `010-pickup-completion` verified.
-- **In-progress** (file:line): `.specs/features/011-reporting-blocking/context.md`
-- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
+  - `011-reporting-blocking` verified.
+- **In-progress** (file:line): none
+- **Next step**: Specify next roadmap feature (`012-moderation`).
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

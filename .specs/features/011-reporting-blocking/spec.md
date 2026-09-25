@@ -8,15 +8,15 @@ Marketplace participants need robust, immediate mechanisms to protect themselves
 
 ## Goals
 
-- [ ] Support structured reporting of listings and user accounts with predefined policy categories.
-- [ ] Guarantee absolute reporter confidentiality: reported users must never discover who reported them or whether a report exists.
-- [ ] Prevent self-reporting: users cannot report their own listings or accounts.
-- [ ] Prevent duplicate pending report spam against the same target by the same reporter.
-- [ ] Enforce bidirectional user blocking at the database layer (AD-016): blocked and blocker users cannot see each other's listings in feed or search.
-- [ ] Prohibit messaging, purchase intents, offers, and reservations between mutually blocked users.
-- [ ] Provide a dedicated management view (`/account/blocked-users`) allowing users to view and unblock blocked accounts.
-- [ ] Exclude private email addresses and internal hashes from all reporting and blocking projections.
-- [ ] Rate-limit report and block creation (max 10 actions/min) to prevent abuse and denial-of-service attempts.
+- [x] Support structured reporting of listings and user accounts with predefined policy categories.
+- [x] Guarantee absolute reporter confidentiality: reported users must never discover who reported them or whether a report exists.
+- [x] Prevent self-reporting: users cannot report their own listings or accounts.
+- [x] Prevent duplicate pending report spam against the same target by the same reporter.
+- [x] Enforce bidirectional user blocking at the database layer (AD-016): blocked and blocker users cannot see each other's listings in feed or search.
+- [x] Prohibit messaging, purchase intents, offers, and reservations between mutually blocked users.
+- [x] Provide a dedicated management view (`/account/blocked-users`) allowing users to view and unblock blocked accounts.
+- [x] Exclude private email addresses and internal hashes from all reporting and blocking projections.
+- [x] Rate-limit report and block creation (max 10 actions/min) to prevent abuse and denial-of-service attempts.
 
 ## Out of Scope
 
@@ -154,8 +154,8 @@ So that I maintain full control over my privacy and block preferences.
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| REP-01 | Structured listing and user reporting with rate limiting | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | pending |
-| REP-02 | Absolute reporter confidentiality and target-blind RLS | P1 Story 2: AC1, AC2, AC3 | Security / RLS / Database | pending |
-| REP-03 | Bidirectional user blocking and feed/search exclusion (AD-016) | P1 Story 3: AC1, AC2, AC3, AC4 | Database RPC / PostgreSQL | pending |
-| REP-04 | Blocking interaction gates in messaging, offers, and reservations | P1 Story 4: AC1, AC2, AC3 | Security / API / Application | pending |
-| REP-05 | Block list management and unblock flow (`/account/blocked-users`) | P1 Story 5: AC1, AC2, AC3 | UI Pages / Application | pending |
+| REP-01 | Structured listing and user reporting with rate limiting | P1 Story 1: AC1, AC2, AC3, AC4, AC5 | Database RPC / API | verified |
+| REP-02 | Absolute reporter confidentiality and target-blind RLS | P1 Story 2: AC1, AC2, AC3 | Security / RLS / Database | verified |
+| REP-03 | Bidirectional user blocking and feed/search exclusion (AD-016) | P1 Story 3: AC1, AC2, AC3, AC4 | Database RPC / PostgreSQL | verified |
+| REP-04 | Blocking interaction gates in messaging, offers, and reservations | P1 Story 4: AC1, AC2, AC3 | Security / API / Application | verified |
+| REP-05 | Block list management and unblock flow (`/account/blocked-users`) | P1 Story 5: AC1, AC2, AC3 | UI Pages / Application | verified |

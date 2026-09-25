@@ -256,9 +256,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: REP-05
 **Done when**:
-- [ ] Displays list of blocked users with avatar, display name, date, and unblock button.
-- [ ] Accessible empty state when no users are blocked.
-- [ ] Component unit tests pass.
+- [x] Displays list of blocked users with avatar, display name, date, and unblock button.
+- [x] Accessible empty state when no users are blocked.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement blocked users management page`

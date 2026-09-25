@@ -230,9 +230,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: REP-01, REP-02
 **Done when**:
-- [ ] Modal displays reason options, optional details textarea ($\le 1000$ chars), and submit button.
-- [ ] Displays confirmation on success reassuring reporter confidentiality.
-- [ ] Component unit tests pass.
+- [x] Modal displays reason options, optional details textarea ($\le 1000$ chars), and submit button.
+- [x] Displays confirmation on success reassuring reporter confidentiality.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): implement report modal component`

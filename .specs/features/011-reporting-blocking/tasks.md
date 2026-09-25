@@ -97,9 +97,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: REP-02, REP-04
 **Done when**:
-- [ ] Boundaries enforce that target users cannot access report tables.
-- [ ] Prohibits reporter PII leakage in public feeds or search responses.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that target users cannot access report tables.
+- [x] Prohibits reporter PII leakage in public feeds or search responses.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(safety): add architectural boundary tests for reporting and blocking`

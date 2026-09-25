@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: REP-01, REP-03, REP-05
 **Done when**:
-- [ ] DTO interfaces and enums defined for reports and blocks.
-- [ ] Type predicates `isCreateReportRequest` and `isUserBlockDTO` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `safety.test.ts`.
+- [x] DTO interfaces and enums defined for reports and blocks.
+- [x] Type predicates `isCreateReportRequest` and `isUserBlockDTO` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `safety.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(safety): define reporting and blocking dtos and type predicates`

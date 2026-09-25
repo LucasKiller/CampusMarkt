@@ -154,10 +154,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: REP-01, REP-02, REP-03
 **Done when**:
-- [ ] Verifies reported target has zero SELECT visibility on reports table.
-- [ ] Verifies duplicate pending report rejection.
-- [ ] Verifies self-block and self-report rejections.
-- [ ] All database persistence tests pass.
+- [x] Verifies reported target has zero SELECT visibility on reports table.
+- [x] Verifies duplicate pending report rejection.
+- [x] Verifies self-block and self-report rejections.
+- [x] All database persistence tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(safety): add database persistence and rls tests for safety`

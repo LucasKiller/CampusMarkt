@@ -198,10 +198,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: REP-01, REP-02
 **Done when**:
-- [ ] Handles report submissions with CSRF origin guards.
-- [ ] Returns HTTP 201 on success.
-- [ ] Returns HTTP 400 on self-reporting and HTTP 409 on duplicate pending.
-- [ ] Integration tests verify route handlers.
+- [x] Handles report submissions with CSRF origin guards.
+- [x] Returns HTTP 201 on success.
+- [x] Returns HTTP 400 on self-reporting and HTTP 409 on duplicate pending.
+- [x] Integration tests verify route handlers.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(safety): implement submit report api route handler`

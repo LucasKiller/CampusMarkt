@@ -12,6 +12,10 @@ import { FavoriteButton } from "../../../components/marketplace/favorites/favori
 import { NegotiationBar } from "../../../components/marketplace/negotiation/negotiation-bar";
 import { MessageButton } from "../../../components/marketplace/messaging/message-button";
 import {
+  BlockButton,
+  ReportButton,
+} from "../../../components/marketplace/safety/index";
+import {
   formatListingPrice,
   formatRelativeTime,
   getCategoryLabel,
@@ -153,6 +157,10 @@ export default async function ListingDetailsPage(
       // Ignored
     }
   }
+
+  const isOwner = Boolean(
+    currentUserId && currentUserId === listing.seller.publicId,
+  );
 
   let initialOffers: OfferDTO[] = [];
   let initialReservation: ReservationDTO | null = null;
@@ -479,6 +487,12 @@ export default async function ListingDetailsPage(
                   variant="details"
                   showLabel={true}
                 />
+                <ReportButton
+                  targetType="listing"
+                  targetId={listing.id}
+                  targetTitle={listing.title}
+                  isOwner={isOwner}
+                />
               </div>
 
               {/* Negotiation & Purchase CTAs - Disabled / hidden on sold listings */}
@@ -625,6 +639,20 @@ export default async function ListingDetailsPage(
                 Privater Nutzer auf CampusMarkt · Kontaktaufnahme und Übergabe
                 vor Ort in Braunschweig.
               </p>
+
+              <div
+                style={{
+                  marginTop: "0.5rem",
+                  borderTop: "1px solid #f1f5f9",
+                  paddingTop: "0.5rem",
+                }}
+              >
+                <BlockButton
+                  userId={listing.seller.publicId}
+                  userName={listing.seller.displayName}
+                  isOwner={isOwner}
+                />
+              </div>
             </div>
           </div>
         </div>

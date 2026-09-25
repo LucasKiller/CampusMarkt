@@ -269,14 +269,14 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: REP-01, REP-02, REP-03, REP-04, REP-05
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - User reports listing with confidential confirmation.
   - User blocks another user.
   - Blocked user's listings disappear from feed and search.
   - Messaging and offers between blocked users are rejected.
   - Unblocking restores visibility.
-- [ ] Operational runbook added to `docs/operations/marketplace/reporting-blocking.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/reporting-blocking.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(safety): prove e2e reporting and blocking journeys`

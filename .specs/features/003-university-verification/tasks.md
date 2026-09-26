@@ -1,5 +1,7 @@
 # University Verification Tasks
 
+> **Policy amendment (Feature 014, 2026-09-26):** AD-019 supersedes the original 180-day cadence with twelve calendar months. The Feature 003 validation report remains unchanged as historical evidence; Feature 014 validates the amendment.
+
 ## Execution Protocol (MANDATORY -- do not skip)
 
 Implement these tasks with the `tlc-spec-driven` skill: **activate it by name and follow its Execute flow and Critical Rules.** Do not search for skill files by filesystem path. The skill is the source of truth for the full flow (per-task cycle, sub-agent delegation, adequacy review, Verifier, discrimination sensor).
@@ -76,7 +78,7 @@ T13 -> T14 -> T15 -> T16
 ### Phase 1: Contracts and Guardrails
 
 ### T1: Define university verification domain policy
-**What**: Add `SupportedUniversity` definition (TU Braunschweig, domains `tu-braunschweig.de`, `tu-bs.de`), 24-hour token TTL, 6-month (180 days) validity constant, and verification active-state evaluator.
+**What**: Add `SupportedUniversity` definition (TU Braunschweig, domains `tu-braunschweig.de`, `tu-bs.de`), 24-hour token TTL, twelve-calendar-month validity constant, and verification active-state evaluator.
 **Where**: `packages/domain/src/identity/university.ts`
 **Depends on**: None
 **Requirement**: UNIV-01, UNIV-02, UNIV-04
@@ -154,12 +156,12 @@ T13 -> T14 -> T15 -> T16
 **Commit**: `feat(university): add initiate verification rpc`
 
 ### T7: Implement verification confirmation and disconnect RPC
-**What**: `identity_api.confirm_university_verification` setting `expires_at = now() + 180 days`, `verified_at = now()`, clearing tokens, and `identity_api.disconnect_university_verification` deleting record.
+**What**: `identity_api.confirm_university_verification` setting `expires_at = now() + interval '12 months'`, `verified_at = now()`, clearing tokens, and `identity_api.disconnect_university_verification` deleting record.
 **Where**: `supabase/migrations/20260921082000_identity_university_confirm_rpc.sql`
 **Depends on**: T6
 **Requirement**: UNIV-02, UNIV-04, UNIV-05
 **Done when**:
-- [x] Confirmation validates token, sets 180-day expiry, and clears token hash.
+- [x] Confirmation validates token, sets twelve-calendar-month expiry, and clears token hash.
 - [x] Disconnect deletes verification record for authenticated owner.
 - [x] Database integration tests cover success, expiry, collision, and race conditions.
 **Tests**: database integration
@@ -263,7 +265,7 @@ T13 -> T14 -> T15 -> T16
 **Commit**: `feat(university): add trust badge to public profile page`
 
 ### T15: Prove full-stack verification journeys in running stack
-**What**: End-to-end stack test covering initiation, Inbucket mail capture, token staging, confirmation, profile badge projection, 6-month expiry query evaluation, and account deletion cascade.
+**What**: End-to-end stack test covering initiation, Inbucket mail capture, token staging, confirmation, profile badge projection, twelve-calendar-month expiry query evaluation, and account deletion cascade.
 **Where**: `tests/integration/stack/identity/university-stack.test.ts`
 **Depends on**: T14
 **Requirement**: UNIV-01, UNIV-02, UNIV-03, UNIV-04, UNIV-05, UNIV-06

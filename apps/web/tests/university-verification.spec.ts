@@ -58,7 +58,7 @@ test.describe("university verification account journeys", () => {
     });
   }
 
-  test("displays verified badge and 180-day expiry when active", async ({
+  test("displays verified badge and annual expiry when active", async ({
     page,
     context,
   }) => {
@@ -83,8 +83,8 @@ test.describe("university verification account journeys", () => {
               status: "verified",
               universityId: "tu-braunschweig",
               badgeLabel: "TU Braunschweig",
-              expiresAt: "2027-03-21T10:00:00.000Z",
-              daysRemaining: 180,
+              expiresAt: "2027-09-21T10:00:00.000Z",
+              daysRemaining: 365,
             },
             correlationId: "11111111-2222-3333-4444-555555555555",
           }),
@@ -95,7 +95,7 @@ test.describe("university verification account journeys", () => {
     await page.goto("/account");
 
     await expect(page.getByText("Verified · TU Braunschweig")).toBeVisible();
-    await expect(page.getByText("Remaining validity: 180 days")).toBeVisible();
+    await expect(page.getByText("Remaining validity: 365 days")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Reverify / Renew" }),
     ).toBeVisible();
@@ -295,8 +295,8 @@ test.describe("university verification account journeys", () => {
                   status: "verified",
                   universityId: "tu-braunschweig",
                   badgeLabel: "TU Braunschweig",
-                  expiresAt: "2027-03-21T10:00:00.000Z",
-                  daysRemaining: 180,
+                  expiresAt: "2027-09-21T10:00:00.000Z",
+                  daysRemaining: 365,
                 }
               : {
                   status: "none",

@@ -54,7 +54,7 @@ To launch a secure, legally compliant, and welcoming private beta in Braunschwei
 | Concurrency / ordering | Locale cookies are read-only per request; switching triggers immediate client-side reload or re-render. |
 | Data lifecycle & cascades | No database migrations required for localization; user preference is persisted in client cookie `NEXT_LOCALE`. |
 | Observability | Structured logging for uncaught security header violations; CSP report-only or blocking mode configurations. |
-| Privacy boundary | Legal pages explicitly document HMAC identity hashing (AD-008), 180-day verification expiry, and zero primary email exposure. |
+| Privacy boundary | Legal pages explicitly document HMAC identity hashing (AD-019), twelve-calendar-month verification expiry, and zero primary email exposure. |
 
 ---
 

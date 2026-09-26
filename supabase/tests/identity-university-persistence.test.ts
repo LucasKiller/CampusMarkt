@@ -4,6 +4,13 @@ import { spawn, spawnSync } from "node:child_process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
+const annualVerificationMigration = readFileSync(
+  resolve(
+    repositoryRoot,
+    "supabase/migrations/20260926070240_annual_university_verification.sql",
+  ),
+  "utf8",
+);
 const projectName = `campusmarkt-university-db-${process.pid}`;
 const docker = process.platform === "win32" ? "docker.exe" : "docker";
 
@@ -295,7 +302,7 @@ describe("T5 university_verifications persistence and RLS", () => {
         auth_user_id, university_id, institutional_email_hash, status, token_hash, token_expires_at, verified_at, expires_at
       ) values (
         '${userId}', 'tu-braunschweig', '${emailHash}', 'verified', '${tokenHashHex}'::bytea,
-        transaction_timestamp() + interval '24 hours', transaction_timestamp(), transaction_timestamp() + interval '180 days'
+        transaction_timestamp() + interval '24 hours', transaction_timestamp(), transaction_timestamp() + interval '12 months'
       );
     `);
     expect(invalidVerified.status).not.toBe(0);
@@ -351,7 +358,7 @@ describe("T6 initiate_university_verification RPC", () => {
         verified_at, expires_at
       ) values (
         '${userA}', 'tu-braunschweig', '${emailHash}', 'verified',
-        transaction_timestamp(), transaction_timestamp() + interval '180 days'
+        transaction_timestamp(), transaction_timestamp() + interval '12 months'
       );
     `);
 
@@ -444,8 +451,48 @@ describe("T6 initiate_university_verification RPC", () => {
   });
 });
 
+describe("Feature 014 annual university verification migration", () => {
+  it("uses PostgreSQL calendar arithmetic for leap-day anniversaries", () => {
+    const result = query(`
+      select
+        ('2024-02-29 23:15:30.123+00'::timestamptz + interval '12 months') =
+        '2025-02-28 23:15:30.123+00'::timestamptz;
+    `);
+
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("t");
+  });
+
+  it("recalculates an existing 180-day record from its original verification timestamp", () => {
+    const userId = createAuthUser({ confirmed: true });
+    const emailHash = "f0".repeat(32);
+
+    const inserted = query(`
+      insert into identity.university_verifications (
+        auth_user_id, university_id, institutional_email_hash, status,
+        verified_at, expires_at
+      ) values (
+        '${userId}', 'tu-braunschweig', '${emailHash}', 'verified',
+        '2026-01-31 10:00:00+00', '2026-07-30 10:00:00+00'
+      );
+    `);
+    expect(inserted.status, inserted.stderr).toBe(0);
+
+    const reapplied = query(annualVerificationMigration);
+    expect(reapplied.status, reapplied.stderr).toBe(0);
+
+    const result = query(`
+      select expires_at = verified_at + interval '12 months', expires_at
+      from identity.university_verifications
+      where auth_user_id = '${userId}';
+    `);
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("t|2027-01-31 10:00:00+00");
+  });
+});
+
 describe("T7 confirm and disconnect RPCs", () => {
-  it("confirms verification, sets 180-day expiry, and clears token", () => {
+  it("confirms verification, sets exact twelve-calendar-month expiry, and clears token", () => {
     const userId = createAuthUser({ confirmed: true });
     const emailHash = "a1".repeat(32);
     const tokenHashHex = "\\x" + "b1".repeat(32);
@@ -457,19 +504,24 @@ describe("T7 confirm and disconnect RPCs", () => {
     `);
 
     const confirm = query(`
-      select auth_user_id, university_id, status, expires_at > transaction_timestamp() + interval '179 days'
+      select auth_user_id, university_id, status
       from identity_api.confirm_university_verification('${tokenHashHex}'::bytea);
     `);
     expect(confirm.status, confirm.stderr).toBe(0);
-    expect(confirm.stdout).toBe(`${userId}|tu-braunschweig|verified|t`);
+    expect(confirm.stdout).toBe(`${userId}|tu-braunschweig|verified`);
 
     // Verify token hash is cleared
     const row = query(`
-      select status, token_hash is null, token_expires_at is null, verified_at is not null
+      select
+        status,
+        token_hash is null,
+        token_expires_at is null,
+        verified_at is not null,
+        expires_at = verified_at + interval '12 months'
       from identity.university_verifications
       where auth_user_id = '${userId}';
     `);
-    expect(row.stdout).toBe("verified|t|t|t");
+    expect(row.stdout).toBe("verified|t|t|t|t");
   });
 
   it("rejects confirmation for expired token", () => {
@@ -559,7 +611,7 @@ describe("T7 confirm and disconnect RPCs", () => {
         verified_at, expires_at
       ) values (
         '${userA}', 'tu-braunschweig', '${emailHash}', 'verified',
-        transaction_timestamp(), transaction_timestamp() + interval '180 days'
+        transaction_timestamp(), transaction_timestamp() + interval '12 months'
       );
     `);
 

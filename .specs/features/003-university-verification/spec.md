@@ -2,6 +2,8 @@
 
 **Status:** Implemented
 
+> **Policy amendment (Feature 014, 2026-09-26):** The original 180-day implementation and its historical validation were superseded by the approved twelve-calendar-month policy in AD-019. This specification now reflects the active policy; the original evidence remains unchanged in `validation.md`.
+
 ## Problem Statement
 
 CampusMarkt users currently have accounts and public profiles, but there is no mechanism to verify student or university affiliation. Students in Braunschweig want a verifiable trust signal to identify fellow university members when arranging in-person exchanges. The marketplace needs an optional university verification capability that issues a visible trust badge without exposing the student's institutional email address or granting exclusive access privileges.
@@ -12,7 +14,7 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 - [x] Deliver a one-time verification link with a bounded 24-hour lifetime to the institutional address.
 - [x] Issue a visible trust badge on the user's public profile upon verification confirmation.
 - [x] Enforce 1:1 uniqueness so that one institutional identity cannot verify multiple active CampusMarkt accounts simultaneously.
-- [x] Automatically expire verifications after 6 months (180 days) with a seamless reverification path.
+- [x] Automatically expire verifications after 12 calendar months with a seamless reverification path.
 - [x] Protect student privacy by storing only a pseudonymous HMAC-SHA-256 hash at rest and never exposing the institutional address in public profiles, APIs, or logs.
 - [x] Integrate with the account deletion lifecycle to purge verification records when an account is deleted.
 
@@ -35,7 +37,7 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 | --- | --- | --- | --- |
 | Initial supported institution | TU Braunschweig (`@tu-braunschweig.de`, `@tu-bs.de`) | Matches V1 geographic focus and existing student email domains. | yes |
 | Verification token lifetime | One-time link valid for 24 hours | Matches the primary account email confirmation window and allows ample inbox turnaround. | yes |
-| Verification validity period | 6 months (180 days) from confirmation date | Semester-aligned academic verification cycle. | yes |
+| Verification validity period | 12 calendar months from confirmation date | Approved annual trust-signal renewal cadence (AD-019). | yes |
 | Institutional email storage | Store only normalized HMAC-SHA-256 hash in database; discard plaintext after verification | Prevents mass scraping, data leaks, and unnecessary PII retention. | yes |
 | Uniqueness constraint | Exactly one active verification per institutional email hash | Prevents fraudulent multi-account trust badge farming. | yes |
 | Voluntary badge disconnect | Allow users to disconnect their university verification from their account settings | Users retain full autonomy over their displayed profile trust signals. | yes |
@@ -75,7 +77,7 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 
 **Acceptance Criteria**:
 
-1. WHEN a user follows a valid, unused verification link before expiry THEN the system SHALL mark the university verification as confirmed and set the expiration timestamp to exactly 6 months (180 days) from confirmation.
+1. WHEN a user follows a valid, unused verification link before expiry THEN the system SHALL mark the university verification as confirmed and set the expiration timestamp to exactly 12 calendar months from confirmation.
 2. WHEN university verification is confirmed THEN the system SHALL store the normalized institutional email hash, discard the plaintext address, and revoke the consumed action token.
 3. WHEN verification confirmation succeeds THEN the system SHALL immediately make the university badge visible on the user's public profile.
 4. IF a verification token is expired, malformed, or already consumed THEN the system SHALL reject confirmation with HTTP 400 and an actionable message offering a new verification request.
@@ -107,9 +109,9 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 
 **Acceptance Criteria**:
 
-1. WHEN system time reaches or exceeds the 6-month (180 days) expiration timestamp THEN the system SHALL evaluate the verification as expired and cease displaying the badge on public profiles.
+1. WHEN system time reaches or exceeds the 12-calendar-month expiration timestamp THEN the system SHALL evaluate the verification as expired and cease displaying the badge on public profiles.
 2. WHEN an authenticated user views their account settings with an expired or expiring verification THEN the system SHALL display the current verification status and provide an initiation action for reverification.
-3. WHEN a user reverifies with a valid institutional email before or after expiration THEN the system SHALL update the verification state and extend expiration to 6 months (180 days) from the new confirmation date.
+3. WHEN a user reverifies with a valid institutional email before or after expiration THEN the system SHALL update the verification state and extend expiration to 12 calendar months from the new confirmation date.
 4. IF a reverification attempt uses a different institutional email that is already verified by another active account THEN the system SHALL reject the reverification with HTTP 409.
 
 ---
@@ -167,7 +169,7 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 | Idempotency, retry, and duplicates | Uniqueness enforced via unique database constraint on active institutional email hashes; duplicate callbacks converge safely. |
 | Auth boundaries and rate limits | Only confirmed authenticated users can initiate verification; rate limits capped at 3/hr per account and 30/hr per IP. |
 | Concurrency and ordering | Concurrent confirmations converge on one winner; reverification preserves active badge until successful confirmation. |
-| Data lifecycle and expiry | Tokens expire in 24 hours; verifications expire in 6 months (180 days); account deletion cascades verification purge. |
+| Data lifecycle and expiry | Tokens expire in 24 hours; verifications expire in 12 calendar months; account deletion cascades verification purge. |
 | Observability | Security events record event type, outcome, correlation ID, and pseudonymous hashes; no plaintext emails or tokens logged. |
 | External-dependency failure | SMTP outage handled gracefully with bounded 503; database failures roll back atomically. |
 | State-transition integrity | Strict lifecycle: `unverified` -> `pending` -> `verified` -> `expired` / `revoked`; transitions guarded by server RPC. |
@@ -195,6 +197,6 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 - [x] Confirmed verification immediately displays the TU Braunschweig badge on the user's public profile and account dashboard.
 - [x] Public profile endpoints and DOM never leak the student's institutional email address or raw hash.
 - [x] An institutional email cannot be linked to more than one active CampusMarkt account simultaneously.
-- [x] Verification automatically expires after 6 months (180 days), removing the badge unless reverified.
+- [x] Verification automatically expires after 12 calendar months, removing the badge unless reverified.
 - [x] Users can voluntarily disconnect their badge, and account deletion purges verification records.
 - [x] Rate limits (3/hour per account) and audit logging are enforced without credential exposure.

@@ -221,8 +221,8 @@ export function UniversityVerificationSection() {
 
       <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
         Verify your affiliation with TU Braunschweig to display an official
-        trust badge on your listings and profile. Verification lasts 6 months
-        (180 days).
+        trust badge on your listings and profile. Verification lasts 12 calendar
+        months.
       </p>
 
       {successNotice && (

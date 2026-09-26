@@ -2,8 +2,9 @@ const SECOND_MS = 1_000;
 
 export const UNIVERSITY_POLICY_SECONDS = {
   tokenTtl: 24 * 60 * 60, // 24 hours
-  validity: 180 * 24 * 60 * 60, // 180 days (6 months)
 } as const;
+
+export const UNIVERSITY_VERIFICATION_VALIDITY_MONTHS = 12;
 
 export interface SupportedUniversity {
   id: "tu-braunschweig";
@@ -56,8 +57,29 @@ export function isUniversityVerificationActive(
 }
 
 export function universityVerificationExpiresAt(confirmedAt: Date): Date {
+  if (Number.isNaN(confirmedAt.getTime())) {
+    return new Date(Number.NaN);
+  }
+
+  const targetMonthIndex =
+    confirmedAt.getUTCMonth() + UNIVERSITY_VERIFICATION_VALIDITY_MONTHS;
+  const targetYear =
+    confirmedAt.getUTCFullYear() + Math.floor(targetMonthIndex / 12);
+  const targetMonth = targetMonthIndex % 12;
+  const lastTargetDay = new Date(
+    Date.UTC(targetYear, targetMonth + 1, 0),
+  ).getUTCDate();
+
   return new Date(
-    confirmedAt.getTime() + UNIVERSITY_POLICY_SECONDS.validity * SECOND_MS,
+    Date.UTC(
+      targetYear,
+      targetMonth,
+      Math.min(confirmedAt.getUTCDate(), lastTargetDay),
+      confirmedAt.getUTCHours(),
+      confirmedAt.getUTCMinutes(),
+      confirmedAt.getUTCSeconds(),
+      confirmedAt.getUTCMilliseconds(),
+    ),
   );
 }
 

@@ -71,7 +71,7 @@ describe("legal pages UI rendering (T14)", () => {
     expect(html).toContain("Datenschutzerklärung");
     expect(html).toContain("Verantwortliche Stelle");
     expect(html).toContain("HMAC-SHA-256");
-    expect(html).toContain("180 Tage");
+    expect(html).toContain("zwölf Kalendermonate");
     expect(html).toContain("Rechte als betroffene Person");
   });
 });

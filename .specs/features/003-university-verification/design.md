@@ -3,6 +3,8 @@
 **Spec**: `.specs/features/003-university-verification/spec.md`  
 **Status**: Draft
 
+> **Policy amendment (Feature 014, 2026-09-26):** AD-019 supersedes the original 180-day cadence with twelve calendar months. Feature 003's `validation.md` remains the historical record of the original implementation.
+
 ---
 
 ## Architecture Overview
@@ -77,7 +79,7 @@ graph TD
 - **Data Model**: A dedicated table `identity.university_verifications` keyed by `auth_user_id` (foreign key to `identity.accounts` on delete cascade).
 - **Email Privacy**: Store only the normalized HMAC-SHA-256 hash (`institutional_email_hash`) computed with the server-side `IDENTITY_HASH_PEPPER`. Plaintext institutional emails are discarded immediately after confirmation.
 - **Uniqueness**: Enforce 1:1 uniqueness at database level: no two active verifications (`status = 'verified'` and `expires_at > clock_timestamp()`) may share the same `institutional_email_hash`.
-- **Query-Time Expiry**: Public profile and account queries evaluate expiration dynamically (`status = 'verified' AND expires_at > transaction_timestamp()`). This guarantees instant badge disappearance after 6 months (180 days) without race conditions or batch polling lag.
+- **Query-Time Expiry**: Public profile and account queries evaluate expiration dynamically (`status = 'verified' AND expires_at > transaction_timestamp()`). This guarantees instant badge disappearance after twelve calendar months without race conditions or batch polling lag.
 - **Reverification**: The user can initiate reverification prior to or after expiration. The existing badge remains visible until the new verification is confirmed.
 - **Lifecycle Integration**: Cascades on account deletion automatically. Voluntary disconnection immediately drops the record and releases the hash.
 
@@ -163,7 +165,7 @@ revoke all on table identity.university_verifications from public, anon, authent
 2. `identity_api.confirm_university_verification(requested_token_hash bytea)`:
    - Finds pending record matching `token_hash` where `token_expires_at > transaction_timestamp()`.
    - Re-checks that `institutional_email_hash` is not claimed by another active verified account.
-   - Sets `status = 'verified'`, `verified_at = transaction_timestamp()`, `expires_at = transaction_timestamp() + interval '180 days'`.
+   - Sets `status = 'verified'`, `verified_at = transaction_timestamp()`, `expires_at = transaction_timestamp() + interval '12 months'`.
    - Clears `token_hash` and `token_expires_at`.
    - Returns public verification DTO.
 3. `identity_api.disconnect_university_verification(requested_auth_user_id uuid)`:
@@ -188,7 +190,7 @@ revoke all on table identity.university_verifications from public, anon, authent
   ```
 - **Policy Constants**:
   - `UNIVERSITY_VERIFICATION_TOKEN_TTL_SECONDS = 24 * 60 * 60` (24 hours)
-  - `UNIVERSITY_VERIFICATION_VALIDITY_SECONDS = 180 * 24 * 60 * 60` (180 days / 6 months)
+  - `UNIVERSITY_VERIFICATION_VALIDITY_MONTHS = 12` (calendar-month arithmetic)
 - **Lifecycle Evaluation**:
   - `isUniversityVerificationActive(verification: { status: string; expiresAt: Date }, now: Date): boolean`
     - Returns `true` iff `verification.status === "verified" && now.getTime() < verification.expiresAt.getTime()`.
@@ -235,7 +237,7 @@ revoke all on table identity.university_verifications from public, anon, authent
 | Header injection in email delivery | Malicious local-part manipulates SMTP headers | Validation rejects CRLF (`\r`, `\n`) and non-printable characters in email inputs before SMTP dispatch. |
 | Email bombing / inbox flooding | Script initiates repeated requests to victim's student email | Dual rate limits (3/hour per account, 30/hour per IP) enforced at database boundary before email dispatch. |
 | Race condition on concurrent confirmation | Two browser tabs or parallel requests confirm simultaneously | Database transaction locks pending record; updates atomically; second request receives safe already-consumed outcome. |
-| Stale badge caching | Public profile caches badge after 6-month expiry | Public profile RPC computes validity dynamically against `transaction_timestamp()`; HTTP cache-control headers on profile APIs enforce fresh validation. |
+| Stale badge caching | Public profile caches badge after twelve-month expiry | Public profile RPC computes validity dynamically against `transaction_timestamp()`; HTTP cache-control headers on profile APIs enforce fresh validation. |
 
 ---
 
@@ -244,8 +246,8 @@ revoke all on table identity.university_verifications from public, anon, authent
 | Requirement | Design Component / Mechanism |
 | --- | --- |
 | **UNIV-01** | `validateInstitutionalEmail` (TU Braunschweig domain matching), `identity_api.initiate_university_verification`, 24h token generation, SMTP email delivery. |
-| **UNIV-02** | `identity_api.confirm_university_verification` setting `expires_at = now() + 180 days`, HMAC-SHA-256 hash storage, plaintext discarding. |
+| **UNIV-02** | `identity_api.confirm_university_verification` setting `expires_at = now() + interval '12 months'`, HMAC-SHA-256 hash storage, plaintext discarding. |
 | **UNIV-03** | `identity_api.get_public_profile` dynamic badge projection; complete omission of institutional email and token from DTOs. |
-| **UNIV-04** | Query-time expiration check (`expires_at > now()`); account dashboard reverification action; renewal extending expiration 180 days. |
+| **UNIV-04** | Query-time expiration check (`expires_at > now()`); account dashboard reverification action; renewal extending expiration twelve calendar months. |
 | **UNIV-05** | `identity_api.disconnect_university_verification`; `ON DELETE CASCADE` from `identity.accounts` on worker purge. |
 | **UNIV-06** | `IdentitySecurityService` dual rate limits; HMAC-SHA-256 pseudonymous audit logging; header-injection validation; bounded 503 on SMTP failure. |

@@ -417,7 +417,7 @@ describe("university verification live stack journeys", () => {
   it("disconnects verification voluntarily and purges record releasing email hash", async () => {
     query(`
       UPDATE identity.university_verifications
-      SET expires_at = now() + interval '180 days'
+      SET expires_at = now() + interval '12 months'
       WHERE auth_user_id = '${user1AuthUserId}';
     `);
 

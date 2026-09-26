@@ -19,7 +19,7 @@ This runbook defines operational guidance, policy boundaries, institutional doma
    - Plaintext institutional emails and verification tokens are never logged, never returned in API payloads, and never exposed on public profiles.
 
 3. **Validity & Token Lifecycle**:
-   - **Verification Validity**: Exactly 6 months (180 days) from the confirmation timestamp.
+   - **Verification Validity**: Exactly 12 calendar months from the confirmation timestamp.
    - **Verification Token Expiration**: Exactly 24 hours from initiation. Tokens are single-use and invalidated immediately upon confirmation.
    - **Query-Time Expiration Check**: Public profiles evaluate verification validity dynamically (`status = 'verified' AND expires_at > transaction_timestamp()`). Expired verifications are automatically omitted from public badges without background worker lag.
 
@@ -74,5 +74,5 @@ $ npm run check
 - **Action**: Explain 1:1 policy to user. If previous account was deleted, ensure deletion purge has completed to release the institutional email hash.
 
 ### 3. Verification Expiry
-- **Symptom**: Trust badge disappears from public profile after 180 days.
-- **Action**: Normal behavior. User can initiate reverification in Account Settings to renew the badge for another 180 days.
+- **Symptom**: Trust badge disappears from the public profile after 12 calendar months.
+- **Action**: Normal behavior. The user can initiate reverification in Account Settings to renew the badge for another 12 calendar months.

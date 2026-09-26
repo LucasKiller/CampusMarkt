@@ -270,12 +270,11 @@ describe("university verification operational runbook verification", () => {
     expect(content).toContain("does not authorize external deployment");
   });
 
-  it("documents supported institutions and 6-month validity", () => {
+  it("documents supported institutions and twelve-month validity", () => {
     const content = readFileSync(uniRunbookPath, "utf8");
     expect(content).toContain("TU Braunschweig");
     expect(content).toContain("tu-braunschweig.de");
-    expect(content).toContain("6 months");
-    expect(content).toContain("180 days");
+    expect(content).toContain("12 calendar months");
   });
 
   it("documents data minimization with HMAC-SHA-256 and discarding of plaintext emails", () => {

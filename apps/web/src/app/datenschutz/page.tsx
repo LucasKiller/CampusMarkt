@@ -96,8 +96,8 @@ export default async function DatenschutzPage() {
             </h2>
             <p className="text-slate-600">
               {isEn
-                ? "CampusMarkt values data minimization. When verifying your status at TU Braunschweig, your institutional email is used strictly to send a one-time confirmation token. Immediately upon verification, the plaintext email is permanently discarded. Only a cryptographically salted HMAC-SHA-256 hash is retained to prevent duplicate badge claims, valid for 180 days."
-                : "CampusMarkt setzt auf strikte Datensparsamkeit. Bei der freiwilligen Verifikation der Hochschulzugehörigkeit an der TU Braunschweig wird die universitäre E-Mail-Adresse ausschließlich zur Zustellung eines einmaligen Bestätigungscodes verwendet und danach umgehend unwiderruflich gelöscht. Es wird lediglich ein kryptografisch gehashter HMAC-SHA-256-Wert zur Verhinderung von Mehrfachverifikationen für 180 Tage gespeichert."}
+                ? "CampusMarkt values data minimization. When verifying your status at TU Braunschweig, your institutional email is used strictly to send a one-time confirmation token. Immediately upon verification, the plaintext email is permanently discarded. Only a cryptographically salted HMAC-SHA-256 hash is retained to prevent duplicate badge claims, valid for twelve calendar months."
+                : "CampusMarkt setzt auf strikte Datensparsamkeit. Bei der freiwilligen Verifikation der Hochschulzugehörigkeit an der TU Braunschweig wird die universitäre E-Mail-Adresse ausschließlich zur Zustellung eines einmaligen Bestätigungscodes verwendet und danach umgehend unwiderruflich gelöscht. Es wird lediglich ein kryptografisch gehashter HMAC-SHA-256-Wert zur Verhinderung von Mehrfachverifikationen für zwölf Kalendermonate gespeichert."}
             </p>
 
             <h2 className="mt-6 text-xl font-semibold text-slate-800">

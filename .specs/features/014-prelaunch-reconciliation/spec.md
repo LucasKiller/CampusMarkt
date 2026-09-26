@@ -10,8 +10,8 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 
 - [x] Make the README accurately describe the implemented V1 and its verified local workflows.
 - [x] Make the public hostname and legal contact addresses configurable while documenting `campusmarkt.inovv.co` as the current production example.
-- [ ] Enforce university-verification validity for twelve calendar months in every active behavior layer.
-- [ ] Preserve historical validation evidence while reconciling completed-spec status markers.
+- [x] Enforce university-verification validity for twelve calendar months in every active behavior layer.
+- [x] Preserve historical validation evidence while reconciling completed-spec status markers.
 - [x] Record the focused hardening work still required before private beta.
 - [x] Restore a clean, executable migration chain after the pre-beta database gate exposed a moderation-schema mismatch.
 
@@ -100,8 +100,8 @@ As a developer or operator, I want every migration to apply to a fresh database 
 
 | Requirement | Description | Target evidence | Status |
 | --- | --- | --- | --- |
-| RECON-01 | Repository truth | README, completed goal markers, STATE review boundary | planned |
-| RECON-02 | Configurable public deployment identity | Env validation tests, legal-page tests, Compose example | planned |
-| RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | planned |
-| RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | planned |
-| RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | planned |
+| RECON-01 | Repository truth | README, completed goal markers, STATE review boundary | implemented |
+| RECON-02 | Configurable public deployment identity | Env validation tests, legal-page tests, Compose example | implemented |
+| RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | implemented |
+| RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | implemented |
+| RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | implemented |

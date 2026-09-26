@@ -5,6 +5,7 @@ import {
   isUniversityVerificationActive,
   SUPPORTED_UNIVERSITIES,
   UNIVERSITY_POLICY_SECONDS,
+  UNIVERSITY_VERIFICATION_VALIDITY_MONTHS,
   universityTokenExpiresAt,
   universityVerificationExpiresAt,
 } from "./university.ts";
@@ -44,9 +45,9 @@ describe("university verification domain policy", () => {
     expect(getSupportedUniversity("other")).toBeUndefined();
   });
 
-  it("defines 24-hour token TTL and 180-day verification validity constants", () => {
+  it("defines a 24-hour token TTL and twelve-calendar-month verification validity", () => {
     expect(UNIVERSITY_POLICY_SECONDS.tokenTtl).toBe(24 * 60 * 60);
-    expect(UNIVERSITY_POLICY_SECONDS.validity).toBe(180 * 24 * 60 * 60);
+    expect(UNIVERSITY_VERIFICATION_VALIDITY_MONTHS).toBe(12);
   });
 
   it("calculates token expiration at issuedAt + 24 hours", () => {
@@ -55,11 +56,24 @@ describe("university verification domain policy", () => {
     expect(expiresAt.toISOString()).toBe("2026-09-22T10:00:00.000Z");
   });
 
-  it("calculates verification expiration at confirmedAt + 180 days", () => {
+  it("calculates verification expiration at confirmedAt + twelve calendar months", () => {
     const confirmedAt = new Date("2026-09-21T10:00:00.000Z");
     const expiresAt = universityVerificationExpiresAt(confirmedAt);
-    const diffMs = expiresAt.getTime() - confirmedAt.getTime();
-    expect(diffMs).toBe(180 * 24 * 60 * 60 * 1000);
+    expect(expiresAt.toISOString()).toBe("2027-09-21T10:00:00.000Z");
+  });
+
+  it("clamps leap-day confirmation to the last day of the target month", () => {
+    const confirmedAt = new Date("2024-02-29T23:15:30.123Z");
+    const expiresAt = universityVerificationExpiresAt(confirmedAt);
+    expect(expiresAt.toISOString()).toBe("2025-02-28T23:15:30.123Z");
+  });
+
+  it("preserves invalid date behavior without throwing", () => {
+    expect(
+      Number.isNaN(
+        universityVerificationExpiresAt(new Date(Number.NaN)).getTime(),
+      ),
+    ).toBe(true);
   });
 
   describe("isUniversityVerificationActive", () => {

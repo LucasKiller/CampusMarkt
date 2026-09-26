@@ -85,7 +85,7 @@ Rules:
 - It is used only for verification, security, abuse prevention, and legal retention requirements.
 - It is never publicly displayed or silently adopted as the account's communication address.
 - One normalized institutional email identity cannot verify multiple active accounts.
-- The expected validity period is 12 months. The verification feature must confirm the exact expiry and reverification behavior before implementation.
+- The validity period is 12 calendar months from confirmation, with query-time expiry and the same flow available for reverification.
 - Expiry removes the visible badge. It does not remove the account or ordinary marketplace access.
 - Plaintext retention after confirmation must be minimized and justified in the verification spec; a protected normalized hash is the preferred durable uniqueness mechanism.
 

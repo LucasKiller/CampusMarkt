@@ -149,7 +149,7 @@
 ## Handoff
 
 - **Feature**: `014-prelaunch-reconciliation`
-- **Phase / Task**: Execute / T1
+- **Phase / Task**: Validate / independent verification
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -164,10 +164,10 @@
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
   - `013-localization-launch-hardening` verified.
-- **In-progress** (file:line): `.specs/features/014-prelaunch-reconciliation/tasks.md` (T1)
-- **Next step**: Reconcile repository documentation, then implement configurable public deployment identity and the twelve-calendar-month university-verification amendment.
+  - `014-prelaunch-reconciliation` implementation complete (T1, T2, T3A, T3); independent validation pending.
+- **In-progress** (file:line): `.specs/features/014-prelaunch-reconciliation/validation.md` (pending creation)
+- **Next step**: Run independent evidence-or-zero validation and the discrimination sensor for Feature 014.
 - **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.
 - **Uncommitted files**: none
 - **Branch**: main
-
 

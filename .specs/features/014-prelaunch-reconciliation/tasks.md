@@ -80,12 +80,12 @@ T1 -> T2 -> T3A -> T3 -> independent validation
 **Depends on:** T3A
 **Requirement:** RECON-03, RECON-04
 **Done when:**
-- [ ] Domain expiry uses UTC calendar-month arithmetic and covers leap/month-end cases.
-- [ ] A new additive migration updates existing rows and replaces confirmation behavior with `interval '12 months'`.
-- [ ] Database tests prove both migration recalculation and new confirmation expiry.
-- [ ] Current product/UI wording says twelve months; historical validation remains untouched.
-- [ ] AD-008 is superseded by a new active decision.
-- [ ] Quick, integration, and database gates pass.
+- [x] Domain expiry uses UTC calendar-month arithmetic and covers leap/month-end cases.
+- [x] A new additive migration updates existing rows and replaces confirmation behavior with `interval '12 months'`.
+- [x] Database tests prove both migration recalculation and new confirmation expiry.
+- [x] Current product/UI wording says twelve months; historical validation remains untouched.
+- [x] AD-008 is superseded by a new active decision.
+- [x] Quick, integration, and database gates pass.
 **Tests:** unit, integration, database
 **Gate:** Quick + Integration + Database
 **Commit:** `fix(identity): extend university verification to twelve months`

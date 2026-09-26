@@ -157,7 +157,7 @@ Complies with § 5 DDG (Telemediengesetz / Digitale-Dienste-Gesetz):
 Complies with DSGVO / GDPR (Regulation EU 2016/679):
 - Data Controller identity & contact.
 - Categories of processed data: accounts, listings, messages, offers.
-- Pseudonymized University Verification (AD-008): HMAC-SHA-256 with pepper, immediate discarding of institutional email addresses, 180-day validity window.
+- Pseudonymized University Verification (AD-019): HMAC-SHA-256 with pepper, immediate discarding of institutional email addresses, twelve-calendar-month validity window.
 - Legal bases: Art. 6(1)(b) DSGVO (contract fulfillment for marketplace transactions), Art. 6(1)(f) DSGVO (legitimate interest for anti-abuse and moderation).
 - Retention & Deletion: immediate cascading deletion upon account closure.
 - Zero third-party trackers, zero advertising cookies.

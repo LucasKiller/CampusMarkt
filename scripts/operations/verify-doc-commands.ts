@@ -76,7 +76,7 @@ function verifyCompose(command: string) {
   const composeIndex = tokens.indexOf("compose");
   const subcommand = tokens
     .slice(composeIndex + 1)
-    .find((token) => !token.startsWith("-") && !token.includes("campusmarkt"));
+    .find((token) => exercisedComposeCommands.has(token));
   if (!subcommand || !exercisedComposeCommands.has(subcommand)) {
     fail(`Unsupported documented Compose command: ${command}`);
   }
@@ -137,8 +137,8 @@ function run() {
 
   const combined = contents.map(({ contents: guide }) => guide).join("\n");
   for (const contract of [
-    "docker compose up --detach --wait",
-    "docker compose down",
+    "docker compose --profile local up --detach --wait",
+    "docker compose --profile local down",
     "npm run preflight",
     "npm run backup",
     "npm run restore",

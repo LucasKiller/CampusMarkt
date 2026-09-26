@@ -9,7 +9,7 @@ services:
 
   rest:
     environment:
-      PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS:-public,graphql_public,identity_api}
+      PGRST_DB_SCHEMAS: ${PGRST_DB_SCHEMAS:-public,graphql_public,identity_api,marketplace_api}
       PGRST_DB_EXTRA_SEARCH_PATH: ${PGRST_DB_EXTRA_SEARCH_PATH:-public,identity_api}
 
   web:
@@ -17,9 +17,9 @@ services:
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY:?SERVICE_ROLE_KEY is required}
       SUPABASE_PUBLISHABLE_KEY: ${ANON_KEY:?ANON_KEY is required}
       IDENTITY_HASH_PEPPER: ${IDENTITY_HASH_PEPPER:?IDENTITY_HASH_PEPPER is required}
-      IDENTITY_ACTION_BASE_URL: ${IDENTITY_ACTION_BASE_URL:-http://localhost:3000}
-      CURRENT_TERMS_VERSION: ${CURRENT_TERMS_VERSION:-2026-09-15}
-      CURRENT_PRIVACY_VERSION: ${CURRENT_PRIVACY_VERSION:-2026-09-15}
+      IDENTITY_ACTION_BASE_URL: ${IDENTITY_ACTION_BASE_URL:-http://localhost:8080}
+      CURRENT_TERMS_VERSION: ${CURRENT_TERMS_VERSION:-terms-2026-09}
+      CURRENT_PRIVACY_VERSION: ${CURRENT_PRIVACY_VERSION:-privacy-2026-09}
       SMTP_HOST: ${SMTP_HOST:-mail}
       SMTP_PORT: ${SMTP_PORT:-2500}
       SMTP_USER: ${SMTP_USER:-}
@@ -32,6 +32,8 @@ services:
     image: inbucket/inbucket:3.0.3
     profiles: ["local", "test"]
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:${MAIL_UI_PORT:-9000}:9000"
     expose:
       - "2500"
       - "9000"

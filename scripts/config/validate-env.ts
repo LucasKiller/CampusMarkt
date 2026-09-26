@@ -135,6 +135,21 @@ function validateBrowserSeparation(
   }
 }
 
+function validateApiSchemas(
+  environment: DeploymentEnvironment,
+  errors: string[],
+) {
+  const configured = environment.PGRST_DB_SCHEMAS;
+  if (!configured) return;
+
+  const schemas = new Set(configured.split(",").map((schema) => schema.trim()));
+  for (const required of ["identity_api", "marketplace_api"]) {
+    if (!schemas.has(required)) {
+      errors.push(`Missing PostgREST exposed schema: ${required}`);
+    }
+  }
+}
+
 export function validateDeployment(input: {
   mode: DeploymentMode;
   environment: DeploymentEnvironment;
@@ -152,6 +167,23 @@ export function validateDeployment(input: {
   }
 
   validateBrowserSeparation(input.environment, errors);
+  validateApiSchemas(input.environment, errors);
+
+  if (input.mode === "local") {
+    const publicUrl = input.environment.NEXT_PUBLIC_SUPABASE_URL;
+    const actionUrl = input.environment.IDENTITY_ACTION_BASE_URL;
+    if (publicUrl && actionUrl) {
+      try {
+        if (new URL(publicUrl).origin !== new URL(actionUrl).origin) {
+          errors.push(
+            "Mismatched local identity origin: IDENTITY_ACTION_BASE_URL, NEXT_PUBLIC_SUPABASE_URL",
+          );
+        }
+      } catch {
+        errors.push("Invalid local identity origin: IDENTITY_ACTION_BASE_URL");
+      }
+    }
+  }
 
   errors.push(
     ...validateIdentityEnvironment(input.mode, input.environment).errors,

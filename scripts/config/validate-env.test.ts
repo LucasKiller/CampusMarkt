@@ -16,13 +16,14 @@ const generatedLocalEnvironment: DeploymentEnvironment = {
   SUPABASE_INTERNAL_URL: "http://api-gw:8000",
   SUPABASE_SERVICE_ROLE_KEY: "role-key-with-at-least-thirty-two-characters",
   IDENTITY_HASH_PEPPER: "pepper-with-at-least-thirty-two-characters",
-  IDENTITY_ACTION_BASE_URL: "http://localhost:3000",
-  SITE_URL: "http://localhost:3000",
+  IDENTITY_ACTION_BASE_URL: "http://localhost:8080",
+  SITE_URL: "http://localhost:8080",
   CURRENT_TERMS_VERSION: "terms-2026-09",
   CURRENT_PRIVACY_VERSION: "privacy-2026-09",
   IDENTITY_WORKER_ID: "identity-worker-local",
   IDENTITY_WORKER_BATCH_SIZE: "25",
   GOTRUE_SESSIONS_TIMEBOX: "720h",
+  PGRST_DB_SCHEMAS: "public,graphql_public,identity_api,marketplace_api",
 };
 
 const productionEnvironment: DeploymentEnvironment = {
@@ -55,6 +56,39 @@ const productionEnvironment: DeploymentEnvironment = {
 const productionResources = { ...MINIMUM_PRODUCTION_RESOURCES };
 
 describe("deployment environment validation", () => {
+  it("rejects a PostgREST schema list that hides application RPCs", () => {
+    const result = validateDeployment({
+      mode: "local",
+      environment: {
+        ...generatedLocalEnvironment,
+        PGRST_DB_SCHEMAS: "public,graphql_public",
+      },
+      resources: { cpuCores: 1, memoryGb: 1, diskGb: 1 },
+    });
+
+    expect(result.errors).toContain(
+      "Missing PostgREST exposed schema: identity_api",
+    );
+    expect(result.errors).toContain(
+      "Missing PostgREST exposed schema: marketplace_api",
+    );
+  });
+
+  it("rejects an identity action origin different from the local app", () => {
+    const result = validateDeployment({
+      mode: "local",
+      environment: {
+        ...generatedLocalEnvironment,
+        IDENTITY_ACTION_BASE_URL: "http://localhost:3000",
+      },
+      resources: { cpuCores: 1, memoryGb: 1, diskGb: 1 },
+    });
+
+    expect(result.errors).toContain(
+      "Mismatched local identity origin: IDENTITY_ACTION_BASE_URL, NEXT_PUBLIC_SUPABASE_URL",
+    );
+  });
+
   it("accepts generated local values without production providers", () => {
     expect(
       validateDeployment({

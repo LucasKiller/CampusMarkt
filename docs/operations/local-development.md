@@ -12,7 +12,7 @@ $ sh infra/supabase/utils/generate-keys.sh --update-env
 $ sh infra/supabase/utils/add-new-auth-keys.sh --update-env
 ```
 
-In `.env`, set `NEXT_PUBLIC_SUPABASE_URL=http://localhost:8080` and set `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to the generated `SUPABASE_PUBLISHABLE_KEY`. Keep all non-`NEXT_PUBLIC_` secrets server-only. Validate the resulting local contract:
+In `.env`, set `NEXT_PUBLIC_SUPABASE_URL`, `SITE_URL`, and `IDENTITY_ACTION_BASE_URL` to `http://localhost:8080`; set `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to the generated `SUPABASE_PUBLISHABLE_KEY`; include `identity_api` and `marketplace_api` in `PGRST_DB_SCHEMAS`; and leave `SMTP_USER` and `SMTP_PASS` empty for Inbucket. Keep all non-`NEXT_PUBLIC_` secrets server-only. Validate the resulting local contract:
 
 ```console
 $ npm run env:validate
@@ -24,7 +24,7 @@ $ docker compose config --quiet
 One root command builds and starts the web app, Caddy, PostgreSQL, Auth, REST, Realtime, Storage, and their support services. The unprofiled migration gate applies pending migrations before the web service can become healthy.
 
 ```console
-$ docker compose up --detach --wait
+$ docker compose --profile local up --detach --wait
 ```
 
 Check both application health levels and the public shell through Caddy:
@@ -34,6 +34,8 @@ $ curl --fail --show-error http://localhost:8080/health/live
 $ curl --fail --show-error http://localhost:8080/health/ready
 $ curl --fail --show-error http://localhost:8080/
 ```
+
+Registration confirmation emails are captured by the local Inbucket inbox at `http://localhost:9000`. They are not sent to external recipients.
 
 To re-run migrations explicitly after adding a migration file:
 
@@ -45,7 +47,7 @@ $ npm run test:db
 Stop the local stack without deleting the named PostgreSQL or Storage volumes. Never add `--volumes` unless destruction of local data is intentional and separately approved.
 
 ```console
-$ docker compose down
+$ docker compose --profile local down
 ```
 
 ## Repository gates

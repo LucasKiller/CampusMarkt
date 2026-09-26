@@ -55,18 +55,18 @@ sh infra/supabase/utils/generate-keys.sh --update-env
 sh infra/supabase/utils/add-new-auth-keys.sh --update-env
 ```
 
-Set `NEXT_PUBLIC_SUPABASE_URL=http://localhost:8080` and copy the generated `SUPABASE_PUBLISHABLE_KEY` into `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Then validate and start the full stack:
+Set `NEXT_PUBLIC_SUPABASE_URL`, `SITE_URL`, and `IDENTITY_ACTION_BASE_URL` to `http://localhost:8080`; copy the generated `SUPABASE_PUBLISHABLE_KEY` into `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; and include `identity_api` and `marketplace_api` in `PGRST_DB_SCHEMAS`. For the local mail inbox, leave `SMTP_USER` and `SMTP_PASS` empty. Then validate and start the full stack:
 
 ```console
 npm run env:validate
 docker compose config --quiet
-docker compose up --detach --wait
+docker compose --profile local up --detach --wait
 ```
 
-The application is available through Caddy at `http://localhost:8080`. Stop every local stack after use without deleting its named data volumes:
+The application is available through Caddy at `http://localhost:8080`. The local email inbox for account confirmation is at `http://localhost:9000` when the `local` profile is active. Stop the local stack after use without deleting its named data volumes:
 
 ```console
-docker compose down
+docker compose --profile local down
 ```
 
 See [Local development](docs/operations/local-development.md) for the complete setup and smoke-test procedure. Production configuration starts from `infra/compose/production.env.example`; its current editable hostname example is `campusmarkt.inovv.co`.

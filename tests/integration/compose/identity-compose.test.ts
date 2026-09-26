@@ -50,6 +50,8 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_test",
     PUBLIC_CONTACT_EMAIL: "kontakt@campusmarkt.inovv.co",
     PUBLIC_PRIVACY_EMAIL: "datenschutz@campusmarkt.inovv.co",
+    SMTP_USER: "compose-test-user",
+    SMTP_PASS: "compose-test-password",
   };
 }
 
@@ -136,14 +138,14 @@ describe("identity Compose integration and configuration", () => {
   it("supplies the action link base URL to the web container", () => {
     const web = renderCompose().services.web;
     expect(web?.environment?.IDENTITY_ACTION_BASE_URL).toBe(
-      "http://localhost:3000",
+      "http://localhost:8080",
     );
   });
 
   it("sets required terms and privacy versions in the web container", () => {
     const web = renderCompose().services.web;
-    expect(web?.environment?.CURRENT_TERMS_VERSION).toBe("2026-09-15");
-    expect(web?.environment?.CURRENT_PRIVACY_VERSION).toBe("2026-09-15");
+    expect(web?.environment?.CURRENT_TERMS_VERSION).toBe("terms-2026-09");
+    expect(web?.environment?.CURRENT_PRIVACY_VERSION).toBe("privacy-2026-09");
   });
 
   it("wires SMTP delivery settings to the web container", () => {
@@ -171,9 +173,11 @@ describe("identity Compose integration and configuration", () => {
     expect(mail?.profiles).toEqual(expect.arrayContaining(["local", "test"]));
   });
 
-  it("does not expose mail capture ports to the public host", () => {
+  it("binds the local mail inbox only to loopback", () => {
     const mail = renderCompose().services.mail;
-    expect(mail?.ports).toBeUndefined();
+    expect(mail?.ports).toEqual([
+      expect.objectContaining({ host_ip: "127.0.0.1", target: 9000 }),
+    ]);
     expect(mail?.expose).toEqual(expect.arrayContaining(["2500", "9000"]));
   });
 

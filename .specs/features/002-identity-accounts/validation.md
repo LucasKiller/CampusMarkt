@@ -200,3 +200,17 @@ All 36 implementation tasks (T1-T36) across Phase 1 through Phase 5 are complete
 **Overall**: ✅ Ready
 
 Feature `002-identity-accounts` is fully implemented, rigorously tested across 1,075 automated tests, verified against all 54 acceptance criteria and 8 edge cases, and confirmed by an isolated P0 discrimination sensor. The identity and accounts foundation is ready for the next feature in the roadmap: Feature `003-university-verification`.
+
+---
+
+## Local registration repair (2026-09-26)
+
+A later local Docker verification found four configuration mismatches blocking registration: PostgREST did not expose `identity_api` and `marketplace_api`; the action origin used port 3000 instead of the Caddy origin on port 8080; the policy versions differed from the registration form; and the local SMTP test inbox was not running. The local configuration, Compose defaults, example environment, and setup guide were aligned. The environment validator now checks the required API schemas and local action origin.
+
+Verification after the repair:
+
+- `npm run env:validate`: passed.
+- `npm run check`: passed (1,277 unit tests, 153 architecture tests, secret scan, documentation command check).
+- Isolated Compose integration suite: 53 passed.
+- Live local registration through Caddy: HTTP 202, one Auth user, one confirmation action token, and one message in the local Inbucket inbox with a port 8080 confirmation link. The disposable user and message were deleted after verification.
+- Local web, REST, and mail services: healthy; Inbucket UI returned HTTP 200 on `localhost:9000`.

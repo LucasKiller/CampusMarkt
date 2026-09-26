@@ -44,6 +44,8 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_test",
     PUBLIC_CONTACT_EMAIL: "kontakt@campusmarkt.inovv.co",
     PUBLIC_PRIVACY_EMAIL: "datenschutz@campusmarkt.inovv.co",
+    SMTP_USER: "compose-test-user",
+    SMTP_PASS: "compose-test-password",
   };
 }
 
@@ -99,12 +101,15 @@ describe("Caddy ingress boundary", () => {
     );
   });
 
-  it("makes Caddy the only service with published ports", () => {
+  it("publishes only Caddy and the loopback local mail inbox", () => {
     const servicesWithPorts = Object.entries(renderedModel().services)
       .filter(([, service]) => (service.ports?.length ?? 0) > 0)
       .map(([name]) => name);
 
-    expect(servicesWithPorts).toEqual(["caddy"]);
+    expect(servicesWithPorts).toEqual(["caddy", "mail"]);
+    expect(renderedModel().services.mail?.ports).toEqual([
+      expect.objectContaining({ host_ip: "127.0.0.1", target: 9000 }),
+    ]);
   });
 
   it("binds local ingress to loopback", () => {

@@ -194,9 +194,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: LOC-01, LOC-02
 **Done when**:
-- [ ] `LanguageProvider` wraps client component tree with initial server-provided locale.
-- [ ] `useTranslation()` returns active locale, dictionary, and `setLocale` callback.
-- [ ] Component tests pass.
+- [x] `LanguageProvider` wraps client component tree with initial server-provided locale.
+- [x] `useTranslation()` returns active locale, dictionary, and `setLocale` callback.
+- [x] Component tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement client language provider and translation hook`

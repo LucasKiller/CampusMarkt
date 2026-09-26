@@ -126,9 +126,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: MOD-01, MOD-02
 **Done when**:
-- [ ] `is_moderator` checks active assignment.
-- [ ] `get_moderation_queue` returns pending reports with target snippets for moderators.
-- [ ] Rejects non-moderators with HTTP 403 `FORBIDDEN`.
+- [x] `is_moderator` checks active assignment.
+- [x] `get_moderation_queue` returns pending reports with target snippets for moderators.
+- [x] Rejects non-moderators with HTTP 403 `FORBIDDEN`.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(moderation): implement get_moderation_queue rpc`

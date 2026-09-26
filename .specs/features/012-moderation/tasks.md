@@ -228,9 +228,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: MOD-02, MOD-03, MOD-04
 **Done when**:
-- [ ] Report card displays target type, snippet, policy reason, and action triggers.
-- [ ] Accessible modal captures mandatory justification note ($\le 1000$ chars).
-- [ ] Component unit tests pass.
+- [x] Report card displays target type, snippet, policy reason, and action triggers.
+- [x] Accessible modal captures mandatory justification note ($\le 1000$ chars).
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement moderation action modal and report card`

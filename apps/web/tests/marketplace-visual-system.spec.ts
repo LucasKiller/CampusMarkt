@@ -365,6 +365,10 @@ test("detail presents public decision information", async ({ page }) => {
   await expect(page.locator(".listing-details-container h1")).toContainText(
     "Calculus Textbook",
   );
+  await expect(page.locator(".listing-details-container h1")).toHaveCSS(
+    "color",
+    "rgb(24, 37, 34)",
+  );
   await expect(page.locator(".listing-details-container")).toContainText(
     "Alex Student",
   );
@@ -438,6 +442,16 @@ test("unavailable buyer actions stay unavailable", async ({
         : id === "visual-sold"
           ? /sold|verkauft/i
           : /archived|archiviert/i,
+    );
+    await expect(
+      page.locator(
+        id === "visual-reserved"
+          ? ".reserved-notice-banner"
+          : ".inactive-notice-banner",
+      ),
+    ).toHaveCSS(
+      "color",
+      id === "visual-archived" ? "rgb(83, 100, 95)" : "rgb(128, 82, 11)",
     );
   }
   await context.addCookies([

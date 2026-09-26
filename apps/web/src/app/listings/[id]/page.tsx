@@ -238,9 +238,13 @@ export default async function ListingDetailsPage(
               padding: "1rem 1.25rem",
               marginBottom: "1.5rem",
               borderRadius: "0.5rem",
-              backgroundColor: isSold ? "#fef3c7" : "#f1f5f9",
-              border: `1px solid ${isSold ? "#f59e0b" : "#cbd5e1"}`,
-              color: isSold ? "#92400e" : "#475569",
+              backgroundColor: isSold
+                ? "color-mix(in srgb, var(--color-warning) 14%, var(--color-surface))"
+                : "var(--color-canvas)",
+              border: isSold
+                ? "1px solid color-mix(in srgb, var(--color-warning) 45%, var(--color-border))"
+                : "1px solid var(--color-border)",
+              color: isSold ? "var(--color-warning)" : "var(--color-muted)",
               display: "flex",
               alignItems: "center",
               gap: "0.75rem",
@@ -267,8 +271,8 @@ export default async function ListingDetailsPage(
               <span
                 data-testid="badge-sold"
                 style={{
-                  background: "#b45309",
-                  color: "#ffffff",
+                  background: "var(--color-warning)",
+                  color: "var(--color-surface)",
                   padding: "0.2rem 0.5rem",
                   borderRadius: "0.25rem",
                   fontSize: "0.75rem",
@@ -299,9 +303,11 @@ export default async function ListingDetailsPage(
               padding: "0.85rem 1.25rem",
               marginBottom: "1.5rem",
               borderRadius: "0.5rem",
-              backgroundColor: "#ffedd5",
-              border: "1px solid #fb923c",
-              color: "#9a3412",
+              backgroundColor:
+                "color-mix(in srgb, var(--color-warning) 14%, var(--color-surface))",
+              border:
+                "1px solid color-mix(in srgb, var(--color-warning) 45%, var(--color-border))",
+              color: "var(--color-warning)",
               display: "flex",
               alignItems: "center",
               gap: "0.75rem",
@@ -311,8 +317,8 @@ export default async function ListingDetailsPage(
           >
             <span
               style={{
-                background: "#ea580c",
-                color: "#ffffff",
+                background: "var(--color-warning)",
+                color: "var(--color-surface)",
                 padding: "0.2rem 0.5rem",
                 borderRadius: "0.25rem",
                 fontSize: "0.75rem",
@@ -369,7 +375,7 @@ export default async function ListingDetailsPage(
                   padding: "0.25rem 0.6rem",
                   borderRadius: "0.375rem",
                   background: "var(--color-brand)",
-                  color: "#ffffff",
+                  color: "var(--color-surface)",
                 }}
               >
                 {getListingTypeLabel(listing.listingType, locale)}

@@ -1,8 +1,9 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getMarketplaceSearchService } from "../../modules/listings/server/index";
 import { SearchClientView } from "./search-client-view";
+import { MarketplaceHeader } from "../../components/marketplace/marketplace-header";
+import { getServerLocale } from "../../modules/localization/server/index";
 import type { PublicFeedItem, SearchFilters } from "@campusmarkt/types";
 
 export const metadata: Metadata = {
@@ -16,11 +17,13 @@ interface SearchPageProps {
 }
 
 export default async function SearchPage(props: SearchPageProps) {
+  const locale = await getServerLocale();
   const searchParams = props.searchParams ? await props.searchParams : {};
   const searchService = getMarketplaceSearchService();
 
   let initialItems: PublicFeedItem[] = [];
   let initialCursor: string | null = null;
+  let initialError = false;
   const initialFilters: SearchFilters = {};
 
   try {
@@ -29,9 +32,12 @@ export default async function SearchPage(props: SearchPageProps) {
       initialItems = result.data.items;
       initialCursor = result.data.nextCursor;
       Object.assign(initialFilters, result.data.appliedFilters);
+    } else {
+      initialError = true;
     }
   } catch (err) {
     console.error("[SearchPage: searchService.search]", err);
+    initialError = true;
   }
 
   // E2E test fallback during CI when DB is unpopulated
@@ -71,88 +77,22 @@ export default async function SearchPage(props: SearchPageProps) {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#ffffff",
-        color: "#0f172a",
-        fontFamily: "system-ui, -apple-system, sans-serif",
-      }}
-    >
-      <header
-        style={{
-          borderBottom: "1px solid #e2e8f0",
-          padding: "1rem 1.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#ffffff",
-        }}
-      >
-        <Link
-          href="/"
-          style={{
-            fontSize: "1.25rem",
-            fontWeight: 800,
-            color: "#0f172a",
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}
-        >
-          <span>CampusMarkt</span>
-          <span
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 500,
-              backgroundColor: "#f1f5f9",
-              padding: "0.15rem 0.5rem",
-              borderRadius: "0.25rem",
-              color: "#475569",
-            }}
-          >
-            Braunschweig
-          </span>
-        </Link>
-
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <Link
-            href="/listings/new"
-            style={{
-              padding: "0.4rem 0.85rem",
-              background: "#0f172a",
-              color: "#ffffff",
-              borderRadius: "0.375rem",
-              textDecoration: "none",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-            }}
-          >
-            Inserat aufgeben
-          </Link>
-          <Link
-            href="/account/listings"
-            style={{
-              fontSize: "0.9rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Meine Inserate
-          </Link>
-        </div>
-      </header>
+    <main className="marketplace-page search-page">
+      <MarketplaceHeader locale={locale} active="search" />
 
       <Suspense
         fallback={
-          <div style={{ padding: "3rem", textAlign: "center" }}>Laden...</div>
+          <div style={{ padding: "3rem", textAlign: "center" }}>
+            {locale === "en" ? "Loading..." : "Laden..."}
+          </div>
         }
       >
         <SearchClientView
           initialItems={initialItems}
           initialCursor={initialCursor}
           initialFilters={initialFilters}
+          locale={locale}
+          initialError={initialError && process.env.E2E_TEST !== "true"}
         />
       </Suspense>
     </main>

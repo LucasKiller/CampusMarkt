@@ -7,6 +7,7 @@ import {
   deserializeSearchParams,
   toURLSearchParams,
   formatSearchSummary,
+  type SupportedLocale,
 } from "@campusmarkt/domain";
 import { SearchBar } from "../../components/marketplace/search/search-bar";
 import {
@@ -19,56 +20,52 @@ export interface SearchClientViewProps {
   initialItems: PublicFeedItem[];
   initialCursor: string | null;
   initialFilters: SearchFilters;
+  locale?: SupportedLocale;
+  initialError?: boolean;
 }
 
 export function SearchClientView({
   initialItems = [],
   initialCursor = null,
   initialFilters = {},
+  locale = "de",
+  initialError = false,
 }: SearchClientViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const [items, setItems] = useState<PublicFeedItem[]>(initialItems);
   const [, setNextCursor] = useState<string | null>(initialCursor);
-  const [filters, setFilters] = useState<SearchFilters>(() => {
-    if (searchParams && searchParams.toString().length > 0) {
-      return deserializeSearchParams(searchParams);
-    }
-    return initialFilters;
-  });
+  const [filters, setFilters] = useState<SearchFilters>(() =>
+    searchParams?.toString()
+      ? deserializeSearchParams(searchParams)
+      : initialFilters,
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(initialError);
 
-  // Sync state from URL params if browser back/forward is used
   useEffect(() => {
-    if (searchParams) {
-      const fromUrl = deserializeSearchParams(searchParams);
-      setFilters(fromUrl);
-    }
+    if (searchParams) setFilters(deserializeSearchParams(searchParams));
   }, [searchParams]);
 
   const executeSearch = useCallback(
     async (activeFilters: SearchFilters) => {
       setIsLoading(true);
-      const queryParams = toURLSearchParams(activeFilters);
-      const queryString = queryParams.toString();
-
-      // Synchronize browser URL without page reload
-      const newPath = queryString ? `/search?${queryString}` : "/search";
-      router.replace(newPath, { scroll: false });
-
+      setError(false);
+      const queryString = toURLSearchParams(activeFilters).toString();
+      router.replace(queryString ? `/search?${queryString}` : "/search", {
+        scroll: false,
+      });
       try {
-        const res = await fetch(`/api/marketplace/search?${queryString}`);
-        if (res.ok) {
-          const json = await res.json();
-          if (json.ok && json.data) {
-            setItems(json.data.items ?? []);
-            setNextCursor(json.data.nextCursor ?? null);
-          }
-        }
-      } catch (err) {
-        console.error("[SearchClientView: executeSearch]", err);
+        const response = await fetch(`/api/marketplace/search?${queryString}`);
+        if (!response.ok) throw new Error(`Search failed: ${response.status}`);
+        const json = await response.json();
+        if (!json.ok || !json.data) throw new Error("Invalid search response");
+        setItems(json.data.items ?? []);
+        setNextCursor(json.data.nextCursor ?? null);
+      } catch (cause) {
+        console.error("[SearchClientView: executeSearch]", cause);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -76,35 +73,26 @@ export function SearchClientView({
     [router],
   );
 
-  const handleSearchTermChange = (searchTerm: string) => {
-    const updated: SearchFilters = {
+  const handleSearchTermChange = (query: string) => {
+    const updated = {
       ...filters,
-      query: searchTerm || undefined,
+      query: query || undefined,
       cursor: undefined,
     };
-    if (!searchTerm) {
-      delete updated.query;
-    }
     setFilters(updated);
-    executeSearch(updated);
+    void executeSearch(updated);
   };
 
   const handleFiltersChange = (updatedFilters: SearchFilters) => {
-    const next: SearchFilters = {
-      ...updatedFilters,
-      query: filters.query,
-      cursor: undefined,
-    };
+    const next = { ...updatedFilters, query: filters.query, cursor: undefined };
     setFilters(next);
-    executeSearch(next);
+    void executeSearch(next);
   };
 
   const handleResetAll = () => {
-    const reset: SearchFilters = {
-      sort: "relevance",
-    };
+    const reset: SearchFilters = { sort: "relevance" };
     setFilters(reset);
-    executeSearch(reset);
+    void executeSearch(reset);
   };
 
   const activeFilterCount =
@@ -116,205 +104,117 @@ export function SearchClientView({
     (filters.maxPriceCents !== undefined ? 1 : 0) +
     (filters.verifiedOnly ? 1 : 0);
 
-  const summary = formatSearchSummary(items.length, filters.query, "de");
-
   return (
-    <div
-      className="search-container"
-      data-testid="search-page-container"
-      style={{
-        width: "min(100%, 76rem)",
-        marginInline: "auto",
-        padding: "1.5rem 1rem 4rem",
-      }}
-    >
-      {/* Search Header Bar */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
-          marginBottom: "1.25rem",
-        }}
-      >
+    <div className="search-container" data-testid="search-page-container">
+      <div className="search-intro">
+        <p>
+          {locale === "en" ? "DISCOVER NEAR YOU" : "IN DEINER NÄHE ENTDECKEN"}
+        </p>
+        <h1>
+          {locale === "en"
+            ? "Find your next good find."
+            : "Entdecke deinen nächsten Fund."}
+        </h1>
+        <span>
+          {locale === "en"
+            ? "Useful things, local people, easy pickup."
+            : "Nützliche Dinge, Menschen aus der Nähe, einfache Übergabe."}
+        </span>
+      </div>
+      <div className="search-toolbar">
         <SearchBar
           initialQuery={filters.query ?? ""}
           onSearch={handleSearchTermChange}
+          locale={locale}
+          placeholder={
+            locale === "en"
+              ? "Search furniture, books, bikes..."
+              : "Möbel, Bücher, Fahrräder suchen..."
+          }
         />
-
-        {/* Mobile Filter Open Button */}
         <button
           type="button"
           data-testid="filter-drawer-open"
+          className="search-filter-trigger"
           onClick={() => setIsDrawerOpen(true)}
-          aria-label={`Filter öffnen (${activeFilterCount} aktiv)`}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.55rem 0.9rem",
-            borderRadius: "0.5rem",
-            border: "1px solid #d1d5db",
-            background: "#ffffff",
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            color: "#374151",
-            cursor: "pointer",
-          }}
+          aria-label={`${locale === "en" ? "Open filters" : "Filter öffnen"} (${activeFilterCount})`}
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-          </svg>
-          <span>Filter</span>
+          {locale === "en" ? "Filters" : "Filter"}
           {activeFilterCount > 0 && (
-            <span
-              data-testid="active-filter-count-badge"
-              style={{
-                backgroundColor: "#2563eb",
-                color: "#ffffff",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                borderRadius: "9999px",
-                padding: "0.1rem 0.4rem",
-                lineHeight: 1,
-              }}
-            >
+            <span data-testid="active-filter-count-badge">
               {activeFilterCount}
             </span>
           )}
         </button>
       </div>
-
-      {/* Desktop Filter Bar */}
       <FilterBar
         filters={filters}
         onFiltersChange={handleFiltersChange}
         onReset={handleResetAll}
+        locale={locale}
       />
-
-      {/* Mobile Filter Drawer */}
       <FilterDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         filters={filters}
         onFiltersChange={handleFiltersChange}
         onReset={handleResetAll}
+        locale={locale}
       />
-
-      {/* Search Results Summary */}
-      <div
-        data-testid="search-summary"
-        style={{
-          margin: "1.25rem 0 1rem",
-          fontSize: "1rem",
-          fontWeight: 600,
-          color: "#374151",
-        }}
-      >
-        {summary}
+      <div className="search-summary" data-testid="search-summary">
+        {formatSearchSummary(items.length, filters.query, locale)}
       </div>
-
-      {/* Results or Empty State */}
       {isLoading ? (
         <div
+          className="search-feedback"
           data-testid="search-loading"
-          style={{ padding: "3rem", textAlign: "center", color: "#6b7280" }}
+          role="status"
         >
-          Laden...
+          {locale === "en"
+            ? "Searching listings..."
+            : "Inserate werden gesucht..."}
+        </div>
+      ) : error ? (
+        <div className="marketplace-error" role="alert">
+          <span>
+            {locale === "en"
+              ? "Could not load listings. Please try again."
+              : "Fehler beim Laden der Inserate. Bitte versuche es erneut."}
+          </span>
+          <button
+            className="marketplace-retry"
+            type="button"
+            onClick={() => void executeSearch(filters)}
+          >
+            {locale === "en" ? "Retry" : "Erneut versuchen"}
+          </button>
         </div>
       ) : items.length > 0 ? (
-        <div
-          data-testid="search-results-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "1.5rem",
-          }}
-        >
+        <div className="search-results-grid" data-testid="search-results-grid">
           {items.map((item) => (
-            <ListingCard key={item.id} item={item} />
+            <ListingCard key={item.id} item={item} locale={locale} />
           ))}
         </div>
       ) : (
         <div
+          className="empty-feed-state"
           data-testid="search-empty-state"
           role="status"
-          aria-label="Keine Inserate gefunden"
-          style={{
-            padding: "3.5rem 1.5rem",
-            textAlign: "center",
-            backgroundColor: "#f9fafb",
-            borderRadius: "0.75rem",
-            border: "1px dashed #d1d5db",
-            marginTop: "1rem",
-          }}
         >
-          <div
-            style={{
-              width: "48px",
-              height: "48px",
-              margin: "0 auto 1rem",
-              color: "#9ca3af",
-            }}
-          >
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </div>
-          <h3
-            style={{
-              fontSize: "1.125rem",
-              fontWeight: 600,
-              color: "#111827",
-              marginBottom: "0.5rem",
-            }}
-          >
-            Keine Inserate gefunden
+          <h3>
+            {locale === "en" ? "No listings found" : "Keine Inserate gefunden"}
           </h3>
-          <p
-            style={{
-              color: "#6b7280",
-              fontSize: "0.875rem",
-              marginBottom: "1.25rem",
-              maxWidth: "28rem",
-              marginInline: "auto",
-            }}
-          >
-            Versuche, die Suchbegriffe zu ändern oder Filter zurückzusetzen.
+          <p>
+            {locale === "en"
+              ? "Try a different search or clear the filters."
+              : "Versuche einen anderen Suchbegriff oder setze die Filter zurück."}
           </p>
           <button
             type="button"
             data-testid="empty-reset-filters"
             onClick={handleResetAll}
-            style={{
-              padding: "0.5rem 1.25rem",
-              backgroundColor: "#2563eb",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "0.375rem",
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              cursor: "pointer",
-            }}
           >
-            Alle Filter zurücksetzen
+            {locale === "en" ? "Clear all filters" : "Alle Filter zurücksetzen"}
           </button>
         </div>
       )}

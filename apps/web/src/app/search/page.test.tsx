@@ -3,6 +3,9 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 
 vi.mock("server-only", () => ({}));
+vi.mock("../../modules/localization/server/index", () => ({
+  getServerLocale: async () => "de",
+}));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     replace: vi.fn(),
@@ -84,8 +87,9 @@ describe("SearchPage and SearchClientView UI (T15)", () => {
     const html = renderToString(pageJsx);
 
     expect(html).toContain("CampusMarkt");
-    expect(html).toContain("Inserat aufgeben");
-    expect(html).toContain("Meine Inserate");
+    expect(html).toContain("Inserieren");
+    expect(html).toContain("Favoriten");
+    expect(html).toContain("Nachrichten");
     expect(html).toContain('data-testid="search-page-container"');
     expect(html).toContain("Calculus Textbook 3rd Edition");
   });

@@ -103,6 +103,11 @@ const soldDetails = {
 
 test.describe("Marketplace Feed and Listing Details E2E Journeys (T16)", () => {
   test.beforeEach(async ({ page }) => {
+    await page
+      .context()
+      .addCookies([
+        { name: "NEXT_LOCALE", value: "de", url: "http://127.0.0.1:3100" },
+      ]);
     // Intercept feed API calls for reliable deterministic testing
     await page.route("**/api/marketplace/feed*", async (route) => {
       const url = new URL(route.request().url());

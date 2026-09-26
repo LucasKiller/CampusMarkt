@@ -7,6 +7,8 @@ import {
   getMarketplaceNegotiationService,
 } from "../../../modules/listings/server/index";
 import { ListingGallery } from "../../../components/marketplace/listing-gallery";
+import { MarketplaceHeader } from "../../../components/marketplace/marketplace-header";
+import { getServerLocale } from "../../../modules/localization/server/index";
 import { TrustBadge } from "../../../components/marketplace/feed";
 import { FavoriteButton } from "../../../components/marketplace/favorites/favorite-button";
 import { NegotiationBar } from "../../../components/marketplace/negotiation/negotiation-bar";
@@ -57,6 +59,8 @@ export default async function ListingDetailsPage(
 ) {
   const params = await props.params;
   const listingId = params.id;
+  const locale = await getServerLocale();
+  const isEnglish = locale === "en";
 
   const feedService = getMarketplaceFeedService();
   let listing: PublicListingDetails | null = null;
@@ -71,7 +75,11 @@ export default async function ListingDetailsPage(
   }
 
   // E2E test fallback fixture
-  if (!listing && process.env.E2E_TEST === "true") {
+  if (
+    !listing &&
+    process.env.E2E_TEST === "true" &&
+    !listingId.includes("missing")
+  ) {
     const testStatus = listingId.includes("sold")
       ? ("sold" as const)
       : listingId.includes("archived")
@@ -82,13 +90,15 @@ export default async function ListingDetailsPage(
 
     listing = {
       id: listingId,
-      listingType: "SELL",
+      listingType: listingId.includes("wanted") ? "WANTED" : "SELL",
       title: listingId.includes("sold")
         ? "Sold Vintage Desk"
-        : "Calculus Textbook 3rd Edition",
+        : listingId.includes("wanted")
+          ? "Looking for Bicycle Lock"
+          : "Calculus Textbook 3rd Edition",
       description:
         "Comprehensive calculus textbook in great condition. Minimal highlights, ideal for engineering students at TU Braunschweig.",
-      priceCents: 2450,
+      priceCents: listingId.includes("wanted") ? 1500 : 2450,
       category: "books_studies",
       pickupArea: "campus_nord_bienrode",
       condition: "GOOD",
@@ -193,27 +203,8 @@ export default async function ListingDetailsPage(
   }
 
   return (
-    <main>
-      <header className="site-header">
-        <a className="brand" href="/" aria-label="CampusMarkt Startseite">
-          CampusMarkt
-        </a>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <a
-            href="/"
-            style={{
-              fontSize: "0.9rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            ← Zurück zur Übersicht
-          </a>
-          <span className="language-note" aria-label="Verfügbare Sprachen">
-            DE · EN
-          </span>
-        </div>
-      </header>
+    <main className="marketplace-page detail-page">
+      <MarketplaceHeader locale={locale} />
 
       <div
         className="listing-details-container"
@@ -223,6 +214,9 @@ export default async function ListingDetailsPage(
           paddingBlock: "2rem 4rem",
         }}
       >
+        <a className="detail-back-link" href="/">
+          ← {isEnglish ? "Back to browse" : "Zurück zur Übersicht"}
+        </a>
         {/* Inactive Notice Banner for sold or archived listings */}
         {isInactive && (
           <div
@@ -271,13 +265,17 @@ export default async function ListingDetailsPage(
                   textTransform: "uppercase",
                 }}
               >
-                Verkauft
+                {isEnglish ? "Sold" : "Verkauft"}
               </span>
             )}
             <span>
               {isSold
-                ? "Dieser Artikel wurde erfolgreich verkauft und übergeben. Dieses Inserat wurde bereits verkauft und ist nicht mehr verfügbar."
-                : "Dieses Inserat wurde archiviert und ist nicht mehr verfügbar."}
+                ? isEnglish
+                  ? "This item has been sold and is no longer available."
+                  : "Dieser Artikel wurde erfolgreich verkauft und übergeben. Dieses Inserat wurde bereits verkauft und ist nicht mehr verfügbar."
+                : isEnglish
+                  ? "This listing has been archived and is no longer available."
+                  : "Dieses Inserat wurde archiviert und ist nicht mehr verfügbar."}
             </span>
           </div>
         )}
@@ -311,16 +309,19 @@ export default async function ListingDetailsPage(
                 textTransform: "uppercase",
               }}
             >
-              Reserviert
+              {isEnglish ? "Reserved" : "Reserviert"}
             </span>
             <span>
-              Dieses Inserat ist derzeit für einen Interessenten reserviert.
+              {isEnglish
+                ? "This listing is currently reserved for another person."
+                : "Dieses Inserat ist derzeit für einen Interessenten reserviert."}
             </span>
           </div>
         )}
 
         {/* 2-Column Responsive Grid on Desktop */}
         <div
+          className="detail-layout"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
@@ -366,7 +367,7 @@ export default async function ListingDetailsPage(
                   color: "#ffffff",
                 }}
               >
-                {getListingTypeLabel(listing.listingType)}
+                {getListingTypeLabel(listing.listingType, locale)}
               </span>
 
               <span
@@ -379,7 +380,7 @@ export default async function ListingDetailsPage(
                   color: "#334155",
                 }}
               >
-                {getConditionLabel(listing.condition)}
+                {getConditionLabel(listing.condition, locale)}
               </span>
 
               <span
@@ -392,7 +393,7 @@ export default async function ListingDetailsPage(
                   color: "#475569",
                 }}
               >
-                {getCategoryLabel(listing.category)}
+                {getCategoryLabel(listing.category, locale)}
               </span>
             </div>
 
@@ -421,13 +422,18 @@ export default async function ListingDetailsPage(
                     listing.listingType === "GIVE_AWAY" ? "#15803d" : "#0f172a",
                 }}
               >
-                {formatListingPrice(listing.listingType, listing.priceCents)}
+                {formatListingPrice(
+                  listing.listingType,
+                  listing.priceCents,
+                  locale,
+                )}
               </span>
               <time
                 dateTime={listing.createdAt}
                 style={{ fontSize: "0.85rem", color: "#64748b" }}
               >
-                Eingestellt {formatRelativeTime(listing.createdAt)}
+                {isEnglish ? "Listed" : "Eingestellt"}{" "}
+                {formatRelativeTime(listing.createdAt, undefined, locale)}
               </time>
             </div>
 
@@ -460,8 +466,9 @@ export default async function ListingDetailsPage(
                 <circle cx="12" cy="10" r="3" />
               </svg>
               <span>
-                <strong>Übergabeort:</strong>{" "}
-                {getPickupAreaLabel(listing.pickupArea)} (Braunschweig)
+                <strong>{isEnglish ? "Pickup area:" : "Übergabeort:"}</strong>{" "}
+                <span>{getPickupAreaLabel(listing.pickupArea, locale)}</span>{" "}
+                (Braunschweig)
               </span>
             </div>
 
@@ -496,19 +503,21 @@ export default async function ListingDetailsPage(
               </div>
 
               {/* Negotiation & Purchase CTAs - Disabled / hidden on sold listings */}
-              {!isSold && (
+              {!isInactive && (
                 <>
-                  <NegotiationBar
-                    listingId={listing.id}
-                    listingTitle={listing.title}
-                    sellerId={listing.seller.publicId}
-                    askingPriceCents={listing.priceCents}
-                    listingType={listing.listingType}
-                    listingStatus={listing.status}
-                    currentUserId={currentUserId}
-                    initialOffers={initialOffers}
-                    initialReservation={initialReservation}
-                  />
+                  {listing.listingType !== "WANTED" && (
+                    <NegotiationBar
+                      listingId={listing.id}
+                      listingTitle={listing.title}
+                      sellerId={listing.seller.publicId}
+                      askingPriceCents={listing.priceCents}
+                      listingType={listing.listingType}
+                      listingStatus={listing.status}
+                      currentUserId={currentUserId}
+                      initialOffers={initialOffers}
+                      initialReservation={initialReservation}
+                    />
+                  )}
 
                   {/* Messaging CTA (MSG-01) */}
                   <MessageButton
@@ -535,7 +544,7 @@ export default async function ListingDetailsPage(
                   color: "#1e293b",
                 }}
               >
-                Beschreibung
+                {isEnglish ? "Description" : "Beschreibung"}
               </h2>
               <div
                 style={{
@@ -573,7 +582,7 @@ export default async function ListingDetailsPage(
                   color: "#64748b",
                 }}
               >
-                Anbieter
+                {isEnglish ? "Seller" : "Anbieter"}
               </div>
 
               <div
@@ -630,14 +639,18 @@ export default async function ListingDetailsPage(
                     {listing.seller.displayName}
                   </span>
                   {listing.seller.universityBadge && (
-                    <TrustBadge badge={listing.seller.universityBadge} />
+                    <TrustBadge
+                      badge={listing.seller.universityBadge}
+                      locale={locale}
+                    />
                   )}
                 </div>
               </div>
 
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Privater Nutzer auf CampusMarkt · Kontaktaufnahme und Übergabe
-                vor Ort in Braunschweig.
+                {isEnglish
+                  ? "Private CampusMarkt member · Contact and local handover in Braunschweig."
+                  : "Privater Nutzer auf CampusMarkt · Kontaktaufnahme und Übergabe vor Ort in Braunschweig."}
               </p>
 
               <div
@@ -658,8 +671,12 @@ export default async function ListingDetailsPage(
         </div>
       </div>
 
-      <footer>
-        <p>Für die Hochschulcommunity und ganz Braunschweig.</p>
+      <footer className="marketplace-footer">
+        <p>
+          {isEnglish
+            ? "For the campus community and all of Braunschweig."
+            : "Für die Hochschulcommunity und ganz Braunschweig."}
+        </p>
       </footer>
     </main>
   );

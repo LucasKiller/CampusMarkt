@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { sanitizeSearchQuery } from "@campusmarkt/domain";
+import { sanitizeSearchQuery, type SupportedLocale } from "@campusmarkt/domain";
 
 export interface SearchBarProps {
   initialQuery?: string;
@@ -10,6 +10,7 @@ export interface SearchBarProps {
   debounceMs?: number;
   className?: string;
   autoFocus?: boolean;
+  locale?: SupportedLocale;
 }
 
 export function SearchBar({
@@ -19,6 +20,7 @@ export function SearchBar({
   debounceMs = 300,
   className = "",
   autoFocus = false,
+  locale = "de",
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,7 +84,9 @@ export function SearchBar({
   return (
     <form
       role="search"
-      aria-label="Marktplatz durchsuchen"
+      aria-label={
+        locale === "en" ? "Search marketplace" : "Marktplatz durchsuchen"
+      }
       onSubmit={handleSubmit}
       className={`search-bar-form ${className}`}
       data-testid="search-form"
@@ -143,7 +147,7 @@ export function SearchBar({
           autoCorrect="off"
           spellCheck="false"
           data-testid="search-input"
-          aria-label="Suchbegriff"
+          aria-label={locale === "en" ? "Search term" : "Suchbegriff"}
           style={{
             width: "100%",
             padding: "0.625rem 6.5rem 0.625rem 2.625rem",
@@ -163,7 +167,7 @@ export function SearchBar({
             type="button"
             onClick={handleClear}
             data-testid="search-clear-button"
-            aria-label="Suche zurücksetzen"
+            aria-label={locale === "en" ? "Clear search" : "Suche zurücksetzen"}
             style={{
               position: "absolute",
               right: "4.75rem",
@@ -199,7 +203,7 @@ export function SearchBar({
         <button
           type="submit"
           data-testid="search-submit-button"
-          aria-label="Suchen"
+          aria-label={locale === "en" ? "Search" : "Suchen"}
           style={{
             position: "absolute",
             right: "0.375rem",

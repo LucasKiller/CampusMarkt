@@ -216,6 +216,11 @@ test.describe("Marketplace Search and Filters E2E Journeys (T16)", () => {
   test("empty state journey: displays message with reset button when 0 items match", async ({
     page,
   }) => {
+    await page
+      .context()
+      .addCookies([
+        { name: "NEXT_LOCALE", value: "de", url: "http://127.0.0.1:3100" },
+      ]);
     await page.goto("/search?q=nonexistent");
 
     const emptyState = page.locator('[data-testid="search-empty-state"]');

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import type { ItemCondition } from "@campusmarkt/domain";
+import type { ItemCondition, SupportedLocale } from "@campusmarkt/domain";
 import {
   ITEM_CONDITIONS,
   LISTING_CATEGORIES,
@@ -21,6 +21,7 @@ export interface FilterProps {
   onFiltersChange: (filters: SearchFilters) => void;
   onReset?: () => void;
   className?: string;
+  locale?: SupportedLocale;
 }
 
 const SORT_LABELS: Record<SearchSortOption, string> = {
@@ -30,6 +31,13 @@ const SORT_LABELS: Record<SearchSortOption, string> = {
   price_desc: "Preis: Höchster zuerst",
 };
 
+const EN_SORT_LABELS: Record<SearchSortOption, string> = {
+  relevance: "Best match",
+  newest: "Newest first",
+  price_asc: "Price: low to high",
+  price_desc: "Price: high to low",
+};
+
 const CONDITION_LABELS: Record<ItemCondition, string> = {
   NEW: "Neu",
   LIKE_NEW: "Wie neu",
@@ -37,11 +45,19 @@ const CONDITION_LABELS: Record<ItemCondition, string> = {
   FAIR: "Akzeptabel",
 };
 
+const EN_CONDITION_LABELS: Record<ItemCondition, string> = {
+  NEW: "New",
+  LIKE_NEW: "Like new",
+  GOOD: "Good",
+  FAIR: "Fair",
+};
+
 export function FilterBar({
   filters,
   onFiltersChange,
   onReset,
   className = "",
+  locale = "de",
 }: FilterProps) {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFiltersChange({
@@ -96,7 +112,7 @@ export function FilterBar({
             htmlFor="filter-sort-select"
             style={{ fontSize: "0.875rem", color: "#4b5563", fontWeight: 500 }}
           >
-            Sortierung:
+            {locale === "en" ? "Sort by:" : "Sortierung:"}
           </label>
           <select
             id="filter-sort-select"
@@ -114,7 +130,7 @@ export function FilterBar({
           >
             {SEARCH_SORT_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
-                {SORT_LABELS[opt]}
+                {locale === "en" ? EN_SORT_LABELS[opt] : SORT_LABELS[opt]}
               </option>
             ))}
           </select>
@@ -137,7 +153,11 @@ export function FilterBar({
             onChange={handleVerifiedToggle}
             style={{ borderRadius: "0.25rem" }}
           />
-          <span>Nur TU Braunschweig verifiziert</span>
+          <span>
+            {locale === "en"
+              ? "TU Braunschweig verified only"
+              : "Nur TU Braunschweig verifiziert"}
+          </span>
         </label>
       </div>
 
@@ -157,7 +177,7 @@ export function FilterBar({
             borderRadius: "0.25rem",
           }}
         >
-          Alle Filter zurücksetzen
+          {locale === "en" ? "Clear all filters" : "Alle Filter zurücksetzen"}
         </button>
       )}
     </div>
@@ -176,6 +196,7 @@ export function FilterDrawer({
   isOpen,
   onClose,
   className = "",
+  locale = "de",
 }: FilterDrawerProps) {
   // Local state staging changes until applied
   const [localFilters, setLocalFilters] = useState<SearchFilters>(filters);
@@ -224,7 +245,7 @@ export function FilterDrawer({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Filtereinstellungen"
+      aria-label={locale === "en" ? "Filter settings" : "Filtereinstellungen"}
       data-testid="filter-drawer"
       className={`filter-drawer-overlay ${className}`}
       style={{
@@ -267,7 +288,7 @@ export function FilterDrawer({
               color: "#111827",
             }}
           >
-            Filter
+            {locale === "en" ? "Filters" : "Filter"}
           </h2>
           <div
             style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
@@ -277,7 +298,7 @@ export function FilterDrawer({
               type="button"
               onClick={onClose}
               data-testid="filter-drawer-close"
-              aria-label="Schließen"
+              aria-label={locale === "en" ? "Close" : "Schließen"}
               style={{
                 background: "none",
                 border: "none",
@@ -322,7 +343,7 @@ export function FilterDrawer({
                 marginBottom: "0.5rem",
               }}
             >
-              Kategorie
+              {locale === "en" ? "Category" : "Kategorie"}
             </h3>
             <div
               style={{
@@ -357,7 +378,7 @@ export function FilterDrawer({
                       });
                     }}
                   />
-                  <span>{getCategoryLabel(cat)}</span>
+                  <span>{getCategoryLabel(cat, locale)}</span>
                 </label>
               ))}
             </div>
@@ -373,7 +394,7 @@ export function FilterDrawer({
                 marginBottom: "0.5rem",
               }}
             >
-              Abholgebiet
+              {locale === "en" ? "Pickup area" : "Abholgebiet"}
             </h3>
             <div
               style={{
@@ -408,7 +429,7 @@ export function FilterDrawer({
                       });
                     }}
                   />
-                  <span>{getPickupAreaLabel(area)}</span>
+                  <span>{getPickupAreaLabel(area, locale)}</span>
                 </label>
               ))}
             </div>
@@ -424,7 +445,7 @@ export function FilterDrawer({
                 marginBottom: "0.5rem",
               }}
             >
-              Preis (€)
+              {locale === "en" ? "Price (€)" : "Preis (€)"}
             </h3>
             <div
               style={{
@@ -439,7 +460,11 @@ export function FilterDrawer({
                 step="1"
                 placeholder="Min €"
                 data-testid="price-min-input"
-                aria-label="Mindestpreis in Euro"
+                aria-label={
+                  locale === "en"
+                    ? "Minimum price in euros"
+                    : "Mindestpreis in Euro"
+                }
                 value={
                   localFilters.minPriceCents !== undefined
                     ? Math.round(localFilters.minPriceCents / 100)
@@ -469,7 +494,11 @@ export function FilterDrawer({
                 step="1"
                 placeholder="Max €"
                 data-testid="price-max-input"
-                aria-label="Maximalpreis in Euro"
+                aria-label={
+                  locale === "en"
+                    ? "Maximum price in euros"
+                    : "Maximalpreis in Euro"
+                }
                 value={
                   localFilters.maxPriceCents !== undefined
                     ? Math.round(localFilters.maxPriceCents / 100)
@@ -505,7 +534,7 @@ export function FilterDrawer({
                 marginBottom: "0.5rem",
               }}
             >
-              Zustand
+              {locale === "en" ? "Condition" : "Zustand"}
             </h3>
             <div
               style={{
@@ -540,7 +569,11 @@ export function FilterDrawer({
                       });
                     }}
                   />
-                  <span>{CONDITION_LABELS[cond]}</span>
+                  <span>
+                    {locale === "en"
+                      ? EN_CONDITION_LABELS[cond]
+                      : CONDITION_LABELS[cond]}
+                  </span>
                 </label>
               ))}
             </div>
@@ -556,7 +589,7 @@ export function FilterDrawer({
                 marginBottom: "0.5rem",
               }}
             >
-              Inserat-Typ
+              {locale === "en" ? "Listing type" : "Inserat-Typ"}
             </h3>
             <div
               style={{
@@ -591,7 +624,7 @@ export function FilterDrawer({
                       });
                     }}
                   />
-                  <span>{getListingTypeLabel(type)}</span>
+                  <span>{getListingTypeLabel(type, locale)}</span>
                 </label>
               ))}
             </div>
@@ -621,7 +654,11 @@ export function FilterDrawer({
                   });
                 }}
               />
-              <span>Nur TU Braunschweig verifiziert</span>
+              <span>
+                {locale === "en"
+                  ? "TU Braunschweig verified only"
+                  : "Nur TU Braunschweig verifiziert"}
+              </span>
             </label>
           </div>
         </div>
@@ -652,7 +689,7 @@ export function FilterDrawer({
               cursor: "pointer",
             }}
           >
-            Zurücksetzen
+            {locale === "en" ? "Reset" : "Zurücksetzen"}
           </button>
           <button
             type="button"
@@ -670,7 +707,7 @@ export function FilterDrawer({
               cursor: "pointer",
             }}
           >
-            Anwenden
+            {locale === "en" ? "Apply" : "Anwenden"}
           </button>
         </div>
       </div>

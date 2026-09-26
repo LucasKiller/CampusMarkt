@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getMarketplaceFeedService } from "../modules/listings/server/index";
 import { MarketplaceFeed } from "../components/marketplace/feed";
+import { MarketplaceHeader } from "../components/marketplace/marketplace-header";
 import type { PublicFeedItem } from "@campusmarkt/types";
-import { LanguageSwitcher } from "../modules/localization/index";
+import { getCategoryLabel } from "@campusmarkt/domain";
 import {
   getServerLocale,
   getServerDictionary,
@@ -28,14 +29,19 @@ export default async function HomePage(props: HomePageProps) {
   const locale = await getServerLocale();
   const dict = await getServerDictionary(locale);
   const isEnglish = locale === "en";
-  const exchangeTypes = isEnglish
-    ? ["Buy", "Sell", "Give away", "Find"]
-    : ["Kaufen", "Verkaufen", "Verschenken", "Suchen"];
+  const featuredCategories = [
+    "furniture",
+    "electronics",
+    "bicycles_mobility",
+    "books_studies",
+    "home_kitchen",
+  ] as const;
   const searchParams = props.searchParams ? await props.searchParams : {};
   const feedService = getMarketplaceFeedService();
 
   let initialItems: PublicFeedItem[] = [];
   let initialCursor: string | null = null;
+  let initialError = false;
 
   try {
     const result = await feedService.getPublicFeed({
@@ -49,9 +55,12 @@ export default async function HomePage(props: HomePageProps) {
     if (result.status === "success") {
       initialItems = result.data.items;
       initialCursor = result.data.nextCursor;
+    } else {
+      initialError = true;
     }
   } catch (err) {
     console.error("[HomePage: getPublicFeed]", err);
+    initialError = true;
   }
 
   // E2E test mock fallback if database is empty during CI tests
@@ -122,130 +131,95 @@ export default async function HomePage(props: HomePageProps) {
   }
 
   return (
-    <main>
-      <header className="site-header">
-        <a
-          className="brand"
-          href="/"
-          aria-label={isEnglish ? "CampusMarkt home" : "CampusMarkt Startseite"}
-        >
-          CampusMarkt
-        </a>
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <a
-            href="/listings/new"
-            style={{
-              padding: "0.4rem 0.85rem",
-              background: "#0f172a",
-              color: "#ffffff",
-              borderRadius: "0.375rem",
-              textDecoration: "none",
-              fontSize: "0.85rem",
-              fontWeight: 600,
-            }}
+    <main className="marketplace-page home-page">
+      <MarketplaceHeader locale={locale} active="explore" />
+
+      <section className="home-hero" aria-labelledby="hero-title">
+        <div className="home-hero-copy">
+          <p className="home-kicker">
+            {isEnglish ? "MADE FOR BRAUNSCHWEIG" : "FÜR BRAUNSCHWEIG GEMACHT"}
+          </p>
+          <h1 id="hero-title">
+            {isEnglish
+              ? "Your marketplace for Braunschweig"
+              : "Dein Marktplatz für Braunschweig"}
+          </h1>
+          <p className="home-lede">
+            {isEnglish
+              ? "Find useful things nearby, give items a second life, and connect locally."
+              : "Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites Leben und tausche dich lokal aus."}
+          </p>
+          <p className="home-promise">
+            Buy. Sell. Give away. Find what you need.
+          </p>
+          <form
+            className="home-search"
+            role="search"
+            action="/search"
+            method="get"
           >
-            {dict.nav.createListing}
-          </a>
-          <a
-            href="/search"
-            data-testid="nav-search-link"
-            style={{
-              fontSize: "0.9rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            {isEnglish ? "Search" : "Suche"}
-          </a>
-          <a
-            href="/account/listings"
-            style={{
-              fontSize: "0.9rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            {dict.nav.myListings}
-          </a>
-          <LanguageSwitcher />
+            <label htmlFor="home-query" className="sr-only">
+              {isEnglish ? "Search listings" : "Inserate suchen"}
+            </label>
+            <span aria-hidden="true">⌕</span>
+            <input
+              id="home-query"
+              name="q"
+              type="search"
+              placeholder={
+                isEnglish ? "What are you looking for?" : "Was suchst du?"
+              }
+            />
+            <button type="submit">{isEnglish ? "Search" : "Suchen"}</button>
+          </form>
         </div>
-      </header>
-
-      <section
-        className="hero"
-        aria-labelledby="hero-title"
-        style={{ paddingBlock: "clamp(2rem, 5vh, 4rem)", textAlign: "center" }}
-      >
-        <p className="eyebrow" style={{ marginBottom: "0.5rem" }}>
-          {isEnglish
-            ? "Local. Simple. For everyone."
-            : "Lokal. Einfach. Für alle."}
-        </p>
-        <h1
-          id="hero-title"
-          style={{ marginInline: "auto", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
-        >
-          {isEnglish
-            ? "Your marketplace for Braunschweig"
-            : "Dein Marktplatz für Braunschweig"}
-        </h1>
-        <p
-          className="lede"
-          style={{
-            marginInline: "auto",
-            maxWidth: "36rem",
-            marginBottom: "1rem",
-          }}
-        >
-          {isEnglish
-            ? "Find useful things nearby, give items a second life, and connect locally."
-            : "Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites Leben und tausche dich lokal aus."}
-        </p>
-        <p className="promise">Buy. Sell. Give away. Find what you need.</p>
-
-        <ul
-          className="exchange-types"
-          aria-label={
-            isEnglish
-              ? "Ways to use CampusMarkt"
-              : "Möglichkeiten auf CampusMarkt"
-          }
-          style={{ justifyContent: "center" }}
-        >
-          {exchangeTypes.map((exchangeType) => (
-            <li key={exchangeType}>{exchangeType}</li>
-          ))}
-        </ul>
+        <div className="home-hero-aside" aria-hidden="true">
+          <span className="hero-orbit hero-orbit-one" />
+          <span className="hero-orbit hero-orbit-two" />
+          <span className="hero-aside-label">
+            {isEnglish
+              ? "Good things stay local."
+              : "Gutes bleibt in der Nähe."}
+          </span>
+          <span className="hero-aside-city">BRAUNSCHWEIG / 52°16′ N</span>
+        </div>
       </section>
+
+      <nav
+        className="home-categories"
+        aria-label={isEnglish ? "Browse categories" : "Kategorien entdecken"}
+      >
+        <span>
+          {isEnglish ? "Explore by category" : "Nach Kategorie stöbern"}
+        </span>
+        <div>
+          {featuredCategories.map((category) => (
+            <Link key={category} href={`/search?category=${category}`}>
+              {getCategoryLabel(category, locale)}
+            </Link>
+          ))}
+        </div>
+      </nav>
 
       {/* Discovery Feed Section */}
       <section
+        className="home-listings"
         aria-label={isEnglish ? "Marketplace listings" : "Marktplatz Inserate"}
-        style={{
-          width: "min(100%, 76rem)",
-          marginInline: "auto",
-          paddingBottom: "3rem",
-        }}
       >
-        <h2
-          style={{
-            fontSize: "1.4rem",
-            fontWeight: 700,
-            marginBottom: "1rem",
-            color: "#0f172a",
-          }}
-        >
-          {isEnglish
-            ? "Recent listings in Braunschweig"
-            : "Aktuelle Inserate in Braunschweig"}
-        </h2>
+        <div className="section-heading">
+          <div>
+            <p>{isEnglish ? "DISCOVER" : "ENTDECKEN"}</p>
+            <h2>
+              {isEnglish
+                ? "Recent listings in Braunschweig"
+                : "Aktuelle Inserate in Braunschweig"}
+            </h2>
+          </div>
+          <Link href="/search">
+            {isEnglish ? "See all" : "Alle ansehen"}{" "}
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
 
         <MarketplaceFeed
           initialItems={initialItems}
@@ -254,56 +228,22 @@ export default async function HomePage(props: HomePageProps) {
           initialArea={searchParams.pickupArea ?? null}
           initialType={searchParams.listingType ?? null}
           locale={locale}
+          initialError={initialError && process.env.E2E_TEST !== "true"}
         />
       </section>
 
-      <footer
-        style={{
-          borderTop: "1px solid #e2e8f0",
-          padding: "2rem 1rem",
-          marginTop: "3rem",
-          textAlign: "center",
-        }}
-      >
-        <p
-          style={{
-            color: "#64748b",
-            fontSize: "0.875rem",
-            marginBottom: "1rem",
-          }}
-        >
+      <footer className="marketplace-footer">
+        <p>
           {locale === "en"
             ? "For the campus community and all of Braunschweig."
             : "Für die Hochschulcommunity und ganz Braunschweig."}
         </p>
         <nav
           aria-label={isEnglish ? "Legal information" : "Rechtliche Hinweise"}
-          style={{
-            display: "flex",
-            gap: "1.5rem",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            fontSize: "0.875rem",
-          }}
         >
-          <Link
-            href="/impressum"
-            style={{ color: "#0f766e", textDecoration: "underline" }}
-          >
-            {dict.legal.impressum}
-          </Link>
-          <Link
-            href="/datenschutz"
-            style={{ color: "#0f766e", textDecoration: "underline" }}
-          >
-            {dict.legal.datenschutz}
-          </Link>
-          <Link
-            href="/agb"
-            style={{ color: "#0f766e", textDecoration: "underline" }}
-          >
-            {dict.legal.agb}
-          </Link>
+          <Link href="/impressum">{dict.legal.impressum}</Link>
+          <Link href="/datenschutz">{dict.legal.datenschutz}</Link>
+          <Link href="/agb">{dict.legal.agb}</Link>
         </nav>
       </footer>
     </main>

@@ -5,6 +5,7 @@ CampusMarkt uses spec-driven development. This file is a map, not the complete p
 ## Read Before Changing the Product
 
 1. Read the relevant file under `docs/product/`.
+   For web UI work, also read the approved visual direction in `DESIGN.md`.
 2. Read active project decisions in `.specs/STATE.md`.
 3. Read the active feature's `spec.md`, `context.md`, `design.md`, and `tasks.md` under `.specs/features/`.
 4. Implement only approved tasks. Trace tests to acceptance criteria.
@@ -22,6 +23,7 @@ An approved spec authorizes local implementation and local commits only. It does
 - [Roadmap](docs/product/04-roadmap.md)
 - [Future capabilities](docs/product/05-future-capabilities.md)
 - [Project decisions and handoff](.specs/STATE.md)
+- [Web visual design](DESIGN.md)
 
 An approved feature specification is authoritative for that feature. If it conflicts with a general product document, follow the feature spec and create a reconciliation task for the product document.
 

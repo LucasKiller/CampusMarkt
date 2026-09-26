@@ -154,6 +154,14 @@
 - **Date**: 2026-09-26
 - **Status**: active; supersedes the default and header-negotiation portions of AD-018
 
+### AD-021
+- **Decision**: CampusMarkt's V1 web interface uses `DESIGN.md` as its visual design reference: original teal identity (`#0B665E`), near-white canvas (`#F7F8F5`), semantic tokens, Inter/system typography, square photo-led listing cards, and responsive navigation. Airbnb is a structural UX reference only, not a copied brand.
+- **Reason**: The visual direction was approved after comparing the previous design conversation with the implemented home, search, cards, and listing detail; it gives future screens a consistent hierarchy without adding product capabilities.
+- **Trade-off**: Existing support and operations screens will converge progressively rather than being restyled in one risky sweep.
+- **Scope**: Web UI and future V1 screen design; no API, stored-data, or marketplace-rule changes.
+- **Date**: 2026-09-27
+- **Status**: active
+
 ## Handoff
 
 - **Feature**: `014-prelaunch-reconciliation`

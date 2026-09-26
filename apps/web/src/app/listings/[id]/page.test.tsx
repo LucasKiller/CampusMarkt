@@ -3,6 +3,9 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 
 vi.mock("server-only", () => ({}));
+vi.mock("../../../modules/localization/server/index", () => ({
+  getServerLocale: async () => "de",
+}));
 
 import { ListingGallery } from "../../../components/marketplace/listing-gallery";
 import ListingDetailsPage from "./page";

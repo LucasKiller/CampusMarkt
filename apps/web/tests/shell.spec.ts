@@ -5,6 +5,11 @@ for (const width of [360, 1280]) {
     page,
   }) => {
     await page.setViewportSize({ width, height: 800 });
+    await page
+      .context()
+      .addCookies([
+        { name: "NEXT_LOCALE", value: "de", url: "http://127.0.0.1:3100" },
+      ]);
     await page.goto("/");
 
     await expect(

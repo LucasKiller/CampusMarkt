@@ -13,6 +13,7 @@ export interface MarketplaceFeedProps {
   initialArea?: string | null;
   initialType?: string | null;
   locale?: SupportedLocale;
+  initialError?: boolean;
 }
 
 export function MarketplaceFeed({
@@ -22,6 +23,7 @@ export function MarketplaceFeed({
   initialArea = null,
   initialType = null,
   locale = "de",
+  initialError = false,
 }: MarketplaceFeedProps) {
   const [items, setItems] = useState<PublicFeedItem[]>(initialItems);
   const [nextCursor, setNextCursor] = useState<string | null>(initialCursor);
@@ -30,7 +32,13 @@ export function MarketplaceFeed({
   const [type, setType] = useState<string | null>(initialType);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isFiltering, setIsFiltering] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    initialError
+      ? locale === "en"
+        ? "Could not load listings. Please try again."
+        : "Fehler beim Laden der Inserate. Bitte versuche es erneut."
+      : null,
+  );
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,6 +81,8 @@ export function MarketplaceFeed({
           }
           setNextCursor(newCursor);
           setError(null);
+        } else {
+          throw new Error("Invalid feed response");
         }
       } catch (err) {
         console.error("[MarketplaceFeed: fetchFeed]", err);
@@ -147,7 +157,7 @@ export function MarketplaceFeed({
 
   return (
     <FavoritesProvider>
-      <div className="marketplace-feed-container" style={{ width: "100%" }}>
+      <div className="marketplace-feed-container">
         {/* Filter Bar */}
         <FeedFilterBar
           selectedCategory={category}
@@ -161,19 +171,15 @@ export function MarketplaceFeed({
         />
 
         {error && (
-          <div
-            role="alert"
-            style={{
-              padding: "0.75rem 1rem",
-              marginBottom: "1rem",
-              background: "#fee2e2",
-              border: "1px solid #f87171",
-              color: "#991b1b",
-              borderRadius: "0.5rem",
-              fontSize: "0.9rem",
-            }}
-          >
-            {error}
+          <div role="alert" className="marketplace-error">
+            <span>{error}</span>
+            <button
+              className="marketplace-retry"
+              type="button"
+              onClick={() => fetchFeed(category, area, type, null, false)}
+            >
+              {locale === "en" ? "Retry" : "Erneut versuchen"}
+            </button>
           </div>
         )}
 
@@ -190,19 +196,13 @@ export function MarketplaceFeed({
               ? "Filtering listings..."
               : "Inserate werden gefiltert..."}
           </div>
-        ) : items.length === 0 ? (
+        ) : error ? null : items.length === 0 ? (
           <EmptyFeedState onReset={handleReset} locale={locale} />
         ) : (
           <>
             <div
               className="marketplace-feed-grid"
               data-testid="marketplace-feed-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-                gap: "1.25rem",
-                width: "100%",
-              }}
             >
               {items.map((item) => (
                 <ListingCard key={item.id} item={item} locale={locale} />

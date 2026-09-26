@@ -1,6 +1,6 @@
 # Localization & Launch Hardening Specification
 
-**Status:** Planned
+**Status:** Verified
 
 ## Problem Statement
 
@@ -153,8 +153,8 @@ So that the platform can recover from VPS hardware failures and manage beta inci
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| LOC-01 | Bilingual Core Navigation & Dictionary Parity | P1 Story 1: AC1, AC2, AC3, AC4 | Domain / Dictionaries / SSR | pending |
-| LOC-02 | Interactive Language Switching & Locale Persistence | P1 Story 2: AC1, AC2, AC3 | UI Components / Middleware | pending |
-| LOC-03 | Statutory German Legal Disclosures | P1 Story 3: AC1, AC2, AC3, AC4 | UI Pages / Legal Compliance | pending |
-| LOC-04 | Security Headers & Production Hardening | P1 Story 4: AC1, AC2, AC3 | Next.js Middleware / Security | pending |
-| LOC-05 | Disaster Recovery & Operational Readiness Runbook | P1 Story 5: AC1, AC2, AC3 | DevOps / Scripts / Runbooks | pending |
+| LOC-01 | Bilingual Core Navigation & Dictionary Parity | P1 Story 1: AC1, AC2, AC3, AC4 | Domain / Dictionaries / SSR | verified |
+| LOC-02 | Interactive Language Switching & Locale Persistence | P1 Story 2: AC1, AC2, AC3 | UI Components / Middleware | verified |
+| LOC-03 | Statutory German Legal Disclosures | P1 Story 3: AC1, AC2, AC3, AC4 | UI Pages / Legal Compliance | verified |
+| LOC-04 | Security Headers & Production Hardening | P1 Story 4: AC1, AC2, AC3 | Next.js Middleware / Security | verified |
+| LOC-05 | Disaster Recovery & Operational Readiness Runbook | P1 Story 5: AC1, AC2, AC3 | DevOps / Scripts / Runbooks | verified |

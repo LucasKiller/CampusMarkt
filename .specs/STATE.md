@@ -140,8 +140,8 @@
 
 ## Handoff
 
-- **Feature**: `013-localization-launch-hardening`
-- **Phase / Task**: Planning (Context, Spec, Design, Tasks)
+- **Feature**: none (CampusMarkt V1 MVP complete)
+- **Phase / Task**: Complete
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -155,10 +155,12 @@
   - `010-pickup-completion` verified.
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
-- **In-progress** (file:line): `.specs/features/013-localization-launch-hardening/`
-- **Next step**: Complete spec, design, and tasks documents, validate with scripts, and commit planning artifacts.
+  - `013-localization-launch-hardening` verified.
+- **In-progress** (file:line): none (All 13 features in CampusMarkt V1 MVP scope are verified and ready for launch)
+- **Next step**: Private beta launch preparation and production deployment runbook execution.
 - **Blockers**: none
-- **Uncommitted files**: `.specs/STATE.md`
+- **Uncommitted files**: none
 - **Branch**: main
+
 
 

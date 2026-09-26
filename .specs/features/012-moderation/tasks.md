@@ -139,10 +139,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: MOD-02, MOD-03, MOD-04, MOD-05
 **Done when**:
-- [ ] `dismiss_report` marks report `dismissed` and logs action.
-- [ ] `remove_listing_moderator` sets listing `removed`, cancels active reservations, and logs action.
-- [ ] `suspend_user_moderator` records suspension, removes active listings, and logs action.
-- [ ] `get_moderation_audit_log` returns paginated audit records for moderators.
+- [x] `dismiss_report` marks report `dismissed` and logs action.
+- [x] `remove_listing_moderator` sets listing `removed`, cancels active reservations, and logs action.
+- [x] `suspend_user_moderator` records suspension, removes active listings, and logs action.
+- [x] `get_moderation_audit_log` returns paginated audit records for moderators.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(moderation): implement moderation action and audit rpcs`

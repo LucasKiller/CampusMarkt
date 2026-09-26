@@ -151,9 +151,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: LOC-05
 **Done when**:
-- [ ] Automated accessibility assertions check root layout language and interactive element labeling.
-- [ ] Tests assert 0 critical accessibility violations across core surfaces.
-- [ ] Integration tests pass.
+- [x] Automated accessibility assertions check root layout language and interactive element labeling.
+- [x] Tests assert 0 critical accessibility violations across core surfaces.
+- [x] Integration tests pass.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `test(hardening): add automated wcag 2.1 aa accessibility audit tests`

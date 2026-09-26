@@ -95,9 +95,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: LOC-01, LOC-04
 **Done when**:
-- [ ] Architecture tests assert `@campusmarkt/domain` localization does not import browser or Next.js globals.
-- [ ] Architecture tests verify dictionary files export pure plain data objects.
-- [ ] Architecture gate passes.
+- [x] Architecture tests assert `@campusmarkt/domain` localization does not import browser or Next.js globals.
+- [x] Architecture tests verify dictionary files export pure plain data objects.
+- [x] Architecture gate passes.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(localization): add architectural boundary tests for localization module`

@@ -68,10 +68,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: LOC-01
 **Done when**:
-- [ ] `de.ts` and `en.ts` dictionaries implemented covering common, nav, listings, messaging, negotiation, safety, moderation, and legal keys.
-- [ ] `parity.test.ts` validates zero missing keys between `de` and `en`.
-- [ ] Zero undefined or empty values.
-- [ ] Unit tests pass.
+- [x] `de.ts` and `en.ts` dictionaries implemented covering common, nav, listings, messaging, negotiation, safety, moderation, and legal keys.
+- [x] `parity.test.ts` validates zero missing keys between `de` and `en`.
+- [x] Zero undefined or empty values.
+- [x] Unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement german and english typed dictionaries with parity test`

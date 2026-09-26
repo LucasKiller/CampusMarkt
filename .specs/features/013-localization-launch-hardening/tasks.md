@@ -250,9 +250,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: LOC-03
 **Done when**:
-- [ ] Terms page documents peer-to-peer physical goods rules, prohibited items, and moderation authority.
-- [ ] Footer links to `/impressum`, `/datenschutz`, and `/agb` updated and accessible.
-- [ ] Integration tests pass in `tests/integration/localization/legal-pages.test.ts`.
+- [x] Terms page documents peer-to-peer physical goods rules, prohibited items, and moderation authority.
+- [x] Footer links to `/impressum`, `/datenschutz`, and `/agb` updated and accessible.
+- [x] Integration tests pass in `tests/integration/localization/legal-pages.test.ts`.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(legal): implement marketplace agb terms of service page`

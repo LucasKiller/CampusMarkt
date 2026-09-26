@@ -3,6 +3,14 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 
 vi.mock("server-only", () => ({}));
+vi.mock("next/headers", () => ({
+  cookies: async () => ({
+    get: () => undefined,
+  }),
+  headers: async () => ({
+    get: () => "de",
+  }),
+}));
 vi.mock("../modules/listings/server/index", () => ({
   getMarketplaceFeedService: () => ({
     getPublicFeed: async () => ({

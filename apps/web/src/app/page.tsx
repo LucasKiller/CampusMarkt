@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getMarketplaceFeedService } from "../modules/listings/server/index";
 import { MarketplaceFeed } from "../components/marketplace/feed";
 import type { PublicFeedItem } from "@campusmarkt/types";
 import { LanguageSwitcher } from "../modules/localization/index";
+import {
+  getServerLocale,
+  getServerDictionary,
+} from "../modules/localization/server/index";
 
 export const metadata: Metadata = {
   title: "CampusMarkt · Dein lokaler Marktplatz für Braunschweig",
@@ -22,6 +27,8 @@ interface HomePageProps {
 }
 
 export default async function HomePage(props: HomePageProps) {
+  const locale = await getServerLocale();
+  const dict = await getServerDictionary(locale);
   const searchParams = props.searchParams ? await props.searchParams : {};
   const feedService = getMarketplaceFeedService();
 
@@ -232,8 +239,54 @@ export default async function HomePage(props: HomePageProps) {
         />
       </section>
 
-      <footer>
-        <p>Für die Hochschulcommunity und ganz Braunschweig.</p>
+      <footer
+        style={{
+          borderTop: "1px solid #e2e8f0",
+          padding: "2rem 1rem",
+          marginTop: "3rem",
+          textAlign: "center",
+        }}
+      >
+        <p
+          style={{
+            color: "#64748b",
+            fontSize: "0.875rem",
+            marginBottom: "1rem",
+          }}
+        >
+          {locale === "en"
+            ? "For the campus community and all of Braunschweig."
+            : "Für die Hochschulcommunity und ganz Braunschweig."}
+        </p>
+        <nav
+          aria-label="Rechtliche Hinweise"
+          style={{
+            display: "flex",
+            gap: "1.5rem",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            fontSize: "0.875rem",
+          }}
+        >
+          <Link
+            href="/impressum"
+            style={{ color: "#0f766e", textDecoration: "underline" }}
+          >
+            {dict.legal.impressum}
+          </Link>
+          <Link
+            href="/datenschutz"
+            style={{ color: "#0f766e", textDecoration: "underline" }}
+          >
+            {dict.legal.datenschutz}
+          </Link>
+          <Link
+            href="/agb"
+            style={{ color: "#0f766e", textDecoration: "underline" }}
+          >
+            {dict.legal.agb}
+          </Link>
+        </nav>
       </footer>
     </main>
   );

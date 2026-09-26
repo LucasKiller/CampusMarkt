@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getMarketplaceFeedService } from "../modules/listings/server/index";
 import { MarketplaceFeed } from "../components/marketplace/feed";
 import type { PublicFeedItem } from "@campusmarkt/types";
+import { LanguageSwitcher } from "../modules/localization/index";
 
 export const metadata: Metadata = {
   title: "CampusMarkt · Dein lokaler Marktplatz für Braunschweig",
@@ -160,9 +161,7 @@ export default async function HomePage(props: HomePageProps) {
           >
             Meine Inserate
           </a>
-          <span className="language-note" aria-label="Verfügbare Sprachen">
-            DE · EN
-          </span>
+          <LanguageSwitcher />
         </div>
       </header>
 

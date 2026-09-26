@@ -224,9 +224,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T12
 **Requirement**: LOC-02
 **Done when**:
-- [ ] Switcher rendered in main navigation header and mobile navigation drawer.
-- [ ] Displays active language and allows toggling with single click.
-- [ ] Accessible `aria-label` provided in active language.
+- [x] Switcher rendered in main navigation header and mobile navigation drawer.
+- [x] Displays active language and allows toggling with single click.
+- [x] Accessible `aria-label` provided in active language.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement interactive language switcher component`

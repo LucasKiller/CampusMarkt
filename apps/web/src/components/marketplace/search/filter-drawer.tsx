@@ -14,6 +14,7 @@ import {
   getListingTypeLabel,
 } from "@campusmarkt/domain";
 import type { SearchFilters } from "@campusmarkt/types";
+import { LanguageSwitcher } from "../../../modules/localization/index";
 
 export interface FilterProps {
   filters: SearchFilters;
@@ -268,31 +269,36 @@ export function FilterDrawer({
           >
             Filter
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            data-testid="filter-drawer-close"
-            aria-label="Schließen"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "0.25rem",
-              color: "#6b7280",
-            }}
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+            <LanguageSwitcher />
+            <button
+              type="button"
+              onClick={onClose}
+              data-testid="filter-drawer-close"
+              aria-label="Schließen"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "0.25rem",
+                color: "#6b7280",
+              }}
             >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Drawer Body with Filter Sections */}

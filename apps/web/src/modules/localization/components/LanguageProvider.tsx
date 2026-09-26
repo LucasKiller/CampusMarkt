@@ -104,7 +104,11 @@ export function LanguageProvider({
 export function useTranslation(): LanguageContextValue {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useTranslation must be used within a LanguageProvider");
+    return {
+      locale: "de",
+      dictionary: getDictionary("de"),
+      setLocale: async () => {},
+    };
   }
   return context;
 }

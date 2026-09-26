@@ -39,9 +39,10 @@ describe("LanguageProvider and useTranslation", () => {
     expect(html).toContain(">Language<");
   });
 
-  it("throws error when useTranslation is called outside of LanguageProvider", () => {
-    expect(() => renderToString(<TestConsumer />)).toThrow(
-      "useTranslation must be used within a LanguageProvider",
-    );
+  it("falls back to default German locale when useTranslation is used outside of LanguageProvider", () => {
+    const html = renderToString(<TestConsumer />);
+    expect(html).toContain(">de<");
+    expect(html).toContain(">CampusMarkt<");
+    expect(html).toContain(">Sprache<");
   });
 });

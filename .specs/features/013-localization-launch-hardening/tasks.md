@@ -82,9 +82,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: LOC-01, LOC-02
 **Done when**:
-- [ ] `resolveLocale(cookie, acceptLanguage)` handles valid, malformed, empty, and wildcard inputs cleanly.
-- [ ] `getDictionary(locale)` returns the corresponding typed dictionary.
-- [ ] Unit tests in `resolve-locale.test.ts` verify all edge cases.
+- [x] `resolveLocale(cookie, acceptLanguage)` handles valid, malformed, empty, and wildcard inputs cleanly.
+- [x] `getDictionary(locale)` returns the corresponding typed dictionary.
+- [x] Unit tests in `resolve-locale.test.ts` verify all edge cases.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement locale resolution and cookie sanitizer`

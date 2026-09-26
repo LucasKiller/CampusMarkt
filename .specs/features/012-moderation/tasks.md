@@ -96,9 +96,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T3
 **Requirement**: MOD-01, MOD-05
 **Done when**:
-- [ ] Boundaries enforce that non-moderator roles cannot access moderation RPCs or views.
-- [ ] Prohibits modification of audit log records.
-- [ ] All architectural boundary tests pass.
+- [x] Boundaries enforce that non-moderator roles cannot access moderation RPCs or views.
+- [x] Prohibits modification of audit log records.
+- [x] All architectural boundary tests pass.
 **Tests**: architecture
 **Gate**: Quick
 **Commit**: `test(moderation): add architectural boundary tests for moderation module`

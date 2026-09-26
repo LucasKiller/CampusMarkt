@@ -112,9 +112,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: LOC-04
 **Done when**:
-- [ ] Middleware sets all required security headers on all responses.
-- [ ] `Vary: Cookie, Accept-Language` and `Content-Language` attached to responses.
-- [ ] Integration tests in `tests/integration/hardening/security-headers.test.ts` verify header presence on routes.
+- [x] Middleware sets all required security headers on all responses.
+- [x] `Vary: Cookie, Accept-Language` and `Content-Language` attached to responses.
+- [x] Integration tests in `tests/integration/hardening/security-headers.test.ts` verify header presence on routes.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(hardening): implement security headers and vary headers middleware`

@@ -13,6 +13,7 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 - [ ] Enforce university-verification validity for twelve calendar months in every active behavior layer.
 - [ ] Preserve historical validation evidence while reconciling completed-spec status markers.
 - [x] Record the focused hardening work still required before private beta.
+- [x] Restore a clean, executable migration chain after the pre-beta database gate exposed a moderation-schema mismatch.
 
 ## Out of Scope
 
@@ -87,6 +88,14 @@ As a maintainer, I want the policy amendment proven without rewriting prior evid
 - **WHEN** Feature 003 history is inspected, **THEN** its original `validation.md` remains unchanged and an amendment points to Feature 014 for the twelve-month policy.
 - **WHEN** project decisions are inspected, **THEN** AD-008 is marked superseded and a new active decision records the twelve-calendar-month policy.
 
+### RECON-05: Clean Database Migration Chain
+
+As a developer or operator, I want every migration to apply to a fresh database in filename order so that local setup and recovery do not fail on schema assumptions that never existed.
+
+- **WHEN** the migration chain reaches Feature 012 moderation, **THEN** it extends the existing text-backed `marketplace.listings.status` check constraint with `removed` and does not reference a nonexistent enum type.
+- **WHEN** database tests provision a fresh isolated PostgreSQL project, **THEN** every migration through Feature 014 applies successfully before persistence assertions run.
+- **WHEN** the database test completes, **THEN** its isolated containers and volumes are removed.
+
 ## Requirement Traceability
 
 | Requirement | Description | Target evidence | Status |
@@ -95,3 +104,4 @@ As a maintainer, I want the policy amendment proven without rewriting prior evid
 | RECON-02 | Configurable public deployment identity | Env validation tests, legal-page tests, Compose example | planned |
 | RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | planned |
 | RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | planned |
+| RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | planned |

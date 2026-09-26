@@ -31,11 +31,12 @@ describe("marketplace moderation persistence, RBAC, and audit log integrity", ()
   });
 
   describe("T5: moderator assignments, audit tables, and engine-level security", () => {
-    it("ensures removed status is added to listing_status", () => {
+    it("extends the text-backed listing status constraint with removed", () => {
       const sql = readFileSync(tableMigration, "utf8");
       expect(sql).toMatch(
-        /alter type marketplace\.listing_status add value if not exists 'removed'/i,
+        /alter table marketplace\.listings[\s\S]*drop constraint if exists listings_status_check[\s\S]*add constraint listings_status_check[\s\S]*check \(status in \('active', 'reserved', 'sold', 'archived', 'removed'\)\)/i,
       );
+      expect(sql).not.toMatch(/alter type marketplace\.listing_status/i);
     });
 
     it("defines marketplace.moderator_assignments with single active assignment constraint (AD-017)", () => {

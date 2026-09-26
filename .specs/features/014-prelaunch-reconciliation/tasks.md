@@ -8,6 +8,7 @@
 | RECON-02 | Required valid contact config; configured legal pages; provisional examples; local fallback | `scripts/config/validate-env.test.ts`, legal-page tests, Compose tests | Unit / integration |
 | RECON-03 | Calendar-month calculation; migration recalculation; current wording; badge semantics | Domain identity tests, Supabase migration tests, legal-page tests | Unit / database / integration |
 | RECON-04 | Traceability; preserved historical evidence; superseding decision | Git diff, spec validators, independent `validation.md` | Structural / independent validation |
+| RECON-05 | Text-backed removed status; fresh migration chain | Moderation persistence test, isolated PostgreSQL database suite | Unit / database |
 
 ## Gate Check Commands
 
@@ -20,7 +21,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3 -> independent validation
+T1 -> T2 -> T3A -> T3 -> independent validation
 ```
 
 ## Task Breakdown
@@ -56,11 +57,26 @@ T1 -> T2 -> T3 -> independent validation
 **Gate:** Integration
 **Commit:** `fix(config): make public site identity configurable`
 
+### T3A: Repair the clean database migration path
+
+**What:** Correct the Feature 012 moderation migration's invalid enum assumption so a fresh database can reach Feature 014.
+**Where:** `supabase/migrations/20260926040000_marketplace_moderation.sql`, moderation persistence test, Feature 012 design amendment
+**Depends on:** T2
+**Requirement:** RECON-05
+**Done when:**
+- [x] The moderation migration extends the actual text-backed listing status constraint with `removed`.
+- [x] Its structural test rejects the nonexistent-enum implementation.
+- [x] A fresh isolated PostgreSQL database applies the complete migration chain.
+- [x] Test containers and volumes are removed after the gate.
+**Tests:** unit and database
+**Gate:** Quick + Database
+**Commit:** `fix(database): repair moderation migration chain`
+
 ### T3: Apply the twelve-calendar-month university policy
 
 **What:** Replace the 180-day rule in domain logic and PostgreSQL through an additive migration, recalculate existing rows, and reconcile all current policy wording and tests.
 **Where:** `packages/domain`, `supabase/migrations`, `supabase/tests`, `apps/web`, `docs/product`, Feature 003 amendment, `.specs/STATE.md`
-**Depends on:** T2
+**Depends on:** T3A
 **Requirement:** RECON-03, RECON-04
 **Done when:**
 - [ ] Domain expiry uses UTC calendar-month arithmetic and covers leap/month-end cases.

@@ -1,8 +1,13 @@
 -- Migration: 20260926040000_marketplace_moderation.sql
 -- Feature 012: Moderation Console and RBAC (AD-017)
 
--- 1. Ensure 'removed' status is present on marketplace.listing_status (Marketplace Invariant 9)
-alter type marketplace.listing_status add value if not exists 'removed';
+-- 1. Extend the text-backed listing status constraint with the distinct
+-- moderator-only 'removed' outcome (Marketplace Invariant 9).
+alter table marketplace.listings
+  drop constraint if exists listings_status_check;
+alter table marketplace.listings
+  add constraint listings_status_check
+  check (status in ('active', 'reserved', 'sold', 'archived', 'removed'));
 
 -- 2. Moderator action type enum
 do $$

@@ -42,8 +42,10 @@ Listing Status:
 ### 3.1 Migration: `20260926040000_marketplace_moderation.sql`
 
 ```sql
--- 1. Ensure 'removed' status is present on marketplace.listing_status
-alter type marketplace.listing_status add value if not exists 'removed';
+-- 1. Extend the text-backed listings status constraint with 'removed'
+alter table marketplace.listings drop constraint if exists listings_status_check;
+alter table marketplace.listings add constraint listings_status_check
+  check (status in ('active', 'reserved', 'sold', 'archived', 'removed'));
 
 -- 2. Moderator action type enum
 create type marketplace.moderator_action_type as enum (

@@ -171,9 +171,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: MOD-01, MOD-02, MOD-05
 **Done when**:
-- [ ] Repository wraps `getModerationQueue`, `dismissReport`, `removeListing`, `suspendUser`, `getAuditLog`.
-- [ ] Maps database records to typed DTOs.
-- [ ] Repository unit tests pass with mock Supabase client.
+- [x] Repository wraps `getModerationQueue`, `dismissReport`, `removeListing`, `suspendUser`, `getAuditLog`.
+- [x] Maps database records to typed DTOs.
+- [x] Repository unit tests pass with mock Supabase client.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement marketplace moderation repository`

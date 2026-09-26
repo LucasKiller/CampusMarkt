@@ -168,9 +168,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T8
 **Requirement**: LOC-01, LOC-02
 **Done when**:
-- [ ] `getServerLocale()` and `getServerDictionary()` helpers implemented.
-- [ ] Uses Next.js `cookies()` and `headers()`.
-- [ ] Unit tests pass.
+- [x] `getServerLocale()` and `getServerDictionary()` helpers implemented.
+- [x] Uses Next.js `cookies()` and `headers()`.
+- [x] Unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement server locale extractor and dictionary loader`

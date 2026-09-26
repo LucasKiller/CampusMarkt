@@ -153,10 +153,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T7
 **Requirement**: MOD-01, MOD-03, MOD-05
 **Done when**:
-- [ ] Verifies non-moderator calls fail with FORBIDDEN.
-- [ ] Verifies UPDATE/DELETE on audit table throws permission denied.
-- [ ] Verifies listing removal cancels active reservation atomically.
-- [ ] All database persistence tests pass.
+- [x] Verifies non-moderator calls fail with FORBIDDEN.
+- [x] Verifies UPDATE/DELETE on audit table throws permission denied.
+- [x] Verifies listing removal cancels active reservation atomically.
+- [x] All database persistence tests pass.
 **Tests**: db
 **Gate**: Database
 **Commit**: `test(moderation): add database persistence and rbac tests`

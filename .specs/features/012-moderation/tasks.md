@@ -241,9 +241,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: MOD-01, MOD-02
 **Done when**:
-- [ ] Gated to authorized moderators; non-moderators see 403/redirect.
-- [ ] Queue lists pending reports with dismiss, remove listing, and suspend user actions.
-- [ ] Component unit tests pass.
+- [x] Gated to authorized moderators; non-moderators see 403/redirect.
+- [x] Queue lists pending reports with dismiss, remove listing, and suspend user actions.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement moderation review queue page`

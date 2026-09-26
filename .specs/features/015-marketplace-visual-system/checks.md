@@ -66,6 +66,9 @@ Proof: `npx playwright test marketplace-visual-system.spec.ts -g "unavailable de
 | core listing types (3) | `SELL` C5/C10 · `GIVE_AWAY` C5/C10 · `WANTED` C6/C11 | - |
 | detail availability (4) | active C10 · reserved C12 · sold C12 · owned C12 | - |
 | discovery outcomes (3) | results C5 · empty C8 · error C9 | - |
+| filter dimensions (3) | category C7 · type C7 · area C7, request parameters and reset asserted | - |
+| responsive grid (4) | 390px 1 column C5 · 768px 2 C5 · 1100px 3 C5 · 1440px 4 C5, discovery grid browser proof | - |
+| detail composition (2) | desktop gallery beside reading/action C10 · mobile gallery before reading/action C13 | - |
 
 No route signatures, database entities, or startup configuration change. `DESIGN.md` identity door is covered by C1, C5, and C10–C13.
 

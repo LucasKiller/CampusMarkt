@@ -90,15 +90,25 @@ export default async function ListingDetailsPage(
 
     listing = {
       id: listingId,
-      listingType: listingId.includes("wanted") ? "WANTED" : "SELL",
+      listingType: listingId.includes("wanted")
+        ? "WANTED"
+        : listingId.includes("giveaway")
+          ? "GIVE_AWAY"
+          : "SELL",
       title: listingId.includes("sold")
         ? "Sold Vintage Desk"
         : listingId.includes("wanted")
           ? "Looking for Bicycle Lock"
-          : "Calculus Textbook 3rd Edition",
+          : listingId.includes("giveaway")
+            ? "Free Desk Lamp"
+            : "Calculus Textbook 3rd Edition",
       description:
         "Comprehensive calculus textbook in great condition. Minimal highlights, ideal for engineering students at TU Braunschweig.",
-      priceCents: listingId.includes("wanted") ? 1500 : 2450,
+      priceCents: listingId.includes("wanted")
+        ? 1500
+        : listingId.includes("giveaway")
+          ? null
+          : 2450,
       category: "books_studies",
       pickupArea: "campus_nord_bienrode",
       condition: "GOOD",
@@ -358,12 +368,7 @@ export default async function ListingDetailsPage(
                   textTransform: "uppercase",
                   padding: "0.25rem 0.6rem",
                   borderRadius: "0.375rem",
-                  background:
-                    listing.listingType === "GIVE_AWAY"
-                      ? "#15803d"
-                      : listing.listingType === "WANTED"
-                        ? "#7c3aed"
-                        : "#0f172a",
+                  background: "var(--color-brand)",
                   color: "#ffffff",
                 }}
               >
@@ -376,8 +381,8 @@ export default async function ListingDetailsPage(
                   fontWeight: 600,
                   padding: "0.25rem 0.6rem",
                   borderRadius: "0.375rem",
-                  background: "#e2e8f0",
-                  color: "#334155",
+                  background: "var(--color-brand-soft)",
+                  color: "var(--color-ink)",
                 }}
               >
                 {getConditionLabel(listing.condition, locale)}
@@ -389,8 +394,8 @@ export default async function ListingDetailsPage(
                   fontWeight: 500,
                   padding: "0.25rem 0.6rem",
                   borderRadius: "0.375rem",
-                  background: "#f1f5f9",
-                  color: "#475569",
+                  background: "var(--color-brand-soft)",
+                  color: "var(--color-muted)",
                 }}
               >
                 {getCategoryLabel(listing.category, locale)}
@@ -404,7 +409,7 @@ export default async function ListingDetailsPage(
                 fontSize: "clamp(1.5rem, 3vw, 2rem)",
                 fontWeight: 800,
                 lineHeight: 1.25,
-                color: "#0f172a",
+                color: "var(--color-ink)",
               }}
             >
               {listing.title}
@@ -418,8 +423,7 @@ export default async function ListingDetailsPage(
                 style={{
                   fontSize: "2rem",
                   fontWeight: 800,
-                  color:
-                    listing.listingType === "GIVE_AWAY" ? "#15803d" : "#0f172a",
+                  color: "var(--color-ink)",
                 }}
               >
                 {formatListingPrice(
@@ -430,7 +434,7 @@ export default async function ListingDetailsPage(
               </span>
               <time
                 dateTime={listing.createdAt}
-                style={{ fontSize: "0.85rem", color: "#64748b" }}
+                style={{ fontSize: "0.85rem", color: "var(--color-muted)" }}
               >
                 {isEnglish ? "Listed" : "Eingestellt"}{" "}
                 {formatRelativeTime(listing.createdAt, undefined, locale)}
@@ -444,11 +448,11 @@ export default async function ListingDetailsPage(
                 alignItems: "center",
                 gap: "0.6rem",
                 padding: "0.75rem 1rem",
-                backgroundColor: "#f8fafc",
+                backgroundColor: "var(--color-canvas)",
                 borderRadius: "0.5rem",
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--color-border)",
                 fontSize: "0.9rem",
-                color: "#334155",
+                color: "var(--color-muted)",
               }}
             >
               <svg
@@ -456,7 +460,7 @@ export default async function ListingDetailsPage(
                 height="18"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#0284c7"
+                stroke="var(--color-brand)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -533,7 +537,7 @@ export default async function ListingDetailsPage(
             <div
               style={{
                 paddingTop: "0.5rem",
-                borderTop: "1px solid #e2e8f0",
+                borderTop: "1px solid var(--color-border)",
               }}
             >
               <h2
@@ -541,7 +545,7 @@ export default async function ListingDetailsPage(
                   fontSize: "1.1rem",
                   fontWeight: 700,
                   marginBottom: "0.75rem",
-                  color: "#1e293b",
+                  color: "var(--color-ink)",
                 }}
               >
                 {isEnglish ? "Description" : "Beschreibung"}
@@ -550,7 +554,7 @@ export default async function ListingDetailsPage(
                 style={{
                   fontSize: "0.95rem",
                   lineHeight: 1.6,
-                  color: "#334155",
+                  color: "var(--color-ink)",
                   whiteSpace: "pre-line",
                   wordBreak: "break-word",
                 }}
@@ -565,9 +569,9 @@ export default async function ListingDetailsPage(
               style={{
                 marginTop: "0.5rem",
                 padding: "1.25rem",
-                backgroundColor: "#ffffff",
+                backgroundColor: "var(--color-surface)",
                 borderRadius: "0.75rem",
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--color-border)",
                 boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.05)",
                 display: "flex",
                 flexDirection: "column",
@@ -579,7 +583,7 @@ export default async function ListingDetailsPage(
                   fontSize: "0.8rem",
                   fontWeight: 700,
                   textTransform: "uppercase",
-                  color: "#64748b",
+                  color: "var(--color-muted)",
                 }}
               >
                 {isEnglish ? "Seller" : "Anbieter"}
@@ -597,13 +601,13 @@ export default async function ListingDetailsPage(
                     width: "2.75rem",
                     height: "2.75rem",
                     borderRadius: "50%",
-                    backgroundColor: "#e2e8f0",
+                    backgroundColor: "var(--color-brand-soft)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: 700,
                     fontSize: "1.1rem",
-                    color: "#334155",
+                    color: "var(--color-ink)",
                     overflow: "hidden",
                   }}
                 >
@@ -633,7 +637,7 @@ export default async function ListingDetailsPage(
                     style={{
                       fontWeight: 700,
                       fontSize: "1rem",
-                      color: "#0f172a",
+                      color: "var(--color-ink)",
                     }}
                   >
                     {listing.seller.displayName}
@@ -647,7 +651,13 @@ export default async function ListingDetailsPage(
                 </div>
               </div>
 
-              <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "0.8rem",
+                  color: "var(--color-muted)",
+                }}
+              >
                 {isEnglish
                   ? "Private CampusMarkt member · Contact and local handover in Braunschweig."
                   : "Privater Nutzer auf CampusMarkt · Kontaktaufnahme und Übergabe vor Ort in Braunschweig."}
@@ -656,7 +666,7 @@ export default async function ListingDetailsPage(
               <div
                 style={{
                   marginTop: "0.5rem",
-                  borderTop: "1px solid #f1f5f9",
+                  borderTop: "1px solid var(--color-border)",
                   paddingTop: "0.5rem",
                 }}
               >

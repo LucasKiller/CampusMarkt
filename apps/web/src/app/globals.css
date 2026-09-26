@@ -429,6 +429,10 @@ body {
 .listing-card-overlay > * {
   pointer-events: auto;
 }
+.listing-card .favorite-button-card {
+  width: 44px !important;
+  height: 44px !important;
+}
 .listing-card-tags {
   display: flex;
   align-items: flex-start;

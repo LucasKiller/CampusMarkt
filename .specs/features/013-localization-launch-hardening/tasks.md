@@ -237,9 +237,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T13
 **Requirement**: LOC-03
 **Done when**:
-- [ ] `/impressum` renders required operator identity, address, contact, and disclaimers.
-- [ ] `/datenschutz` details GDPR data processing, HMAC hash privacy, and user rights.
-- [ ] English view displays translated text with binding German statutory notice.
+- [x] `/impressum` renders required operator identity, address, contact, and disclaimers.
+- [x] `/datenschutz` details GDPR data processing, HMAC hash privacy, and user rights.
+- [x] English view displays translated text with binding German statutory notice.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(legal): implement statutory german impressum and datenschutz pages`

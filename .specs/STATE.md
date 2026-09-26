@@ -64,7 +64,7 @@
 - **Trade-off**: Plaintext institutional email is never recoverable from platform storage; expired verifications require initiating a fresh one-time email loop.
 - **Scope**: University verification, identity domain, database schema/RPCs, public profile trust badges, and account deletion lifecycle.
 - **Date**: 2026-09-21
-- **Status**: active
+- **Status**: superseded by AD-019
 
 ### AD-009
 - **Decision**: Listing media uses pre-signed direct upload to Supabase Storage `listing-media` with owner-scoped RLS policies; listing creation, mutable updates, and status transitions occur via atomic PostgreSQL RPCs (`marketplace_api`) with strict account confirmation checks, price invariants, and `listing_type` immutability.
@@ -138,10 +138,18 @@
 - **Date**: 2026-09-26
 - **Status**: active
 
+### AD-019
+- **Decision**: University verification remains pseudonymous and optional but is valid for twelve calendar months from confirmation. Existing verification expirations are recalculated from their original `verified_at` timestamps, and future confirmations use PostgreSQL calendar-month arithmetic rather than a fixed-day approximation.
+- **Reason**: The annual cadence was explicitly approved and matches the durable product documentation while reducing unnecessary re-verification friction.
+- **Trade-off**: A trust badge can remain active longer before the user must prove continued university access; query-time expiration and manual disconnect remain mandatory.
+- **Scope**: University-verification domain rules, database migrations/RPCs, badge projection, privacy wording, and retention documentation.
+- **Date**: 2026-09-26
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: none (CampusMarkt V1 MVP complete)
-- **Phase / Task**: Complete
+- **Feature**: `014-prelaunch-reconciliation`
+- **Phase / Task**: Execute / T1
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -156,11 +164,10 @@
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
   - `013-localization-launch-hardening` verified.
-- **In-progress** (file:line): none (All 13 features in CampusMarkt V1 MVP scope are verified and ready for launch)
-- **Next step**: Private beta launch preparation and production deployment runbook execution.
-- **Blockers**: none
+- **In-progress** (file:line): `.specs/features/014-prelaunch-reconciliation/tasks.md` (T1)
+- **Next step**: Reconcile repository documentation, then implement configurable public deployment identity and the twelve-calendar-month university-verification amendment.
+- **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.
 - **Uncommitted files**: none
 - **Branch**: main
-
 
 

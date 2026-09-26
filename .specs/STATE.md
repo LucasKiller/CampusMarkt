@@ -149,7 +149,7 @@
 ## Handoff
 
 - **Feature**: `014-prelaunch-reconciliation`
-- **Phase / Task**: Validate / independent verification
+- **Phase / Task**: Complete / independently verified
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -164,9 +164,9 @@
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
   - `013-localization-launch-hardening` verified.
-  - `014-prelaunch-reconciliation` implementation complete (T1-T5), including repair of private identity API boundaries exposed by live-stack validation; independent validation pending.
-- **In-progress** (file:line): `.specs/features/014-prelaunch-reconciliation/validation.md` (pending creation)
-- **Next step**: Run independent evidence-or-zero validation and the discrimination sensor for Feature 014.
+  - `014-prelaunch-reconciliation` verified PASS (24/24 acceptance criteria, all gates passing, valid discrimination sensor 6/6).
+- **In-progress**: none
+- **Next step**: Specify the focused pre-beta security and recovery hardening feature for the blocker classes below.
 - **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.
 - **Uncommitted files**: none
 - **Branch**: main

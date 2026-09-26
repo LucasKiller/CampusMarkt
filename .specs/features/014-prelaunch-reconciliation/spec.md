@@ -1,6 +1,6 @@
 # Prelaunch Reconciliation Specification
 
-**Status:** Approved
+**Status:** Verified
 
 ## Problem Statement
 
@@ -112,9 +112,9 @@ As an authenticated user, I want to read and update my profile without exposing 
 
 | Requirement | Description | Target evidence | Status |
 | --- | --- | --- | --- |
-| RECON-01 | Repository truth | README, completed goal markers, STATE review boundary | implemented |
-| RECON-02 | Configurable public deployment identity | Env validation tests, legal-page tests, Compose example | implemented |
-| RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | implemented |
-| RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | implemented |
-| RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | implemented |
-| RECON-06 | Private identity API boundaries | Repository contracts, PostgreSQL privilege/session/version tests, live-stack journey | implemented |
+| RECON-01 | Repository truth | README, completed goal markers, STATE review boundary | verified |
+| RECON-02 | Configurable public deployment identity | Env validation tests, legal-page tests, Compose example | verified |
+| RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | verified |
+| RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | verified |
+| RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | verified |
+| RECON-06 | Private identity API boundaries | Repository contracts, PostgreSQL privilege/session/version tests, live-stack journey | verified |

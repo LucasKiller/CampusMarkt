@@ -10,7 +10,7 @@ To launch a secure, legally compliant, and welcoming private beta in Braunschwei
 
 - [x] Provide 100% bilingual UI dictionary coverage for German (`de`) and English (`en`) across all core marketplace journeys.
 - [x] Enforce compile-time TypeScript type parity to guarantee zero missing, undefined, or empty keys across languages.
-- [x] Implement server-side locale detection via sanitized `NEXT_LOCALE` cookie and `Accept-Language` header, defaulting to German (`de`).
+- [x] Implement server-side locale detection via sanitized `NEXT_LOCALE` cookie, defaulting to English (`en`) when no valid cookie exists (AD-020).
 - [x] Eliminate Flash of Unlocalized Content (FOIC) and hydration mismatch by server-rendering `<html lang="...">` and matching strings.
 - [x] Provide an accessible language switcher component in navigation/header with immediate cookie update and zero URL perturbation.
 - [x] Deliver compliant German statutory disclosure pages: `/impressum` (§ 5 DDG), `/datenschutz` (DSGVO/GDPR), and `/agb` (Marketplace terms).
@@ -35,7 +35,7 @@ To launch a secure, legally compliant, and welcoming private beta in Braunschwei
 | Assumption / decision | Chosen default | Rationale | Confirmed? |
 | --- | --- | --- | --- |
 | Locale architecture | Lightweight server-driven typed dictionaries (AD-018) | Unanimous Jury decision: compile-time safety, zero route disruption, zero FOIC, fits single VPS (AD-006). | yes |
-| Default language | German (`de`) | CampusMarkt is hosted and operated in Braunschweig, Germany; German is the official administrative language. | yes |
+| Default language | English (`en`) | AD-020: explicit user request; saved German selection remains available. | yes |
 | Cookie sanitization | Strict regex `/^(de|en)$/` | Prevents header injection, cookie tampering, or cache poisoning attacks. | yes |
 | Legal bindingness | German statutory text is primary | English translations include explicit disclaimer referencing German statutory text as legally binding under German law. | yes |
 
@@ -47,8 +47,8 @@ To launch a secure, legally compliant, and welcoming private beta in Braunschwei
 
 | Dimension | Resolution |
 | --- | --- |
-| Input validation & bounds | Locale strings must strictly match `de` or `en`; any malformed or unrecognized value safely defaults to `de`. |
-| Failure / partial-failure states | Missing or corrupted cookie defaults to `Accept-Language` or `de`; server rendering never crashes on missing keys due to compile-time dictionary parity. |
+| Input validation & bounds | Locale strings must strictly match `de` or `en`; any malformed or unrecognized value safely defaults to `en`. |
+| Failure / partial-failure states | Missing or corrupted cookie defaults to `en`; server rendering never crashes on missing keys due to compile-time dictionary parity. |
 | Idempotency / retry handling | Setting the locale cookie is idempotent; multiple toggles write the same cookie value cleanly. |
 | Auth boundaries & rate limits | Locale resolution applies to all visitors (public, authenticated, and moderators); security headers protect all endpoints. |
 | Concurrency / ordering | Locale cookies are read-only per request; switching triggers immediate client-side reload or re-render. |
@@ -68,12 +68,12 @@ So that I can comfortably search, read, negotiate, and transact without language
 
 #### Acceptance Criteria
 
-- **WHEN** a user visits any page with `NEXT_LOCALE=de` or with an `Accept-Language: de` header,  
+- **WHEN** a user visits any page with `NEXT_LOCALE=de`,
   **THEN** the system server-renders the document with `<html lang="de">` and German interface strings across navigation, cards, and buttons.
-- **WHEN** a user visits any page with `NEXT_LOCALE=en` or with an `Accept-Language: en` header,  
+- **WHEN** a user visits any page with `NEXT_LOCALE=en`,
   **THEN** the system server-renders the document with `<html lang="en">` and English interface strings across navigation, cards, and buttons.
-- **WHEN** the user has not set an explicit locale cookie and no English preference is present in `Accept-Language`,  
-  **THEN** the system defaults to German (`de`).
+- **WHEN** the user has not set a valid locale cookie, regardless of `Accept-Language`,
+  **THEN** the system defaults to English (`en`).
 - **WHEN** executing unit and architectural tests,  
   **THEN** the test suite asserts 100% key parity between the German and English translation dictionaries with zero missing, undefined, or empty keys.
 
@@ -92,7 +92,7 @@ So that my preference is immediately applied, persisted in a secure cookie, and 
 - **WHEN** the locale is switched,  
   **THEN** the system renders the translated page with zero Flash of Unlocalized Content (FOIC) and zero hydration mismatch warnings.
 - **WHEN** a client submits a malformed or unsupported locale code (e.g. `fr` or `<script>`),  
-  **THEN** the system sanitizes the input, rejects the unsupported value, and resolves safely to default German (`de`).
+  **THEN** the system sanitizes the input, rejects the unsupported value, and resolves safely to default English (`en`).
 
 ---
 
@@ -126,7 +126,7 @@ So that the marketplace is protected against clickjacking, MIME sniffing, and cr
 - **WHEN** any HTTP request is processed by the application middleware,  
   **THEN** the system attaches strict security headers: `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Permissions-Policy`.
 - **WHEN** rendering cacheable or authenticated responses,  
-  **THEN** the system attaches `Vary: Cookie, Accept-Language` and `Content-Language: <locale>` to prevent reverse-proxy cache poisoning.
+  **THEN** the system attaches `Vary: Cookie` and `Content-Language: <locale>` to prevent reverse-proxy cache poisoning.
 - **WHEN** running security automated test suites,  
   **THEN** the system verifies that all static assets and API routes return the required security headers.
 

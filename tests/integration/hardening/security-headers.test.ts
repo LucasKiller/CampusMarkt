@@ -45,18 +45,18 @@ describe("security headers and vary middleware", () => {
     );
   });
 
-  it("attaches Vary header covering Cookie and Accept-Language", () => {
+  it("attaches Vary header covering Cookie", () => {
     const req = createRequest();
     const res = middleware(req);
 
-    expect(res.headers.get("Vary")).toBe("Cookie, Accept-Language");
+    expect(res.headers.get("Vary")).toBe("Cookie");
   });
 
-  it("sets Content-Language to German ('de') by default", () => {
+  it("sets Content-Language to English ('en') by default", () => {
     const req = createRequest();
     const res = middleware(req);
 
-    expect(res.headers.get("Content-Language")).toBe("de");
+    expect(res.headers.get("Content-Language")).toBe("en");
   });
 
   it("sets Content-Language to English ('en') when NEXT_LOCALE cookie is 'en'", () => {
@@ -69,9 +69,9 @@ describe("security headers and vary middleware", () => {
     expect(res.headers.get("Content-Language")).toBe("en");
   });
 
-  it("sets Content-Language to English ('en') when Accept-Language prefers English", () => {
+  it("keeps English as the default regardless of browser language", () => {
     const req = createRequest({
-      headers: { "accept-language": "en-US,en;q=0.9,de;q=0.8" },
+      headers: { "accept-language": "de-DE,de;q=0.9" },
     });
     const res = middleware(req);
 

@@ -18,7 +18,8 @@ describe("legal pages UI rendering (T14)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCookies.mockResolvedValue({
-      get: () => undefined,
+      get: (name: string) =>
+        name === "NEXT_LOCALE" ? { value: "de" } : undefined,
     });
     mockHeaders.mockResolvedValue({
       get: () => "de-DE,de;q=0.9",

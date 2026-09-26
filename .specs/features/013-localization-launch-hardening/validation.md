@@ -159,3 +159,15 @@
 - **Discrimination sensor**: 3/3 mutants killed (0 survived)
 - **Gate checks**: Quick, Integration, and Playwright E2E all passed with 0 failures
 - **Repository status**: All 13 MVP features completed, verified, and hardened for launch!
+
+## 9. T17 localization correction (2026-09-26)
+
+AD-020 supersedes the historical German default and `Accept-Language` fallback cited in AC 1.3 and AC 2.3 above. The revised criteria require English when no valid `NEXT_LOCALE` cookie exists, including a browser that sends `Accept-Language: de`. An explicit `de` cookie still selects German.
+
+| Revised criterion | Evidence | Result |
+| --- | --- | --- |
+| AC 1.3: English without a valid cookie | `resolve-locale.test.ts`, `get-server-locale.test.ts`, `security-headers.test.ts`, and browser test with a German header | PASS |
+| AC 2.1–2.2: switch from German to English updates cookie and visible page/feed without changing the route | `marketplace-localization-hardening.spec.ts` browser journey | PASS |
+| AC 2.3: malformed cookie falls back to English | `resolve-locale.test.ts` and `security-headers.test.ts` | PASS |
+
+Verification: `npm run check` (1,275 unit and 153 architecture tests, plus typecheck, lint, format, secret scan, and documentation checks); 69 targeted locale checks; 2 Playwright browser journeys. The Playwright web server stopped after the run.

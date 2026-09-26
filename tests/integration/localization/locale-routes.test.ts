@@ -107,7 +107,7 @@ describe("locale routes integration suite (T12)", () => {
     expect(cookieValue).toBe("en");
 
     // 2. Server resolves locale using the extracted cookie
-    const resolved = resolveLocale(cookieValue, "de-DE,de;q=0.9");
+    const resolved = resolveLocale(cookieValue);
     expect(resolved).toBe("en");
 
     // 3. Dictionary loaded for resolved locale has expected English strings

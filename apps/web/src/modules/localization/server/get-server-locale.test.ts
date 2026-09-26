@@ -34,20 +34,20 @@ describe("getServerLocale and getServerDictionary", () => {
     expect(locale).toBe("en");
   });
 
-  it("falls back to Accept-Language header when NEXT_LOCALE cookie is absent", async () => {
+  it("defaults to English despite a German Accept-Language header", async () => {
     mockCookies.mockResolvedValue({
       get: () => undefined,
     });
     mockHeaders.mockResolvedValue({
       get: (name: string) =>
-        name.toLowerCase() === "accept-language" ? "en-US,en;q=0.9" : null,
+        name.toLowerCase() === "accept-language" ? "de-DE,de;q=0.9" : null,
     });
 
     const locale = await getServerLocale();
     expect(locale).toBe("en");
   });
 
-  it("defaults to 'de' when neither cookie nor header specify supported locale", async () => {
+  it("defaults to 'en' when no cookie is set", async () => {
     mockCookies.mockResolvedValue({
       get: () => undefined,
     });
@@ -56,7 +56,7 @@ describe("getServerLocale and getServerDictionary", () => {
     });
 
     const locale = await getServerLocale();
-    expect(locale).toBe("de");
+    expect(locale).toBe("en");
   });
 
   it("getServerDictionary loads the English dictionary when locale is 'en'", async () => {

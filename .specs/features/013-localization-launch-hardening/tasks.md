@@ -270,3 +270,15 @@ T13 -> T14 -> T15 -> T16
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(launch): prove e2e bilingual journeys and launch hardening verification`
+
+#### T17: Fix language switching and make English the initial locale
+**What**: Honor a validated locale cookie, default to English without one, and render the home feed in the selected language. Let the locale API own the cookie write so the UI updates only after a successful response.
+**Where**: `packages/domain/src/localization/`, `apps/web/src/modules/localization/`, `apps/web/src/app/page.tsx`, `apps/web/src/components/marketplace/marketplace-feed.tsx`
+**Requirement**: LOC-01 AC 1.3; LOC-02 AC 2.1, 2.2, 2.3 (revised by AD-020)
+**Done when**:
+- [x] No valid locale cookie yields English even with a German browser language.
+- [x] Explicit `de` cookie yields German; switcher changes it to `en` and updates the home page and feed.
+- [x] Locale unit, integration, type, and browser checks pass.
+**Tests**: unit, integration, E2E
+**Gate**: Full localization gate
+**Commit**: `fix(localization): restore English switch and default`

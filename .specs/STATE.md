@@ -146,6 +146,14 @@
 - **Date**: 2026-09-26
 - **Status**: active
 
+### AD-020
+- **Decision**: The locale defaults to English (`en`) when no valid `NEXT_LOCALE` cookie exists. An explicit `de` cookie continues to select German. Browser `Accept-Language` no longer selects the initial language; responses vary only by cookie.
+- **Reason**: The requested English default must hold for visitors whose browser advertises German, while a saved language choice remains stable.
+- **Trade-off**: Visitors with a German browser must use the language switcher once to save German.
+- **Scope**: Locale resolution, response headers, and language switching.
+- **Date**: 2026-09-26
+- **Status**: active; supersedes the default and header-negotiation portions of AD-018
+
 ## Handoff
 
 - **Feature**: `014-prelaunch-reconciliation`

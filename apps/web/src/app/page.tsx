@@ -15,8 +15,6 @@ export const metadata: Metadata = {
     "Finde, kaufe, verschenke und suche nützliche Dinge in deiner Nachbarschaft in Braunschweig.",
 };
 
-const exchangeTypes = ["Kaufen", "Verkaufen", "Verschenken", "Suchen"];
-
 interface HomePageProps {
   searchParams?: Promise<{
     cursor?: string;
@@ -29,6 +27,10 @@ interface HomePageProps {
 export default async function HomePage(props: HomePageProps) {
   const locale = await getServerLocale();
   const dict = await getServerDictionary(locale);
+  const isEnglish = locale === "en";
+  const exchangeTypes = isEnglish
+    ? ["Buy", "Sell", "Give away", "Find"]
+    : ["Kaufen", "Verkaufen", "Verschenken", "Suchen"];
   const searchParams = props.searchParams ? await props.searchParams : {};
   const feedService = getMarketplaceFeedService();
 
@@ -122,7 +124,11 @@ export default async function HomePage(props: HomePageProps) {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="/" aria-label="CampusMarkt Startseite">
+        <a
+          className="brand"
+          href="/"
+          aria-label={isEnglish ? "CampusMarkt home" : "CampusMarkt Startseite"}
+        >
           CampusMarkt
         </a>
         <div
@@ -145,7 +151,7 @@ export default async function HomePage(props: HomePageProps) {
               fontWeight: 600,
             }}
           >
-            Inserat aufgeben
+            {dict.nav.createListing}
           </a>
           <a
             href="/search"
@@ -156,7 +162,7 @@ export default async function HomePage(props: HomePageProps) {
               textDecoration: "none",
             }}
           >
-            Suche
+            {isEnglish ? "Search" : "Suche"}
           </a>
           <a
             href="/account/listings"
@@ -166,7 +172,7 @@ export default async function HomePage(props: HomePageProps) {
               textDecoration: "none",
             }}
           >
-            Meine Inserate
+            {dict.nav.myListings}
           </a>
           <LanguageSwitcher />
         </div>
@@ -178,13 +184,17 @@ export default async function HomePage(props: HomePageProps) {
         style={{ paddingBlock: "clamp(2rem, 5vh, 4rem)", textAlign: "center" }}
       >
         <p className="eyebrow" style={{ marginBottom: "0.5rem" }}>
-          Lokal. Einfach. Für alle.
+          {isEnglish
+            ? "Local. Simple. For everyone."
+            : "Lokal. Einfach. Für alle."}
         </p>
         <h1
           id="hero-title"
           style={{ marginInline: "auto", fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
         >
-          Dein Marktplatz für Braunschweig
+          {isEnglish
+            ? "Your marketplace for Braunschweig"
+            : "Dein Marktplatz für Braunschweig"}
         </h1>
         <p
           className="lede"
@@ -194,14 +204,19 @@ export default async function HomePage(props: HomePageProps) {
             marginBottom: "1rem",
           }}
         >
-          Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites
-          Leben und tausche dich lokal aus.
+          {isEnglish
+            ? "Find useful things nearby, give items a second life, and connect locally."
+            : "Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites Leben und tausche dich lokal aus."}
         </p>
         <p className="promise">Buy. Sell. Give away. Find what you need.</p>
 
         <ul
           className="exchange-types"
-          aria-label="Möglichkeiten auf CampusMarkt"
+          aria-label={
+            isEnglish
+              ? "Ways to use CampusMarkt"
+              : "Möglichkeiten auf CampusMarkt"
+          }
           style={{ justifyContent: "center" }}
         >
           {exchangeTypes.map((exchangeType) => (
@@ -212,7 +227,7 @@ export default async function HomePage(props: HomePageProps) {
 
       {/* Discovery Feed Section */}
       <section
-        aria-label="Marktplatz Inserate"
+        aria-label={isEnglish ? "Marketplace listings" : "Marktplatz Inserate"}
         style={{
           width: "min(100%, 76rem)",
           marginInline: "auto",
@@ -227,7 +242,9 @@ export default async function HomePage(props: HomePageProps) {
             color: "#0f172a",
           }}
         >
-          Aktuelle Inserate in Braunschweig
+          {isEnglish
+            ? "Recent listings in Braunschweig"
+            : "Aktuelle Inserate in Braunschweig"}
         </h2>
 
         <MarketplaceFeed
@@ -236,6 +253,7 @@ export default async function HomePage(props: HomePageProps) {
           initialCategory={searchParams.category ?? null}
           initialArea={searchParams.pickupArea ?? null}
           initialType={searchParams.listingType ?? null}
+          locale={locale}
         />
       </section>
 
@@ -259,7 +277,7 @@ export default async function HomePage(props: HomePageProps) {
             : "Für die Hochschulcommunity und ganz Braunschweig."}
         </p>
         <nav
-          aria-label="Rechtliche Hinweise"
+          aria-label={isEnglish ? "Legal information" : "Rechtliche Hinweise"}
           style={{
             display: "flex",
             gap: "1.5rem",

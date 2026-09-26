@@ -20,7 +20,7 @@ export default async function RootLayout({
   const dictionary = await getServerDictionary(locale);
 
   return (
-    <html lang={locale} data-test-lang="de">
+    <html lang={locale}>
       <body>
         <LanguageProvider initialLocale={locale} initialDictionary={dictionary}>
           {children}

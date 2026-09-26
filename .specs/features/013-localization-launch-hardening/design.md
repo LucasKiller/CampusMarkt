@@ -8,6 +8,7 @@ CampusMarkt operates as a modular monolith (AD-006) on a single budget VPS, usin
 - **AD-006**: Self-hosted modular monolith on single budget VPS.
 - **AD-007**: Identity, cookie-based session management, and server-side data boundary.
 - **AD-018**: Bilingual localization (German & English) and launch hardening architected as lightweight server-driven typed dictionaries with cookie/header locale resolution paired with a monorepo launch hardening suite.
+- **AD-020**: English is the initial locale when no valid locale cookie exists; an explicit German cookie remains authoritative. `Accept-Language` does not override this default.
   - No invasive URL subpath prefixing (`/[locale]/...`), keeping permalinks stable.
   - Zero FOIC via SSR `<html lang="...">` and server-rendered dictionary strings.
   - Strict compile-time TypeScript type parity between `de` and `en` dictionaries.
@@ -27,7 +28,7 @@ packages/domain/src/localization/
 ├── dictionaries/
 │   ├── de.ts                    # Full German translations
 │   └── en.ts                    # Full English translations
-├── resolve-locale.ts            # Sanitization, cookie & Accept-Language parser
+├── resolve-locale.ts            # Sanitization and cookie fallback
 ├── get-dictionary.ts            # Typed dictionary getter
 └── index.ts                     # Public domain exports
 
@@ -126,17 +127,11 @@ Both `de.ts` and `en.ts` implement `Dictionary` identically. An automated test a
 
 ### 2.3 Locale Resolution & Cookie Negotiation
 ```typescript
-export function resolveLocale(cookieValue?: string | null, acceptLanguage?: string | null): SupportedLocale {
+export function resolveLocale(cookieValue?: string | null): SupportedLocale {
   if (cookieValue && /^(de|en)$/.test(cookieValue)) {
     return cookieValue as SupportedLocale;
   }
-  if (acceptLanguage) {
-    const primary = acceptLanguage.split(',')[0]?.split(';')[0]?.trim().toLowerCase();
-    if (primary?.startsWith('en')) {
-      return 'en';
-    }
-  }
-  return 'de';
+  return 'en';
 }
 ```
 
@@ -184,7 +179,7 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
 };
 ```
-Middleware sets these headers on all responses, alongside `Vary: Cookie, Accept-Language` and `Content-Language: <locale>`.
+Middleware sets these headers on all responses, alongside `Vary: Cookie` and `Content-Language: <locale>`.
 
 ---
 

@@ -1,6 +1,21 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Bilingual Localization & Launch Hardening E2E Journeys (T16)", () => {
+  test("defaults to English without a locale cookie, even for a German browser", async ({
+    page,
+  }) => {
+    await page.setExtraHTTPHeaders({ "Accept-Language": "de-DE,de;q=0.9" });
+    await page.goto("/");
+
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator("#hero-title")).toHaveText(
+      "Your marketplace for Braunschweig",
+    );
+    await expect(page.locator(".marketplace-feed-grid")).toContainText(
+      "For Sale",
+    );
+  });
+
   test("renders homepage in German with NEXT_LOCALE=de and switches to English via LanguageSwitcher", async ({
     page,
     context,
@@ -35,10 +50,11 @@ test.describe("Bilingual Localization & Launch Hardening E2E Journeys (T16)", ()
     const enBtn = page.locator('[data-testid="language-btn-en"]').first();
     await expect(enBtn).toBeVisible();
     await enBtn.click();
-    await page.waitForTimeout(1000);
-
     // 5. Verify page updates to English
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator("#hero-title")).toHaveText(
+      "Your marketplace for Braunschweig",
+    );
 
     // 6. Verify cookie NEXT_LOCALE is set to 'en'
     const cookies = await context.cookies();

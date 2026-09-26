@@ -120,7 +120,7 @@ describe("localization architectural boundary tests", () => {
 
   it("verifies localization resolution functions are pure and execute without browser or next globals", () => {
     // Should run purely using argument values without accessing window, document, or Next.js globals
-    const resolved = resolveLocale("en", "de");
+    const resolved = resolveLocale("en");
     expect(resolved).toBe("en");
 
     const dict = getDictionary(resolved);

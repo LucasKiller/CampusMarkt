@@ -1,5 +1,5 @@
 import "server-only";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import {
   resolveLocale,
   getDictionary,
@@ -9,12 +9,8 @@ import {
 
 export async function getServerLocale(): Promise<SupportedLocale> {
   const cookieStore = await cookies();
-  const headerStore = await headers();
-
   const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value;
-  const acceptLanguage = headerStore.get("accept-language");
-
-  return resolveLocale(cookieLocale, acceptLanguage);
+  return resolveLocale(cookieLocale);
 }
 
 export async function getServerDictionary(

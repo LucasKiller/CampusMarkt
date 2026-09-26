@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { useRouter } from "next/navigation";
 import {
+  DEFAULT_LOCALE,
   type Dictionary,
   type SupportedLocale,
   getDictionary,
@@ -72,7 +73,6 @@ export function LanguageProvider({
         }
 
         if (typeof document !== "undefined") {
-          document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
           document.documentElement.lang = newLocale;
         }
         if (
@@ -111,8 +111,8 @@ export function useTranslation(): LanguageContextValue {
   const context = useContext(LanguageContext);
   if (!context) {
     return {
-      locale: "de",
-      dictionary: getDictionary("de"),
+      locale: DEFAULT_LOCALE,
+      dictionary: getDictionary(DEFAULT_LOCALE),
       setLocale: async () => {},
     };
   }

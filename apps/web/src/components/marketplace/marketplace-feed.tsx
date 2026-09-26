@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicFeedItem } from "@campusmarkt/types";
+import type { SupportedLocale } from "@campusmarkt/domain";
 import { EmptyFeedState, FeedFilterBar, ListingCard } from "./feed";
 import { FavoritesProvider } from "./favorites/favorites-context";
 
@@ -11,6 +12,7 @@ export interface MarketplaceFeedProps {
   initialCategory?: string | null;
   initialArea?: string | null;
   initialType?: string | null;
+  locale?: SupportedLocale;
 }
 
 export function MarketplaceFeed({
@@ -19,6 +21,7 @@ export function MarketplaceFeed({
   initialCategory = null,
   initialArea = null,
   initialType = null,
+  locale = "de",
 }: MarketplaceFeedProps) {
   const [items, setItems] = useState<PublicFeedItem[]>(initialItems);
   const [nextCursor, setNextCursor] = useState<string | null>(initialCursor);
@@ -73,10 +76,14 @@ export function MarketplaceFeed({
         }
       } catch (err) {
         console.error("[MarketplaceFeed: fetchFeed]", err);
-        setError("Fehler beim Laden der Inserate. Bitte versuche es erneut.");
+        setError(
+          locale === "en"
+            ? "Could not load listings. Please try again."
+            : "Fehler beim Laden der Inserate. Bitte versuche es erneut.",
+        );
       }
     },
-    [],
+    [locale],
   );
 
   const handleCategoryChange = async (newCategory: string | null) => {
@@ -150,6 +157,7 @@ export function MarketplaceFeed({
           onAreaChange={handleAreaChange}
           onTypeChange={handleTypeChange}
           onReset={handleReset}
+          locale={locale}
         />
 
         {error && (
@@ -178,10 +186,12 @@ export function MarketplaceFeed({
               fontSize: "0.95rem",
             }}
           >
-            Inserate werden gefiltert...
+            {locale === "en"
+              ? "Filtering listings..."
+              : "Inserate werden gefiltert..."}
           </div>
         ) : items.length === 0 ? (
-          <EmptyFeedState onReset={handleReset} />
+          <EmptyFeedState onReset={handleReset} locale={locale} />
         ) : (
           <>
             <div
@@ -195,7 +205,7 @@ export function MarketplaceFeed({
               }}
             >
               {items.map((item) => (
-                <ListingCard key={item.id} item={item} />
+                <ListingCard key={item.id} item={item} locale={locale} />
               ))}
             </div>
 
@@ -211,7 +221,11 @@ export function MarketplaceFeed({
                   fontSize: "0.9rem",
                 }}
               >
-                {isLoadingMore ? "Weitere Inserate laden..." : ""}
+                {isLoadingMore
+                  ? locale === "en"
+                    ? "Loading more listings..."
+                    : "Weitere Inserate laden..."
+                  : ""}
               </div>
             )}
 
@@ -224,7 +238,9 @@ export function MarketplaceFeed({
                   fontSize: "0.85rem",
                 }}
               >
-                Alle aktuellen Inserate für Braunschweig geladen.
+                {locale === "en"
+                  ? "All current listings for Braunschweig loaded."
+                  : "Alle aktuellen Inserate für Braunschweig geladen."}
               </div>
             )}
           </>

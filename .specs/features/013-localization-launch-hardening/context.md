@@ -13,7 +13,7 @@ Prior features (001 through 012) established the complete goods lifecycle, disco
 ## In-Scope Capabilities
 
 - **Bilingual Dictionaries**: Strongly typed dictionary system for `de` and `en` covering navigation, auth, listings, discovery, search, messaging, negotiations, pickup completion, safety, moderation, and legal disclaimers.
-- **Locale Resolution**: Server-side locale detection via `NEXT_LOCALE` cookie falling back to `Accept-Language` header and defaulting to German (`de`), attaching `Vary: Cookie, Accept-Language` and `Content-Language` headers.
+- **Locale Resolution**: Server-side locale detection via `NEXT_LOCALE` cookie, defaulting to English (`en`) when no valid cookie exists, attaching `Vary: Cookie` and `Content-Language` headers (AD-020).
 - **Interactive Language Switcher**: Persistent language switcher component in navigation/header with immediate cookie update and page refresh without URL route perturbation.
 - **Legal Disclosure Pages**: Accessible server-rendered routes for `/impressum`, `/datenschutz`, and `/agb` with clear regulatory disclosures.
 - **Security Headers Middleware**: Next.js HTTP response headers enforcement.

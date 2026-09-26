@@ -13,8 +13,7 @@ export const SECURITY_HEADERS = {
 
 export function middleware(request: NextRequest) {
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-  const acceptLanguage = request.headers.get("accept-language");
-  const locale = resolveLocale(cookieLocale, acceptLanguage);
+  const locale = resolveLocale(cookieLocale);
 
   const response = NextResponse.next();
 
@@ -22,7 +21,7 @@ export function middleware(request: NextRequest) {
     response.headers.set(header, value);
   }
 
-  response.headers.set("Vary", "Cookie, Accept-Language");
+  response.headers.set("Vary", "Cookie");
   response.headers.set("Content-Language", locale);
 
   return response;

@@ -26,9 +26,6 @@ export function LanguageSwitcher({
 
   const handleToggle = () => {
     startTransition(async () => {
-      if (typeof document !== "undefined") {
-        document.cookie = `NEXT_LOCALE=${targetLocale}; path=/; max-age=31536000; SameSite=Lax`;
-      }
       await setLocale(targetLocale);
     });
   };
@@ -37,9 +34,6 @@ export function LanguageSwitcher({
     e.stopPropagation();
     if (nextLocale !== locale) {
       startTransition(async () => {
-        if (typeof document !== "undefined") {
-          document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
-        }
         await setLocale(nextLocale);
       });
     }

@@ -11,7 +11,7 @@ import {
 describe("localization types & predicates", () => {
   it("defines supported locales containing german and english", () => {
     expect(SUPPORTED_LOCALES).toEqual(["de", "en"]);
-    expect(DEFAULT_LOCALE).toBe("de");
+    expect(DEFAULT_LOCALE).toBe("en");
   });
 
   it("accurately identifies supported locales via type predicate", () => {

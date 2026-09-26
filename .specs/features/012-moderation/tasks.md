@@ -69,9 +69,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T1
 **Requirement**: MOD-02, MOD-03, MOD-04
 **Done when**:
-- [ ] `validateExecuteModerationActionInput` checks action type enum, mandatory reason, UUID targets.
-- [ ] Re-exported from `packages/validation/src/index.ts`.
-- [ ] Unit tests pass in `moderation.test.ts`.
+- [x] `validateExecuteModerationActionInput` checks action type enum, mandatory reason, UUID targets.
+- [x] Re-exported from `packages/validation/src/index.ts`.
+- [x] Unit tests pass in `moderation.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement moderation action validation schemas`

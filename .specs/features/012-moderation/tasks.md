@@ -254,8 +254,8 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T14
 **Requirement**: MOD-05
 **Done when**:
-- [ ] Displays chronological audit log with moderator ID, action badge, target, reason, and date.
-- [ ] Component unit tests pass.
+- [x] Displays chronological audit log with moderator ID, action badge, target, reason, and date.
+- [x] Component unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement moderation audit log page`

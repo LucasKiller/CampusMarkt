@@ -181,9 +181,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: LOC-02
 **Done when**:
-- [ ] Validates locale payload against `isSupportedLocale`.
-- [ ] Sets `NEXT_LOCALE` cookie with `SameSite=Lax`, `Path=/`, and returns JSON confirmation.
-- [ ] Rejects invalid locale codes with HTTP 400.
+- [x] Validates locale payload against `isSupportedLocale`.
+- [x] Sets `NEXT_LOCALE` cookie with `SameSite=Lax`, `Path=/`, and returns JSON confirmation.
+- [x] Rejects invalid locale codes with HTTP 400.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): implement locale toggle api route handler`

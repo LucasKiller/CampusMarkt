@@ -82,10 +82,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T2
 **Requirement**: MOD-01, MOD-03, MOD-04
 **Done when**:
-- [ ] `assertCanModerate(isModerator)` enforces RBAC.
-- [ ] Domain helpers for listing status `removed` (Marketplace Invariant 9) and reservation cascades.
-- [ ] Re-exported from `packages/domain/src/index.ts`.
-- [ ] Unit tests pass in `moderation.test.ts`.
+- [x] `assertCanModerate(isModerator)` enforces RBAC.
+- [x] Domain helpers for listing status `removed` (Marketplace Invariant 9) and reservation cascades.
+- [x] Re-exported from `packages/domain/src/index.ts`.
+- [x] Unit tests pass in `moderation.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement domain invariants and status helpers`

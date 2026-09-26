@@ -83,6 +83,58 @@ describe("identity RPC repository", () => {
     ).resolves.toEqual({ ok: true, value: null });
   });
 
+  it("uses the user JWT and an argument-free RPC for the owner profile", async () => {
+    const test = repository([
+      {
+        public_id: "33333333-3333-4333-8333-333333333333",
+        display_name: "Ada",
+        joined_month: "2026-09",
+        avatar_url: null,
+        university_id: null,
+        badge_label: null,
+      },
+    ]);
+
+    await expect(test.repository.readOwnerProfile()).resolves.toEqual({
+      ok: true,
+      value: {
+        publicId: "33333333-3333-4333-8333-333333333333",
+        displayName: "Ada",
+        joinedMonth: "2026-09",
+        avatarUrl: null,
+        universityBadge: null,
+      },
+    });
+    expect(test.user.calls).toEqual([
+      { functionName: "get_owner_profile", arguments_: undefined },
+    ]);
+    expect(test.service.calls).toEqual([]);
+  });
+
+  it("resolves an exact public avatar version through the service boundary", async () => {
+    const test = repository([{ object_key: "profiles/public/3-file.webp" }]);
+
+    await expect(
+      test.repository.resolveAvatarMedia(
+        "33333333-3333-4333-8333-333333333333",
+        3,
+      ),
+    ).resolves.toEqual({
+      ok: true,
+      value: "profiles/public/3-file.webp",
+    });
+    expect(test.service.calls).toEqual([
+      {
+        functionName: "resolve_avatar_media",
+        arguments_: {
+          requested_public_id: "33333333-3333-4333-8333-333333333333",
+          requested_version: 3,
+        },
+      },
+    ]);
+    expect(test.user.calls).toEqual([]);
+  });
+
   it("rejects a public profile containing a private field", async () => {
     const test = repository([
       {

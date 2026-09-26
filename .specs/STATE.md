@@ -164,7 +164,7 @@
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
   - `013-localization-launch-hardening` verified.
-  - `014-prelaunch-reconciliation` implementation complete (T1-T4); independent validation pending.
+  - `014-prelaunch-reconciliation` implementation complete (T1-T5), including repair of private identity API boundaries exposed by live-stack validation; independent validation pending.
 - **In-progress** (file:line): `.specs/features/014-prelaunch-reconciliation/validation.md` (pending creation)
 - **Next step**: Run independent evidence-or-zero validation and the discrimination sensor for Feature 014.
 - **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.

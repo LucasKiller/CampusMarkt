@@ -42,34 +42,32 @@ const composePrefix = [
   resolve(repositoryRoot, "supabase/tests/compose.test.yaml"),
 ];
 
-function compose(arguments_: string[], input?: string) {
+function compose(arguments_: string[]) {
   return spawnSync(docker, [...composePrefix, ...arguments_], {
     cwd: repositoryRoot,
     encoding: "utf8",
     env: environment,
-    input,
   });
 }
 
 function query(sql: string) {
-  const result = compose(
-    [
-      "exec",
-      "--no-TTY",
-      "db",
-      "psql",
-      "--username",
-      "postgres",
-      "--dbname",
-      "postgres",
-      "--quiet",
-      "--tuples-only",
-      "--no-align",
-      "--set",
-      "ON_ERROR_STOP=1",
-    ],
+  const result = compose([
+    "exec",
+    "--no-TTY",
+    "db",
+    "psql",
+    "--username",
+    "postgres",
+    "--dbname",
+    "postgres",
+    "--quiet",
+    "--tuples-only",
+    "--no-align",
+    "--set",
+    "ON_ERROR_STOP=1",
+    "--command",
     sql,
-  );
+  ]);
   return { ...result, stdout: result.stdout.trim() };
 }
 
@@ -93,6 +91,8 @@ function queryAsync(sql: string) {
           "--no-align",
           "--set",
           "ON_ERROR_STOP=1",
+          "--command",
+          sql,
         ],
         { cwd: repositoryRoot, env: environment },
       );
@@ -109,7 +109,7 @@ function queryAsync(sql: string) {
       child.on("close", (status) => {
         resolvePromise({ status, stdout: stdout.trim(), stderr });
       });
-      child.stdin.end(sql);
+      child.stdin.end();
     },
   );
 }
@@ -634,19 +634,27 @@ describe("T9 one-time identity action tokens", () => {
     const id = createAuthUser();
     const expiredHash = tokenHash();
     const activeHash = tokenHash();
-    query(`
-      select identity_api.issue_action_token('${id}', 'email_confirmation', '${expiredHash}'::bytea);
-      select identity_api.issue_action_token('${id}', 'password_recovery', '${activeHash}'::bytea);
-      update identity.action_tokens set expires_at = transaction_timestamp()
-      where token_hash = '${expiredHash}'::bytea;
-    `);
-    expect(
-      query(`
+    const cleanup = query(`
+        do $setup$
+        begin
+          perform identity_api.issue_action_token(
+            '${id}', 'email_confirmation', '${expiredHash}'::bytea
+          );
+          perform identity_api.issue_action_token(
+            '${id}', 'password_recovery', '${activeHash}'::bytea
+          );
+          update identity.action_tokens
+          set created_at = transaction_timestamp() - interval '2 hours',
+            expires_at = transaction_timestamp() - interval '1 hour'
+          where token_hash = '${expiredHash}'::bytea;
+        end
+        $setup$;
         select identity_api.prune_expired_action_tokens();
         select encode(token_hash, 'hex') from identity.action_tokens
         where auth_user_id = '${id}';
-      `).stdout,
-    ).toBe(`1\n${activeHash.slice(2)}`);
+      `);
+    expect(cleanup.status, cleanup.stderr).toBe(0);
+    expect(cleanup.stdout).toBe(`1\n${activeHash.slice(2)}`);
   });
 
   it.each([
@@ -1703,7 +1711,14 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
   }
 
   function requestDeletionSuccessfully(authUserId: string, sessionId: string) {
-    const result = requestDeletion(authUserId, sessionId);
+    const result = query(`
+      select identity_api.record_password_assurance(
+        '${authUserId}', '${sessionId}'
+      );
+      select * from identity_api.request_deletion(
+        '${authUserId}', '${sessionId}'
+      );
+    `);
     expect(result.status, result.stderr).toBe(0);
     return result;
   }
@@ -2572,6 +2587,69 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
       ).toBe("Grace");
     });
 
+    it("projects the owner profile only from the authenticated live session", () => {
+      const id = createAuthUser({ confirmed: true, displayName: "Ada" });
+      const sessionId = createAuthSession(id);
+      const publicId = publicIdFor(id);
+
+      expect(
+        authenticatedQuery(
+          id,
+          sessionId,
+          "select public_id, display_name, university_id from identity_api.get_owner_profile();",
+        ).stdout,
+      ).toBe(`${publicId}|Ada|`);
+
+      query(`delete from auth.sessions where id = '${sessionId}';`);
+      expect(
+        authenticatedQuery(
+          id,
+          sessionId,
+          "select * from identity_api.get_owner_profile();",
+        ).status,
+      ).not.toBe(0);
+    });
+
+    it("projects bounded university status through the service boundary", () => {
+      const id = createAuthUser({ confirmed: true, displayName: "Ada" });
+      query(`
+        insert into identity.university_verifications (
+          auth_user_id, university_id, institutional_email_hash, status,
+          token_hash, token_expires_at
+        ) values (
+          '${id}', 'tu-braunschweig', '${subjectHash()}', 'pending',
+          '${tokenHash()}'::bytea, transaction_timestamp() + interval '24 hours'
+        );
+      `);
+
+      expect(
+        query(`
+          set role service_role;
+          select status, university_id, expires_at, token_expires_at is not null
+          from identity_api.get_university_verification_record('${id}');
+        `).stdout,
+      ).toBe("pending|tu-braunschweig||t");
+    });
+
+    it("resolves only the active immutable avatar version", () => {
+      const id = createAuthUser({ confirmed: true, displayName: "Ada" });
+      const publicId = publicIdFor(id);
+      const objectKey = avatarKey(publicId, 3);
+      query(`
+        update identity.profiles
+        set avatar_version = 3, avatar_object_key = '${objectKey}'
+        where auth_user_id = '${id}';
+      `);
+
+      expect(
+        query(`
+          set role service_role;
+          select object_key from identity_api.resolve_avatar_media('${publicId}', 3);
+          select count(*) from identity_api.resolve_avatar_media('${publicId}', 2);
+        `).stdout,
+      ).toBe(`${objectKey}\n0`);
+    });
+
     it.each([" A ", "<b>Ada</b>"])(
       "rejects invalid display name %j without changing the profile",
       (displayName) => {
@@ -2596,7 +2674,9 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
     it.each([
       "find_registration_by_email_key(text)",
       "find_recovery_by_email_key(text)",
+      "get_university_verification_record(uuid)",
       "password_assurance_is_recent(uuid, uuid, integer)",
+      "resolve_avatar_media(uuid, bigint)",
     ])("grants identity_api.%s only to service_role", (signature) => {
       expect(
         query(`
@@ -2619,6 +2699,17 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
       ).toBe("f|f|t|f");
     });
 
+    it("grants owner profile projection only to authenticated requests", () => {
+      expect(
+        query(`
+          select has_function_privilege('public', 'identity_api.get_owner_profile()', 'execute'),
+            has_function_privilege('anon', 'identity_api.get_owner_profile()', 'execute'),
+            has_function_privilege('authenticated', 'identity_api.get_owner_profile()', 'execute'),
+            has_function_privilege('service_role', 'identity_api.get_owner_profile()', 'execute');
+        `).stdout,
+      ).toBe("f|f|t|f");
+    });
+
     it("pins search_path and uses SECURITY DEFINER for composition RPCs", () => {
       expect(
         query(`
@@ -2629,7 +2720,10 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
             and p.proname in (
               'find_recovery_by_email_key',
               'find_registration_by_email_key',
+              'get_owner_profile',
+              'get_university_verification_record',
               'password_assurance_is_recent',
+              'resolve_avatar_media',
               'update_display_name'
             )
           order by p.proname;
@@ -2637,7 +2731,10 @@ describe("T14 identity reconciliation and confirmation synchronization", () => {
       ).toBe(
         "find_recovery_by_email_key|t|t\n" +
           "find_registration_by_email_key|t|t\n" +
+          "get_owner_profile|t|t\n" +
+          "get_university_verification_record|t|t\n" +
           "password_assurance_is_recent|t|t\n" +
+          "resolve_avatar_media|t|t\n" +
           "update_display_name|t|t",
       );
     });

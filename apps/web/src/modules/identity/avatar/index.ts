@@ -43,7 +43,6 @@ export interface AvatarStorageClient {
 export type AvatarServicePorts = {
   storage: AvatarStorageClient;
   repository: ReturnType<typeof createIdentityRepository>;
-  adminClient: ReturnType<typeof createAdminSupabaseClient>;
 };
 
 function createDefaultPorts(): AvatarServicePorts {
@@ -56,7 +55,6 @@ function createDefaultPorts(): AvatarServicePorts {
   return {
     storage: admin.storage as unknown as AvatarStorageClient,
     repository: repo,
-    adminClient: admin,
   };
 }
 
@@ -143,52 +141,17 @@ export function createAvatarService(
       version: number,
     ): Promise<Buffer | null> {
       try {
-        const { data, error } = await ports.adminClient
-          .schema("identity")
-          .from("accounts")
-          .select(
-            "public_id, state, profiles(avatar_version, avatar_object_key)",
-          )
-          .eq("public_id", publicId)
-          .maybeSingle();
-
-        if (error || !data) {
-          return null;
-        }
-
-        const account = data as {
-          public_id: string;
-          state: string;
-          profiles?:
-            | {
-                avatar_version: number | string;
-                avatar_object_key: string | null;
-              }
-            | Array<{
-                avatar_version: number | string;
-                avatar_object_key: string | null;
-              }>;
-        };
-
-        if (account.state !== "active_confirmed") {
-          return null;
-        }
-
-        const profile = Array.isArray(account.profiles)
-          ? account.profiles[0]
-          : account.profiles;
-
-        if (!profile || !profile.avatar_object_key) {
-          return null;
-        }
-
-        if (Number(profile.avatar_version) !== version) {
+        const resolved = await ports.repository.resolveAvatarMedia(
+          publicId,
+          version,
+        );
+        if (!resolved.ok || !resolved.value) {
           return null;
         }
 
         const { data: blob, error: downloadError } = await ports.storage
           .from("profile-avatars")
-          .download(profile.avatar_object_key);
+          .download(resolved.value);
 
         if (downloadError || !blob) {
           return null;

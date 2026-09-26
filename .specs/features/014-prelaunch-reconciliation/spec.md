@@ -14,6 +14,7 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 - [x] Preserve historical validation evidence while reconciling completed-spec status markers.
 - [x] Record the focused hardening work still required before private beta.
 - [x] Restore a clean, executable migration chain after the pre-beta database gate exposed a moderation-schema mismatch.
+- [x] Keep private identity tables unexposed while restoring owner-profile and university-status operations found broken by live-stack validation.
 
 ## Out of Scope
 
@@ -45,7 +46,7 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 | Input validation and bounds | Production preflight rejects absent/invalid public contact emails; hostname remains validated through the existing URL/ingress rules. |
 | Failure and partial-failure states | Local/test rendering has safe `.local` fallbacks; production must explicitly provide public contact configuration. |
 | Idempotency and retry | Reapplying configuration is idempotent; the additive migration deterministically recalculates expiration from `verified_at`. |
-| Authentication and authorization | No auth boundary changes are introduced by this feature. |
+| Authentication and authorization | Owner-profile access derives identity from the authenticated JWT and a live session; private identity tables remain outside PostgREST exposure. |
 | Concurrency and ordering | The migration changes only the derived expiration timestamp; confirmation RPCs calculate the same policy atomically. |
 | Data lifecycle and cascades | Existing verification rows are extended to twelve calendar months; account-deletion cascades remain unchanged. |
 | Observability | Preflight errors name missing or invalid configuration keys without logging values. |
@@ -96,6 +97,17 @@ As a developer or operator, I want every migration to apply to a fresh database 
 - **WHEN** database tests provision a fresh isolated PostgreSQL project, **THEN** every migration through Feature 014 applies successfully before persistence assertions run.
 - **WHEN** the database test completes, **THEN** its isolated containers and volumes are removed.
 
+### RECON-06: Private Identity API Boundaries
+
+As an authenticated user, I want to read and update my profile without exposing private identity tables so that account settings work through the intended API boundary.
+
+- **WHEN** an authenticated user with a live session requests the owner profile, **THEN** the data boundary derives the owner from the JWT and returns only the allowlisted public-profile fields.
+- **WHEN** that user updates a valid display name, **THEN** the existing owner-scoped mutation runs with the user JWT and the refreshed owner projection is returned.
+- **WHEN** a session is absent or revoked, **THEN** the owner-profile projection is rejected at the database boundary.
+- **WHEN** the application reads university-verification status for a server-authenticated user, **THEN** it uses a service-only bounded RPC that omits institutional email and token hashes instead of querying the private table through PostgREST.
+- **WHEN** a public avatar URL is requested, **THEN** a service-only bounded RPC resolves a storage key only for an active confirmed account and the exact immutable avatar version.
+- **WHEN** API privileges are inspected, **THEN** the owner-profile RPC is executable only by `authenticated`, uses `SECURITY DEFINER` with pinned `search_path`, and the private `identity` schema remains unexposed.
+
 ## Requirement Traceability
 
 | Requirement | Description | Target evidence | Status |
@@ -105,3 +117,4 @@ As a developer or operator, I want every migration to apply to a fresh database 
 | RECON-03 | Twelve-month university verification | Domain tests, additive migration tests, documentation checks | implemented |
 | RECON-04 | Evidence preservation and traceability | Feature amendment, STATE decision, independent validation | implemented |
 | RECON-05 | Clean database migration chain | Moderation migration test and fresh PostgreSQL migration run | implemented |
+| RECON-06 | Private identity API boundaries | Repository contracts, PostgreSQL privilege/session/version tests, live-stack journey | implemented |

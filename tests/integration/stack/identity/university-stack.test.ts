@@ -237,7 +237,7 @@ describe("university verification live stack journeys", () => {
     return loginSetCookie.split(";")[0];
   }
 
-  it("sets up authenticated user and verifies initial unverified profile state", async () => {
+  it("sets up authenticated user and verifies the owner-profile boundary", async () => {
     user1AuthCookie = await registerAndLogin(user1Email, "Gauss Student");
 
     const profileRes = await fetch(`${baseUrl}/api/identity/me/profile`, {
@@ -247,6 +247,19 @@ describe("university verification live stack journeys", () => {
     const profileJson = await profileRes.json();
     user1PublicId = profileJson.data.publicId;
     expect(user1PublicId).toBeTruthy();
+
+    const updateRes = await fetch(`${baseUrl}/api/identity/me/profile`, {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json",
+        origin: canonicalOrigin,
+        cookie: user1AuthCookie,
+      },
+      body: JSON.stringify({ displayName: "Gauss Student Updated" }),
+    });
+    expect(updateRes.status).toBe(200);
+    const updateJson = await updateRes.json();
+    expect(updateJson.data.profile.displayName).toBe("Gauss Student Updated");
 
     const statusRes = await fetch(
       `${baseUrl}/api/identity/me/university-verification`,
@@ -324,8 +337,8 @@ describe("university verification live stack journeys", () => {
     const days = Math.round(
       (expiresAt.getTime() - now.getTime()) / (24 * 3600 * 1000),
     );
-    expect(days).toBeGreaterThanOrEqual(179);
-    expect(days).toBeLessThanOrEqual(181);
+    expect(days).toBeGreaterThanOrEqual(364);
+    expect(days).toBeLessThanOrEqual(366);
 
     const publicRes = await fetch(
       `${baseUrl}/api/identity/profiles/${user1PublicId}`,
@@ -344,7 +357,8 @@ describe("university verification live stack journeys", () => {
     expect(statusRes.status).toBe(200);
     const statusJson = await statusRes.json();
     expect(statusJson.data.status).toBe("verified");
-    expect(statusJson.data.daysRemaining).toBeGreaterThanOrEqual(179);
+    expect(statusJson.data.daysRemaining).toBeGreaterThanOrEqual(364);
+    expect(statusJson.data.daysRemaining).toBeLessThanOrEqual(366);
   });
 
   it("prevents reuse of consumed verification token", async () => {
@@ -389,11 +403,12 @@ describe("university verification live stack journeys", () => {
   it("evaluates badge as expired at query time when expiration date passes", async () => {
     const dbResult = query(`
       UPDATE identity.university_verifications
-      SET expires_at = now() - interval '1 hour'
+      SET verified_at = now() - interval '2 hours',
+        expires_at = now() - interval '1 hour'
       WHERE status = 'verified'
       RETURNING auth_user_id;
     `);
-    expect(dbResult.status).toBe(0);
+    expect(dbResult.status, dbResult.stderr).toBe(0);
     user1AuthUserId = dbResult.stdout.split("\n")[0];
     expect(user1AuthUserId).toBeTruthy();
 

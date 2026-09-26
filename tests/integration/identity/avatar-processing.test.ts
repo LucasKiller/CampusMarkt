@@ -334,24 +334,29 @@ describe("Avatar processing and private media access (T28)", () => {
             },
           };
         },
+        resolveAvatarMedia: async (_publicId: string, version: number) => {
+          const account = overrides?.accountData as
+            | {
+                state?: string;
+                profiles?: {
+                  avatar_version?: number;
+                  avatar_object_key?: string | null;
+                };
+              }
+            | undefined;
+          const profile = account?.profiles;
+          return {
+            ok: true as const,
+            value:
+              account?.state === "active_confirmed" &&
+              profile?.avatar_version === version
+                ? (profile.avatar_object_key ?? null)
+                : null,
+          };
+        },
       } as never;
 
-      const adminClient = {
-        schema: () => ({
-          from: () => ({
-            select: () => ({
-              eq: () => ({
-                maybeSingle: async () => ({
-                  data: overrides?.accountData ?? null,
-                  error: null,
-                }),
-              }),
-            }),
-          }),
-        }),
-      } as never;
-
-      return { storage, repository, adminClient };
+      return { storage, repository };
     }
 
     it("successfully swaps avatar and returns new avatarUrl", async () => {
@@ -507,27 +512,8 @@ describe("Avatar processing and private media access (T28)", () => {
             download: async () => ({ data: null, error: null }),
           }),
         },
-        repository: {} as never,
-        adminClient: {
-          schema: () => ({
-            from: () => ({
-              select: () => ({
-                eq: () => ({
-                  maybeSingle: async () => ({
-                    data: {
-                      public_id: "018f47a0-0000-7abc-8def-0123456789ab",
-                      state: "active_deletion_pending", // HIDDEN!
-                      profiles: {
-                        avatar_version: 1,
-                        avatar_object_key: "profiles/key.webp",
-                      },
-                    },
-                    error: null,
-                  }),
-                }),
-              }),
-            }),
-          }),
+        repository: {
+          resolveAvatarMedia: async () => ({ ok: true, value: null }),
         } as never,
       };
 
@@ -547,27 +533,8 @@ describe("Avatar processing and private media access (T28)", () => {
             download: async () => ({ data: null, error: null }),
           }),
         },
-        repository: {} as never,
-        adminClient: {
-          schema: () => ({
-            from: () => ({
-              select: () => ({
-                eq: () => ({
-                  maybeSingle: async () => ({
-                    data: {
-                      public_id: "018f47a0-0000-7abc-8def-0123456789ab",
-                      state: "active_confirmed",
-                      profiles: {
-                        avatar_version: 2,
-                        avatar_object_key: "profiles/key2.webp",
-                      }, // active is 2
-                    },
-                    error: null,
-                  }),
-                }),
-              }),
-            }),
-          }),
+        repository: {
+          resolveAvatarMedia: async () => ({ ok: true, value: null }),
         } as never,
       };
 
@@ -598,26 +565,10 @@ describe("Avatar processing and private media access (T28)", () => {
             }),
           }),
         },
-        repository: {} as never,
-        adminClient: {
-          schema: () => ({
-            from: () => ({
-              select: () => ({
-                eq: () => ({
-                  maybeSingle: async () => ({
-                    data: {
-                      public_id: "018f47a0-0000-7abc-8def-0123456789ab",
-                      state: "active_confirmed",
-                      profiles: {
-                        avatar_version: 1,
-                        avatar_object_key: "profiles/key1.webp",
-                      },
-                    },
-                    error: null,
-                  }),
-                }),
-              }),
-            }),
+        repository: {
+          resolveAvatarMedia: async () => ({
+            ok: true,
+            value: "profiles/key1.webp",
           }),
         } as never,
       };

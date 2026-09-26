@@ -262,60 +262,6 @@ export function createUniversityRepository(clients: {
       UniversityRepositoryResult<UniversityVerificationRecord | null>
     > {
       try {
-        const target =
-          typeof (
-            service as unknown as {
-              schema?: (s: string) => {
-                from?: (t: string) => {
-                  select: (c: string) => {
-                    eq: (
-                      col: string,
-                      val: string,
-                    ) => {
-                      maybeSingle: () => PromiseLike<{
-                        data: Record<string, unknown> | null;
-                        error: unknown;
-                      }>;
-                    };
-                  };
-                };
-              };
-            }
-          ).schema === "function"
-            ? (
-                service as unknown as {
-                  schema: (s: string) => Record<string, unknown>;
-                }
-              ).schema("identity")
-            : service;
-
-        if (typeof target.from === "function") {
-          const { data, error } = await target
-            .from("university_verifications")
-            .select("status, university_id, expires_at, token_expires_at")
-            .eq("auth_user_id", authUserId)
-            .maybeSingle();
-
-          if (error) {
-            return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
-          }
-
-          if (!data) {
-            return { ok: true, value: null };
-          }
-
-          return {
-            ok: true,
-            value: {
-              status: data.status,
-              universityId: data.university_id,
-              expiresAt: data.expires_at,
-              tokenExpiresAt: data.token_expires_at,
-            },
-          };
-        }
-
-        // Fallback for mock RPC environments
         const { data, error } = await callRpc(
           service,
           "get_university_verification_record",
@@ -331,6 +277,16 @@ export function createUniversityRepository(clients: {
         const row = firstRow(data);
         if (!row || !isRecord(row)) {
           return { ok: true, value: null };
+        }
+
+        if (
+          !["pending", "verified", "revoked"].includes(String(row.status)) ||
+          typeof row.university_id !== "string" ||
+          (row.expires_at !== null && typeof row.expires_at !== "string") ||
+          (row.token_expires_at !== null &&
+            typeof row.token_expires_at !== "string")
+        ) {
+          return { ok: false, code: "INVALID_PROVIDER_RESPONSE" };
         }
 
         return {

@@ -246,27 +246,15 @@ describe("university verification repository", () => {
   });
 
   describe("getVerificationRecord", () => {
-    it("reads record when client supports table query", async () => {
-      const service = {
-        rpc: async () => ({ data: null, error: null }),
-        schema: () => ({
-          from: () => ({
-            select: () => ({
-              eq: () => ({
-                maybeSingle: async () => ({
-                  data: {
-                    status: "verified",
-                    university_id: "tu-braunschweig",
-                    expires_at: "2027-03-21T00:00:00.000Z",
-                    token_expires_at: null,
-                  },
-                  error: null,
-                }),
-              }),
-            }),
-          }),
-        }),
-      };
+    it("reads the bounded record through the service RPC", async () => {
+      const service = mockClient([
+        {
+          status: "verified",
+          university_id: "tu-braunschweig",
+          expires_at: "2027-09-21T00:00:00.000Z",
+          token_expires_at: null,
+        },
+      ]);
 
       const repo = createUniversityRepository({ service });
       const result = await repo.getVerificationRecord(authUserId);
@@ -276,28 +264,20 @@ describe("university verification repository", () => {
         value: {
           status: "verified",
           universityId: "tu-braunschweig",
-          expiresAt: "2027-03-21T00:00:00.000Z",
+          expiresAt: "2027-09-21T00:00:00.000Z",
           tokenExpiresAt: null,
         },
       });
+      expect(service.calls).toEqual([
+        {
+          functionName: "get_university_verification_record",
+          arguments_: { requested_auth_user_id: authUserId },
+        },
+      ]);
     });
 
     it("returns null when no record exists", async () => {
-      const service = {
-        rpc: async () => ({ data: null, error: null }),
-        schema: () => ({
-          from: () => ({
-            select: () => ({
-              eq: () => ({
-                maybeSingle: async () => ({
-                  data: null,
-                  error: null,
-                }),
-              }),
-            }),
-          }),
-        }),
-      };
+      const service = mockClient([], null);
 
       const repo = createUniversityRepository({ service });
       const result = await repo.getVerificationRecord(authUserId);

@@ -9,6 +9,7 @@
 | RECON-03 | Calendar-month calculation; migration recalculation; current wording; badge semantics | Domain identity tests, Supabase migration tests, legal-page tests | Unit / database / integration |
 | RECON-04 | Traceability; preserved historical evidence; superseding decision | Git diff, spec validators, independent `validation.md` | Structural / independent validation |
 | RECON-05 | Text-backed removed status; fresh migration chain | Moderation persistence test, isolated PostgreSQL database suite | Unit / database |
+| RECON-06 | JWT-derived owner read/update; bounded university/avatar lookups; revoked-session and wrong-version rejection; private-schema isolation | Repository contracts, PostgreSQL privilege/session/version tests, live-stack journey | Integration / database / stack |
 
 ## Gate Check Commands
 
@@ -21,7 +22,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3 -> T4 -> independent validation
+T1 -> T2 -> T3 -> T4 -> T5 -> independent validation
 ```
 
 ## Task Breakdown
@@ -90,6 +91,24 @@ T1 -> T2 -> T3 -> T4 -> independent validation
 **Gate:** Quick + Integration + Database
 **Commit:** `fix(identity): extend university verification to twelve months`
 
+### T5: Repair private identity API boundaries
+
+**What:** Replace direct PostgREST access to the private `identity` schema with JWT-derived or service-bounded RPC composition after live-stack validation exposed broken owner-profile and university-status paths.
+**Where:** `apps/web/src/modules/identity`, additive Supabase migration, repository/database/stack tests
+**Depends on:** T4
+**Requirement:** RECON-06
+**Done when:**
+- [x] Owner reads derive identity and active session from the JWT and return only allowlisted profile fields.
+- [x] Display-name updates use the existing authenticated RPC rather than direct private-table access.
+- [x] University status uses a bounded service-only RPC that omits email and token hashes.
+- [x] Avatar media resolution uses a bounded service-only RPC and requires the exact public ID, active account state, and immutable version.
+- [x] The new projection RPC is granted only to `authenticated`, uses `SECURITY DEFINER`, and pins `search_path`.
+- [x] Repository, live PostgreSQL, and full-stack tests prove the boundary and revoked-session failure.
+- [x] Quick, integration, database, and focused stack gates pass.
+**Tests:** integration, database, stack
+**Gate:** Quick + Integration + Database + focused Stack
+**Commit:** `fix(identity): restore owner profile boundary`
+
 ## Final Validation
 
-After T4, an independent verifier must create `validation.md`, trace every acceptance criterion and edge case to fresh evidence, run the required gates, and execute a discrimination sensor. Feature 014 is complete only with a PASS verdict and a clean state validator.
+After T5, an independent verifier must create `validation.md`, trace every acceptance criterion and edge case to fresh evidence, run the required gates, and execute a discrimination sensor. Feature 014 is complete only with a PASS verdict and a clean state validator.

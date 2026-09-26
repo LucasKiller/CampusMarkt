@@ -86,16 +86,17 @@ export async function resolveCookieSession() {
   }
 }
 
-export function getSessionDal(canonicalOrigin?: string) {
-  const config = getIdentityInfrastructureConfig();
-  const origin = canonicalOrigin ?? config.actionBaseUrl;
-  const env = {
-    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
-    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
-    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
-  };
-  const adminClient = createAdminSupabaseClient(env);
-  const userProxy: IdentityRpcClient = {
+type IdentitySupabaseEnvironment = {
+  SUPABASE_INTERNAL_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
+  SUPABASE_PUBLISHABLE_KEY: string;
+};
+
+export function createCookieIdentityRpcClient(
+  env: IdentitySupabaseEnvironment,
+  adminClient: ReturnType<typeof createAdminSupabaseClient>,
+): IdentityRpcClient {
+  return {
     async rpc(
       functionName: string,
       args?: Record<string, unknown>,
@@ -122,6 +123,18 @@ export function getSessionDal(canonicalOrigin?: string) {
       ).rpc(functionName, args);
     },
   };
+}
+
+export function getSessionDal(canonicalOrigin?: string) {
+  const config = getIdentityInfrastructureConfig();
+  const origin = canonicalOrigin ?? config.actionBaseUrl;
+  const env = {
+    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
+    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
+    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
+  };
+  const adminClient = createAdminSupabaseClient(env);
+  const userProxy = createCookieIdentityRpcClient(env, adminClient);
 
   const repository = createIdentityRepository({
     user: userProxy,

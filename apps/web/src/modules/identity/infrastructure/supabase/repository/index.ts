@@ -269,6 +269,38 @@ export function createIdentityRepository({ user, service }: RepositoryClients) {
         : ({ ok: true, value } as const);
     },
 
+    async readOwnerProfile() {
+      const result = await call(user, "get_owner_profile");
+      if (!result.ok) {
+        return result;
+      }
+      const value = parsePublicProfile(result.value);
+      return value === undefined
+        ? ({ ok: false, code: "INVALID_PROVIDER_RESPONSE" } as const)
+        : ({ ok: true, value } as const);
+    },
+
+    async resolveAvatarMedia(publicId: string, version: number) {
+      const result = await call(service, "resolve_avatar_media", {
+        requested_public_id: publicId,
+        requested_version: version,
+      });
+      if (!result.ok) {
+        return result;
+      }
+      if (result.value === null) {
+        return { ok: true, value: null } as const;
+      }
+      if (
+        !isRecord(result.value) ||
+        Object.keys(result.value).join("|") !== "object_key" ||
+        typeof result.value.object_key !== "string"
+      ) {
+        return { ok: false, code: "INVALID_PROVIDER_RESPONSE" } as const;
+      }
+      return { ok: true, value: result.value.object_key } as const;
+    },
+
     consumeRateLimits(input: RateLimitInput) {
       return call(service, "consume_rate_limits", {
         requested_action: input.action,

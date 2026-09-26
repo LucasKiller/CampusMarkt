@@ -5,6 +5,7 @@ import { parseDisplayName } from "@campusmarkt/validation";
 import { getIdentityInfrastructureConfig } from "../infrastructure/environment";
 import { createAdminSupabaseClient } from "../infrastructure/supabase/client/index";
 import { createIdentityRepository } from "../infrastructure/supabase/repository/index";
+import { createCookieIdentityRpcClient } from "./access";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -36,7 +37,6 @@ export interface ProfileService {
 
 export function createProfileService(ports?: {
   repository: ReturnType<typeof createIdentityRepository>;
-  adminClient: ReturnType<typeof createAdminSupabaseClient>;
 }): ProfileService {
   function getPorts() {
     if (ports) return ports;
@@ -47,11 +47,12 @@ export function createProfileService(ports?: {
       SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
     };
     const adminClient = createAdminSupabaseClient(env);
+    const userClient = createCookieIdentityRpcClient(env, adminClient);
     const repository = createIdentityRepository({
-      user: adminClient,
+      user: userClient,
       service: adminClient,
     });
-    return { adminClient, repository };
+    return { repository };
   }
 
   return {
@@ -117,35 +118,24 @@ export function createProfileService(ports?: {
     },
 
     async getOwnerProfile(authUserId: string) {
-      const { adminClient, repository } = getPorts();
-
-      try {
-        const { data, error } = await adminClient
-          .schema("identity")
-          .from("accounts")
-          .select("public_id")
-          .eq("auth_user_id", authUserId)
-          .maybeSingle();
-
-        if (error || !data?.public_id) {
-          return { status: "not_found" as const };
-        }
-
-        const publicResult = await repository.readPublicProfile(data.public_id);
-        if (!publicResult.ok) {
-          return { status: "unavailable" as const };
-        }
-        if (publicResult.value === null) {
-          return { status: "not_found" as const };
-        }
-
-        return { status: "found" as const, profile: publicResult.value };
-      } catch {
+      if (!UUID_PATTERN.test(authUserId)) {
+        return { status: "not_found" as const };
+      }
+      const { repository } = getPorts();
+      const result = await repository.readOwnerProfile();
+      if (!result.ok) {
         return { status: "unavailable" as const };
       }
+      if (result.value === null) {
+        return { status: "not_found" as const };
+      }
+      return { status: "found" as const, profile: result.value };
     },
 
     async updateDisplayName(authUserId: string, displayName: unknown) {
+      if (!UUID_PATTERN.test(authUserId)) {
+        return { status: "unavailable" as const };
+      }
       const parsed = parseDisplayName(displayName);
       if (!parsed.ok) {
         return {
@@ -154,41 +144,16 @@ export function createProfileService(ports?: {
         };
       }
 
-      const { adminClient, repository } = getPorts();
-
-      try {
-        const { error: updateError } = await adminClient
-          .schema("identity")
-          .from("profiles")
-          .update({ display_name: parsed.value })
-          .eq("auth_user_id", authUserId);
-
-        if (updateError) {
-          return { status: "unavailable" as const };
-        }
-
-        const { data: accountData, error: accountError } = await adminClient
-          .schema("identity")
-          .from("accounts")
-          .select("public_id")
-          .eq("auth_user_id", authUserId)
-          .maybeSingle();
-
-        if (accountError || !accountData?.public_id) {
-          return { status: "unavailable" as const };
-        }
-
-        const refreshed = await repository.readPublicProfile(
-          accountData.public_id,
-        );
-        if (!refreshed.ok || !refreshed.value) {
-          return { status: "unavailable" as const };
-        }
-
-        return { status: "updated" as const, profile: refreshed.value };
-      } catch {
+      const { repository } = getPorts();
+      const updateResult = await repository.updateDisplayName(parsed.value);
+      if (!updateResult.ok) {
         return { status: "unavailable" as const };
       }
+      const refreshed = await repository.readOwnerProfile();
+      if (!refreshed.ok || !refreshed.value) {
+        return { status: "unavailable" as const };
+      }
+      return { status: "updated" as const, profile: refreshed.value };
     },
   };
 }

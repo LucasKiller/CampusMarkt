@@ -130,10 +130,18 @@
 - **Date**: 2026-09-26
 - **Status**: active
 
+### AD-018
+- **Decision**: Bilingual localization (German & English) and launch hardening are architected as lightweight server-driven typed dictionaries with cookie/header locale resolution paired with a monorepo launch hardening suite. Locale negotiation resolves from a sanitized `NEXT_LOCALE` cookie (strict regex `/^(de|en)$/`) falling back to the `Accept-Language` header and defaulting to German (`de`), attaching `Vary: Cookie, Accept-Language` and `Content-Language` headers without mutating existing canonical URL routes. Dictionaries (`de.ts`, `en.ts`) enforce compile-time TypeScript type parity tests to eliminate runtime missing-string defects. Launch hardening incorporates strict HTTP Security Headers (Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) in Next.js middleware, automated backup and restore validation, German statutory compliance pages (`/impressum` per § 5 DDG, `/datenschutz` per DSGVO/GDPR, `/agb`), and automated WCAG 2.1 AA accessibility assertions.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 95/100, Evidence Grade A). Rejects invasive URL subpath prefixing (`/[locale]/`) which would break existing canonical permalinks and routes established across Features 001–012, avoids heavy runtime framework overhead on the single budget VPS (AD-006), eliminates Flash of Unlocalized Content (FOIC) and hydration mismatch through deterministic server-side rendering with matching `<html lang="...">` attributes, and completes all operational and legal exit criteria for Horizon 5 private beta release.
+- **Trade-off**: Multi-language discovery relies on cookie and header content negotiation rather than distinct localized path slugs (`/de/...` vs `/en/...`).
+- **Scope**: Internationalization dictionaries, locale resolution, language switching UI, HTTP security headers, legal disclosures, backup verification, and launch runbooks.
+- **Date**: 2026-09-26
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: none active (`012-moderation` verified)
-- **Phase / Task**: Validation completed and passing
+- **Feature**: `013-localization-launch-hardening`
+- **Phase / Task**: Planning (Context, Spec, Design, Tasks)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -147,9 +155,10 @@
   - `010-pickup-completion` verified.
   - `011-reporting-blocking` verified.
   - `012-moderation` verified.
-- **In-progress** (file:line): none
-- **Next step**: Review V1 release readiness or select next feature from roadmap (`docs/product/04-roadmap.md`).
+- **In-progress** (file:line): `.specs/features/013-localization-launch-hardening/`
+- **Next step**: Complete spec, design, and tasks documents, validate with scripts, and commit planning artifacts.
 - **Blockers**: none
-- **Uncommitted files**: none
+- **Uncommitted files**: `.specs/STATE.md`
 - **Branch**: main
+
 

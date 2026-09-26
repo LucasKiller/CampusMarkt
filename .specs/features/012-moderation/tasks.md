@@ -184,9 +184,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T9
 **Requirement**: MOD-01, MOD-02, MOD-03, MOD-04
 **Done when**:
-- [ ] Verifies caller moderator role before dispatching actions.
-- [ ] Coordinates dismissal, listing removal, and user suspension.
-- [ ] Application service unit tests pass.
+- [x] Verifies caller moderator role before dispatching actions.
+- [x] Coordinates dismissal, listing removal, and user suspension.
+- [x] Application service unit tests pass.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): implement marketplace moderation application service`

@@ -138,9 +138,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T6
 **Requirement**: LOC-05
 **Done when**:
-- [ ] Runbook documents daily backup routines, restore steps, and RTO/RPO targets.
-- [ ] Incident response escalation tree and moderator onboarding steps documented.
-- [ ] Markdown validation passes.
+- [x] Runbook documents daily backup routines, restore steps, and RTO/RPO targets.
+- [x] Incident response escalation tree and moderator onboarding steps documented.
+- [x] Markdown validation passes.
 **Tests**: docs
 **Gate**: Quick
 **Commit**: `docs(hardening): document launch operational runbooks and disaster recovery`

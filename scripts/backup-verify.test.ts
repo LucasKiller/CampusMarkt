@@ -120,7 +120,7 @@ CREATE TABLE "marketplace"."listings" (
     };
 
     const result = executeBackupVerification({
-      dbUrl: "postgresql://postgres:secret@localhost:5432/campusmarkt",
+      dbUrl: "postgresql://postgres:test-password@localhost:5432/campusmarkt",
       dumpProvider: failingProvider,
     });
 
@@ -133,7 +133,7 @@ CREATE TABLE "marketplace"."listings" (
     const successfulProvider = () => validMockDump;
 
     const result = executeBackupVerification({
-      dbUrl: "postgresql://postgres:secret@localhost:5432/campusmarkt",
+      dbUrl: "postgresql://postgres:test-password@localhost:5432/campusmarkt",
       dumpProvider: successfulProvider,
     });
 

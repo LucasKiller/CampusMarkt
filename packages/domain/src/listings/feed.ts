@@ -4,8 +4,7 @@ import type {
   ListingType,
   PickupArea,
 } from "./index.ts";
-
-export type SupportedLocale = "de" | "en";
+import type { SupportedLocale } from "../localization/types.ts";
 
 export const CATEGORY_LABELS_DE: Readonly<Record<ListingCategory, string>> = {
   furniture: "Möbel & Wohnen",

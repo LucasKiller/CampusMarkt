@@ -54,10 +54,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: LOC-01, LOC-02
 **Done when**:
-- [ ] `SupportedLocale` union (`'de' | 'en'`) and `Dictionary` interfaces declared.
-- [ ] Type predicate `isSupportedLocale(value: unknown): value is SupportedLocale` implemented.
-- [ ] Exported from `packages/domain`.
-- [ ] Unit tests pass in `packages/domain/src/localization/types.test.ts`.
+- [x] `SupportedLocale` union (`'de' | 'en'`) and `Dictionary` interfaces declared.
+- [x] Type predicate `isSupportedLocale(value: unknown): value is SupportedLocale` implemented.
+- [x] Exported from `packages/domain`.
+- [x] Unit tests pass in `packages/domain/src/localization/types.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(localization): define supported locales and dictionary schema types`

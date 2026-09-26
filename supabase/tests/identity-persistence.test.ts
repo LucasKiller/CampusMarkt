@@ -1690,15 +1690,22 @@ describe("T12 avatar state, private bucket, and cleanup queue", () => {
 
 describe("T13 deletion-pending lifecycle and purge queue", () => {
   function assureDeletion(authUserId: string, sessionId: string) {
-    query(
+    const result = query(
       `select identity_api.record_password_assurance('${authUserId}', '${sessionId}');`,
     );
+    expect(result.status, result.stderr).toBe(0);
   }
 
   function requestDeletion(authUserId: string, sessionId: string) {
     return query(
       `select * from identity_api.request_deletion('${authUserId}', '${sessionId}');`,
     );
+  }
+
+  function requestDeletionSuccessfully(authUserId: string, sessionId: string) {
+    const result = requestDeletion(authUserId, sessionId);
+    expect(result.status, result.stderr).toBe(0);
+    return result;
   }
 
   it("rejects deletion without recent password assurance", () => {
@@ -1785,14 +1792,14 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const sessionId = createAuthSession(id);
     const publicId = publicIdFor(id);
     assureDeletion(id, sessionId);
-    expect(
-      query(`
+    const result = query(`
         begin;
         select changed from identity_api.request_deletion('${id}', '${sessionId}');
         select count(*) from identity_api.get_public_profile('${publicId}');
         commit;
-      `).stdout,
-    ).toBe("t\n0");
+      `);
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("t\n0");
   });
 
   it("clears an avatar pointer and queues its object atomically", () => {
@@ -1803,8 +1810,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
       `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${key}');`,
     );
     assureDeletion(id, sessionId);
-    expect(
-      query(`
+    const result = query(`
         begin;
         select changed from identity_api.request_deletion('${id}', '${sessionId}');
         select profile.avatar_object_key is null,
@@ -1814,15 +1820,16 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
           )
         from identity.profiles as profile where auth_user_id = '${id}';
         commit;
-      `).stdout,
-    ).toBe("t\nt|t");
+      `);
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toBe("t\nt|t");
   });
 
   it("denies avatar mutation while deletion is pending", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(
         `select * from identity_api.swap_avatar('${id}', '${sessionId}', 0, '${avatarKey(publicIdFor(id), 1)}');`,
@@ -1839,7 +1846,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       authenticatedQuery(
         id,
@@ -1859,7 +1866,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
       );
     `);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(`
         select valid from identity_api.stage_action_token(
@@ -1884,7 +1891,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true, emailKey });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     const replacementId = crypto.randomUUID();
     expect(
       query(`
@@ -1908,7 +1915,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(`
         select purge_due_at > requested_at,
@@ -1941,7 +1948,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(`
         select auth_user_id, attempts, lease_until > transaction_timestamp(), state
@@ -1958,8 +1965,8 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const secondSession = createAuthSession(second);
     assureDeletion(first, firstSession);
     assureDeletion(second, secondSession);
-    requestDeletion(first, firstSession);
-    requestDeletion(second, secondSession);
+    requestDeletionSuccessfully(first, firstSession);
+    requestDeletionSuccessfully(second, secondSession);
     const results = await Promise.all([
       queryAsync(
         "select auth_user_id from identity_api.claim_deletion_job('purger-one', 300);",
@@ -1977,7 +1984,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     query(`
       update identity.deletion_jobs set state = 'processing',
         worker_id = 'expired-purger',
@@ -1997,7 +2004,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     query(
       "select * from identity_api.claim_deletion_job('retry-purger', 300);",
     );
@@ -2017,7 +2024,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(`
         select identity_api.retry_deletion_job(
@@ -2033,7 +2040,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     expect(
       query(`
         select identity_api.complete_deletion_job('${id}');
@@ -2119,7 +2126,7 @@ describe("T13 deletion-pending lifecycle and purge queue", () => {
     const id = createAuthUser({ confirmed: true });
     const sessionId = createAuthSession(id);
     assureDeletion(id, sessionId);
-    requestDeletion(id, sessionId);
+    requestDeletionSuccessfully(id, sessionId);
     query(`delete from auth.users where id = '${id}';`);
     expect(
       query(

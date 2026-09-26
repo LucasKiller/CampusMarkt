@@ -68,6 +68,7 @@ T1 -> T2 -> T3A -> T3 -> independent validation
 - [x] Its structural test rejects the nonexistent-enum implementation.
 - [x] A fresh isolated PostgreSQL database applies the complete migration chain.
 - [x] Test containers and volumes are removed after the gate.
+- [x] The two live PostgreSQL suites execute in separate Vitest processes so their isolated Compose lifecycles cannot contaminate each other.
 **Tests:** unit and database
 **Gate:** Quick + Database
 **Commit:** `fix(database): repair moderation migration chain`

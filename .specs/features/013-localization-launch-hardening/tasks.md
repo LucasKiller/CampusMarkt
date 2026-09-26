@@ -207,9 +207,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: LOC-01, LOC-02
 **Done when**:
-- [ ] Integration tests verify `POST /api/localization/locale` sets cookie correctly.
-- [ ] Tests verify malformed locales return 400.
-- [ ] Integration suite passes.
+- [x] Integration tests verify `POST /api/localization/locale` sets cookie correctly.
+- [x] Tests verify malformed locales return 400.
+- [x] Integration suite passes.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `test(localization): add integration tests for locale resolution and toggle api`

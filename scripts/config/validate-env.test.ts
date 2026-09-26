@@ -34,6 +34,8 @@ const productionEnvironment: DeploymentEnvironment = {
   IDENTITY_ACTION_BASE_URL: "https://markt.example.edu",
   CADDY_SITE_ADDRESS: "markt.example.edu",
   SMTP_ADMIN_EMAIL: "operator@example.edu",
+  PUBLIC_CONTACT_EMAIL: "kontakt@campusmarkt.inovv.co",
+  PUBLIC_PRIVACY_EMAIL: "datenschutz@campusmarkt.inovv.co",
   SMTP_HOST: "smtp.example.edu",
   SMTP_PORT: "465",
   SMTP_TLS_MODE: "implicit",
@@ -155,6 +157,8 @@ describe("deployment environment validation", () => {
     "SITE_URL",
     "CADDY_SITE_ADDRESS",
     "SMTP_ADMIN_EMAIL",
+    "PUBLIC_CONTACT_EMAIL",
+    "PUBLIC_PRIVACY_EMAIL",
     "SMTP_HOST",
     "SMTP_PORT",
     "SMTP_TLS_MODE",
@@ -210,6 +214,22 @@ describe("deployment environment validation", () => {
           resources: productionResources,
         }).errors,
       ).toContain("Invalid production hostname: CADDY_SITE_ADDRESS");
+    },
+  );
+
+  it.each(["PUBLIC_CONTACT_EMAIL", "PUBLIC_PRIVACY_EMAIL"])(
+    "rejects invalid production email variable %s",
+    (variable) => {
+      expect(
+        validateDeployment({
+          mode: "production",
+          environment: {
+            ...productionEnvironment,
+            [variable]: "not-an-email",
+          },
+          resources: productionResources,
+        }).errors,
+      ).toContain(`Invalid production email variable: ${variable}`);
     },
   );
 

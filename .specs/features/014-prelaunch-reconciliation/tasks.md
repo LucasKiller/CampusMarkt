@@ -47,11 +47,11 @@ T1 -> T2 -> T3 -> independent validation
 **Depends on:** T1
 **Requirement:** RECON-02
 **Done when:**
-- [ ] Production preflight requires and validates both public contact addresses.
-- [ ] Legal pages use configuration with safe local fallbacks and contain no fixed legacy hostname.
-- [ ] Production Compose passes the variables only to the web service.
-- [ ] Examples and runbooks use configurable values with `campusmarkt.inovv.co` as the current example.
-- [ ] Focused unit and integration tests pass.
+- [x] Production preflight requires and validates both public contact addresses.
+- [x] Legal pages use configuration with safe local fallbacks and contain no fixed legacy hostname.
+- [x] Production Compose passes the variables only to the web service.
+- [x] Examples and runbooks use configurable values with `campusmarkt.inovv.co` as the current example.
+- [x] Focused unit and integration tests pass.
 **Tests:** unit and integration
 **Gate:** Integration
 **Commit:** `fix(config): make public site identity configurable`

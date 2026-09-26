@@ -65,6 +65,8 @@ services:
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:?NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is required}
       SUPABASE_INTERNAL_URL: http://api-gw:8000
       SUPABASE_HEALTH_KEY: ${ANON_KEY:?ANON_KEY is required}
+      PUBLIC_CONTACT_EMAIL: ${PUBLIC_CONTACT_EMAIL:-kontakt@campusmarkt.local}
+      PUBLIC_PRIVACY_EMAIL: ${PUBLIC_PRIVACY_EMAIL:-datenschutz@campusmarkt.local}
     expose:
       - "3000"
     healthcheck:

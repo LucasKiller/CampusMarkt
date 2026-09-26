@@ -69,7 +69,7 @@ test.describe("Bilingual Localization & Launch Hardening E2E Journeys (T16)", ()
     await expect(impressumHeading).toContainText("Impressum");
     await expect(page.locator("body")).toContainText("§ 5 DDG");
     await expect(page.locator("body")).toContainText(
-      "kontakt@campusmarkt.tu-braunschweig.de",
+      "kontakt@campusmarkt.local",
     );
 
     // 2. Visit /datenschutz

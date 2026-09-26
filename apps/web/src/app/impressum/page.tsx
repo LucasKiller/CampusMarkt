@@ -5,6 +5,7 @@ import {
   getServerDictionary,
 } from "../../modules/localization/server/index";
 import { LanguageSwitcher } from "../../modules/localization/components/LanguageSwitcher";
+import { getPublicContactConfiguration } from "../../modules/config/server/public-contact";
 
 export const metadata: Metadata = {
   title: "Impressum | CampusMarkt",
@@ -15,6 +16,7 @@ export default async function ImpressumPage() {
   const locale = await getServerLocale();
   const dict = await getServerDictionary(locale);
   const isEn = locale === "en";
+  const { contactEmail } = getPublicContactConfiguration();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -83,10 +85,10 @@ export default async function ImpressumPage() {
             <p className="text-slate-600">
               E-Mail:{" "}
               <a
-                href="mailto:kontakt@campusmarkt.tu-braunschweig.de"
+                href={`mailto:${contactEmail}`}
                 className="text-emerald-600 underline"
               >
-                kontakt@campusmarkt.tu-braunschweig.de
+                {contactEmail}
               </a>
             </p>
 

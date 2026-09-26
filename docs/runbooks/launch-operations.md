@@ -10,7 +10,8 @@
 
 CampusMarkt runs as a self-hosted modular monolith on a single budget Virtual Private Server (VPS) located in Germany. All persistence, authentication, and storage reside on-host using containerized PostgreSQL and Supabase services orchestrated via Docker Compose and secured through Caddy ingress.
 
-- **Primary URL:** `https://campusmarkt.tu-braunschweig.de`
+- **Primary URL:** configured by `SITE_URL` (current example: `https://campusmarkt.inovv.co`)
+- **Public contacts:** configured by `PUBLIC_CONTACT_EMAIL` and `PUBLIC_PRIVACY_EMAIL`
 - **Database:** PostgreSQL with `marketplace` schema and strict Row Level Security (RLS)
 - **Object Storage:** Self-hosted S3-compatible Supabase Storage
 - **Identity & Verification:** Pseudonymized email HMAC with pepper (AD-008)
@@ -123,7 +124,7 @@ In the event of hardware failure, VPS corruption, or catastrophic data loss:
    ```
 
 7. **Verify Frontend & SSL Ingress:**
-   - Access `https://campusmarkt.tu-braunschweig.de/impressum`.
+   - Access `${SITE_URL}/impressum` (currently `https://campusmarkt.inovv.co/impressum`).
    - Confirm HTTP 200 response, valid SSL certificate, and correct security headers.
 
 ---
@@ -186,5 +187,5 @@ LIMIT 50;
    UPDATE marketplace.profiles SET is_suspended = true WHERE id = '<SUSPICIOUS_UUID>';
    ```
 3. **Escalation Notification:**
-   - Notify CampusMarkt lead engineer: `admin@campusmarkt.tu-braunschweig.de`.
+   - Notify the operator address configured in `SMTP_ADMIN_EMAIL`.
    - If user data was compromised, inform TU Braunschweig data protection contact within 72 hours per Art. 33 DSGVO.

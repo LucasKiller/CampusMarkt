@@ -35,6 +35,8 @@ const PRODUCTION_REQUIRED = [
   "SITE_URL",
   "CADDY_SITE_ADDRESS",
   "SMTP_ADMIN_EMAIL",
+  "PUBLIC_CONTACT_EMAIL",
+  "PUBLIC_PRIVACY_EMAIL",
   "SMTP_HOST",
   "SMTP_PORT",
   "SMTP_TLS_MODE",
@@ -86,6 +88,10 @@ function isProductionHostname(value: string) {
     value !== "localhost" &&
     !/^\d{1,3}(?:\.\d{1,3}){3}$/u.test(value)
   );
+}
+
+function isEmailAddress(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(value);
 }
 
 function validateBrowserSeparation(
@@ -175,6 +181,18 @@ export function validateDeployment(input: {
       !isProductionHostname(input.environment.CADDY_SITE_ADDRESS!)
     ) {
       errors.push("Invalid production hostname: CADDY_SITE_ADDRESS");
+    }
+
+    for (const name of [
+      "PUBLIC_CONTACT_EMAIL",
+      "PUBLIC_PRIVACY_EMAIL",
+    ] as const) {
+      if (
+        hasValue(input.environment, name) &&
+        !isEmailAddress(input.environment[name]!)
+      ) {
+        errors.push(`Invalid production email variable: ${name}`);
+      }
     }
 
     if (

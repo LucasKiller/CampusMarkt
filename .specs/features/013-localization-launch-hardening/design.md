@@ -148,7 +148,7 @@ export function resolveLocale(cookieValue?: string | null, acceptLanguage?: stri
 Complies with § 5 DDG (Telemediengesetz / Digitale-Dienste-Gesetz):
 - Operator identity: CampusMarkt Initiative / Projektgruppe Braunschweig.
 - Postal address in Braunschweig, Germany.
-- Direct contact: email (`kontakt@campusmarkt.tu-braunschweig.de`).
+- Direct contact: server-configured `PUBLIC_CONTACT_EMAIL` (current production example: `kontakt@campusmarkt.inovv.co`).
 - Authorized representatives and university context.
 - Haftungsausschluss (Liability for contents and external links).
 - Urheberrecht (Copyright notice).

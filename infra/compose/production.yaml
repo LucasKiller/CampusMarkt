@@ -28,4 +28,6 @@ services:
       SMTP_USER: ${SMTP_USER:?SMTP_USER is required for production}
       SMTP_PASS: ${SMTP_PASS:?SMTP_PASS is required for production}
       SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:?SMTP_ADMIN_EMAIL is required for production}
+      PUBLIC_CONTACT_EMAIL: ${PUBLIC_CONTACT_EMAIL:?PUBLIC_CONTACT_EMAIL is required for production}
+      PUBLIC_PRIVACY_EMAIL: ${PUBLIC_PRIVACY_EMAIL:?PUBLIC_PRIVACY_EMAIL is required for production}
       SMTP_TLS_MODE: ${SMTP_TLS_MODE:-implicit}

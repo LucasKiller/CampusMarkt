@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToString } from "react-dom/server";
 
 vi.mock("server-only", () => ({}));
@@ -23,6 +23,12 @@ describe("legal pages UI rendering (T14)", () => {
     mockHeaders.mockResolvedValue({
       get: () => "de-DE,de;q=0.9",
     });
+    vi.stubEnv("PUBLIC_CONTACT_EMAIL", "kontakt@campusmarkt.inovv.co");
+    vi.stubEnv("PUBLIC_PRIVACY_EMAIL", "datenschutz@campusmarkt.inovv.co");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("renders /impressum page in German with § 5 DDG details", async () => {
@@ -31,7 +37,7 @@ describe("legal pages UI rendering (T14)", () => {
 
     expect(html).toContain("Impressum");
     expect(html).toContain("Angaben gemäß § 5 DDG");
-    expect(html).toContain("kontakt@campusmarkt.tu-braunschweig.de");
+    expect(html).toContain("mailto:kontakt@campusmarkt.inovv.co");
     expect(html).toContain("Universitätsplatz 2");
   });
 
@@ -45,6 +51,17 @@ describe("legal pages UI rendering (T14)", () => {
 
     expect(html).toContain("Legal Notice");
     expect(html).toContain("German statutory version is legally binding");
+  });
+
+  it("uses safe local role addresses when deployment contacts are absent", async () => {
+    vi.stubEnv("PUBLIC_CONTACT_EMAIL", "");
+    vi.stubEnv("PUBLIC_PRIVACY_EMAIL", "");
+
+    const impressum = renderToString(await ImpressumPage());
+    const privacy = renderToString(await DatenschutzPage());
+
+    expect(impressum).toContain("kontakt@campusmarkt.local");
+    expect(privacy).toContain("datenschutz@campusmarkt.local");
   });
 
   it("renders /datenschutz page with GDPR controller, HMAC hash, and rights", async () => {

@@ -10,7 +10,7 @@ describe("security headers and vary middleware", () => {
     cookies?: Record<string, string>;
     headers?: Record<string, string>;
   }) {
-    const url = options?.url ?? "https://campusmarkt.tu-braunschweig.de/";
+    const url = options?.url ?? "https://campusmarkt.inovv.co/";
     const headers = new Headers(options?.headers);
     const cookiesMap = new Map<string, string>(
       Object.entries(options?.cookies ?? {}),
@@ -90,7 +90,7 @@ describe("security headers and vary middleware", () => {
 
   it("enforces clickjacking defense and strict CSP directives", () => {
     const req = createRequest({
-      url: "https://campusmarkt.tu-braunschweig.de/agb",
+      url: "https://campusmarkt.inovv.co/agb",
     });
     const res = middleware(req);
 

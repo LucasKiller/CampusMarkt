@@ -5,6 +5,7 @@ import {
   getServerDictionary,
 } from "../../modules/localization/server/index";
 import { LanguageSwitcher } from "../../modules/localization/components/LanguageSwitcher";
+import { getPublicContactConfiguration } from "../../modules/config/server/public-contact";
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung | CampusMarkt",
@@ -16,6 +17,7 @@ export default async function DatenschutzPage() {
   const locale = await getServerLocale();
   const dict = await getServerDictionary(locale);
   const isEn = locale === "en";
+  const { privacyEmail } = getPublicContactConfiguration();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -69,10 +71,10 @@ export default async function DatenschutzPage() {
               <br />
               E-Mail:{" "}
               <a
-                href="mailto:datenschutz@campusmarkt.tu-braunschweig.de"
+                href={`mailto:${privacyEmail}`}
                 className="text-emerald-600 underline"
               >
-                datenschutz@campusmarkt.tu-braunschweig.de
+                {privacyEmail}
               </a>
             </p>
 

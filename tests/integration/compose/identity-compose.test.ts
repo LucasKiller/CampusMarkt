@@ -48,6 +48,8 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
     ...Object.fromEntries(entries),
     NEXT_PUBLIC_SUPABASE_URL: "http://localhost/api",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_test",
+    PUBLIC_CONTACT_EMAIL: "kontakt@campusmarkt.inovv.co",
+    PUBLIC_PRIVACY_EMAIL: "datenschutz@campusmarkt.inovv.co",
   };
 }
 
@@ -150,6 +152,17 @@ describe("identity Compose integration and configuration", () => {
     expect(web?.environment?.SMTP_PORT).toBeDefined();
     expect(web?.environment?.SMTP_ADMIN_EMAIL).toBeDefined();
     expect(web?.environment?.SMTP_TLS_MODE).toBeDefined();
+  });
+
+  it("wires server-only public role addresses to the web container", () => {
+    const web = renderCompose().services.web;
+
+    expect(web?.environment?.PUBLIC_CONTACT_EMAIL).toBe(
+      "kontakt@campusmarkt.inovv.co",
+    );
+    expect(web?.environment?.PUBLIC_PRIVACY_EMAIL).toBe(
+      "datenschutz@campusmarkt.inovv.co",
+    );
   });
 
   it("wires the Inbucket mail capture service on test and local profiles", () => {

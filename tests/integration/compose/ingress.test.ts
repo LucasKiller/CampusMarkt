@@ -42,6 +42,8 @@ function exampleEnvironment(): NodeJS.ProcessEnv {
     ...Object.fromEntries(entries),
     NEXT_PUBLIC_SUPABASE_URL: "http://localhost/api",
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_local_test",
+    PUBLIC_CONTACT_EMAIL: "kontakt@campusmarkt.inovv.co",
+    PUBLIC_PRIVACY_EMAIL: "datenschutz@campusmarkt.inovv.co",
   };
 }
 

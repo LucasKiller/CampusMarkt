@@ -197,10 +197,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T10
 **Requirement**: MOD-01, MOD-02
 **Done when**:
-- [ ] `GET /api/moderation/queue` returns pending reports for authorized moderators.
-- [ ] `GET /api/moderation/status` returns moderator flag.
-- [ ] Rejects non-moderators with HTTP 403 `FORBIDDEN`.
-- [ ] Integration tests verify route handlers.
+- [x] `GET /api/moderation/queue` returns pending reports for authorized moderators.
+- [x] `GET /api/moderation/status` returns moderator flag.
+- [x] Rejects non-moderators with HTTP 403 `FORBIDDEN`.
+- [x] Integration tests verify route handlers.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(moderation): implement moderation queue and status api routes`

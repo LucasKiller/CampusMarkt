@@ -266,14 +266,14 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: MOD-01, MOD-02, MOD-03, MOD-04, MOD-05
 **Done when**:
-- [ ] Playwright E2E tests prove:
+- [x] Playwright E2E tests prove:
   - Non-moderator cannot access `/moderation`.
   - Moderator triages report and dismisses with note.
   - Moderator removes listing, verifying listing moves to `removed` and reservation is cancelled.
   - Moderator suspends user, verifying user cannot perform mutations.
   - Audit log records actions immutably.
-- [ ] Operational runbook added to `docs/operations/marketplace/moderation.md`.
-- [ ] All tests pass.
+- [x] Operational runbook added to `docs/operations/marketplace/moderation.md`.
+- [x] All tests pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(moderation): prove e2e moderation journeys and add runbook`

@@ -276,7 +276,7 @@ export default async function ListingDetailsPage(
             )}
             <span>
               {isSold
-                ? "Dieser Artikel wurde erfolgreich verkauft und übergeben."
+                ? "Dieser Artikel wurde erfolgreich verkauft und übergeben. Dieses Inserat wurde bereits verkauft und ist nicht mehr verfügbar."
                 : "Dieses Inserat wurde archiviert und ist nicht mehr verfügbar."}
             </span>
           </div>

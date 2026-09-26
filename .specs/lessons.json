@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 13,
+  "next_id": 16,
   "lessons": [
     {
       "id": "L-001",
@@ -220,6 +220,60 @@
       ],
       "created": "2026-09-26T01:44:09Z",
       "last_seen": "2026-09-26T01:44:09Z"
+    },
+    {
+      "id": "L-013",
+      "key": "surviving_mutant::assert outgoing filter parameter names and values not only selected control state",
+      "text": "Assert outgoing filter parameter names and values, not only selected control state",
+      "signal": "surviving_mutant",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "015-marketplace-visual-system"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C7 (ui)"
+      ],
+      "created": "2026-09-26T23:40:40Z",
+      "last_seen": "2026-09-26T23:40:40Z"
+    },
+    {
+      "id": "L-014",
+      "key": "surviving_mutant::exercise recovery actions after a simulated request failure and assert the recovered state",
+      "text": "Exercise recovery actions after a simulated request failure and assert the recovered state",
+      "signal": "surviving_mutant",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "015-marketplace-visual-system"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C9 (ui)"
+      ],
+      "created": "2026-09-26T23:40:45Z",
+      "last_seen": "2026-09-26T23:40:45Z"
+    },
+    {
+      "id": "L-015",
+      "key": "surviving_mutant::assert computed visual values at the effective css boundary including overrides",
+      "text": "Assert computed visual values at the effective CSS boundary, including overrides",
+      "signal": "surviving_mutant",
+      "scope": "ui",
+      "status": "candidate",
+      "features": [
+        "015-marketplace-visual-system"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "C10 (ui)"
+      ],
+      "created": "2026-09-26T23:40:51Z",
+      "last_seen": "2026-09-26T23:40:51Z"
     }
   ]
 }

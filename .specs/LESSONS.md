@@ -4,7 +4,7 @@
 > Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script.
 > promote_threshold=2 distinct features · window_days=45 · quarantine_threshold=2
 
-## Confirmed (load these at Specify/Design)
+## Confirmed (load these at Plan/Checks)
 
 Corroborated across multiple features. Safe to apply as guidance.
 
@@ -85,6 +85,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - features: 012-moderation
 - evidence: spec.md:111 (ui/account)
 - last seen: 2026-09-26T01:44:09Z
+
+### L-013 - Assert outgoing filter parameter names and values, not only selected control state
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: 015-marketplace-visual-system
+- evidence: C7 (ui)
+- last seen: 2026-09-26T23:40:40Z
+
+### L-014 - Exercise recovery actions after a simulated request failure and assert the recovered state
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: 015-marketplace-visual-system
+- evidence: C9 (ui)
+- last seen: 2026-09-26T23:40:45Z
+
+### L-015 - Assert computed visual values at the effective CSS boundary, including overrides
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `ui` · harmful: 0
+- features: 015-marketplace-visual-system
+- evidence: C10 (ui)
+- last seen: 2026-09-26T23:40:51Z
 
 ## Quarantined (failed when applied - ignore)
 

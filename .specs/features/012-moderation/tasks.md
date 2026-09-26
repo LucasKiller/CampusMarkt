@@ -211,9 +211,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T11
 **Requirement**: MOD-02, MOD-03, MOD-04, MOD-05
 **Done when**:
-- [ ] `POST /api/moderation/actions` executes dismissal, listing removal, or suspension with CSRF check.
-- [ ] `GET /api/moderation/audit` returns chronological audit records.
-- [ ] Integration tests verify all action branches.
+- [x] `POST /api/moderation/actions` executes dismissal, listing removal, or suspension with CSRF check.
+- [x] `GET /api/moderation/audit` returns chronological audit records.
+- [x] Integration tests verify all action branches.
 **Tests**: integration
 **Gate**: Integration
 **Commit**: `feat(moderation): implement moderation action and audit api routes`

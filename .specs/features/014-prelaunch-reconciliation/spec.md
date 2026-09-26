@@ -8,11 +8,11 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 
 ## Goals
 
-- [ ] Make the README accurately describe the implemented V1 and its verified local workflows.
+- [x] Make the README accurately describe the implemented V1 and its verified local workflows.
 - [ ] Make the public hostname and legal contact addresses configurable while documenting `campusmarkt.inovv.co` as the current production example.
 - [ ] Enforce university-verification validity for twelve calendar months in every active behavior layer.
 - [ ] Preserve historical validation evidence while reconciling completed-spec status markers.
-- [ ] Record the focused hardening work still required before private beta.
+- [x] Record the focused hardening work still required before private beta.
 
 ## Out of Scope
 

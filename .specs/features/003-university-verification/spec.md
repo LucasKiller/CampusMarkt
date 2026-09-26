@@ -191,10 +191,10 @@ CampusMarkt users currently have accounts and public profiles, but there is no m
 
 ## Success Criteria
 
-- [ ] A confirmed user can submit a `@tu-braunschweig.de` or `@tu-bs.de` email address, receive a verification link, and confirm it within 24 hours.
-- [ ] Confirmed verification immediately displays the TU Braunschweig badge on the user's public profile and account dashboard.
-- [ ] Public profile endpoints and DOM never leak the student's institutional email address or raw hash.
-- [ ] An institutional email cannot be linked to more than one active CampusMarkt account simultaneously.
-- [ ] Verification automatically expires after 6 months (180 days), removing the badge unless reverified.
-- [ ] Users can voluntarily disconnect their badge, and account deletion purges verification records.
-- [ ] Rate limits (3/hour per account) and audit logging are enforced without credential exposure.
+- [x] A confirmed user can submit a `@tu-braunschweig.de` or `@tu-bs.de` email address, receive a verification link, and confirm it within 24 hours.
+- [x] Confirmed verification immediately displays the TU Braunschweig badge on the user's public profile and account dashboard.
+- [x] Public profile endpoints and DOM never leak the student's institutional email address or raw hash.
+- [x] An institutional email cannot be linked to more than one active CampusMarkt account simultaneously.
+- [x] Verification automatically expires after 6 months (180 days), removing the badge unless reverified.
+- [x] Users can voluntarily disconnect their badge, and account deletion purges verification records.
+- [x] Rate limits (3/hour per account) and audit logging are enforced without credential exposure.

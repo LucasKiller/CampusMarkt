@@ -32,10 +32,10 @@ T1 -> T2 -> T3 -> independent validation
 **Depends on:** None
 **Requirement:** RECON-01, RECON-04
 **Done when:**
-- [ ] README describes the actual implementation, setup, checks, and release status.
-- [ ] Only goals backed by passing feature validations are marked complete.
-- [ ] Historical `validation.md` files are unchanged.
-- [ ] STATE no longer claims the system is ready for launch with zero blockers.
+- [x] README describes the actual implementation, setup, checks, and release status.
+- [x] Only goals backed by passing feature validations are marked complete.
+- [x] Historical `validation.md` files are unchanged.
+- [x] STATE no longer claims the system is ready for launch with zero blockers.
 **Tests:** documentation and structural checks
 **Gate:** Quick
 **Commit:** `docs(project): reconcile MVP status and feature records`

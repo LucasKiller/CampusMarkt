@@ -8,15 +8,15 @@ Marketplace buyers and sellers need a direct, private, in-app messaging channel 
 
 ## Goals
 
-- [ ] Support 1:1 private conversations scoped uniquely to each `(listing_id, buyer_id)` pair.
-- [ ] Prevent self-messaging: users cannot initiate a conversation on their own listings (`buyer_id <> seller_id`).
-- [ ] Persist text messages in PostgreSQL with participant-only Row Level Security (`auth.uid() IN (buyer_id, seller_id)`).
-- [ ] Implement atomic message insertion via `marketplace_api.send_message` with validation and rate limiting (max 30 messages/min).
-- [ ] Support real-time message delivery over Supabase Realtime channel subscriptions with graceful fallback and keyset pagination.
-- [ ] Provide an organized inbox view (`/messages`) displaying active conversations, latest message snippets, unread indicators, and partner trust badges.
-- [ ] Track message read state and provide `marketplace_api.mark_conversation_read` to update read timestamps.
-- [ ] Display contextual transaction milestones (offers, counteroffers, active reservations) within the conversation timeline as read-only event indicators without polluting chat tables.
-- [ ] Strictly protect user privacy by never exposing primary or institutional email addresses or internal auth hashes.
+- [x] Support 1:1 private conversations scoped uniquely to each `(listing_id, buyer_id)` pair.
+- [x] Prevent self-messaging: users cannot initiate a conversation on their own listings (`buyer_id <> seller_id`).
+- [x] Persist text messages in PostgreSQL with participant-only Row Level Security (`auth.uid() IN (buyer_id, seller_id)`).
+- [x] Implement atomic message insertion via `marketplace_api.send_message` with validation and rate limiting (max 30 messages/min).
+- [x] Support real-time message delivery over Supabase Realtime channel subscriptions with graceful fallback and keyset pagination.
+- [x] Provide an organized inbox view (`/messages`) displaying active conversations, latest message snippets, unread indicators, and partner trust badges.
+- [x] Track message read state and provide `marketplace_api.mark_conversation_read` to update read timestamps.
+- [x] Display contextual transaction milestones (offers, counteroffers, active reservations) within the conversation timeline as read-only event indicators without polluting chat tables.
+- [x] Strictly protect user privacy by never exposing primary or institutional email addresses or internal auth hashes.
 
 ## Out of Scope
 

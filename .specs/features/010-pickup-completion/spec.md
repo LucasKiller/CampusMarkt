@@ -8,13 +8,13 @@ When a physical item on CampusMarkt is reserved and participants coordinate meet
 
 ## Goals
 
-- [ ] Surface prominent safe-pickup guidance on reservation details and chat threads (public campus locations, daylight meetings, inspection before payment, zero prepayment).
-- [ ] Implement seller-led completion via atomic PostgreSQL RPC (`marketplace_api.complete_pickup`).
-- [ ] Atomically transition reservation status from `ACTIVE` to `COMPLETED` and listing status from `RESERVED` to `SOLD` (AD-015).
-- [ ] Serialise concurrent actions: reject cancellation on completed reservations and reject completion on cancelled/inactive reservations via row-level locks.
-- [ ] Provide a dedicated purchase and sales history view in `/account/reservations` with structured transaction receipts.
-- [ ] Update public listing details view for `SOLD` items: display "Verkauft" status banner, disable all negotiation actions, and protect buyer privacy.
-- [ ] Enforce strict data boundary: zero platform-held funds, no online escrow, and complete exclusion of private emails or exact addresses.
+- [x] Surface prominent safe-pickup guidance on reservation details and chat threads (public campus locations, daylight meetings, inspection before payment, zero prepayment).
+- [x] Implement seller-led completion via atomic PostgreSQL RPC (`marketplace_api.complete_pickup`).
+- [x] Atomically transition reservation status from `ACTIVE` to `COMPLETED` and listing status from `RESERVED` to `SOLD` (AD-015).
+- [x] Serialise concurrent actions: reject cancellation on completed reservations and reject completion on cancelled/inactive reservations via row-level locks.
+- [x] Provide a dedicated purchase and sales history view in `/account/reservations` with structured transaction receipts.
+- [x] Update public listing details view for `SOLD` items: display "Verkauft" status banner, disable all negotiation actions, and protect buyer privacy.
+- [x] Enforce strict data boundary: zero platform-held funds, no online escrow, and complete exclusion of private emails or exact addresses.
 
 ## Out of Scope
 

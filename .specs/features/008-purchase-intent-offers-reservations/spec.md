@@ -8,15 +8,15 @@ Marketplace buyers and sellers need a structured, reliable, and mutually binding
 
 ## Goals
 
-- [ ] Enable registered buyers to submit direct purchase intent (buy at asking price) on `SELL` listings.
-- [ ] Enable registered buyers to express interest in `GIVE_AWAY` listings to request a reservation.
-- [ ] Support structured offer negotiation with price proposals, counter-offers, decline, and withdrawal states.
-- [ ] Prevent self-negotiation: users cannot purchase, offer on, or reserve their own listings (Marketplace Invariant 2).
-- [ ] Enforce atomic reservation exclusivity: exactly one active reservation can control a listing at a time (Marketplace Invariant 5, AD-013).
-- [ ] Atomically mark competing pending offers as `superseded` when a listing is reserved.
-- [ ] Allow either participant to cancel an active reservation with a structured reason, immediately restoring the listing to `ACTIVE` status.
-- [ ] Exclude all private email addresses and internal identity hashes from negotiation API projections.
-- [ ] Rate-limit offer and purchase intent mutations (max 15 proposals per minute per user) to prevent harassment and spam.
+- [x] Enable registered buyers to submit direct purchase intent (buy at asking price) on `SELL` listings.
+- [x] Enable registered buyers to express interest in `GIVE_AWAY` listings to request a reservation.
+- [x] Support structured offer negotiation with price proposals, counter-offers, decline, and withdrawal states.
+- [x] Prevent self-negotiation: users cannot purchase, offer on, or reserve their own listings (Marketplace Invariant 2).
+- [x] Enforce atomic reservation exclusivity: exactly one active reservation can control a listing at a time (Marketplace Invariant 5, AD-013).
+- [x] Atomically mark competing pending offers as `superseded` when a listing is reserved.
+- [x] Allow either participant to cancel an active reservation with a structured reason, immediately restoring the listing to `ACTIVE` status.
+- [x] Exclude all private email addresses and internal identity hashes from negotiation API projections.
+- [x] Rate-limit offer and purchase intent mutations (max 15 proposals per minute per user) to prevent harassment and spam.
 
 ## Out of Scope
 

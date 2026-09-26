@@ -8,14 +8,14 @@ CampusMarkt visitors and registered users need a convenient, reliable, and priva
 
 ## Goals
 
-- [ ] Allow authenticated registered users to privately save (favorite) and remove (unfavorite) active and reserved listings.
-- [ ] Prevent users from favoriting their own listings (Marketplace Invariant 2).
-- [ ] Provide an authenticated micro-endpoint (`GET /api/marketplace/favorites/ids`) to hydrate user favorite states across edge-cached public feed and search listings without cache invalidation storms (AD-012).
-- [ ] Provide an accessible, optimistic heart toggle button on listing cards and details views with appropriate `aria-pressed` state and login redirection for visitors.
-- [ ] Provide a dedicated, responsive favorites dashboard ("Merkliste" `/favorites`) displaying saved listings sorted by save date, including visual status badges for `reserved` and `sold` items.
-- [ ] Enforce database-level data minimization: favorites table stores only `(user_id, listing_id, created_at)` with owner-only RLS policies.
-- [ ] Automatically prune favorite associations when listings or user accounts are deleted via PostgreSQL cascading foreign keys (`ON DELETE CASCADE`).
-- [ ] Rate-limit favorite toggling at the application service boundary (max 30 toggles per minute per user) to prevent automation abuse.
+- [x] Allow authenticated registered users to privately save (favorite) and remove (unfavorite) active and reserved listings.
+- [x] Prevent users from favoriting their own listings (Marketplace Invariant 2).
+- [x] Provide an authenticated micro-endpoint (`GET /api/marketplace/favorites/ids`) to hydrate user favorite states across edge-cached public feed and search listings without cache invalidation storms (AD-012).
+- [x] Provide an accessible, optimistic heart toggle button on listing cards and details views with appropriate `aria-pressed` state and login redirection for visitors.
+- [x] Provide a dedicated, responsive favorites dashboard ("Merkliste" `/favorites`) displaying saved listings sorted by save date, including visual status badges for `reserved` and `sold` items.
+- [x] Enforce database-level data minimization: favorites table stores only `(user_id, listing_id, created_at)` with owner-only RLS policies.
+- [x] Automatically prune favorite associations when listings or user accounts are deleted via PostgreSQL cascading foreign keys (`ON DELETE CASCADE`).
+- [x] Rate-limit favorite toggling at the application service boundary (max 30 toggles per minute per user) to prevent automation abuse.
 
 ## Out of Scope
 

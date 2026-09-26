@@ -125,9 +125,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T5
 **Requirement**: LOC-05
 **Done when**:
-- [ ] Script executes schema verification, table presence checks, and row count sanity tests.
-- [ ] Handles missing environment variables and error states gracefully.
-- [ ] Unit and execution tests pass in `scripts/backup-verify.test.ts`.
+- [x] Script executes schema verification, table presence checks, and row count sanity tests.
+- [x] Handles missing environment variables and error states gracefully.
+- [x] Unit and execution tests pass in `scripts/backup-verify.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(hardening): implement automated database backup and restore verification script`

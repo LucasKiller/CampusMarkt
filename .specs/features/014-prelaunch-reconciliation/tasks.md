@@ -21,7 +21,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3A -> T3 -> independent validation
+T1 -> T2 -> T3 -> T4 -> independent validation
 ```
 
 ## Task Breakdown
@@ -57,7 +57,7 @@ T1 -> T2 -> T3A -> T3 -> independent validation
 **Gate:** Integration
 **Commit:** `fix(config): make public site identity configurable`
 
-### T3A: Repair the clean database migration path
+### T3: Repair the clean database migration path
 
 **What:** Correct the Feature 012 moderation migration's invalid enum assumption so a fresh database can reach Feature 014.
 **Where:** `supabase/migrations/20260926040000_marketplace_moderation.sql`, moderation persistence test, Feature 012 design amendment
@@ -73,11 +73,11 @@ T1 -> T2 -> T3A -> T3 -> independent validation
 **Gate:** Quick + Database
 **Commit:** `fix(database): repair moderation migration chain`
 
-### T3: Apply the twelve-calendar-month university policy
+### T4: Apply the twelve-calendar-month university policy
 
 **What:** Replace the 180-day rule in domain logic and PostgreSQL through an additive migration, recalculate existing rows, and reconcile all current policy wording and tests.
 **Where:** `packages/domain`, `supabase/migrations`, `supabase/tests`, `apps/web`, `docs/product`, Feature 003 amendment, `.specs/STATE.md`
-**Depends on:** T3A
+**Depends on:** T3
 **Requirement:** RECON-03, RECON-04
 **Done when:**
 - [x] Domain expiry uses UTC calendar-month arithmetic and covers leap/month-end cases.
@@ -92,4 +92,4 @@ T1 -> T2 -> T3A -> T3 -> independent validation
 
 ## Final Validation
 
-After T3, an independent verifier must create `validation.md`, trace every acceptance criterion and edge case to fresh evidence, run the required gates, and execute a discrimination sensor. Feature 014 is complete only with a PASS verdict and a clean state validator.
+After T4, an independent verifier must create `validation.md`, trace every acceptance criterion and edge case to fresh evidence, run the required gates, and execute a discrimination sensor. Feature 014 is complete only with a PASS verdict and a clean state validator.

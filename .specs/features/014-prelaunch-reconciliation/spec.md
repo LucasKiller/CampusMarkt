@@ -36,7 +36,7 @@ CampusMarkt's implemented V1 and its repository documentation no longer agree on
 | Existing records | Recalculate `expires_at = verified_at + interval '12 months'` | Applies one consistent policy to current verification records. |
 | Historical reports | Preserve them verbatim | They are evidence of the behavior validated at that point in time. |
 
-**Open questions:** The final legal operator identity and postal address remain intentionally outside this feature and must be confirmed before public launch.
+**Open questions:** none within this feature. The final legal operator identity and postal address remain a separately tracked launch prerequisite rather than a technical default.
 
 ## Implicit-Requirement Dimensions Sweep
 

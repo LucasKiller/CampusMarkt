@@ -80,6 +80,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: apps/web/tests/shell.spec.ts:15 (apps/web)
 - last seen: 2026-09-22T22:58:19Z
 
+### L-012 - When specifying badge indicators for existing pages, include explicit tasks and tests for the target page components.
+- signal: `spec_precision_gap` · recurrence: 1 feature(s) · scope: `ui/account` · harmful: 0
+- features: 012-moderation
+- evidence: spec.md:111 (ui/account)
+- last seen: 2026-09-26T01:44:09Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

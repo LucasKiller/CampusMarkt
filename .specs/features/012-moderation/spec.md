@@ -1,6 +1,6 @@
 # Moderation Specification
 
-**Status:** Draft
+**Status:** Implemented
 
 ## Problem Statement
 
@@ -8,15 +8,15 @@ When users report policy-violating listings or malicious accounts, marketplace o
 
 ## Goals
 
-- [ ] Enforce least-privilege Role-Based Access Control (RBAC) via `marketplace.moderator_assignments` (AD-017).
-- [ ] Prevent self-elevation: ordinary users cannot assign themselves the moderator role through user metadata or client tokens.
-- [ ] Provide a secure review queue for triage of pending reports submitted via Feature 011.
-- [ ] Support auditable report dismissal (`dismiss_report`) with mandatory justification note.
-- [ ] Support listing removal (`remove_listing`) setting listing status to `removed` (Marketplace Invariant 9) and atomically cancelling any active reservation.
-- [ ] Support bad-actor account suspension (`suspend_user`), rejecting subsequent actions by that user.
-- [ ] Record all moderation actions in an immutable, append-only audit trail (`marketplace.moderation_actions`) with zero `UPDATE` or `DELETE` grants.
-- [ ] Exclude private email addresses and internal identity hashes from moderation projections.
-- [ ] Provide an accessible moderation workspace (`/moderation`) with review queue and audit log tabs.
+- [x] Enforce least-privilege Role-Based Access Control (RBAC) via `marketplace.moderator_assignments` (AD-017).
+- [x] Prevent self-elevation: ordinary users cannot assign themselves the moderator role through user metadata or client tokens.
+- [x] Provide a secure review queue for triage of pending reports submitted via Feature 011.
+- [x] Support auditable report dismissal (`dismiss_report`) with mandatory justification note.
+- [x] Support listing removal (`remove_listing`) setting listing status to `removed` (Marketplace Invariant 9) and atomically cancelling any active reservation.
+- [x] Support bad-actor account suspension (`suspend_user`), rejecting subsequent actions by that user.
+- [x] Record all moderation actions in an immutable, append-only audit trail (`marketplace.moderation_actions`) with zero `UPDATE` or `DELETE` grants.
+- [x] Exclude private email addresses and internal identity hashes from moderation projections.
+- [x] Provide an accessible moderation workspace (`/moderation`) with review queue and audit log tabs.
 
 ## Out of Scope
 
@@ -148,8 +148,8 @@ So that all enforcement actions are fully accountable and tamper-proof.
 
 | Requirement ID | Description | Acceptance Criteria | Target Layer | Status |
 | --- | --- | --- | --- | --- |
-| MOD-01 | Least-privilege moderator RBAC and authorization (AD-017) | P1 Story 1: AC1, AC2, AC3, AC4 | Security / RLS / Database | pending |
-| MOD-02 | Moderation queue review and report dismissal | P1 Story 2: AC1, AC2, AC3 | Database RPC / UI Pages | pending |
-| MOD-03 | Listing takedown, status `removed`, and reservation cascades | P1 Story 3: AC1, AC2, AC3 | Database RPC / PostgreSQL | pending |
-| MOD-04 | Bad-actor account suspension and mutation lockout | P1 Story 4: AC1, AC2 | Database RPC / Security | pending |
-| MOD-05 | Immutable append-only audit trail (`marketplace.moderation_actions`) | P1 Story 5: AC1, AC2, AC3 | Database / PostgreSQL / Audit | pending |
+| MOD-01 | Least-privilege moderator RBAC and authorization (AD-017) | P1 Story 1: AC1, AC2, AC3, AC4 | Security / RLS / Database | verified |
+| MOD-02 | Moderation queue review and report dismissal | P1 Story 2: AC1, AC2, AC3 | Database RPC / UI Pages | verified |
+| MOD-03 | Listing takedown, status `removed`, and reservation cascades | P1 Story 3: AC1, AC2, AC3 | Database RPC / PostgreSQL | verified |
+| MOD-04 | Bad-actor account suspension and mutation lockout | P1 Story 4: AC1, AC2 | Database RPC / Security | verified |
+| MOD-05 | Immutable append-only audit trail (`marketplace.moderation_actions`) | P1 Story 5: AC1, AC2, AC3 | Database / PostgreSQL / Audit | verified |

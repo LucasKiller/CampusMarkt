@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 12,
+  "next_id": 13,
   "lessons": [
     {
       "id": "L-001",
@@ -202,6 +202,24 @@
       ],
       "created": "2026-09-22T22:58:19Z",
       "last_seen": "2026-09-22T22:58:19Z"
+    },
+    {
+      "id": "L-012",
+      "key": "spec_precision_gap::when specifying badge indicators for existing pages include explicit tasks and tests for the target page components",
+      "text": "When specifying badge indicators for existing pages, include explicit tasks and tests for the target page components.",
+      "signal": "spec_precision_gap",
+      "scope": "ui/account",
+      "status": "candidate",
+      "features": [
+        "012-moderation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md:111 (ui/account)"
+      ],
+      "created": "2026-09-26T01:44:09Z",
+      "last_seen": "2026-09-26T01:44:09Z"
     }
   ]
 }

@@ -132,8 +132,8 @@
 
 ## Handoff
 
-- **Feature**: 012-moderation / `.specs/features/012-moderation/`
-- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-017, writing context.md & spec.md)
+- **Feature**: none active (`012-moderation` verified)
+- **Phase / Task**: Validation completed and passing
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -146,8 +146,9 @@
   - `009-messaging` verified.
   - `010-pickup-completion` verified.
   - `011-reporting-blocking` verified.
-- **In-progress** (file:line): `.specs/features/012-moderation/context.md`
-- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
+  - `012-moderation` verified.
+- **In-progress** (file:line): none
+- **Next step**: Review V1 release readiness or select next feature from roadmap (`docs/product/04-roadmap.md`).
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

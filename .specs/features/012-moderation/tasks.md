@@ -55,10 +55,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: None
 **Requirement**: MOD-01, MOD-02, MOD-05
 **Done when**:
-- [ ] DTO interfaces and types defined for queue items, actions, and audit logs.
-- [ ] Type predicates `isExecuteModerationActionRequest` and `isModerationActionDTO` implemented.
-- [ ] Re-exported from `packages/types/src/index.ts`.
-- [ ] Unit tests pass in `moderation.test.ts`.
+- [x] DTO interfaces and types defined for queue items, actions, and audit logs.
+- [x] Type predicates `isExecuteModerationActionRequest` and `isModerationActionDTO` implemented.
+- [x] Re-exported from `packages/types/src/index.ts`.
+- [x] Unit tests pass in `moderation.test.ts`.
 **Tests**: unit
 **Gate**: Quick
 **Commit**: `feat(moderation): define moderation dtos and type predicates`

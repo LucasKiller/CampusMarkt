@@ -122,10 +122,18 @@
 - **Date**: 2026-09-25
 - **Status**: active
 
+### AD-017
+- **Decision**: Marketplace moderation authorization, triage operations, and audit records are architected as database-enforced Role-Based Access Control (RBAC) via a dedicated `marketplace.moderator_assignments` table coupled with transactional PostgreSQL RPCs in `marketplace_api` and an append-only audit log in `marketplace.moderation_actions`. Moderator assignments are inaccessible to client modification (`service_role` only write access, preventing self-elevation). All privileged actions (`dismiss_report`, `remove_listing`, `suspend_user`) execute within transactional RPCs with pinned `search_path`, verifying `auth.uid()` against active assignments. Audit entries are committed atomically in the same transaction, and `UPDATE` and `DELETE` privileges on the audit table are explicitly revoked from all non-superuser roles to guarantee mathematical non-repudiation.
+- **Reason**: Decided unanimously by The Jury (Confidence HIGH, 97/100, Evidence Grade A). Rejects storing roles in user profiles or metadata (which is susceptible to mass-assignment or client modification) and rejects hardcoding roles in environment variables (which breaks database RLS and requires VPS process restarts on single VPS AD-006). Guarantees that moderation takedowns transition listings cleanly to `removed` (distinct from owner archiving per Invariant 9) and logs complete, immutable audit evidence required for European consumer and youth-protection compliance.
+- **Trade-off**: Requires dedicated schema tables and `service_role` / database migrations to onboard initial platform administrators.
+- **Scope**: Moderator assignment, least-privilege queue access, listing takedown, account suspension, and append-only moderation audit logging.
+- **Date**: 2026-09-26
+- **Status**: active
+
 ## Handoff
 
-- **Feature**: 011-reporting-blocking / `.specs/features/011-reporting-blocking/`
-- **Phase / Task**: Complete (Validated by Independent Verifier, PASS)
+- **Feature**: 012-moderation / `.specs/features/012-moderation/`
+- **Phase / Task**: Specify Phase in progress (The Jury convened on AD-017, writing context.md & spec.md)
 - **Completed**:
   - `001-web-supabase-foundation` verified.
   - `002-identity-accounts` verified.
@@ -138,8 +146,8 @@
   - `009-messaging` verified.
   - `010-pickup-completion` verified.
   - `011-reporting-blocking` verified.
-- **In-progress** (file:line): none
-- **Next step**: Specify next roadmap feature (`012-moderation`).
+- **In-progress** (file:line): `.specs/features/012-moderation/context.md`
+- **Next step**: Complete `context.md`, `spec.md`, run `validate_spec.py`.
 - **Blockers**: none
 - **Uncommitted files**: none
 - **Branch**: main

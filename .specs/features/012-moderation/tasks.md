@@ -113,9 +113,9 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T4
 **Requirement**: MOD-01, MOD-05
 **Done when**:
-- [ ] Tables created with foreign keys and unique constraints.
-- [ ] `UPDATE` and `DELETE` on `moderation_actions` revoked at engine level (AD-017).
-- [ ] RLS policies restrict management of moderator roles to `service_role`.
+- [x] Tables created with foreign keys and unique constraints.
+- [x] `UPDATE` and `DELETE` on `moderation_actions` revoked at engine level (AD-017).
+- [x] RLS policies restrict management of moderator roles to `service_role`.
 **Tests**: db
 **Gate**: Database
 **Commit**: `feat(moderation): add moderator assignments and audit tables migration`

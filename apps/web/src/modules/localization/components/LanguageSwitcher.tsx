@@ -14,6 +14,11 @@ export function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const { locale, setLocale } = useTranslation();
   const [isPending, startTransition] = useTransition();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isDe = locale === "de";
   const targetLocale = isDe ? "en" : "de";
@@ -21,6 +26,9 @@ export function LanguageSwitcher({
 
   const handleToggle = () => {
     startTransition(async () => {
+      if (typeof document !== "undefined") {
+        document.cookie = `NEXT_LOCALE=${targetLocale}; path=/; max-age=31536000; SameSite=Lax`;
+      }
       await setLocale(targetLocale);
     });
   };
@@ -29,6 +37,9 @@ export function LanguageSwitcher({
     e.stopPropagation();
     if (nextLocale !== locale) {
       startTransition(async () => {
+        if (typeof document !== "undefined") {
+          document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
+        }
         await setLocale(nextLocale);
       });
     }
@@ -38,6 +49,7 @@ export function LanguageSwitcher({
     <div
       className={`language-switcher-wrapper ${className}`}
       data-testid="language-switcher-container"
+      data-hydrated={mounted ? "true" : "false"}
       style={{ display: "inline-flex", alignItems: "center" }}
     >
       <button

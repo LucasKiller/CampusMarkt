@@ -72,9 +72,15 @@ export function LanguageProvider({
         }
 
         if (typeof document !== "undefined") {
+          document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
           document.documentElement.lang = newLocale;
         }
-        if (router?.refresh) {
+        if (
+          typeof window !== "undefined" &&
+          typeof window.location?.reload === "function"
+        ) {
+          window.location.reload();
+        } else if (router?.refresh) {
           router.refresh();
         }
       } catch (err) {

@@ -263,10 +263,10 @@ T13 -> T14 -> T15 -> T16
 **Depends on**: T15
 **Requirement**: LOC-01, LOC-02, LOC-03, LOC-04, LOC-05
 **Done when**:
-- [ ] E2E tests verify language toggle switches navigation and feed strings immediately.
-- [ ] E2E tests verify `/impressum`, `/datenschutz`, and `/agb` render correctly in both languages.
-- [ ] E2E tests verify security headers are present on loaded pages.
-- [ ] All E2E journeys pass.
+- [x] E2E tests verify language toggle switches navigation and feed strings immediately.
+- [x] E2E tests verify `/impressum`, `/datenschutz`, and `/agb` render correctly in both languages.
+- [x] E2E tests verify security headers are present on loaded pages.
+- [x] All E2E journeys pass.
 **Tests**: e2e
 **Gate**: Full
 **Commit**: `test(launch): prove e2e bilingual journeys and launch hardening verification`

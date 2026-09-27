@@ -20,7 +20,7 @@
 ### Phase 1: Discovery identity
 
 ```
-T1 → T2
+T1 → T2 → T3
 ```
 
 ## Task Breakdown
@@ -57,6 +57,23 @@ T1 → T2
 - [x] Home and search preserve the square media, decision information, and honest no-photo card.
 - [x] Hover only scales media within 220ms; reduced motion suppresses card and favorite transforms.
 - [x] Keyboard focus is visible on the card link and favorite button.
+
+**Tests**: e2e
+**Gate**: build
+**Status**: complete
+
+### T3: Close independent verification gaps
+
+**What**: Prove the initial empty feed in the browser and the favorite's active transform under reduced motion.
+**Where**: `apps/web/tests/neighborhood-identity.spec.ts`, `apps/web/src/app/page.tsx`
+**Depends on**: T2
+**Requirement**: VIS-01, VIS-02
+
+**Done when**:
+
+- [x] An initially empty home shows its empty state and three generic browse tiles in the browser.
+- [x] Pressing favorite under reduced motion leaves its computed transform at `none`.
+- [x] The browser and project gates pass.
 
 **Tests**: e2e
 **Gate**: build

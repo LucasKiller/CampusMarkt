@@ -23,6 +23,7 @@ interface HomePageProps {
     category?: string;
     pickupArea?: string;
     listingType?: string;
+    e2eEmptyFeed?: string;
   }>;
 }
 
@@ -64,8 +65,18 @@ export default async function HomePage(props: HomePageProps) {
     initialError = true;
   }
 
-  // E2E test mock fallback if database is empty during CI tests
-  if (initialItems.length === 0 && process.env.E2E_TEST === "true") {
+  // E2E fixtures for the initial public-feed states.
+  if (process.env.E2E_TEST === "true" && searchParams.e2eEmptyFeed === "1") {
+    initialItems = [];
+    initialCursor = null;
+    initialError = false;
+  }
+
+  if (
+    initialItems.length === 0 &&
+    process.env.E2E_TEST === "true" &&
+    searchParams.e2eEmptyFeed !== "1"
+  ) {
     initialCursor = "test-page-2-cursor";
     initialItems = [
       {

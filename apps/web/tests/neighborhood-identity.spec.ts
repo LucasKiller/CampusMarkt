@@ -79,6 +79,17 @@ test("home search and discovery remain reachable at 390px", async ({
   ).toBe(false);
 });
 
+test("initial empty feed keeps the real empty state and generic browse tiles", async ({
+  page,
+}) => {
+  await page.goto("/?e2eEmptyFeed=1");
+  const hero = page.getByTestId("home-hero-showcase");
+  await expect(hero.locator("a[href^='/listings/']")).toHaveCount(0);
+  await expect(hero.locator("a[href^='/search?listingType=']")).toHaveCount(3);
+  await expect(hero.locator("img")).toHaveCount(0);
+  await expect(page.locator(".empty-feed-state")).toBeVisible();
+});
+
 test("approved home copy follows the saved language", async ({
   page,
   context,
@@ -105,6 +116,7 @@ test("approved home copy follows the saved language", async ({
 test("discovery cards use restrained media motion on home and search", async ({
   page,
 }) => {
+  await keepFeedAvailable(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const route of ["/", "/search?q=calculus"]) {
     await page.goto(route);
@@ -143,6 +155,18 @@ test("reduced motion suppresses card and favorite transforms", async ({
   await expect(image).toHaveCSS("transform", "none");
   await expect(image).toHaveCSS("transition-duration", "0s");
   await expect(favorite).toHaveCSS("transition-duration", "0s");
+  const bounds = await favorite.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2,
+    bounds!.y + bounds!.height / 2,
+  );
+  await page.mouse.down();
+  try {
+    await expect(favorite).toHaveCSS("transform", "none");
+  } finally {
+    await page.mouse.up();
+  }
 });
 
 test("card navigation and favorite both show keyboard focus", async ({

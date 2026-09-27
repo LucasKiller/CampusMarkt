@@ -4,7 +4,7 @@
 > Canonical state lives in `.specs/lessons.json`. Edit lessons only via the script.
 > promote_threshold=2 distinct features · window_days=45 · quarantine_threshold=2
 
-## Confirmed (load these at Plan/Checks)
+## Confirmed (load these at Specify/Design)
 
 Corroborated across multiple features. Safe to apply as guidance.
 
@@ -103,6 +103,18 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - features: 015-marketplace-visual-system
 - evidence: C10 (ui)
 - last seen: 2026-09-26T23:40:51Z
+
+### L-016 - For reduced-motion controls, assert the active transform as well as the transition duration.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `web-ui` · harmful: 0
+- features: 016-neighborhood-identity
+- evidence: apps/web/src/app/globals.css:1093 (web-ui)
+- last seen: 2026-09-27T01:56:40Z
+
+### L-017 - Exercise initial empty server data in browser tests without test-only sample fallbacks.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `web-ui` · harmful: 0
+- features: 016-neighborhood-identity
+- evidence: apps/web/src/app/page.tsx:67 (web-ui)
+- last seen: 2026-09-27T01:56:45Z
 
 ## Quarantined (failed when applied - ignore)
 

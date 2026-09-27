@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 16,
+  "next_id": 18,
   "lessons": [
     {
       "id": "L-001",
@@ -274,6 +274,42 @@
       ],
       "created": "2026-09-26T23:40:51Z",
       "last_seen": "2026-09-26T23:40:51Z"
+    },
+    {
+      "id": "L-016",
+      "key": "surviving_mutant::for reduced motion controls assert the active transform as well as the transition duration",
+      "text": "For reduced-motion controls, assert the active transform as well as the transition duration.",
+      "signal": "surviving_mutant",
+      "scope": "web-ui",
+      "status": "candidate",
+      "features": [
+        "016-neighborhood-identity"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "apps/web/src/app/globals.css:1093 (web-ui)"
+      ],
+      "created": "2026-09-27T01:56:40Z",
+      "last_seen": "2026-09-27T01:56:40Z"
+    },
+    {
+      "id": "L-017",
+      "key": "ac_gap::exercise initial empty server data in browser tests without test only sample fallbacks",
+      "text": "Exercise initial empty server data in browser tests without test-only sample fallbacks.",
+      "signal": "ac_gap",
+      "scope": "web-ui",
+      "status": "candidate",
+      "features": [
+        "016-neighborhood-identity"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "apps/web/src/app/page.tsx:67 (web-ui)"
+      ],
+      "created": "2026-09-27T01:56:45Z",
+      "last_seen": "2026-09-27T01:56:45Z"
     }
   ]
 }

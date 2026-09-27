@@ -6,9 +6,9 @@ The approved marketplace layout is consistent on the core journey, but the home 
 
 ## Goals
 
-- [ ] Show a distinctive, item-led home without fictional listings or images.
-- [ ] Give home and search cards the same restrained interaction language.
-- [ ] Preserve the existing marketplace flows, responsive navigation, and English/German localization.
+- [x] Show a distinctive, item-led home without fictional listings or images.
+- [x] Give home and search cards the same restrained interaction language.
+- [x] Preserve the existing marketplace flows, responsive navigation, and English/German localization.
 
 ## Out of Scope
 
@@ -70,13 +70,13 @@ The approved marketplace layout is consistent on the core journey, but the home 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| VIS-01 | P1: Local home identity | Execute | Implementing |
-| VIS-02 | P1: Calm, expressive discovery cards | Execute | Implementing |
+| VIS-01 | P1: Local home identity | Execute | Verified |
+| VIS-02 | P1: Calm, expressive discovery cards | Execute | Verified |
 
 **Coverage:** 2 total, 2 mapped to tasks, 0 unmapped.
 
 ## Success Criteria
 
-- [ ] New browser proof for home layout, locale, and honest imagery passes.
-- [ ] Existing marketplace visual-system browser proof remains green.
-- [ ] Home and search have no horizontal overflow at 390px.
+- [x] New browser proof for home layout, locale, and honest imagery passes.
+- [x] Existing marketplace visual-system browser proof remains green.
+- [x] Home and search have no horizontal overflow at 390px.

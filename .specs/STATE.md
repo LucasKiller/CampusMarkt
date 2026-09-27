@@ -164,7 +164,7 @@
 
 ## Handoff
 
-- **Feature**: `014-prelaunch-reconciliation`
+- **Feature**: `016-neighborhood-identity`
 - **Phase / Task**: Complete / independently verified
 - **Completed**:
   - `001-web-supabase-foundation` verified.
@@ -181,8 +181,10 @@
   - `012-moderation` verified.
   - `013-localization-launch-hardening` verified.
   - `014-prelaunch-reconciliation` verified PASS (24/24 acceptance criteria, all gates passing, valid discrimination sensor 6/6).
+  - `015-marketplace-visual-system` verified PASS in its scoped verification report.
+  - `016-neighborhood-identity` verified PASS (9/9 acceptance criteria, 22/22 browser tests, sensor 2/2).
 - **In-progress**: none
-- **Next step**: Specify the focused pre-beta security and recovery hardening feature for the blocker classes below.
+- **Next step**: Gather visual feedback on the new home and discovery cards; separately specify the pre-beta security and recovery hardening feature for the blocker classes below.
 - **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.
 - **Uncommitted files**: none
 - **Branch**: main

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getMarketplaceFeedService } from "../modules/listings/server/index";
 import { MarketplaceFeed } from "../components/marketplace/feed";
 import { MarketplaceHeader } from "../components/marketplace/marketplace-header";
+import { HomeHeroShowcase } from "../components/marketplace/home-hero-showcase";
 import type { PublicFeedItem } from "@campusmarkt/types";
 import { getCategoryLabel } from "@campusmarkt/domain";
 import {
@@ -137,20 +138,17 @@ export default async function HomePage(props: HomePageProps) {
       <section className="home-hero" aria-labelledby="hero-title">
         <div className="home-hero-copy">
           <p className="home-kicker">
-            {isEnglish ? "MADE FOR BRAUNSCHWEIG" : "FÜR BRAUNSCHWEIG GEMACHT"}
+            {isEnglish ? "Made for Braunschweig" : "Für Braunschweig gemacht"}
           </p>
           <h1 id="hero-title">
             {isEnglish
-              ? "Your marketplace for Braunschweig"
-              : "Dein Marktplatz für Braunschweig"}
+              ? "Good finds. Close to home."
+              : "Gute Funde. Ganz in deiner Nähe."}
           </h1>
           <p className="home-lede">
             {isEnglish
-              ? "Find useful things nearby, give items a second life, and connect locally."
-              : "Finde nützliche Dinge in deiner Nähe, gib Gegenständen ein zweites Leben und tausche dich lokal aus."}
-          </p>
-          <p className="home-promise">
-            Buy. Sell. Give away. Find what you need.
+              ? "A desk lamp, a bike, the books for next semester. Find what you need nearby and give good things another life."
+              : "Eine Schreibtischlampe, ein Fahrrad, Bücher fürs nächste Semester. Finde, was du brauchst, ganz in deiner Nähe."}
           </p>
           <form
             className="home-search"
@@ -173,16 +171,7 @@ export default async function HomePage(props: HomePageProps) {
             <button type="submit">{isEnglish ? "Search" : "Suchen"}</button>
           </form>
         </div>
-        <div className="home-hero-aside" aria-hidden="true">
-          <span className="hero-orbit hero-orbit-one" />
-          <span className="hero-orbit hero-orbit-two" />
-          <span className="hero-aside-label">
-            {isEnglish
-              ? "Good things stay local."
-              : "Gutes bleibt in der Nähe."}
-          </span>
-          <span className="hero-aside-city">BRAUNSCHWEIG / 52°16′ N</span>
-        </div>
+        <HomeHeroShowcase items={initialItems} locale={locale} />
       </section>
 
       <nav

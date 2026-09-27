@@ -126,7 +126,7 @@ describe("HomePage and ListingsPage public feed UI (T14)", () => {
       const pageJsx = await HomePage({});
       const html = renderToString(pageJsx);
 
-      expect(html).toContain("Your marketplace for Braunschweig");
+      expect(html).toContain("Good finds. Close to home.");
       expect(html).toContain("Recent listings in Braunschweig");
       expect(html).toContain("CampusMarkt");
     });

@@ -6,6 +6,8 @@
 
 CampusMarkt should feel like a local, trustworthy, welcoming marketplace — neither a corporate storefront nor an Airbnb clone. The previously approved reference is structural: photography first, prominent search, easy-to-scan categories, lightweight cards, and clear actions on listing details. CampusMarkt owns its visual identity, copy, and interactions.
 
+The approved expression is **70% local and welcoming, 30% young and expressive**. Real objects and approximate pickup areas give the interface its local character. Stronger headline typography and brief action feedback add energy. Airbnb remains a reference for information structure, not a source of brand colors, travel controls, or copy.
+
 The product serves all of Braunschweig. University verification is optional and signals trust; it never determines whether someone may browse or negotiate. V1 covers only physical goods with listing types `SELL`, `GIVE_AWAY`, and `WANTED`, in-person pickup, and no platform-held funds.
 
 ## Composition principles
@@ -15,6 +17,7 @@ The product serves all of Braunschweig. University verification is optional and 
 3. **Trust without exclusion:** public name, optional university badge, and approximate location help people decide; email addresses and exact addresses stay private.
 4. **Local lightness:** near-white canvas, few borders, and subtle elevation. Teal marks decisions rather than decorating the whole screen.
 5. **One language across devices:** hierarchy and content remain recognizable as layout changes. Mobile must not be a cut-down interface with essential links hidden.
+6. **Real things, real places:** home may feature current listing imagery, but never substitute generated or stock photos for a live listing. Missing photos use explicit text; an empty feed can link to real marketplace filters.
 
 ## Proposed identity and tokens
 
@@ -33,6 +36,7 @@ These are semantic colors, not page-specific colors. Implementation should expos
 | `--color-focus`       | `#9B5A18` | Focus ring, distinct from teal       |
 | `--color-danger`      | `#A83232` | Error and destructive actions        |
 | `--color-warning`     | `#80520B` | Reserved/caution state               |
+| `--color-sun`         | `#E8BB64` | Small local accent, not body text    |
 
 Typography: `Inter` with system fallbacks. Avoid blocking font downloads and proprietary fonts. Type scale: body `16px/1.5`, metadata `14px/1.4`, cards `16px/1.35`, section headings `24–32px/1.15`, main heading `clamp(32px, 4vw, 52px)/1.05`. Use 400 for body text, 600 for labels/actions, and 700 for headings. Do not use all caps as the default hierarchy device.
 
@@ -49,6 +53,7 @@ Spacing follows a 4px base: `4, 8, 12, 16, 24, 32, 48, 64px`. Radii: `8px` on fi
 ### Discovery (`/` and `/search`)
 
 - Home uses a short promise and functional search in the first viewport. The listing showcase begins early; the hero must not consume nearly the entire screen.
+- Home may pair the headline and search with a compact collage of current feed items. The collage links to those listings and names each item's type, title, price or intent, and approximate area. If imagery is missing or fails to load, the tile keeps its text and proportion. If the feed is empty, use type-based browse links without inventing listings.
 - Categories are a horizontally navigable strip connected to real filters. `SELL`, `GIVE_AWAY`, and `WANTED` are filters, not separate capabilities invented by the visuals.
 - Grid: one column below `640px`, two from `640–1023px`, three from `1024–1279px`, four from `1280px`. Validate these guide values visually with realistic content.
 - Search and feed share the same card and filter language. Show active filters and offer a way to clear them. Preserve current URL behavior, ordering, and pagination; the redesign does not change the query.
@@ -95,6 +100,7 @@ Loading states preserve content geometry. Empty states explain what happened and
 - Meet WCAG 2.1 AA contrast: `4.5:1` for normal text and `3:1` for large text and functional boundaries. Validate actual color combinations, not just palette entries.
 - Keep focus visible, tab order logical, touch targets at least `44×44px`, keyboard interaction complete, and no hover-only functionality.
 - Respect `prefers-reduced-motion`. Short transitions (`150–200ms`) may clarify state without delaying a task.
+- Keep non-user-triggered motion rare. Card hover may scale only the clipped image, never move the whole card; favorite feedback may briefly change scale. Specify transform and opacity transitions, not `transition: all`. Suppress these transforms under `prefers-reduced-motion`.
 - Informative images have useful `alt` text; decorative icons are hidden from screen readers. Price, type, status, and action outcomes are expressed in text.
 - Check 320px, 390px, tablet, and desktop with long German and English copy. No page-level horizontal overflow, fixed-element overlap, or CTA hidden behind the keyboard.
 

@@ -163,7 +163,6 @@ export function FavoriteButton({
           fontWeight: 600,
           fontSize: "0.9375rem",
           cursor: "pointer",
-          transition: "all 0.15s ease",
           border: isFavorited ? "1px solid #f43f5e" : "1px solid #cbd5e1",
           backgroundColor: isFavorited ? "#fff1f2" : "#ffffff",
           color: isFavorited ? "#e11d48" : "#334155",
@@ -213,7 +212,6 @@ export function FavoriteButton({
         color: isFavorited ? "#e11d48" : "#64748b",
         cursor: "pointer",
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.12)",
-        transition: "transform 0.15s ease, background-color 0.15s ease",
         pointerEvents: "auto",
         zIndex: 5,
       }}

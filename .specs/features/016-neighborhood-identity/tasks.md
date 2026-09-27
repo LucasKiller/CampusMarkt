@@ -47,17 +47,17 @@ T1 → T2
 ### T2: Polish shared discovery cards and motion
 
 **What**: Make cards on home and search match the approved restrained visual and motion language.
-**Where**: `apps/web/src/components/marketplace/feed.tsx`
+**Where**: `apps/web/src/app/globals.css`
 **Depends on**: T1
 **Reuses**: `apps/web/src/components/marketplace/favorites/favorite-button.tsx`
 **Requirement**: VIS-02
 
 **Done when**:
 
-- [ ] Home and search preserve the square media, decision information, and honest no-photo card.
-- [ ] Hover only scales media within 220ms; reduced motion suppresses card and favorite transforms.
-- [ ] Keyboard focus is visible on the card link and favorite button.
+- [x] Home and search preserve the square media, decision information, and honest no-photo card.
+- [x] Hover only scales media within 220ms; reduced motion suppresses card and favorite transforms.
+- [x] Keyboard focus is visible on the card link and favorite button.
 
 **Tests**: e2e
 **Gate**: build
-**Status**: pending
+**Status**: complete

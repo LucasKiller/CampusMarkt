@@ -71,7 +71,7 @@ The approved marketplace layout is consistent on the core journey, but the home 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | VIS-01 | P1: Local home identity | Execute | Implementing |
-| VIS-02 | P1: Calm, expressive discovery cards | Execute | Pending |
+| VIS-02 | P1: Calm, expressive discovery cards | Execute | Implementing |
 
 **Coverage:** 2 total, 2 mapped to tasks, 0 unmapped.
 

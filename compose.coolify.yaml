@@ -617,10 +617,9 @@ services:
     volumes:
       [
         {
-          "bind": { "create_host_path": false },
-          "source": "./infra/supabase/volumes/snippets",
+          "source": "studio-snippets",
           "target": "/app/snippets",
-          "type": "bind",
+          "type": "volume",
         },
         {
           "bind": { "create_host_path": false },
@@ -790,6 +789,8 @@ volumes:
     name: "${STACK_ID:?}-deno-cache"
   minio-data:
     name: "${STACK_ID:?}-minio-data"
+  studio-snippets:
+    name: "${STACK_ID:?}-studio-snippets"
 x-migration-service:
   depends_on:
     auth:

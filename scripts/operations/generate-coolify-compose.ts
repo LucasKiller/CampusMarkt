@@ -128,6 +128,12 @@ for (const [name, service] of Object.entries(model.services)) {
   service.networks = { backend: aliases.length ? { aliases } : {} };
   for (const mount of service.volumes ?? []) {
     if (mount.type !== "bind") continue;
+    if (name === "studio" && mount.target === "/app/snippets") {
+      mount.type = "volume";
+      mount.source = "studio-snippets";
+      delete mount.bind;
+      continue;
+    }
     mount.source =
       name === "identity-worker"
         ? "./"
@@ -186,6 +192,7 @@ model.services["minio-createbucket"] = {
   ],
 };
 model.volumes["minio-data"] = { name: "${STACK_ID:?}-minio-data" };
+model.volumes["studio-snippets"] = { name: "${STACK_ID:?}-studio-snippets" };
 Object.assign(model.services.storage.environment!, {
   STORAGE_BACKEND: "s3",
   GLOBAL_S3_ENDPOINT: "http://minio:9000",

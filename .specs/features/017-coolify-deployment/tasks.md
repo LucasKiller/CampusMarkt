@@ -21,7 +21,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3
+T1 -> T4 -> T2 -> T3
 ```
 
 ## Task Breakdown
@@ -35,9 +35,18 @@ T1 -> T2 -> T3
 **Tests**: Requirement-derived integration checks listed in the matrix.
 **Gate**: Focused integration checks, Compose config rendering, formatting, secret scanning, and applicable build checks.
 
-### T2: Validate the adaptation independently
+### T4: Fix Studio persistence in a fresh checkout
 
 **Depends on**: T1
+**Requirements**: DEPLOY-01
+**Deliverable**: A scoped named volume for Studio snippets in the deployment derivative.
+**Done when**: Generation and bind validation work from a fresh Git checkout without an ignored empty directory; vendored files remain unchanged.
+**Tests**: Existing bind checks plus independent generation from a disposable checkout.
+**Gate**: Focused configuration suite, typecheck, lint, and independent re-verification.
+
+### T2: Validate the adaptation independently
+
+**Depends on**: T4
 **Requirements**: DEPLOY-01
 **Deliverable**: Independent validation report with source evidence and a discrimination sensor.
 **Done when**: A fresh verifier reports PASS for the repository adaptation and the structural completion gate passes.
@@ -56,6 +65,7 @@ T1 -> T2 -> T3
 ## Status
 
 - [x] T1
+- [x] T4
 - [ ] T2
 - [ ] T3
 

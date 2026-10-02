@@ -37,3 +37,22 @@ $ curl --fail --show-error https://campusmarkt.example/
 ```
 
 Keep operational logs and monitoring outside the containers. Record the pinned value in `infra/supabase/.supabase-version`, the application Git revision, the backup manifest path, and smoke-check results for each release.
+
+## Coolify installation
+
+Deploy the Git repository with the Compose build pack from `production`. Set Base Directory to `/`, Docker Compose Location to `/compose.coolify.yaml`, and enable Preserve Repository During Deployment. Assign `https://campusmarkt.inovv.co:80` only to Caddy. Coolify owns public TLS; all other services stay on the installation's private backend network.
+
+`compose.coolify.yaml` and `infra/caddy/Caddyfile.coolify` are generated derivatives. Regenerate with `node --experimental-strip-types scripts/operations/generate-coolify-compose.ts`, then format the YAML with Prettier. The generator does not interpolate credentials or edit vendored Supabase files. Run `npx vitest run tests/integration/compose/coolify-compose.test.ts` to check the deployment boundary.
+
+Set `STACK_ID` to the persistent Coolify resource identifier. It namespaces the private network, data volumes, and web image. Keep it unchanged on redeployments. Do not assign domains to Studio, the API gateway, PostgreSQL, Storage, or MinIO. Realtime retains its tenant hostname as a private network alias.
+
+Generate fresh PostgreSQL, JWT, service-role, encryption, identity-pepper, dashboard, and MinIO credentials for this installation. Never reuse development values. Store them in Coolify Environment Variables; never commit an installation `.env`. Required variables use `${VARIABLE:?}` so missing values fail before startup. The public Supabase key is the only credential intended for the browser.
+
+The public URLs (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_PUBLIC_URL`, `SITE_URL`, and `IDENTITY_ACTION_BASE_URL`) use the HTTPS application origin. `API_EXTERNAL_URL` adds `/auth/v1`. Supply public contact and privacy email addresses. For Google SMTP, use `smtp.gmail.com`, port `465`, and TLS mode `implicit`; insert the account and application password directly in Coolify. `SMTP_ADMIN_EMAIL` supplies the sender address, and `SMTP_SENDER_NAME` supplies its display name. SMTP authentication verification must not send mail or print credentials.
+
+PostgreSQL persists in the resource's `campusmarkt-postgres-data` volume. Objects persist in its separate `minio-data` volume. The bucket initialization service must complete successfully before Storage starts. The application waits for the database migration gate. Do not delete these volumes or change `STACK_ID` during routine deployment.
+
+Check the deployment logs, service health, `/`, `/health/live`, and `/health/ready` over valid HTTPS. An unhealthy service or failed migration is an incomplete deployment. Disconnect diagnostic terminal sessions immediately after each check.
+
+This installation is initially for owner progress review. External backup was deferred by the operator. A volume on the same VPS does not provide recovery from losing the server. Before real-user beta, configure off-host backups, prove restoration, and resolve the beta security blockers recorded in `.specs/STATE.md`. The existing production preflight remains authoritative and must not be weakened or marked passing while its requirements are unmet.
+

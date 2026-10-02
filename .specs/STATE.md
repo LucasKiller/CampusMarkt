@@ -167,9 +167,9 @@
 - **Feature**: `017-coolify-deployment`
 - **Phase/task**: Execute, T3 remote deployment
 - **Completed**: Existing V1 features 001-016 remain verified. Development/production branches created. DEPLOY-01 adaptation independently verified PASS, fresh checkout reproducible, 58 configuration checks pass, sensor 3/3 killed.
-- **In-progress**: Coolify installation from production; fresh installation keys and operator SMTP configured in the resource.
-- **Next step**: Publish validated configuration to development and production, load /compose.coolify.yaml, deploy and verify HTTPS/readiness/SMTP.
+- **In-progress**: Production installed successfully at https://campusmarkt.inovv.co; HTTPS, readiness, healthy services and distinct persistent volumes verified. SMTP AUTH rejected by Google with code 535; T3 remains pending.
+- **Next step**: Operator corrects SMTP credentials directly in Coolify; repeat bounded authentication and independent release verification. Evidence: features/017-coolify-deployment/release.md.
 - **Blockers**: Off-host backup deferred by the operator for owner progress review. Before real-user beta, harden authenticated marketplace RPC composition and offer authorization/concurrency, and prove off-host backup restoration.
-- **Uncommitted files**: task/spec/validation status updates for T2
+- **Uncommitted files**: none after the release evidence checkpoint
 - **Branch**: development
 

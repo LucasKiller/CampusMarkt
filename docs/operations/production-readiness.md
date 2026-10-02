@@ -50,6 +50,8 @@ Generate fresh PostgreSQL, JWT, service-role, encryption, identity-pepper, dashb
 
 The public URLs (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_PUBLIC_URL`, `SITE_URL`, and `IDENTITY_ACTION_BASE_URL`) use the HTTPS application origin. `API_EXTERNAL_URL` adds `/auth/v1`. Supply public contact and privacy email addresses. For Google SMTP, use `smtp.gmail.com`, port `465`, and TLS mode `implicit`; insert the account and application password directly in Coolify. `SMTP_ADMIN_EMAIL` supplies the sender address, and `SMTP_SENDER_NAME` supplies its display name. SMTP authentication verification must not send mail or print credentials.
 
+For the existing symmetric JWT configuration, leave optional `JWT_JWKS` empty. Coolify can interpret its nested Compose fallback as literal text and inject that invalid JSON into Storage. Enable asymmetric keys only with a separately validated Auth and API configuration. If an old empty bind placeholder conflicts with a tracked file during repository preservation, inspect and move that exact placeholder aside before retrying; never remove data volumes.
+
 PostgreSQL persists in the resource's `campusmarkt-postgres-data` volume. Objects persist in its separate `minio-data` volume. The bucket initialization service must complete successfully before Storage starts. The application waits for the database migration gate. Do not delete these volumes or change `STACK_ID` during routine deployment.
 
 Check the deployment logs, service health, `/`, `/health/live`, and `/health/ready` over valid HTTPS. An unhealthy service or failed migration is an incomplete deployment. Disconnect diagnostic terminal sessions immediately after each check.

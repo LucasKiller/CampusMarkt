@@ -164,27 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `016-neighborhood-identity`
-- **Phase / Task**: Complete / independently verified
-- **Completed**:
-  - `001-web-supabase-foundation` verified.
-  - `002-identity-accounts` verified.
-  - `003-university-verification` verified.
-  - `004-listing-creation-management` verified.
-  - `005-marketplace-feed-listing-details` verified.
-  - `006-search-filters` verified.
-  - `007-favorites` verified.
-  - `008-purchase-intent-offers-reservations` verified.
-  - `009-messaging` verified.
-  - `010-pickup-completion` verified.
-  - `011-reporting-blocking` verified.
-  - `012-moderation` verified.
-  - `013-localization-launch-hardening` verified.
-  - `014-prelaunch-reconciliation` verified PASS (24/24 acceptance criteria, all gates passing, valid discrimination sensor 6/6).
-  - `015-marketplace-visual-system` verified PASS in its scoped verification report.
-  - `016-neighborhood-identity` verified PASS (9/9 acceptance criteria, 22/22 browser tests, sensor 2/2).
-- **In-progress**: none
-- **Next step**: Gather visual feedback on the new home and discovery cards; separately specify the pre-beta security and recovery hardening feature for the blocker classes below.
-- **Blockers**: Before private beta, separately harden authenticated marketplace RPC composition, offer authorization/concurrency, and prove backup restoration against an ephemeral PostgreSQL target.
-- **Uncommitted files**: none
-- **Branch**: main
+- **Feature**: `017-coolify-deployment`
+- **Phase/task**: Execute, T3 remote deployment
+- **Completed**: Existing V1 features 001-016 remain verified. Development/production branches created. DEPLOY-01 adaptation independently verified PASS, fresh checkout reproducible, 58 configuration checks pass, sensor 3/3 killed.
+- **In-progress**: Coolify installation from production; fresh installation keys and operator SMTP configured in the resource.
+- **Next step**: Publish validated configuration to development and production, load /compose.coolify.yaml, deploy and verify HTTPS/readiness/SMTP.
+- **Blockers**: Off-host backup deferred by the operator for owner progress review. Before real-user beta, harden authenticated marketplace RPC composition and offer authorization/concurrency, and prove off-host backup restoration.
+- **Uncommitted files**: task/spec/validation status updates for T2
+- **Branch**: development
+

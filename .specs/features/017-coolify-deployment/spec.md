@@ -77,7 +77,7 @@ The production branch is configured in Coolify, but its parser only discovers se
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| DEPLOY-01 | Reproducible Coolify configuration | Specify | Pending |
+| DEPLOY-01 | Reproducible Coolify configuration | Execute | Verified |
 | DEPLOY-02 | Owner progress deployment | Specify | Pending |
 
 ## Success Criteria
@@ -86,4 +86,5 @@ The production branch is configured in Coolify, but its parser only discovers se
 - [ ] Independent verification of the repository adaptation passes.
 - [ ] The production VPS serves the application and its readiness endpoint over HTTPS.
 - [ ] External backup and beta-hardening gaps are explicitly retained.
+
 

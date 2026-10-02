@@ -66,7 +66,7 @@ T1 -> T4 -> T2 -> T3
 
 - [x] T1
 - [x] T4
-- [ ] T2
+- [x] T2
 - [ ] T3
 
 
@@ -84,4 +84,5 @@ Configuration suite: 58/58 tests pass with COMPOSE_DISABLE_ENV_FILE=true, preven
 | Bind files and routing | coolify-compose.test.ts: existsSync and Auth-denial matcher equality | Existing files and preserved denial |
 
 All five tests map to DEPLOY-01 criteria or listed edges. No existing tests were changed, skipped or removed.
+
 

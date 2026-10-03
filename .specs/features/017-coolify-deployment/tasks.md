@@ -64,6 +64,12 @@ T1 -> T4 -> T2 -> T3
 
 ## Status
 
+### T5: Monitor public ingress readiness
+
+Approved by the operator's request on 2026-10-03 to fix the Coolify healthcheck. DEPLOY-02: Caddy SHALL check `/health/ready` over local HTTP with a bounded GET, retain existing dependency checks, and report healthy in Coolify after deployment. Implement in the generator and derivative, assert the bounded command, independently verify, then publish and observe runtime health and HTTPS readiness.
+
+- [ ] T5
+
 - [x] T1
 - [x] T4
 - [x] T2

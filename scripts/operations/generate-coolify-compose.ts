@@ -149,6 +149,24 @@ for (const [name, volume] of Object.entries(model.volumes))
 model.services.caddy.networks!.default = {};
 model.services.caddy.environment = {};
 model.services.caddy.expose = ["80"];
+model.services.caddy.healthcheck = {
+  test: [
+    "CMD",
+    "wget",
+    "-q",
+    "-t",
+    "1",
+    "-T",
+    "5",
+    "-O",
+    "/dev/null",
+    "http://127.0.0.1/health/ready",
+  ],
+  interval: "10s",
+  timeout: "6s",
+  retries: 3,
+  start_period: "30s",
+};
 model.services.caddy.volumes![0].source = "./infra/caddy/Caddyfile.coolify";
 // Resource-scoped image names prevent a second installation overwriting this build.
 model.services.web.image = "campusmarkt/web:${STACK_ID:?}";

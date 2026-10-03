@@ -151,6 +151,24 @@ services:
       backend: {}
       default: {}
     expose: ["80"]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "-q",
+          "-t",
+          "1",
+          "-T",
+          "5",
+          "-O",
+          "/dev/null",
+          "http://127.0.0.1/health/ready",
+        ]
+      interval: "10s"
+      timeout: "6s"
+      retries: 3
+      start_period: "30s"
   db:
     command:
       [

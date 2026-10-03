@@ -7,6 +7,13 @@ const root = resolve(import.meta.dirname, "../../..");
 const file = resolve(root, "compose.coolify.yaml");
 const docker = process.platform === "win32" ? "docker.exe" : "docker";
 type Service = {
+  healthcheck?: {
+    test: string[];
+    interval: string;
+    timeout: string;
+    retries: number;
+    start_period: string;
+  };
   container_name?: string;
   ports?: unknown[];
   networks?: Record<string, { aliases?: string[] }>;
@@ -40,6 +47,26 @@ if (result.status !== 0) throw new Error(result.stderr);
 const model = JSON.parse(result.stdout) as Model;
 
 describe("DEPLOY-01 Coolify configuration", () => {
+  it("checks public ingress readiness with a bounded HTTP GET", () => {
+    expect(model.services.caddy.healthcheck).toEqual({
+      test: [
+        "CMD",
+        "wget",
+        "-q",
+        "-t",
+        "1",
+        "-T",
+        "5",
+        "-O",
+        "/dev/null",
+        "http://127.0.0.1/health/ready",
+      ],
+      interval: "10s",
+      timeout: "6s",
+      retries: 3,
+      start_period: "30s",
+    });
+  });
   it("discovers the complete stack without includes", () => {
     expect(Object.keys(model.services)).toEqual(
       expect.arrayContaining([

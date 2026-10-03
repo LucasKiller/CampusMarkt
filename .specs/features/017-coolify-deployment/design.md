@@ -11,3 +11,5 @@ Create fresh installation secrets, independent of the local development `.env`. 
 Record deployment smoke evidence separately from a production-readiness verdict. Deferring external backup does not modify or weaken the current production preflight.
 
 The deployment artifact, relevant tests, and operating documentation are the only repository implementation surface. No marketplace behavior or database schema changes are planned.
+
+The operator-approved healthcheck correction uses Caddy's Alpine wget to GET `http://127.0.0.1/health/ready`. This tests the public ingress route and existing readiness dependencies, with a five-second request limit, ten-second interval, three retries and thirty-second startup grace. It does not replace existing service checks or weaken the migration gate.

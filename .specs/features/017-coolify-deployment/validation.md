@@ -100,3 +100,17 @@ release.md:21-24 records healthy required running services, completed migration/
 Tasks remain correctly unchecked for T3 (tasks.md:70). STATE.md:168-172, release.md:44-46 and operations documentation preserve the SMTP and beta-readiness obligations. No contradictory overall PASS or production-preflight PASS claim was found.
 
 **Remaining required action**: operator corrects SMTP credentials directly in Coolify, then a bounded, redacted authentication check must succeed before T3/DEPLOY-02 can close. Do not expose credentials or infer SMTP success from HTTPS/readiness. Off-host backup restoration and existing beta security blockers remain separate prerequisites before beta readiness.
+
+## Final owner progress verification — 2026-10-03
+
+This section supersedes the pending SMTP/T3 findings above. DEPLOY-02 is **PASS for the owner progress release**. This does not establish beta readiness.
+
+| Criterion | New evidence | Result |
+| --- | --- | --- |
+| AC1 public HTTPS | Fresh independent HTTP requests with normal TLS certificate validation returned 200 for `/`, `/health/live`, and `/health/ready`. Each command exited after the check. | PASS |
+| AC2 bounded SMTP result | A TLS SMTP session from the deployed web container returned authentication code 235. A single direct test message returned acceptance code 250 and appeared in the designated Gmail inbox. No credentials were printed. | PASS |
+| AC3 persistence | Prior Coolify inspection recorded separate resource-scoped PostgreSQL and object-storage volumes; configuration assertions passed in the independent repository check. No destructive persistence test was performed. | PASS for configured persistence |
+| AC4 owner review boundary | `release.md` and `STATE.md` retain off-host backup and beta security/recovery blockers. | PASS |
+| AC5 diagnostic lifecycle | The Coolify terminal was explicitly exited after the SMTP check; no diagnostic shell was left running. | PASS |
+
+The application email path was checked separately: `POST /api/identity/confirmation-resends` returned HTTP 200 with `status: accepted`, and the matching confirmation message appeared in the designated inbox. The confirmation token is intentionally omitted. Direct SMTP acceptance, inbox receipt, and application-path receipt provide separate observations; the earlier Google 535 failure is historical. The previously completed independent repository adaptation validation remains PASS. Remote container health and volume inventory rely on the prior operator execution record rather than a fresh independent host inspection. No production preflight PASS is claimed.

@@ -24,7 +24,7 @@ Date: 2026-10-02. This is an owner review installation, with beta readiness pend
 | Published container host ports | Empty bindings for all installation containers |
 | PostgreSQL persistence | Named resource-scoped `campusmarkt-postgres-data` volume at `/var/lib/postgresql/data` |
 | Object persistence | Separate named resource-scoped `minio-data` volume at `/data` |
-| SMTP authentication | Google TLS connection reached SMTP AUTH; provider rejected credentials with code 535. No email sent; no credentials printed. Operator correction requested. |
+| SMTP authentication | Initial 2026-10-02 check reached SMTP AUTH but Google rejected credentials with code 535. Recheck on 2026-10-03 returned 235 authentication success, without printing credentials. |
 | Diagnostic sessions | Disconnected after each bounded check; deployed services remain running |
 
 Coolify adds its resource-scoped network to the services alongside the declared private backend. Caddy additionally has the Compose default ingress network. No database, administration or object-storage host ports are published. This evidence does not claim that Coolify leaves the rendered network list unchanged.
@@ -41,6 +41,6 @@ The control-plane queue had hundreds of duplicate file-inspection jobs for this 
 
 ## Remaining obligations
 
-DEPLOY-02 and T3 remain incomplete because SMTP authentication has not succeeded. HTTPS and service installation are verified; SMTP credentials require operator correction in Coolify and another bounded check.
+On 2026-10-03, a bounded SMTP check from the deployed web container returned 235 authentication success. A single direct test message to the operator-designated mailbox was accepted by the SMTP server with code 250 and appeared in that mailbox. The deployed application's `POST /api/identity/confirmation-resends` returned HTTP 200 and `status: accepted` for the same address; the corresponding confirmation message appeared in the mailbox. The confirmation link and credentials are omitted from this record. The diagnostic Coolify terminal was closed immediately after the check. Independent HTTPS requests to `/`, `/health/live`, and `/health/ready` each returned HTTP 200. DEPLOY-02 and T3 are complete for the owner progress release.
 
 Off-host backup is deferred by the operator. Named volumes provide persistence, not disaster recovery. Before real-user beta, prove off-host backup restoration and resolve the existing authenticated marketplace RPC composition and offer authorization/concurrency blockers in STATE.md. No production preflight PASS is claimed.

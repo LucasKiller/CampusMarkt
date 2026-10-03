@@ -165,8 +165,8 @@
 ## Handoff
 
 - **Feature**: `018-password-entry-usability`
-- **Phase/task**: Execute, T1 and T2 complete; independent revalidation pending
-- **Completed**: Features 001-017 retain their recorded outcomes. Password visibility, registration confirmation, and progressive length guidance are implemented locally. The first verifier found a surviving accessibility-state mutation; T2 added assertions for both controls, rendered colors, and 10/128-character request paths. The 54-test browser suite, 47 account-validation unit tests, typecheck, scoped lint, formatting, and secret scan passed.
+- **Phase/task**: Execute, T1 through T3 complete; independent revalidation pending
+- **Completed**: Features 001-017 retain their recorded outcomes. Password visibility, registration confirmation, and progressive length guidance are implemented locally. Two verifier rounds found accessibility-state coverage gaps; T2 and T3 added exact assertions for both controls, rendered milestone text/colors, and 10/128-character request paths. The 54-test browser suite, 47 account-validation unit tests, typecheck, scoped lint, formatting, and secret scan passed.
 - **In-progress**: A fresh verifier must recheck feature 018 against its specification, run a discrimination sensor, and update `validation.md`.
 - **Next step**: Run independent feature revalidation, then `validate_state.py`; record any verifier findings before declaring feature completion. No push or deployment is authorized by this local task.
 - **Blockers**: None for local feature 018. Existing off-host backup and beta security/recovery blockers remain before real-user beta.

@@ -4,17 +4,41 @@ test.describe("session and logout journey", () => {
   test("shows and hides the current password without submitting", async ({
     page,
   }) => {
+    let requestCount = 0;
+    await page.route("**/api/identity/sessions", async (route) => {
+      if (route.request().method() === "POST") {
+        requestCount += 1;
+        await route.abort();
+      } else {
+        await route.continue();
+      }
+    });
     await page.goto("/sign-in");
+    await page.getByLabel("Email address").fill("person@example.com");
     const password = page.getByLabel("Password", { exact: true });
     await password.fill("PastedSecretPass123!");
 
     await expect(password).toHaveAttribute("type", "password");
     await expect(password).toHaveAttribute("autocomplete", "current-password");
-    await page.getByRole("button", { name: "Show password" }).click();
+    const showPassword = page.getByRole("button", { name: "Show password" });
+    await expect(showPassword).toHaveAttribute("type", "button");
+    await expect(showPassword).toHaveAttribute("aria-pressed", "false");
+    await password.focus();
+    await page.keyboard.press("Tab");
+    await expect(showPassword).toBeFocused();
+    await showPassword.click();
     await expect(password).toHaveAttribute("type", "text");
     await expect(password).toHaveValue("PastedSecretPass123!");
-    await page.getByRole("button", { name: "Hide password" }).click();
+    const hidePassword = page.getByRole("button", { name: "Hide password" });
+    await expect(hidePassword).toHaveAttribute("aria-pressed", "true");
+    await hidePassword.click();
     await expect(password).toHaveAttribute("type", "password");
+    await expect(password).toHaveValue("PastedSecretPass123!");
+    await expect(
+      page.getByRole("button", { name: "Show password" }),
+    ).toHaveAttribute("aria-pressed", "false");
+    await expect(page.locator(".error-summary")).toHaveCount(0);
+    expect(requestCount).toBe(0);
   });
 
   for (const width of [360, 1280]) {

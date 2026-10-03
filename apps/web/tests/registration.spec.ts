@@ -4,6 +4,11 @@ test.describe("registration and confirmation journey", () => {
   test("reveals and hides each password without changing its value", async ({
     page,
   }) => {
+    let requestCount = 0;
+    await page.route("**/api/identity/registrations", async (route) => {
+      requestCount += 1;
+      await route.abort();
+    });
     await page.goto("/register");
     const password = page.getByLabel("Password", { exact: true });
     const confirmation = page.getByLabel("Confirm password", { exact: true });
@@ -47,6 +52,7 @@ test.describe("registration and confirmation journey", () => {
     await expect(password).toHaveAttribute("type", "password");
     await expect(password).toHaveValue("correct horse battery staple");
     await expect(page.locator(".error-summary")).toHaveCount(0);
+    expect(requestCount).toBe(0);
   });
 
   test("shows progressive length guidance without adding composition requirements", async ({
@@ -58,13 +64,17 @@ test.describe("registration and confirmation journey", () => {
     const segments = page.locator(".password-progress span");
     const completeColor = "rgb(11, 102, 94)";
     const incompleteColor = "rgb(221, 229, 223)";
+    const mutedTextColor = "rgb(83, 100, 95)";
     await expect(
       page.getByText("Length alone isn't a security score.", { exact: false }),
     ).toBeVisible();
 
     await password.fill("abcdefghij");
     await expect(milestones.nth(0)).toHaveClass(/is-complete/);
+    await expect(milestones.nth(0)).toContainText("10 characters (required)");
+    await expect(milestones.nth(0)).toHaveCSS("color", completeColor);
     await expect(milestones.nth(1)).not.toHaveClass(/is-complete/);
+    await expect(milestones.nth(1)).toHaveCSS("color", mutedTextColor);
     await expect(page.getByText("Minimum length reached")).toBeVisible();
     await expect(segments.nth(0)).toHaveCSS("background-color", completeColor);
     await expect(segments.nth(1)).toHaveCSS(
@@ -74,6 +84,12 @@ test.describe("registration and confirmation journey", () => {
 
     await password.fill("abcdefghijklmn");
     await expect(milestones.nth(1)).toHaveClass(/is-complete/);
+    await expect(milestones.nth(1)).toContainText(
+      "14 characters (recommended)",
+    );
+    await expect(milestones.nth(1)).toHaveCSS("color", completeColor);
+    await expect(page.getByText("Longer password")).toBeVisible();
+    await expect(milestones.nth(2)).toHaveCSS("color", mutedTextColor);
     await expect(segments.nth(1)).toHaveCSS("background-color", completeColor);
     await expect(segments.nth(2)).toHaveCSS(
       "background-color",
@@ -82,6 +98,10 @@ test.describe("registration and confirmation journey", () => {
 
     await password.fill("correct horse battery staple");
     await expect(milestones.nth(2)).toHaveClass(/is-complete/);
+    await expect(milestones.nth(2)).toContainText(
+      "20 characters (long passphrase)",
+    );
+    await expect(milestones.nth(2)).toHaveCSS("color", completeColor);
     await expect(page.getByText("Long passphrase length")).toBeVisible();
     await expect(segments.nth(2)).toHaveCSS("background-color", completeColor);
 

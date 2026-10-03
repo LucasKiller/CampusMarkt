@@ -20,7 +20,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2
+T1 -> T2 -> T3
 ```
 
 ## Task Breakdown
@@ -43,13 +43,25 @@ T1 -> T2
 **Tests:** Focused registration browser checks and the full browser command in the coverage matrix.
 **Gate:** Browser, types, lint, and formatting before an atomic test-fix commit.
 
+### T3: Close sign-in and milestone test gaps
+
+**Depends on:** T2
+**Requirements:** PWDUI-01, PWDUI-03
+**Deliverable:** Exact sign-in button accessibility and non-submission assertions, plus milestone text and computed color assertions.
+**Done when:** The sign-in-only false pressed-state mutation fails the browser test and the 10/14/20 milestone labels and colors match the spec.
+**Tests:** Focused sign-in and registration browser checks and the full browser command in the coverage matrix.
+**Gate:** Browser, types, lint, and formatting before an atomic test-fix commit.
+
 ## Status
 
 - [x] T1
 - [x] T2
+- [x] T3
 
 T1 gate: 52 relevant Playwright tests passed; after the Unicode input adjustment, 11 registration tests and the final focused guidance test passed. Typecheck, scoped lint, formatting, and tracked-secret scan passed. Playwright stopped its temporary server after each run.
 
-After T2 is committed, a fresh verifier reviews the spec, diff, tests, and a discrimination sensor and updates `validation.md`.
-
 T2 gate: 54 relevant Playwright tests, 47 account-validation unit tests, typecheck, scoped lint, and formatting passed. A focused four-test browser run covered both visibility controls, rendered guidance, paste, and Unicode input. The temporary browser server exited and port 3100 had no listener.
+
+T3 gate: Three focused browser tests and the complete 54-test browser suite passed. Typecheck, scoped lint, and formatting passed. Port 3100 had no listener after Playwright exited.
+
+After T3 is committed, a fresh verifier reviews the spec, diff, tests, and a discrimination sensor and updates `validation.md`.

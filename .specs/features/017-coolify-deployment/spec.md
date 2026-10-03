@@ -1,6 +1,6 @@
 # Coolify Deployment Specification
 
-**Status:** Approved by the operator on 2026-10-02; implementation in progress.
+**Status:** Approved by the operator on 2026-10-02; owner progress deployment verified on 2026-10-03. Beta readiness remains pending.
 
 ## Problem Statement
 
@@ -8,9 +8,9 @@ The production branch is configured in Coolify, but its parser only discovers se
 
 ## Goals
 
-- [ ] Deploy the existing V1 application from `production` on the existing Coolify resource.
-- [ ] Keep all database, administration, and storage services private.
-- [ ] Use the operator's Google SMTP configuration without exposing credentials.
+- [x] Deploy the existing V1 application from `production` on the existing Coolify resource.
+- [x] Keep all database, administration, and storage services private.
+- [x] Use the operator's Google SMTP configuration without exposing credentials.
 
 ## Out of Scope
 
@@ -78,13 +78,13 @@ The production branch is configured in Coolify, but its parser only discovers se
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | DEPLOY-01 | Reproducible Coolify configuration | Execute | Verified |
-| DEPLOY-02 | Owner progress deployment | Specify | Pending |
+| DEPLOY-02 | Owner progress deployment | Validate | Verified |
 
 ## Success Criteria
 
-- [ ] Complete Compose artifact and requirement-derived checks pass.
-- [ ] Independent verification of the repository adaptation passes.
-- [ ] The production VPS serves the application and its readiness endpoint over HTTPS.
-- [ ] External backup and beta-hardening gaps are explicitly retained.
+- [x] Complete Compose artifact and requirement-derived checks pass.
+- [x] Independent verification of the repository adaptation passes.
+- [x] The production VPS serves the application and its readiness endpoint over HTTPS.
+- [x] External backup and beta-hardening gaps are explicitly retained.
 
 

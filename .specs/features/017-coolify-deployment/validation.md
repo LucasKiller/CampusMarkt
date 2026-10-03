@@ -81,3 +81,36 @@ The three earlier killed sensors remain valid because the fix changes only Studi
 Scratch-wide `npm run format:check` reported 458 files because Windows checkout produced CRLF across existing baseline files. It was not treated as an implementation failure: changed deployment implementation/tests pass a root `npx prettier --check compose.coolify.yaml scripts/operations/generate-coolify-compose.ts infra/caddy/Caddyfile.coolify tests/integration/compose/coolify-compose.test.ts --ignore-unknown`, and the earlier root full formatting gate passed. This checkout formatting limitation is recorded transparently. No tests or implementation files were changed by the verifier.
 
 **Remaining gaps**: no unresolved local adaptation defect; DEPLOY-02 HTTPS, service health, SMTP authentication and actual volume persistence still require remote operational evidence. Beta security, backup and restoration blockers remain outside this adaptation PASS.
+## Independent remote evidence review — 2026-10-02
+
+This section supersedes the earlier statement that no remote evidence exists. The local DEPLOY-01 verdict remains PASS; **DEPLOY-02 is incomplete and the overall feature is not complete**. Installed revision is recorded as 6cd4fb203ac475dd7b9dfc0285d05d3fb227618d in release.md:7. This verifier did not access Coolify or host administration and cannot independently attest container inspection, deployed revision, volume inventory or prior diagnostic disconnects.
+
+Independent read-only HTTPS requests used PowerShell Invoke-WebRequest with default certificate validation, no certificate bypass, 20-second timeout per request, zero redirects, and explicit HTTP 200 assertion. The check process completed and exited without leaving a terminal session or server running.
+
+| DEPLOY-02 acceptance criterion | Evidence and assertion | Scoped status |
+| --- | --- | --- |
+| AC1 valid HTTPS and HTTP 200 for root/live/ready | Independently observed `/` HTTP 200 (23554 bytes), `/health/live` HTTP 200 with `{"status":"live"}`, `/health/ready` HTTP 200 with `{"status":"ready","unavailable":[]}`. Asserted `[int]$r.StatusCode -eq 200` for each bounded request. Matches release.md:18-20. | Independently verified |
+| AC2 bounded/redacted SMTP check | release.md:27 records Google TLS reaching AUTH and rejection code 535, no mail sent, no credentials printed. No SMTP success is inferred; this verifier did not reauthenticate. release.md:44 and STATE.md:170-171 retain operator correction and pending T3. | Recorded bounded failure; successful authentication remains unresolved |
+| AC3 distinct persistent PostgreSQL/object volumes | release.md:25-26 records scoped PostgreSQL and separate MinIO volumes; local exact configuration assertions at coolify-compose.test.ts:75-92 independently passed earlier. No host inspection or restart persistence test was repeated by this verifier. | Operator execution evidence reviewed, runtime persistence not independently repeated |
+| AC4 owner progress review with beta pending while backup absent | release.md:3,46; STATE.md:172; docs/operations/production-readiness.md:59 consistently retain owner review, deferred off-host backup and beta security/recovery blockers. | Evidence consistent |
+| AC5 diagnostic disconnect | release.md:28 records remote disconnections; independent HTTPS verifier process exited normally without starting or retaining a service. Prior remote sessions were not inspectable in this read-only review. | Execution record reviewed; verifier session lifecycle satisfied |
+
+release.md:21-24 records healthy required running services, completed migration/bucket initialization and zero published host ports. release.md:30 explicitly notes Coolify attaches its scoped network alongside the backend; it does not silently equate deployed networks with the rendered list. release.md:32 distinguishes the successfully exited migration gate from a running unhealthy service. These observations are internally consistent with readiness being healthy, but are not fresh container inspection by this verifier.
+
+Tasks remain correctly unchecked for T3 (tasks.md:70). STATE.md:168-172, release.md:44-46 and operations documentation preserve the SMTP and beta-readiness obligations. No contradictory overall PASS or production-preflight PASS claim was found.
+
+**Remaining required action**: operator corrects SMTP credentials directly in Coolify, then a bounded, redacted authentication check must succeed before T3/DEPLOY-02 can close. Do not expose credentials or infer SMTP success from HTTPS/readiness. Off-host backup restoration and existing beta security blockers remain separate prerequisites before beta readiness.
+
+## Final owner progress verification — 2026-10-03
+
+This section supersedes the pending SMTP/T3 findings above. DEPLOY-02 is **PASS for the owner progress release**. This does not establish beta readiness.
+
+| Criterion | New evidence | Result |
+| --- | --- | --- |
+| AC1 public HTTPS | Fresh independent HTTP requests with normal TLS certificate validation returned 200 for `/`, `/health/live`, and `/health/ready`. Each command exited after the check. | PASS |
+| AC2 bounded SMTP result | A TLS SMTP session from the deployed web container returned authentication code 235. A single direct test message returned acceptance code 250 and appeared in the designated Gmail inbox. No credentials were printed. | PASS |
+| AC3 persistence | Prior Coolify inspection recorded separate resource-scoped PostgreSQL and object-storage volumes; configuration assertions passed in the independent repository check. No destructive persistence test was performed. | PASS for configured persistence |
+| AC4 owner review boundary | `release.md` and `STATE.md` retain off-host backup and beta security/recovery blockers. | PASS |
+| AC5 diagnostic lifecycle | The Coolify terminal was explicitly exited after the SMTP check; no diagnostic shell was left running. | PASS |
+
+The application email path was checked separately: `POST /api/identity/confirmation-resends` returned HTTP 200 with `status: accepted`, and the matching confirmation message appeared in the designated inbox. The confirmation token is intentionally omitted. Direct SMTP acceptance, inbox receipt, and application-path receipt provide separate observations; the earlier Google 535 failure is historical. The previously completed independent repository adaptation validation remains PASS. Remote container health and volume inventory rely on the prior operator execution record rather than a fresh independent host inspection. No production preflight PASS is claimed.

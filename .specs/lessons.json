@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 18,
+  "next_id": 21,
   "lessons": [
     {
       "id": "L-001",
@@ -310,6 +310,60 @@
       ],
       "created": "2026-09-27T01:56:45Z",
       "last_seen": "2026-09-27T01:56:45Z"
+    },
+    {
+      "id": "L-018",
+      "key": "surviving_mutant::assert accessible state and retained value on every independently toggled shared form control",
+      "text": "Assert accessible state and retained value on every independently toggled shared form control.",
+      "signal": "surviving_mutant",
+      "scope": "identity-ui",
+      "status": "candidate",
+      "features": [
+        "018-password-entry-usability"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md:M7 (identity-ui)"
+      ],
+      "created": "2026-10-03T21:27:54Z",
+      "last_seen": "2026-10-03T21:27:54Z"
+    },
+    {
+      "id": "L-019",
+      "key": "ac_gap::when acceptance criteria require visual progress assert computed styles as well as state classes",
+      "text": "When acceptance criteria require visual progress, assert computed styles as well as state classes.",
+      "signal": "ac_gap",
+      "scope": "identity-ui",
+      "status": "candidate",
+      "features": [
+        "018-password-entry-usability"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md:PWDUI-03.1 (identity-ui)"
+      ],
+      "created": "2026-10-03T21:27:55Z",
+      "last_seen": "2026-10-03T21:27:55Z"
+    },
+    {
+      "id": "L-020",
+      "key": "ac_gap::exercise accepted password input through the form request including paste and unicode length boundaries",
+      "text": "Exercise accepted password input through the form request, including paste and Unicode length boundaries.",
+      "signal": "ac_gap",
+      "scope": "identity-ui",
+      "status": "candidate",
+      "features": [
+        "018-password-entry-usability"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "validation.md:PWDUI-03.2 (identity-ui)"
+      ],
+      "created": "2026-10-03T21:27:56Z",
+      "last_seen": "2026-10-03T21:27:56Z"
     }
   ]
 }

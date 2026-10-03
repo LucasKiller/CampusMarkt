@@ -116,6 +116,24 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: apps/web/src/app/page.tsx:67 (web-ui)
 - last seen: 2026-09-27T01:56:45Z
 
+### L-018 - Assert accessible state and retained value on every independently toggled shared form control.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `identity-ui` · harmful: 0
+- features: 018-password-entry-usability
+- evidence: validation.md:M7 (identity-ui)
+- last seen: 2026-10-03T21:27:54Z
+
+### L-019 - When acceptance criteria require visual progress, assert computed styles as well as state classes.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `identity-ui` · harmful: 0
+- features: 018-password-entry-usability
+- evidence: validation.md:PWDUI-03.1 (identity-ui)
+- last seen: 2026-10-03T21:27:55Z
+
+### L-020 - Exercise accepted password input through the form request, including paste and Unicode length boundaries.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `identity-ui` · harmful: 0
+- features: 018-password-entry-usability
+- evidence: validation.md:PWDUI-03.2 (identity-ui)
+- last seen: 2026-10-03T21:27:56Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

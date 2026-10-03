@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `017-coolify-deployment`
-- **Phase/task**: Validate, T3 remote deployment complete
-- **Completed**: Existing V1 features 001-016 remain verified. Development/production branches created. DEPLOY-01 adaptation independently verified PASS, fresh checkout reproducible, 58 configuration checks pass, sensor 3/3 killed.
-- **In-progress**: Production installed successfully at https://campusmarkt.inovv.co; HTTPS, readiness, healthy services and distinct persistent volumes verified. On 2026-10-03 SMTP authentication succeeded and both a direct test message and an application confirmation message arrived in the operator-designated mailbox. DEPLOY-02 and T3 are verified for owner progress review.
-- **Next step**: Owner may follow the latest confirmation link in their mailbox. Before real-user beta, resolve the security and recovery blockers below. Evidence: features/017-coolify-deployment/release.md and validation.md.
-- **Blockers**: Off-host backup deferred by the operator for owner progress review. Before real-user beta, harden authenticated marketplace RPC composition and offer authorization/concurrency, and prove off-host backup restoration.
-- **Uncommitted files**: none expected after the final release evidence commit
+- **Feature**: `018-password-entry-usability`
+- **Phase/task**: Execute complete; T1 through T3 and independent validation passed
+- **Completed**: Features 001-017 retain their recorded outcomes. Feature 018 password visibility, registration confirmation, and progressive length guidance are implemented and independently validated locally. All seven acceptance criteria have exact test evidence. The 54-test browser suite, 47 account-validation unit tests, typecheck, scoped lint, and formatting passed; two targeted browser-side pressed-state mutants were killed.
+- **In-progress**: None for feature 018.
+- **Next step**: Continue with the next approved local feature when requested. No push or deployment is authorized by this local task.
+- **Blockers**: None for local feature 018. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: None after the validation commit.
 - **Branch**: development
 

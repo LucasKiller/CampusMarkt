@@ -1,6 +1,123 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("registration and confirmation journey", () => {
+  test("reveals and hides each password without changing its value", async ({
+    page,
+  }) => {
+    await page.goto("/register");
+    const password = page.getByLabel("Password", { exact: true });
+    const confirmation = page.getByLabel("Confirm password", { exact: true });
+    await password.fill("correct horse battery staple");
+    await confirmation.fill("correct horse battery staple");
+
+    await expect(password).toHaveAttribute("type", "password");
+    await expect(password).toHaveAttribute("autocomplete", "new-password");
+    await expect(confirmation).toHaveAttribute("autocomplete", "new-password");
+    const showPassword = page.getByRole("button", { name: "Show password" });
+    await password.focus();
+    await page.keyboard.press("Tab");
+    await expect(showPassword).toBeFocused();
+    await showPassword.click();
+    await expect(password).toHaveAttribute("type", "text");
+    await expect(
+      page.getByRole("button", { name: "Hide password" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(confirmation).toHaveAttribute("type", "password");
+    await page.getByRole("button", { name: "Show confirm password" }).click();
+    await expect(confirmation).toHaveAttribute("type", "text");
+    await page.getByRole("button", { name: "Hide password" }).click();
+    await expect(password).toHaveAttribute("type", "password");
+    await expect(password).toHaveValue("correct horse battery staple");
+  });
+
+  test("shows progressive length guidance without adding composition requirements", async ({
+    page,
+  }) => {
+    await page.goto("/register");
+    const password = page.getByLabel("Password", { exact: true });
+    const milestones = page.locator(".password-milestones li");
+    await expect(
+      page.getByText("Length alone isn't a security score.", { exact: false }),
+    ).toBeVisible();
+
+    await password.fill("abcdefghij");
+    await expect(milestones.nth(0)).toHaveClass(/is-complete/);
+    await expect(milestones.nth(1)).not.toHaveClass(/is-complete/);
+    await expect(page.getByText("Minimum length reached")).toBeVisible();
+
+    await password.fill("abcdefghijklmn");
+    await expect(milestones.nth(1)).toHaveClass(/is-complete/);
+
+    await password.fill("correct horse battery staple");
+    await expect(milestones.nth(2)).toHaveClass(/is-complete/);
+    await expect(page.getByText("Long passphrase length")).toBeVisible();
+
+    const unicodePassphrase = "🙂".repeat(128);
+    await password.fill(unicodePassphrase);
+    await expect(password).toHaveValue(unicodePassphrase);
+  });
+
+  test("does not send a registration request when confirmation differs", async ({
+    page,
+  }) => {
+    let requestCount = 0;
+    await page.route("**/api/identity/registrations", async (route) => {
+      requestCount += 1;
+      await route.abort();
+    });
+    await page.goto("/register");
+    await page.getByLabel("Email address").fill("test@example.com");
+    await page.getByLabel("Display name (public)").fill("Alex");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("first-password-123");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("different-password-123");
+    await page.getByLabel("I confirm that I am at least 18 years old.").check();
+    await page
+      .getByLabel("I agree to the Terms of Service and Privacy Policy.")
+      .check();
+
+    await page.getByRole("button", { name: "Create account" }).click();
+
+    await expect(page.locator(".error-summary")).toBeFocused();
+    await expect(page.locator("#confirmPassword-error")).toHaveText(
+      "Passwords do not match.",
+    );
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
+    await expect(
+      page.getByLabel("Confirm password", { exact: true }),
+    ).toHaveValue("");
+    expect(requestCount).toBe(0);
+  });
+
+  test("requires a confirmation before registration", async ({ page }) => {
+    let requestCount = 0;
+    await page.route("**/api/identity/registrations", async (route) => {
+      requestCount += 1;
+      await route.abort();
+    });
+    await page.goto("/register");
+    await page.getByLabel("Email address").fill("test@example.com");
+    await page.getByLabel("Display name (public)").fill("Alex");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("a-long-passphrase");
+    await page.getByLabel("I confirm that I am at least 18 years old.").check();
+    await page
+      .getByLabel("I agree to the Terms of Service and Privacy Policy.")
+      .check();
+
+    await page.getByRole("button", { name: "Create account" }).click();
+
+    await expect(page.locator(".error-summary")).toBeFocused();
+    await expect(page.locator("#confirmPassword-error")).toHaveText(
+      "Confirm your password.",
+    );
+    expect(requestCount).toBe(0);
+  });
+
   for (const width of [360, 1280]) {
     test(`renders registration form without horizontal overflow at ${width}px`, async ({
       page,
@@ -15,7 +132,10 @@ test.describe("registration and confirmation journey", () => {
       // Form inputs
       await expect(page.getByLabel("Email address")).toBeVisible();
       await expect(page.getByLabel("Display name (public)")).toBeVisible();
-      await expect(page.getByLabel("Password")).toBeVisible();
+      await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+      await expect(
+        page.getByLabel("Confirm password", { exact: true }),
+      ).toBeVisible();
       await expect(
         page.getByLabel("I confirm that I am at least 18 years old."),
       ).toBeVisible();
@@ -41,7 +161,7 @@ test.describe("registration and confirmation journey", () => {
 
     await page.getByLabel("Email address").fill("test@example.com");
     await page.getByLabel("Display name (public)").fill("Alex");
-    await page.getByLabel("Password").fill("Secret12345!");
+    await page.getByLabel("Password", { exact: true }).fill("Secret12345!");
 
     // Submit without checking required checkboxes
     await page.getByRole("button", { name: "Create account" }).click();
@@ -61,7 +181,7 @@ test.describe("registration and confirmation journey", () => {
     await expect(page.locator("#termsConsent-error")).toBeVisible();
 
     // Password must be cleared (never repopulated on error)
-    await expect(page.getByLabel("Password")).toHaveValue("");
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
   });
 
   test("handles server validation error, moves focus to summary, and clears password", async ({
@@ -87,7 +207,8 @@ test.describe("registration and confirmation journey", () => {
 
     await page.getByLabel("Email address").fill("bad-email");
     await page.getByLabel("Display name (public)").fill("Valid Name");
-    await page.getByLabel("Password").fill("short");
+    await page.getByLabel("Password", { exact: true }).fill("short");
+    await page.getByLabel("Confirm password", { exact: true }).fill("short");
     await page.getByLabel("I confirm that I am at least 18 years old.").check();
     await page
       .getByLabel("I agree to the Terms of Service and Privacy Policy.")
@@ -108,7 +229,10 @@ test.describe("registration and confirmation journey", () => {
     await expect(page.locator("#password-error")).toBeVisible();
 
     // Password field must be cleared
-    await expect(page.getByLabel("Password")).toHaveValue("");
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
+    await expect(
+      page.getByLabel("Confirm password", { exact: true }),
+    ).toHaveValue("");
   });
 
   test("disables submit button while submission is pending to prevent dedupe", async ({
@@ -133,7 +257,12 @@ test.describe("registration and confirmation journey", () => {
 
     await page.getByLabel("Email address").fill("valid@example.com");
     await page.getByLabel("Display name (public)").fill("Valid Name");
-    await page.getByLabel("Password").fill("valid-password-123");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("valid-password-123");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("valid-password-123");
     await page.getByLabel("I confirm that I am at least 18 years old.").check();
     await page
       .getByLabel("I agree to the Terms of Service and Privacy Policy.")
@@ -156,6 +285,13 @@ test.describe("registration and confirmation journey", () => {
     page,
   }) => {
     await page.route("**/api/identity/registrations", async (route) => {
+      expect(route.request().postDataJSON()).toMatchObject({
+        email: "newuser@example.com",
+        password: "super-secret-pass-123",
+      });
+      expect(route.request().postDataJSON()).not.toHaveProperty(
+        "confirmPassword",
+      );
       await route.fulfill({
         status: 202,
         contentType: "application/json",
@@ -171,7 +307,12 @@ test.describe("registration and confirmation journey", () => {
 
     await page.getByLabel("Email address").fill("newuser@example.com");
     await page.getByLabel("Display name (public)").fill("Sam Student");
-    await page.getByLabel("Password").fill("super-secret-pass-123");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("super-secret-pass-123");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("super-secret-pass-123");
     await page.getByLabel("I confirm that I am at least 18 years old.").check();
     await page
       .getByLabel("I agree to the Terms of Service and Privacy Policy.")

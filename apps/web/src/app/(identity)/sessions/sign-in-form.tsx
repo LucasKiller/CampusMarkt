@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
+import { PasswordInput } from "../password-input";
 
 export function SignInForm() {
   const searchParams = useSearchParams();
@@ -159,12 +160,11 @@ export function SignInForm() {
             Forgot password?
           </a>
         </div>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
+          label="Password"
           autoComplete="current-password"
-          className="form-input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

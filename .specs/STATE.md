@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `017-coolify-deployment`
-- **Phase/task**: Validate, T3 remote deployment complete
-- **Completed**: Existing V1 features 001-016 remain verified. Development/production branches created. DEPLOY-01 adaptation independently verified PASS, fresh checkout reproducible, 58 configuration checks pass, sensor 3/3 killed.
-- **In-progress**: Production installed successfully at https://campusmarkt.inovv.co; HTTPS, readiness, healthy services and distinct persistent volumes verified. On 2026-10-03 SMTP authentication succeeded and both a direct test message and an application confirmation message arrived in the operator-designated mailbox. DEPLOY-02 and T3 are verified for owner progress review.
-- **Next step**: Owner may follow the latest confirmation link in their mailbox. Before real-user beta, resolve the security and recovery blockers below. Evidence: features/017-coolify-deployment/release.md and validation.md.
-- **Blockers**: Off-host backup deferred by the operator for owner progress review. Before real-user beta, harden authenticated marketplace RPC composition and offer authorization/concurrency, and prove off-host backup restoration.
-- **Uncommitted files**: none expected after the final release evidence commit
+- **Feature**: `018-password-entry-usability`
+- **Phase/task**: Execute, T1 implementation complete; independent validation pending
+- **Completed**: Features 001-017 retain their recorded outcomes. Password visibility, registration confirmation, and progressive length guidance are implemented locally. The relevant 52-test browser suite, subsequent focused checks, typecheck, scoped lint, formatting, and secret scan passed.
+- **In-progress**: A fresh verifier must review feature 018 against its specification, run a discrimination sensor, and write `validation.md`.
+- **Next step**: Run independent feature validation, then `validate_state.py`; record any verifier findings before declaring feature completion. No push or deployment is authorized by this local task.
+- **Blockers**: None for local feature 018. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: none expected after the T1 commit
 - **Branch**: development
 

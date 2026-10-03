@@ -1249,6 +1249,98 @@ footer {
   border-color: #b91c1c;
 }
 
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 6.5rem;
+}
+
+.password-visibility-button {
+  position: absolute;
+  right: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 5.5rem;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-brand, #0b665e);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.password-visibility-button:hover {
+  background: var(--color-brand-soft, #e7f4f0);
+}
+
+.password-visibility-button:focus-visible {
+  outline: 2px solid var(--color-focus, #9b5a18);
+  outline-offset: 1px;
+}
+
+.password-guidance {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.password-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.password-progress span {
+  height: 0.4rem;
+  border-radius: 99px;
+  background: var(--color-border, #dde5df);
+}
+
+.password-progress span.is-complete {
+  background: var(--color-brand, #0b665e);
+}
+
+.password-progress-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.password-milestones {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: var(--color-muted, #53645f);
+}
+
+.password-milestones li {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.password-milestones li.is-complete {
+  color: var(--color-brand, #0b665e);
+}
+
+.password-guidance .form-hint {
+  margin: 0;
+}
+
 .form-checkbox-label {
   display: flex;
   align-items: flex-start;

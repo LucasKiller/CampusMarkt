@@ -1,6 +1,6 @@
 # Password Entry Usability Specification
 
-**Status:** Locally implemented on 2026-10-03; independent validation pending.
+**Status:** Locally implemented and independently validated on 2026-10-03.
 
 ## Problem Statement
 
@@ -70,12 +70,12 @@ People cannot reveal their password while signing in or registering. Registratio
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PWDUI-01 | Reveal password | Execute | Implemented, verification pending |
-| PWDUI-02 | Confirm registration password | Execute | Implemented, verification pending |
-| PWDUI-03 | Explain password guidance | Execute | Implemented, verification pending |
+| PWDUI-01 | Reveal password | Execute | Verified |
+| PWDUI-02 | Confirm registration password | Execute | Verified |
+| PWDUI-03 | Explain password guidance | Execute | Verified |
 
 ## Success Criteria
 
 - [x] Registration and sign-in browser tests pass, including 360px layouts.
 - [x] Typecheck, lint, and formatting pass.
-- [ ] An independent verifier records PASS in `validation.md`.
+- [x] An independent verifier records PASS in `validation.md`.

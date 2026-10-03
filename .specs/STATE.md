@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `018-password-entry-usability`
-- **Phase/task**: Execute, T1 implementation complete; independent validation pending
-- **Completed**: Features 001-017 retain their recorded outcomes. Password visibility, registration confirmation, and progressive length guidance are implemented locally. The relevant 52-test browser suite, subsequent focused checks, typecheck, scoped lint, formatting, and secret scan passed.
-- **In-progress**: A fresh verifier must review feature 018 against its specification, run a discrimination sensor, and write `validation.md`.
-- **Next step**: Run independent feature validation, then `validate_state.py`; record any verifier findings before declaring feature completion. No push or deployment is authorized by this local task.
+- **Phase/task**: Execute, T1 and T2 complete; independent revalidation pending
+- **Completed**: Features 001-017 retain their recorded outcomes. Password visibility, registration confirmation, and progressive length guidance are implemented locally. The first verifier found a surviving accessibility-state mutation; T2 added assertions for both controls, rendered colors, and 10/128-character request paths. The 54-test browser suite, 47 account-validation unit tests, typecheck, scoped lint, formatting, and secret scan passed.
+- **In-progress**: A fresh verifier must recheck feature 018 against its specification, run a discrimination sensor, and update `validation.md`.
+- **Next step**: Run independent feature revalidation, then `validate_state.py`; record any verifier findings before declaring feature completion. No push or deployment is authorized by this local task.
 - **Blockers**: None for local feature 018. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: none expected after the T1 commit
+- **Uncommitted files**: the first verifier's FAIL report remains until revalidation; candidate lessons accompany T2
 - **Branch**: development
 

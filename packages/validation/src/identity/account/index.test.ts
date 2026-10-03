@@ -68,7 +68,7 @@ describe("primary email normalization", () => {
 });
 
 describe("password validation", () => {
-  it.each(["a".repeat(10), "a".repeat(128)])(
+  it.each(["a".repeat(10), "a".repeat(128), "🙂".repeat(10), "🙂".repeat(128)])(
     "accepts a password at an inclusive length boundary",
     (password) => {
       expect(parseCredentials({ email: "user@example.com", password }).ok).toBe(

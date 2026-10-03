@@ -14,6 +14,13 @@ test.describe("registration and confirmation journey", () => {
     await expect(password).toHaveAttribute("autocomplete", "new-password");
     await expect(confirmation).toHaveAttribute("autocomplete", "new-password");
     const showPassword = page.getByRole("button", { name: "Show password" });
+    const showConfirmation = page.getByRole("button", {
+      name: "Show confirm password",
+    });
+    await expect(showPassword).toHaveAttribute("type", "button");
+    await expect(showPassword).toHaveAttribute("aria-pressed", "false");
+    await expect(showConfirmation).toHaveAttribute("type", "button");
+    await expect(showConfirmation).toHaveAttribute("aria-pressed", "false");
     await password.focus();
     await page.keyboard.press("Tab");
     await expect(showPassword).toBeFocused();
@@ -23,11 +30,23 @@ test.describe("registration and confirmation journey", () => {
       page.getByRole("button", { name: "Hide password" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(confirmation).toHaveAttribute("type", "password");
-    await page.getByRole("button", { name: "Show confirm password" }).click();
+    await showConfirmation.click();
     await expect(confirmation).toHaveAttribute("type", "text");
+    const hideConfirmation = page.getByRole("button", {
+      name: "Hide confirm password",
+    });
+    await expect(hideConfirmation).toHaveAttribute("aria-pressed", "true");
+    await expect(confirmation).toHaveValue("correct horse battery staple");
+    await hideConfirmation.click();
+    await expect(confirmation).toHaveAttribute("type", "password");
+    await expect(
+      page.getByRole("button", { name: "Show confirm password" }),
+    ).toHaveAttribute("aria-pressed", "false");
+    await expect(confirmation).toHaveValue("correct horse battery staple");
     await page.getByRole("button", { name: "Hide password" }).click();
     await expect(password).toHaveAttribute("type", "password");
     await expect(password).toHaveValue("correct horse battery staple");
+    await expect(page.locator(".error-summary")).toHaveCount(0);
   });
 
   test("shows progressive length guidance without adding composition requirements", async ({
@@ -36,6 +55,9 @@ test.describe("registration and confirmation journey", () => {
     await page.goto("/register");
     const password = page.getByLabel("Password", { exact: true });
     const milestones = page.locator(".password-milestones li");
+    const segments = page.locator(".password-progress span");
+    const completeColor = "rgb(11, 102, 94)";
+    const incompleteColor = "rgb(221, 229, 223)";
     await expect(
       page.getByText("Length alone isn't a security score.", { exact: false }),
     ).toBeVisible();
@@ -44,18 +66,88 @@ test.describe("registration and confirmation journey", () => {
     await expect(milestones.nth(0)).toHaveClass(/is-complete/);
     await expect(milestones.nth(1)).not.toHaveClass(/is-complete/);
     await expect(page.getByText("Minimum length reached")).toBeVisible();
+    await expect(segments.nth(0)).toHaveCSS("background-color", completeColor);
+    await expect(segments.nth(1)).toHaveCSS(
+      "background-color",
+      incompleteColor,
+    );
 
     await password.fill("abcdefghijklmn");
     await expect(milestones.nth(1)).toHaveClass(/is-complete/);
+    await expect(segments.nth(1)).toHaveCSS("background-color", completeColor);
+    await expect(segments.nth(2)).toHaveCSS(
+      "background-color",
+      incompleteColor,
+    );
 
     await password.fill("correct horse battery staple");
     await expect(milestones.nth(2)).toHaveClass(/is-complete/);
     await expect(page.getByText("Long passphrase length")).toBeVisible();
+    await expect(segments.nth(2)).toHaveCSS("background-color", completeColor);
 
     const unicodePassphrase = "🙂".repeat(128);
     await password.fill(unicodePassphrase);
     await expect(password).toHaveValue(unicodePassphrase);
   });
+
+  for (const input of [
+    { name: "10-character pasted", value: "abcdefghij", paste: true },
+    { name: "128-code-point filled", value: "🙂".repeat(128), paste: false },
+  ]) {
+    test(`submits the ${input.name} password without its confirmation`, async ({
+      page,
+    }) => {
+      let submittedBody: Record<string, unknown> | null = null;
+      await page.route("**/api/identity/registrations", async (route) => {
+        submittedBody = route.request().postDataJSON();
+        await route.fulfill({
+          status: 202,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            data: { status: "accepted" },
+            correlationId: "88888888-8888-4888-8888-888888888888",
+          }),
+        });
+      });
+      await page.goto("/register");
+      await page.getByLabel("Email address").fill("boundary@example.com");
+      await page.getByLabel("Display name (public)").fill("Boundary User");
+      const password = page.getByLabel("Password", { exact: true });
+      if (input.paste) {
+        await page
+          .context()
+          .grantPermissions(["clipboard-read", "clipboard-write"]);
+        await page.evaluate(
+          (value) => navigator.clipboard.writeText(value),
+          input.value,
+        );
+        await password.focus();
+        await page.keyboard.press("ControlOrMeta+V");
+      } else {
+        await password.fill(input.value);
+      }
+      await expect(password).toHaveValue(input.value);
+      await page
+        .getByLabel("Confirm password", { exact: true })
+        .fill(input.value);
+      await page
+        .getByLabel("I confirm that I am at least 18 years old.")
+        .check();
+      await page
+        .getByLabel("I agree to the Terms of Service and Privacy Policy.")
+        .check();
+
+      await page.getByRole("button", { name: "Create account" }).click();
+
+      await expect(page.getByText("Check your inbox")).toBeVisible();
+      expect(submittedBody).toMatchObject({
+        email: "boundary@example.com",
+        password: input.value,
+      });
+      expect(submittedBody).not.toHaveProperty("confirmPassword");
+    });
+  }
 
   test("does not send a registration request when confirmation differs", async ({
     page,

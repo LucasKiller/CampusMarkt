@@ -20,7 +20,7 @@
 ## Execution Plan
 
 ```text
-T1
+T1 -> T2
 ```
 
 ## Task Breakdown
@@ -34,10 +34,22 @@ T1
 **Tests:** Browser checks in the coverage matrix.
 **Gate:** Browser, types, lint, formatting, and task/requirement status update in the same atomic commit.
 
+### T2: Close independent test coverage findings
+
+**Depends on:** T1
+**Requirements:** PWDUI-01, PWDUI-03
+**Deliverable:** Browser assertions for both visibility controls, rendered progress colors, and registration submission with 10/128-code-point passwords, plus server-rule boundary assertions.
+**Done when:** The confirmation control's false pressed-state mutation is detected; browser tests prove the remaining outcomes identified in `validation.md`.
+**Tests:** Focused registration browser checks and the full browser command in the coverage matrix.
+**Gate:** Browser, types, lint, and formatting before an atomic test-fix commit.
+
 ## Status
 
 - [x] T1
+- [x] T2
 
 T1 gate: 52 relevant Playwright tests passed; after the Unicode input adjustment, 11 registration tests and the final focused guidance test passed. Typecheck, scoped lint, formatting, and tracked-secret scan passed. Playwright stopped its temporary server after each run.
 
-After T1 is committed, a fresh verifier reviews the spec, diff, tests, and a discrimination sensor and writes `validation.md`.
+After T2 is committed, a fresh verifier reviews the spec, diff, tests, and a discrimination sensor and updates `validation.md`.
+
+T2 gate: 54 relevant Playwright tests, 47 account-validation unit tests, typecheck, scoped lint, and formatting passed. A focused four-test browser run covered both visibility controls, rendered guidance, paste, and Unicode input. The temporary browser server exited and port 3100 had no listener.

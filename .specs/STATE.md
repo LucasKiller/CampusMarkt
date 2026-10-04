@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `025-inbox-repair`
-- **Phase/task**: T1 implemented locally; independent validation pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Features 023 and 024 passed independent local validation but remain unpublished. Feature 025 repairs the user-token messaging boundary, message pagination, truthful failure states, listing-owner entry points, and inbox/thread visual language. Focused tests, responsive browser checks, typecheck, lint, and build pass.
-- **In-progress**: Independent review of feature 025 and its database migration.
-- **Next step**: Record independent validation, then request separate authorization before push, migration, or Coolify deployment. Verify inbox/send/read behavior with real accounts after deployment.
-- **Blockers**: Docker is unavailable locally, so the new SQL function and transaction-level rate limit have not been executed against PostgreSQL. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: Feature 025 implementation until the task commit.
+- **Phase/task**: T1 implemented and independently validated locally; publication pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Features 023 and 024 passed independent local validation but remain unpublished. Feature 025 repairs the user-token messaging boundary, message pagination, read receipts for the latest page, truthful failure states, listing-owner entry points, and inbox/thread visual language. Its independent local validation passed INBOX-01/02/03 with the limits recorded in `validation.md`.
+- **In-progress**: None locally for feature 025.
+- **Next step**: Obtain separate authorization before push, database migration, or Coolify deployment. Then verify inbox/send/read behavior with real accounts on the public site.
+- **Blockers**: Docker is unavailable locally, so the new SQL function and transaction-level rate limit have not been executed against PostgreSQL. Feature 009's sub-second Realtime delivery remains open; feature 025 uses four-second polling. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: Validation record until its commit.
 - **Branch**: development
 

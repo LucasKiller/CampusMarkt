@@ -36,6 +36,6 @@ Repair the existing 1:1, text-only messaging journey. Use the request's verified
 
 | Requirement | Test evidence | Status |
 | --- | --- | --- |
-| INBOX-01 | Token-client boundary, route, and listing owner tests | Implemented; independent validation pending |
-| INBOX-02 | Repository pagination, rate-limit mapping, thread tests, browser catch-up and read-receipt tests | Implemented; database execution pending |
-| INBOX-03 | Inbox rendering, failure-state, language, and responsive browser tests | Implemented; independent validation pending |
+| INBOX-01 | Token-client boundary, route, and listing owner tests | Pass in local validation; SQL execution pending |
+| INBOX-02 | Repository pagination, rate-limit mapping, thread tests, browser catch-up and read-receipt tests | Pass in local validation; SQL execution pending |
+| INBOX-03 | Inbox rendering, failure-state, language, and responsive browser tests | Pass in local validation |

@@ -67,9 +67,28 @@ export function createUploadIntentRouteHandler(
           };
         }
 
+        let signedUploadUrl: string;
+        try {
+          const signed = new URL(uploadResult.value.signedUploadUrl);
+          const expectedPath = `/storage/v1/object/upload/sign/listing-media/${storagePath}`;
+          if (
+            uploadResult.value.storagePath !== storagePath ||
+            signed.pathname !== expectedPath ||
+            !signed.searchParams.get("token")
+          ) {
+            throw new Error("INVALID_SIGNED_UPLOAD_URL");
+          }
+          signedUploadUrl = new URL(
+            `${signed.pathname}${signed.search}`,
+            origin,
+          ).toString();
+        } catch {
+          return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
+        }
+
         return {
           ok: true,
-          data: uploadResult.value,
+          data: { ...uploadResult.value, signedUploadUrl },
           status: 200,
         };
       },

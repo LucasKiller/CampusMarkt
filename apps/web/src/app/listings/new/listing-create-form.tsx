@@ -1,7 +1,14 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FormEvent,
+} from "react";
 import { useRouter } from "next/navigation";
+import { uploadSignedListingPhoto } from "../../../modules/listings/client/upload-photo";
 import {
   ITEM_CONDITIONS,
   LISTING_CATEGORIES,
@@ -65,6 +72,7 @@ export function ListingCreateForm() {
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -85,9 +93,8 @@ export function ListingCreateForm() {
     }
   }
 
-  async function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+  async function uploadFiles(files: File[]) {
+    if (files.length === 0 || isUploading) return;
 
     if (images.length + files.length > 8) {
       setGeneralError("You can upload a maximum of 8 photos.");
@@ -96,11 +103,13 @@ export function ListingCreateForm() {
 
     setIsUploading(true);
     setGeneralError(null);
+    const newImages: UploadedImage[] = [];
 
     try {
-      const newImages: UploadedImage[] = [];
-
       for (const file of files) {
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+          throw new Error(`File "${file.name}" must be JPEG, PNG, or WebP.`);
+        }
         if (file.size > 5 * 1024 * 1024) {
           throw new Error(`File "${file.name}" exceeds the 5MB size limit.`);
         }
@@ -127,34 +136,35 @@ export function ListingCreateForm() {
         const { signedUploadUrl, storagePath } = intentJson.data;
 
         // 2. Upload file
-        const uploadRes = await fetch(signedUploadUrl, {
-          method: "PUT",
-          headers: { "content-type": file.type },
-          body: file,
-        });
-
-        if (!uploadRes.ok) {
-          // Direct file upload fallback: create local object URL for preview
-          console.warn("Direct storage upload failed, using uploaded ref");
-        }
+        await uploadSignedListingPhoto(signedUploadUrl, file);
 
         newImages.push({
           storagePath,
           previewUrl: URL.createObjectURL(file),
         });
       }
-
-      setImages((prev) => [...prev, ...newImages]);
     } catch (err: unknown) {
       setGeneralError(
         err instanceof Error ? err.message : "Failed to upload photo.",
       );
     } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (newImages.length > 0) {
+        setImages((prev) => [...prev, ...newImages]);
       }
+      setIsUploading(false);
     }
+  }
+
+  async function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    await uploadFiles(files);
+  }
+
+  function handleFileDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDragOver(false);
+    void uploadFiles(Array.from(e.dataTransfer.files));
   }
 
   function handleRemoveImage(index: number) {
@@ -573,11 +583,22 @@ export function ListingCreateForm() {
           />
 
           <div
+            id="photo-drop-zone"
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragOver(true);
+            }}
+            onDragLeave={() => setIsDragOver(false)}
+            onDrop={handleFileDrop}
             style={{
               display: "flex",
               gap: "0.75rem",
               flexWrap: "wrap",
               alignItems: "center",
+              border: `2px dashed ${isDragOver ? "#0b665e" : "#cbd5e1"}`,
+              borderRadius: "8px",
+              padding: "1rem",
+              background: isDragOver ? "#eef7f3" : "transparent",
             }}
           >
             <button
@@ -589,7 +610,7 @@ export function ListingCreateForm() {
               {isUploading ? "Uploading..." : "+ Upload Photos"}
             </button>
             <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
-              {images.length}/8 uploaded
+              Drag photos here or choose files · {images.length}/8 uploaded
             </span>
           </div>
 

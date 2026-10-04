@@ -5,6 +5,10 @@ vi.mock("server-only", () => ({}));
 import { createSessionsHandler } from "../../../apps/web/src/app/api/identity/sessions/route.ts";
 import { createCurrentSessionHandler } from "../../../apps/web/src/app/api/identity/sessions/current/route.ts";
 import { AUTH_COOKIE_NAME } from "../../../apps/web/src/modules/identity/server/access.ts";
+import {
+  REFRESH_COOKIE_NAME,
+  parseRefreshCookie,
+} from "../../../apps/web/src/modules/identity/session-cookie.ts";
 
 const canonicalOrigin = "https://markt.example.test";
 
@@ -41,12 +45,25 @@ describe("session route integration (POST /api/identity/sessions)", () => {
     password: "Password123!",
   };
 
-  it("authenticates valid credentials, sets 30-day HttpOnly cookie, and returns safe returnTo", async () => {
+  it("authenticates valid credentials, sets bounded HttpOnly access and refresh cookies, and returns safe returnTo", async () => {
     const mockService = {
-      signIn: vi.fn(async () => ({
-        status: "authenticated" as const,
-        redirectTo: "/account",
-      })),
+      signIn: vi.fn(
+        async (
+          _body: unknown,
+          context: {
+            onSessionEstablished: (tokens: {
+              accessToken: string;
+              refreshToken: string;
+            }) => void;
+          },
+        ) => {
+          context.onSessionEstablished({
+            accessToken: "real-access",
+            refreshToken: "real-refresh",
+          });
+          return { status: "signed_in" as const, redirectTo: "/account" };
+        },
+      ),
       signOutCurrent: vi.fn(),
       signOutAll: vi.fn(),
     };
@@ -65,11 +82,22 @@ describe("session route integration (POST /api/identity/sessions)", () => {
 
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
-    expect(cookie).toContain(`${AUTH_COOKIE_NAME}=authenticated-session`);
+    expect(cookie).toContain(`${AUTH_COOKIE_NAME}=real-access`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=`);
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("SameSite=Lax");
     expect(cookie).toContain("Path=/");
     expect(cookie).toContain("Max-Age=2592000"); // 30 days in seconds
+    const refreshCookie = res.headers
+      .getSetCookie()
+      .find((value) => value.startsWith(`${REFRESH_COOKIE_NAME}=`));
+    expect(refreshCookie).toBeDefined();
+    expect(
+      parseRefreshCookie(refreshCookie?.split(";")[0]?.split("=")[1]),
+    ).toEqual({
+      refreshToken: "real-refresh",
+      issuedAt: expect.any(Number),
+    });
 
     const json = await res.json();
     expect(json.ok).toBe(true);
@@ -85,12 +113,74 @@ describe("session route integration (POST /api/identity/sessions)", () => {
     );
   });
 
+  it("marks each sign-in credential HttpOnly, SameSite=Lax, and Secure in production", async () => {
+    const mockService = {
+      signIn: vi.fn(
+        async (
+          _body: unknown,
+          context: {
+            onSessionEstablished: (tokens: {
+              accessToken: string;
+              refreshToken: string;
+            }) => void;
+          },
+        ) => {
+          context.onSessionEstablished({
+            accessToken: "production-access",
+            refreshToken: "production-refresh",
+          });
+          return { status: "signed_in" as const, redirectTo: "/account" };
+        },
+      ),
+    };
+    vi.stubEnv("NODE_ENV", "production");
+    try {
+      const handler = createSessionsHandler(
+        mockService as never,
+        canonicalOrigin,
+      );
+      const response = await handler.POST(
+        postRequest(
+          `${canonicalOrigin}/api/identity/sessions`,
+          validCredentials,
+        ),
+      );
+      expect(response.status).toBe(200);
+      for (const name of [AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME]) {
+        const cookie = response.headers
+          .getSetCookie()
+          .find((value) => value.startsWith(`${name}=`));
+        expect(cookie).toContain("HttpOnly");
+        expect(cookie).toContain("SameSite=Lax");
+        expect(cookie).toContain("Secure");
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("passes safe returnTo through sign-in", async () => {
     const mockService = {
-      signIn: vi.fn(async () => ({
-        status: "authenticated" as const,
-        redirectTo: "/listings/create",
-      })),
+      signIn: vi.fn(
+        async (
+          _body: unknown,
+          context: {
+            onSessionEstablished: (tokens: {
+              accessToken: string;
+              refreshToken: string;
+            }) => void;
+          },
+        ) => {
+          context.onSessionEstablished({
+            accessToken: "real-access",
+            refreshToken: "real-refresh",
+          });
+          return {
+            status: "signed_in" as const,
+            redirectTo: "/listings/create",
+          };
+        },
+      ),
       signOutCurrent: vi.fn(),
       signOutAll: vi.fn(),
     };
@@ -107,6 +197,27 @@ describe("session route integration (POST /api/identity/sessions)", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.returnTo).toBe("/listings/create");
+  });
+
+  it("fails closed when sign-in returns success without real tokens", async () => {
+    const mockService = {
+      signIn: vi.fn(async () => ({
+        status: "signed_in" as const,
+        redirectTo: "/account",
+      })),
+      signOutCurrent: vi.fn(),
+      signOutAll: vi.fn(),
+    };
+    const handler = createSessionsHandler(
+      mockService as never,
+      canonicalOrigin,
+    );
+    const res = await handler.POST(
+      postRequest(`${canonicalOrigin}/api/identity/sessions`, validCredentials),
+    );
+
+    expect(res.status).toBe(503);
+    expect(res.headers.get("set-cookie")).toBeNull();
   });
 
   it("returns 401 UNAUTHENTICATED on invalid credentials without user enumeration", async () => {
@@ -326,10 +437,23 @@ describe("session route integration (POST /api/identity/sessions)", () => {
   it("generates valid correlationId in response", async () => {
     const inboundCorrelationId = "44444444-4444-4444-8444-444444444444";
     const mockService = {
-      signIn: vi.fn(async () => ({
-        status: "authenticated" as const,
-        redirectTo: "/account",
-      })),
+      signIn: vi.fn(
+        async (
+          _body: unknown,
+          context: {
+            onSessionEstablished: (tokens: {
+              accessToken: string;
+              refreshToken: string;
+            }) => void;
+          },
+        ) => {
+          context.onSessionEstablished({
+            accessToken: "real-access",
+            refreshToken: "real-refresh",
+          });
+          return { status: "signed_in" as const, redirectTo: "/account" };
+        },
+      ),
       signOutCurrent: vi.fn(),
       signOutAll: vi.fn(),
     };
@@ -375,7 +499,7 @@ describe("session route integration (POST /api/identity/sessions)", () => {
 });
 
 describe("current session logout (DELETE /api/identity/sessions/current)", () => {
-  it("clears auth cookie and calls signOutCurrent", async () => {
+  it("clears both session cookies and calls signOutCurrent", async () => {
     const mockService = {
       signIn: vi.fn(),
       signOutCurrent: vi.fn(async () => {}),
@@ -396,7 +520,9 @@ describe("current session logout (DELETE /api/identity/sessions/current)", () =>
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
     expect(cookie).toContain(`${AUTH_COOKIE_NAME}=;`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("Max-Age=0");
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("HttpOnly");
 
     const json = await res.json();
@@ -451,7 +577,7 @@ describe("current session logout (DELETE /api/identity/sessions/current)", () =>
 });
 
 describe("all sessions logout (DELETE /api/identity/sessions)", () => {
-  it("clears auth cookie and returns signed_out", async () => {
+  it("clears both session cookies and returns signed_out", async () => {
     const mockService = {
       signIn: vi.fn(),
       signOutCurrent: vi.fn(),
@@ -470,6 +596,7 @@ describe("all sessions logout (DELETE /api/identity/sessions)", () => {
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
     expect(cookie).toContain(`${AUTH_COOKIE_NAME}=;`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("Max-Age=0");
 
     const json = await res.json();

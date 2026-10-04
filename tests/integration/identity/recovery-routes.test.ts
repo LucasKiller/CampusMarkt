@@ -5,6 +5,7 @@ vi.mock("server-only", () => ({}));
 import { createRecoveryHandler } from "../../../apps/web/src/app/api/identity/recoveries/route.ts";
 import { createPasswordResetHandler } from "../../../apps/web/src/app/api/identity/password-resets/route.ts";
 import { AUTH_COOKIE_NAME } from "../../../apps/web/src/modules/identity/server/access.ts";
+import { REFRESH_COOKIE_NAME } from "../../../apps/web/src/modules/identity/session-cookie.ts";
 
 const canonicalOrigin = "https://markt.example.test";
 
@@ -269,6 +270,11 @@ describe("password reset route integration (POST /api/identity/password-resets)"
     expect(
       setCookies.some(
         (c) => c.includes(`${AUTH_COOKIE_NAME}=`) && c.includes("Max-Age=0"),
+      ),
+    ).toBe(true);
+    expect(
+      setCookies.some(
+        (c) => c.includes(`${REFRESH_COOKIE_NAME}=`) && c.includes("Max-Age=0"),
       ),
     ).toBe(true);
 

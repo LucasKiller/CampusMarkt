@@ -8,9 +8,13 @@ import {
 import {
   getAccessService,
   getSessionDal,
-  AUTH_COOKIE_NAME,
   MAX_AUTH_COOKIE_AGE_SECONDS,
 } from "../../../../modules/identity/server/access";
+import {
+  appendSessionCookies,
+  appendClearedSessionCookies,
+  type SessionTokens,
+} from "../../../../modules/identity/session-cookie";
 
 function getCanonicalOrigin(request: Request) {
   return (
@@ -38,7 +42,7 @@ export function createSessionsHandler(
       const origin = canonicalOrigin ?? getCanonicalOrigin(request);
       const resolvedService = service ?? getAccessService(origin);
 
-      let sessionToken: string | undefined;
+      let sessionTokens: SessionTokens | undefined;
 
       const response = await handleIdentityJsonMutation(
         request,
@@ -48,8 +52,8 @@ export function createSessionsHandler(
           const result = await resolvedService.signIn(body, {
             trustedClientIp,
             correlationId,
-            onSessionEstablished(token) {
-              sessionToken = token;
+            onSessionEstablished(tokens) {
+              sessionTokens = tokens;
             },
           });
 
@@ -79,6 +83,9 @@ export function createSessionsHandler(
               code: "DEPENDENCY_UNAVAILABLE",
             };
           }
+          if (!sessionTokens) {
+            return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
+          }
 
           const expiresDate = new Date(
             Date.now() + MAX_AUTH_COOKIE_AGE_SECONDS * 1000,
@@ -96,19 +103,12 @@ export function createSessionsHandler(
         },
       );
 
-      // If sign in succeeded, attach the auth cookie
-      if (response.status === 200) {
-        const isProduction = process.env.NODE_ENV === "production";
-        const token = sessionToken || "authenticated-session";
-        const cookieAttributes = [
-          `${AUTH_COOKIE_NAME}=${token}`,
-          "Path=/",
-          `Max-Age=${MAX_AUTH_COOKIE_AGE_SECONDS}`,
-          "HttpOnly",
-          "SameSite=Lax",
-          ...(isProduction ? ["Secure"] : []),
-        ].join("; ");
-        response.headers.append("set-cookie", cookieAttributes);
+      if (response.status === 200 && sessionTokens) {
+        appendSessionCookies(
+          response.headers,
+          sessionTokens,
+          Math.floor(Date.now() / 1000),
+        );
       }
 
       return response;
@@ -148,10 +148,7 @@ export function createSessionsHandler(
         context.correlationId,
       );
 
-      response.headers.append(
-        "set-cookie",
-        `${AUTH_COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`,
-      );
+      appendClearedSessionCookies(response.headers);
 
       return response;
     },

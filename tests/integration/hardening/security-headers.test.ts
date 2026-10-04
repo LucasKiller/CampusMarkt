@@ -28,9 +28,9 @@ describe("security headers and vary middleware", () => {
     } as unknown as Parameters<typeof middleware>[0];
   }
 
-  it("attaches all required security headers to responses", () => {
+  it("attaches all required security headers to responses", async () => {
     const req = createRequest();
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Content-Security-Policy")).toBe(
       SECURITY_HEADERS["Content-Security-Policy"],
@@ -45,54 +45,54 @@ describe("security headers and vary middleware", () => {
     );
   });
 
-  it("attaches Vary header covering Cookie", () => {
+  it("attaches Vary header covering Cookie", async () => {
     const req = createRequest();
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Vary")).toBe("Cookie");
   });
 
-  it("sets Content-Language to English ('en') by default", () => {
+  it("sets Content-Language to English ('en') by default", async () => {
     const req = createRequest();
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Content-Language")).toBe("en");
   });
 
-  it("sets Content-Language to English ('en') when NEXT_LOCALE cookie is 'en'", () => {
+  it("sets Content-Language to English ('en') when NEXT_LOCALE cookie is 'en'", async () => {
     const req = createRequest({
       cookies: { NEXT_LOCALE: "en" },
       headers: { "accept-language": "de-DE,de;q=0.9" },
     });
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Content-Language")).toBe("en");
   });
 
-  it("keeps English as the default regardless of browser language", () => {
+  it("keeps English as the default regardless of browser language", async () => {
     const req = createRequest({
       headers: { "accept-language": "de-DE,de;q=0.9" },
     });
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Content-Language")).toBe("en");
   });
 
-  it("sanitizes malformed cookie values and falls back safely", () => {
+  it("sanitizes malformed cookie values and falls back safely", async () => {
     const req = createRequest({
       cookies: { NEXT_LOCALE: "<script>evil</script>" },
       headers: { "accept-language": "en-US,en;q=0.9" },
     });
-    const res = middleware(req);
+    const res = await middleware(req);
 
     expect(res.headers.get("Content-Language")).toBe("en");
   });
 
-  it("enforces clickjacking defense and strict CSP directives", () => {
+  it("enforces clickjacking defense and strict CSP directives", async () => {
     const req = createRequest({
       url: "https://campusmarkt.inovv.co/agb",
     });
-    const res = middleware(req);
+    const res = await middleware(req);
 
     const csp = res.headers.get("Content-Security-Policy");
     expect(csp).toContain("frame-ancestors 'none'");

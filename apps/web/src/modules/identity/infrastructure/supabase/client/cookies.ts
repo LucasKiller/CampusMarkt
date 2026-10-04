@@ -1,9 +1,13 @@
 import "server-only";
 
 import type { CookieMethodsServer, CookieOptions } from "@supabase/ssr";
+import {
+  AUTH_COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
+  MAX_AUTH_COOKIE_AGE_SECONDS,
+} from "../../../session-cookie";
 
-export const AUTH_COOKIE_NAME = "campusmarkt-auth";
-export const MAX_AUTH_COOKIE_AGE_SECONDS = 30 * 24 * 60 * 60;
+export { AUTH_COOKIE_NAME, MAX_AUTH_COOKIE_AGE_SECONDS };
 
 type RequestCookie = { name: string; value: string };
 
@@ -66,7 +70,10 @@ function writeCookie(
   cookie: RequestCookie & { options: CookieOptions },
   security: CookieSecurity,
 ) {
-  if (!isAuthCookieName(cookie.name)) {
+  if (
+    !isAuthCookieName(cookie.name) &&
+    !(cookie.name === REFRESH_COOKIE_NAME && cookie.options.maxAge === 0)
+  ) {
     throw new AuthCookieMutationError();
   }
 
@@ -101,7 +108,7 @@ export function clearAuthCookies(
   security: CookieSecurity = {},
 ) {
   for (const cookie of store.getAll()) {
-    if (isAuthCookieName(cookie.name)) {
+    if (isAuthCookieName(cookie.name) || cookie.name === REFRESH_COOKIE_NAME) {
       writeCookie(
         store,
         { name: cookie.name, value: "", options: { maxAge: 0 } },

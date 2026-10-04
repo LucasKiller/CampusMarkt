@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { resolveLocale } from "@campusmarkt/domain";
+import { refreshAuthSession } from "./modules/identity/session-refresh";
 
 export const SECURITY_HEADERS = {
   "Content-Security-Policy":
@@ -11,11 +11,11 @@ export const SECURITY_HEADERS = {
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
 } as const;
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
   const locale = resolveLocale(cookieLocale);
 
-  const response = NextResponse.next();
+  const response = await refreshAuthSession(request);
 
   for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
     response.headers.set(header, value);

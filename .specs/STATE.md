@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `019-legal-page-alignment`
-- **Phase/task**: Feature 019 complete and independently validated
-- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. T2 tested all three routes in both languages at 320px and fixed Privacy Policy title overflow. Independent revalidation passed all six acceptance criteria and the focused browser, render, type, lint, formatting, and spec/task gates.
-- **In-progress**: None for feature 019.
-- **Next step**: Await the next approved feature. No push or deployment was authorized by this local task.
-- **Blockers**: None for local feature 019. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: None after the feature 019 validation commit.
+- **Feature**: `021-listing-photo-upload-repair`
+- **Phase/task**: Validate complete; T1-T3 and PHOTO-01/PHOTO-02 verified locally
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 returns a signed Storage URL on the site's origin, uploads photos with Supabase-compatible multipart PUT, and accepts dropped files. Failed uploads do not appear as completed photos. T3 added proof of the selected file bytes, duplicate-drop prevention, and JPEG/WebP support. Its gate passed 21 focused tests, 18 browser journeys, typecheck, lint, formatting, and production web build.
+- **In-progress**: None for Feature 021. Independent validation passed 6/6 criteria, all task gates, and 2/2 final discrimination mutations.
+- **Next step**: Local feature complete. Deployment to Docker or the VPS requires a separately authorized operation.
+- **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: None after the validation record commit.
 - **Branch**: development
 

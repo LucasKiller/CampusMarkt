@@ -28,7 +28,13 @@ function dependencies() {
         void _password;
         return {
           ok: true,
-          value: { authUserId, sessionId, accessToken: "secret", issuedAt: 99 },
+          value: {
+            authUserId,
+            sessionId,
+            accessToken: "secret",
+            refreshToken: "refresh-secret",
+            issuedAt: 99,
+          },
         };
       },
     ),
@@ -174,7 +180,7 @@ describe("access sign-in", () => {
     await expect(
       createAccessService(ports).signIn(credentials, context),
     ).resolves.toEqual({ status: "denied" });
-    expect(ports.auth.signOutCurrent).toHaveBeenCalled();
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledWith("secret");
     expect(ports.clearSession).toHaveBeenCalled();
   });
 
@@ -185,6 +191,43 @@ describe("access sign-in", () => {
       authUserId,
       sessionId,
     });
+  });
+
+  it("passes the real access and refresh pair to the server only after session validation", async () => {
+    const ports = dependencies();
+    const onSessionEstablished = vi.fn();
+
+    await expect(
+      createAccessService(ports).signIn(credentials, {
+        ...context,
+        onSessionEstablished,
+      }),
+    ).resolves.toEqual({
+      status: "signed_in",
+      redirectTo: "/account/security",
+    });
+    expect(onSessionEstablished).toHaveBeenCalledExactlyOnceWith({
+      accessToken: "secret",
+      refreshToken: "refresh-secret",
+    });
+  });
+
+  it("fails closed when the provider omits the refresh token", async () => {
+    const ports = dependencies();
+    ports.auth.signInWithPassword.mockResolvedValue({
+      ok: true,
+      value: { authUserId, sessionId, accessToken: "secret" },
+    });
+    const onSessionEstablished = vi.fn();
+
+    await expect(
+      createAccessService(ports).signIn(credentials, {
+        ...context,
+        onSessionEstablished,
+      }),
+    ).resolves.toEqual({ status: "unavailable" });
+    expect(onSessionEstablished).not.toHaveBeenCalled();
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledExactlyOnceWith("secret");
   });
 
   it("fails closed and signs out when assurance cannot be recorded", async () => {
@@ -262,16 +305,47 @@ describe("access logout and reauthentication", () => {
     const newSessionId = "44444444-4444-4444-8444-444444444444";
     ports.auth.signInWithPassword.mockResolvedValue({
       ok: true,
-      value: { authUserId, sessionId: newSessionId },
+      value: {
+        authUserId,
+        sessionId: newSessionId,
+        accessToken: "new-access",
+        refreshToken: "new-refresh",
+      },
     });
-    await createAccessService(ports).reauthenticate(
-      { authUserId, sessionId },
-      { email: "person@example.test", password: "long-password" },
-    );
+    const onSessionEstablished = vi.fn();
+    await expect(
+      createAccessService(ports).reauthenticate(
+        { authUserId, sessionId },
+        { email: "person@example.test", password: "long-password" },
+        onSessionEstablished,
+      ),
+    ).resolves.toEqual({ status: "reauthenticated" });
     expect(ports.repository.recordPasswordAssurance).toHaveBeenCalledWith({
       authUserId,
       sessionId: newSessionId,
     });
+    expect(onSessionEstablished).toHaveBeenCalledExactlyOnceWith({
+      accessToken: "new-access",
+      refreshToken: "new-refresh",
+    });
+  });
+
+  it("fails reauthentication without a real refresh token and revokes the new access JWT", async () => {
+    const ports = dependencies();
+    ports.auth.signInWithPassword.mockResolvedValue({
+      ok: true,
+      value: { authUserId, sessionId, accessToken: "new-access" },
+    });
+    const onSessionEstablished = vi.fn();
+    await expect(
+      createAccessService(ports).reauthenticate(
+        { authUserId, sessionId },
+        { email: "person@example.test", password: "long-password" },
+        onSessionEstablished,
+      ),
+    ).resolves.toEqual({ status: "unavailable" });
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledWith("new-access");
+    expect(onSessionEstablished).not.toHaveBeenCalled();
   });
 
   it("rejects reauthentication when Auth returns another user", async () => {

@@ -182,12 +182,12 @@ describe("listings routes integration (T11)", () => {
       fileSizeBytes: 1024 * 500, // 500 KB
     };
 
-    it("returns signed upload path for valid image MIME types", async () => {
+    it("returns the signed Storage path and token on the public site origin", async () => {
       const mockRepo: Partial<ListingRepository> = {
         createSignedUploadUrl: vi.fn(async (path) => ({
           ok: true as const,
           value: {
-            signedUploadUrl: "https://storage.example.test/signed/url",
+            signedUploadUrl: `http://api-gw:8000/storage/v1/object/upload/sign/listing-media/${path}?token=signed-token`,
             storagePath: path,
             expiresAt: "2026-09-22T11:00:00.000Z",
           },
@@ -210,12 +210,70 @@ describe("listings routes integration (T11)", () => {
       const json = await res.json();
       expect(json.ok).toBe(true);
       expect(json.data.signedUploadUrl).toBe(
-        "https://storage.example.test/signed/url",
+        `${canonicalOrigin}/storage/v1/object/upload/sign/listing-media/${json.data.storagePath}?token=signed-token`,
       );
       expect(json.data.storagePath).toMatch(
         new RegExp(`^${authUserId}/[0-9a-f-]+\\.webp$`),
       );
       expect(mockRepo.createSignedUploadUrl).toHaveBeenCalled();
+    });
+
+    it.each([
+      "not-a-url",
+      "http://api-gw:8000/storage/v1/object/upload/sign/listing-media/other/photo.png?token=signed-token",
+      `http://api-gw:8000/storage/v1/object/upload/sign/listing-media/${authUserId}/photo.png`,
+    ])("rejects an invalid signed upload URL: %s", async (signedUploadUrl) => {
+      const mockRepo: Partial<ListingRepository> = {
+        createSignedUploadUrl: vi.fn(async (path) => ({
+          ok: true as const,
+          value: {
+            signedUploadUrl,
+            storagePath: path,
+            expiresAt: "2026-09-22T11:00:00.000Z",
+          },
+        })),
+      };
+      const handler = createUploadIntentRouteHandler(
+        mockRepo as ListingRepository,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+
+      const response = await handler(
+        postRequest(
+          `${canonicalOrigin}/api/listings/media/upload-intent`,
+          validIntent,
+        ),
+      );
+      expect(response.status).toBe(503);
+      expect((await response.json()).data).toBeUndefined();
+    });
+
+    it("rejects a signed Storage path without its token", async () => {
+      const mockRepo: Partial<ListingRepository> = {
+        createSignedUploadUrl: vi.fn(async (path) => ({
+          ok: true as const,
+          value: {
+            signedUploadUrl: `http://api-gw:8000/storage/v1/object/upload/sign/listing-media/${path}`,
+            storagePath: path,
+            expiresAt: "2026-09-22T11:00:00.000Z",
+          },
+        })),
+      };
+      const handler = createUploadIntentRouteHandler(
+        mockRepo as ListingRepository,
+        mockSessionDal(),
+        canonicalOrigin,
+      );
+      const response = await handler(
+        postRequest(
+          `${canonicalOrigin}/api/listings/media/upload-intent`,
+          validIntent,
+        ),
+      );
+
+      expect(response.status).toBe(503);
+      expect((await response.json()).data).toBeUndefined();
     });
 
     it("rejects invalid MIME types with HTTP 400", async () => {

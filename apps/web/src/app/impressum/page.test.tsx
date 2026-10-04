@@ -40,6 +40,8 @@ describe("legal pages UI rendering (T14)", () => {
     expect(html).toContain("Angaben gemäß § 5 DDG");
     expect(html).toContain("mailto:kontakt@campusmarkt.inovv.co");
     expect(html).toContain("Universitätsplatz 2");
+    expect(html).toContain("offen für alle Menschen in Braunschweig");
+    expect(html).toContain("Die Hochschulverifikation ist freiwillig");
   });
 
   it("renders /impressum page in English with binding notice", async () => {
@@ -52,6 +54,8 @@ describe("legal pages UI rendering (T14)", () => {
 
     expect(html).toContain("Legal Notice");
     expect(html).toContain("German statutory version is legally binding");
+    expect(html).toContain("open to everyone in Braunschweig");
+    expect(html).toContain("University verification is optional");
   });
 
   it("uses safe local role addresses when deployment contacts are absent", async () => {

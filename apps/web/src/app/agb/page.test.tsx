@@ -33,6 +33,7 @@ describe("AGB page UI rendering (T15)", () => {
     expect(html).toContain("Geltungsbereich");
     expect(html).toContain("Vor-Ort-Übergabe");
     expect(html).toContain("Unzulässige Inserate");
+    expect(html).not.toContain("AD-");
   });
 
   it("renders /agb page in English with binding statutory notice", async () => {
@@ -46,5 +47,6 @@ describe("AGB page UI rendering (T15)", () => {
     expect(html).toContain("Terms of Service");
     expect(html).toContain("German statutory version is legally binding");
     expect(html).toContain("Prohibited Goods");
+    expect(html).not.toContain("AD-");
   });
 });

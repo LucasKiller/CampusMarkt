@@ -109,7 +109,9 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
 
     await page.getByLabel("Email address").fill("newuser@example.test");
     await page.getByLabel("Display name (public)").fill("New User");
-    await page.getByLabel("Password").fill("SecretPassword123!");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("SecretPassword123!");
 
     // Submit without checking adult declaration or terms
     await page.getByRole("button", { name: "Create account" }).click();
@@ -127,7 +129,7 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
     ).toBeVisible();
 
     // Password must be cleared immediately upon validation failure
-    await expect(page.getByLabel("Password")).toHaveValue("");
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
   });
 
   test("[IDAC-01] registration disables submit button while pending to prevent duplicate requests", async ({
@@ -151,7 +153,12 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
     await page.goto("/register");
     await page.getByLabel("Email address").fill("duplicate-guard@example.test");
     await page.getByLabel("Display name (public)").fill("Dupe Guard");
-    await page.getByLabel("Password").fill("SecretPassword123!");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("SecretPassword123!");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("SecretPassword123!");
     await page.getByLabel("I confirm that I am at least 18 years old.").check();
     await page
       .getByLabel("I agree to the Terms of Service and Privacy Policy.")
@@ -245,7 +252,9 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
 
     await page.goto("/sign-in?returnTo=https://evil.test");
     await page.getByLabel("Email address").fill("user@example.test");
-    await page.getByLabel("Password").fill("ValidPassword123!");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("ValidPassword123!");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     // Verify it navigates to local root and NEVER to evil.test
@@ -274,7 +283,9 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
 
     await page.goto("/sign-in?returnTo=/account");
     await page.getByLabel("Email address").fill("user@example.test");
-    await page.getByLabel("Password").fill("ValidPassword123!");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("ValidPassword123!");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     await page.waitForURL("**/account");
@@ -655,7 +666,7 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
       page.getByRole("heading", { name: "Reauthentication Required" }),
     ).toBeVisible();
     await expect(page.getByLabel("Primary Email")).toBeVisible();
-    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Verify password" }),
     ).toBeVisible();
@@ -728,7 +739,7 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
 
     await page.goto("/sign-in");
     await page.getByLabel("Email address").fill("victim@example.test");
-    await page.getByLabel("Password").fill("Secret123!");
+    await page.getByLabel("Password", { exact: true }).fill("Secret123!");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     const summary = page.locator(".error-summary");
@@ -736,7 +747,7 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
     await expect(
       summary.getByText("Too many sign-in attempts. Please try again later."),
     ).toBeVisible();
-    await expect(page.getByLabel("Password")).toHaveValue("");
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
   });
 
   test("[IDAC-06] dependency unavailability (503) presents accessible error summary without leaking internal stack traces", async ({
@@ -761,7 +772,12 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
     await page.goto("/register");
     await page.getByLabel("Email address").fill("outage-tester@example.test");
     await page.getByLabel("Display name (public)").fill("Outage Tester");
-    await page.getByLabel("Password").fill("SecurePassword123!");
+    await page
+      .getByLabel("Password", { exact: true })
+      .fill("SecurePassword123!");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("SecurePassword123!");
     await page.getByLabel("I confirm that I am at least 18 years old.").check();
     await page
       .getByLabel("I agree to the Terms of Service and Privacy Policy.")
@@ -778,7 +794,7 @@ test.describe("identity acceptance matrix & cross-journey verification", () => {
     ).toBeVisible();
 
     // Password must be cleared
-    await expect(page.getByLabel("Password")).toHaveValue("");
+    await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
 
     // Ensure no raw exception strings leaked into DOM
     const bodyContent = await page.evaluate(() => document.body.innerHTML);

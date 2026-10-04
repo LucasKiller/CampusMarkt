@@ -414,6 +414,115 @@ body {
   text-decoration: none;
 }
 
+.legal-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding: 0;
+}
+.legal-content {
+  width: min(100% - 48px, 900px);
+  flex: 1;
+  margin: 0 auto;
+  padding: clamp(32px, 5vw, 64px) 0 72px;
+}
+.legal-intro > a {
+  display: inline-block;
+  min-height: 44px;
+  padding: 10px 0;
+  color: var(--color-brand);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.legal-intro > a:hover,
+.legal-article a:hover {
+  text-decoration: underline;
+}
+.legal-intro > p {
+  margin: 24px 0 10px;
+  color: var(--color-brand);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.legal-intro h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.legal-mobile-language {
+  display: none;
+}
+.legal-binding-note {
+  margin-top: 24px;
+  padding: 15px 18px;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-brand);
+  border-radius: 8px;
+  background: var(--color-brand-soft);
+  color: var(--color-ink);
+  line-height: 1.5;
+}
+.legal-article {
+  margin-top: 28px;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.legal-article h2 {
+  margin: 0 0 12px;
+  font-size: clamp(19px, 2.5vw, 23px);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+.legal-article h2:not(:first-child) {
+  margin-top: 38px;
+}
+.legal-article h3 {
+  margin: 26px 0 9px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.legal-article p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.legal-article a {
+  color: var(--color-brand);
+  font-weight: 600;
+}
+@media (max-width: 639px) {
+  .legal-content {
+    width: min(100% - 32px, 900px);
+    padding: 22px 0 48px;
+  }
+  .legal-intro {
+    position: relative;
+  }
+  .legal-intro > a {
+    padding-right: 92px;
+  }
+  .legal-mobile-language {
+    position: absolute;
+    top: 4px;
+    right: 0;
+    display: block;
+  }
+  .legal-intro > p {
+    margin-top: 20px;
+  }
+  .legal-article {
+    margin-top: 22px;
+  }
+}
+
 .listing-card {
   position: relative;
   display: flex;
@@ -1247,6 +1356,98 @@ footer {
 
 .form-input[aria-invalid="true"] {
   border-color: #b91c1c;
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 6.5rem;
+}
+
+.password-visibility-button {
+  position: absolute;
+  right: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 5.5rem;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.55rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-brand, #0b665e);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.password-visibility-button:hover {
+  background: var(--color-brand-soft, #e7f4f0);
+}
+
+.password-visibility-button:focus-visible {
+  outline: 2px solid var(--color-focus, #9b5a18);
+  outline-offset: 1px;
+}
+
+.password-guidance {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.password-progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.password-progress span {
+  height: 0.4rem;
+  border-radius: 99px;
+  background: var(--color-border, #dde5df);
+}
+
+.password-progress span.is-complete {
+  background: var(--color-brand, #0b665e);
+}
+
+.password-progress-label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.password-milestones {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: var(--color-muted, #53645f);
+}
+
+.password-milestones li {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.password-milestones li.is-complete {
+  color: var(--color-brand, #0b665e);
+}
+
+.password-guidance .form-hint {
+  margin: 0;
 }
 
 .form-checkbox-label {

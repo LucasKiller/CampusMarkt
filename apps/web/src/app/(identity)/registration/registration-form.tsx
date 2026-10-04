@@ -1,10 +1,13 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import { PasswordInput } from "../password-input";
+import { PasswordGuidance } from "./password-guidance";
 
 interface FieldErrors {
   email?: string[];
   password?: string[];
+  confirmPassword?: string[];
   displayName?: string[];
   adultDeclared?: string[];
   termsVersion?: string[];
@@ -16,6 +19,7 @@ export function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [adultDeclared, setAdultDeclared] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -32,11 +36,17 @@ export function RegistrationForm() {
     ...(fieldErrors.email || []),
     ...(fieldErrors.displayName || []),
     ...(fieldErrors.password || []),
+    ...(fieldErrors.confirmPassword || []),
     ...(fieldErrors.adultDeclared || []),
     ...(fieldErrors.termsVersion || []),
     ...(fieldErrors.privacyVersion || []),
     ...(generalError ? [generalError] : []),
   ];
+
+  function clearPasswords() {
+    setPassword("");
+    setConfirmPassword("");
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -57,10 +67,15 @@ export function RegistrationForm() {
         "You must accept the Terms of Service and Privacy Policy.",
       ];
     }
+    if (!confirmPassword) {
+      localErrors.confirmPassword = ["Confirm your password."];
+    } else if (password !== confirmPassword) {
+      localErrors.confirmPassword = ["Passwords do not match."];
+    }
 
     if (Object.keys(localErrors).length > 0) {
       setFieldErrors(localErrors);
-      setPassword(""); // Never retain password on error
+      clearPasswords();
       setTimeout(() => errorSummaryRef.current?.focus(), 50);
       return;
     }
@@ -86,7 +101,7 @@ export function RegistrationForm() {
       const payload = await response.json().catch(() => null);
 
       if (!response.ok || !payload?.ok) {
-        setPassword(""); // Never retain password on failure
+        clearPasswords();
         if (response.status === 429) {
           setGeneralError(
             "Too many registration attempts. Please try again later.",
@@ -104,9 +119,9 @@ export function RegistrationForm() {
 
       // Success
       setIsSubmitted(true);
-      setPassword("");
+      clearPasswords();
     } catch {
-      setPassword("");
+      clearPasswords();
       setGeneralError(
         "Network error. Please check your connection and try again.",
       );
@@ -259,31 +274,50 @@ export function RegistrationForm() {
         <label htmlFor="password" className="form-label">
           Password
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
+          label="Password"
           autoComplete="new-password"
-          className="form-input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={10}
-          maxLength={128}
           aria-invalid={!!fieldErrors.password}
           aria-describedby={
-            fieldErrors.password ? "password-error" : "password-hint"
+            fieldErrors.password
+              ? "password-guidance password-error"
+              : "password-guidance"
           }
         />
-        <span
-          id="password-hint"
-          style={{ fontSize: "0.75rem", color: "#526b59" }}
-        >
-          10 to 128 characters.
-        </span>
+        <PasswordGuidance password={password} />
         {fieldErrors.password && (
           <span id="password-error" className="form-error">
             {fieldErrors.password[0]}
+          </span>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="confirmPassword" className="form-label">
+          Confirm password
+        </label>
+        <PasswordInput
+          id="confirmPassword"
+          name="confirmPassword"
+          label="Confirm password"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          aria-invalid={!!fieldErrors.confirmPassword}
+          aria-describedby={
+            fieldErrors.confirmPassword ? "confirmPassword-error" : undefined
+          }
+        />
+        {fieldErrors.confirmPassword && (
+          <span id="confirmPassword-error" className="form-error">
+            {fieldErrors.confirmPassword[0]}
           </span>
         )}
       </div>

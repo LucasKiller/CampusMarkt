@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `017-coolify-deployment`
-- **Phase/task**: Validate, T3 remote deployment complete
-- **Completed**: Existing V1 features 001-016 remain verified. Development/production branches created. DEPLOY-01 adaptation independently verified PASS, fresh checkout reproducible, 58 configuration checks pass, sensor 3/3 killed.
-- **In-progress**: Production installed successfully at https://campusmarkt.inovv.co; HTTPS, readiness, healthy services and distinct persistent volumes verified. On 2026-10-03 SMTP authentication succeeded and both a direct test message and an application confirmation message arrived in the operator-designated mailbox. DEPLOY-02 and T3 are verified for owner progress review.
-- **Next step**: Owner may follow the latest confirmation link in their mailbox. Before real-user beta, resolve the security and recovery blockers below. Evidence: features/017-coolify-deployment/release.md and validation.md.
-- **Blockers**: Off-host backup deferred by the operator for owner progress review. Before real-user beta, harden authenticated marketplace RPC composition and offer authorization/concurrency, and prove off-host backup restoration.
-- **Uncommitted files**: none expected after the final release evidence commit
+- **Feature**: `019-legal-page-alignment`
+- **Phase/task**: Feature 019 complete and independently validated
+- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. T2 tested all three routes in both languages at 320px and fixed Privacy Policy title overflow. Independent revalidation passed all six acceptance criteria and the focused browser, render, type, lint, formatting, and spec/task gates.
+- **In-progress**: None for feature 019.
+- **Next step**: Await the next approved feature. No push or deployment was authorized by this local task.
+- **Blockers**: None for local feature 019. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: None after the feature 019 validation commit.
 - **Branch**: development
 

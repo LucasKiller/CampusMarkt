@@ -11,6 +11,7 @@ export function ProfileEditor() {
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const editedRef = useRef(false);
@@ -46,6 +47,8 @@ export function ProfileEditor() {
             "Unable to load your display name. Please refresh the page.",
           );
         }
+      } finally {
+        if (active) setIsLoadingProfile(false);
       }
     }
 
@@ -185,6 +188,7 @@ export function ProfileEditor() {
             type="text"
             className="form-input"
             value={displayName}
+            aria-busy={isLoadingProfile}
             onChange={(e) => {
               editedRef.current = true;
               setDisplayName(e.target.value);

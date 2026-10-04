@@ -367,6 +367,7 @@ test.describe("public and owner profile journeys", () => {
       page.getByText("Current display name: New Name"),
     ).toBeVisible();
     releaseRead();
+    await expect(input).toHaveAttribute("aria-busy", "false");
     await expect(input).toHaveValue("New Name");
     await expect(
       page.getByText("Current display name: New Name"),

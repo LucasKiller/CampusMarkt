@@ -21,7 +21,7 @@
 ## Execution Plan
 
 ```text
-T1
+T1 -> T2
 ```
 
 ## Task Breakdown
@@ -35,6 +35,16 @@ T1
 **Tests:** `apps/web/tests/profiles.spec.ts`
 **Gate:** Browser, types, lint, format, build, and atomic commit.
 
+### T2: Prove a late profile read cannot replace a completed save
+
+**Depends on:** T1
+**Requirements:** NAME-01.4
+**Deliverable:** Expose completion of the initial read to assistive technology and wait for that completion before asserting the saved name in the browser test.
+**Done when:** The late-read test checks the saved name after the initial GET has been consumed, and the browser, type, lint, format, and build gates pass.
+**Tests:** `apps/web/tests/profiles.spec.ts`
+**Gate:** Browser, types, lint, format, build, and atomic commit.
+
 ## Status
 
 - [x] T1
+- [x] T2

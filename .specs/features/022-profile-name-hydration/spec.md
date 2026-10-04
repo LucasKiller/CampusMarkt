@@ -47,7 +47,7 @@ Registration and profile updates store the public display name, but the account 
 
 | Requirement ID | Story | Status |
 | --- | --- | --- |
-| NAME-01 | Read the saved display name | Implemented T1; validation pending |
+| NAME-01 | Read the saved display name | Implemented T1-T2; validation pending |
 
 ## Success Criteria
 

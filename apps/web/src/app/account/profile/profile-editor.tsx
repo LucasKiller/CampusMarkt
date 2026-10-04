@@ -1,16 +1,10 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
-type ProfileEditorProps = {
-  initialDisplayName?: string;
-};
-
-export function ProfileEditor({
-  initialDisplayName = "User",
-}: ProfileEditorProps) {
-  const [displayName, setDisplayName] = useState(initialDisplayName);
-  const [lastSavedName, setLastSavedName] = useState(initialDisplayName);
+export function ProfileEditor() {
+  const [displayName, setDisplayName] = useState("");
+  const [lastSavedName, setLastSavedName] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ displayName?: string[] }>(
     {},
   );
@@ -19,6 +13,47 @@ export function ProfileEditor({
   const [isPending, setIsPending] = useState(false);
 
   const errorSummaryRef = useRef<HTMLDivElement>(null);
+  const editedRef = useRef(false);
+  const savedRef = useRef(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProfile() {
+      try {
+        const response = await fetch("/api/identity/me/profile", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const payload = await response.json();
+        if (
+          !response.ok ||
+          !payload?.ok ||
+          typeof payload.data?.displayName !== "string"
+        ) {
+          throw new Error("Profile unavailable");
+        }
+
+        if (active && !savedRef.current) {
+          setLastSavedName(payload.data.displayName);
+          if (!editedRef.current) {
+            setDisplayName(payload.data.displayName);
+          }
+        }
+      } catch {
+        if (active && !savedRef.current) {
+          setGeneralError(
+            "Unable to load your display name. Please refresh the page.",
+          );
+        }
+      }
+    }
+
+    void loadProfile();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const errorList = [
     ...(fieldErrors.displayName || []),
@@ -77,6 +112,7 @@ export function ProfileEditor({
 
       // Last successful write display-name behavior
       const updatedName = payload.data?.profile?.displayName || trimmed;
+      savedRef.current = true;
       setDisplayName(updatedName);
       setLastSavedName(updatedName);
       setSuccessMessage("Display name updated successfully!");
@@ -90,11 +126,17 @@ export function ProfileEditor({
 
   return (
     <div style={{ marginTop: "1rem" }}>
-      <p
-        style={{ fontSize: "0.875rem", color: "#526b59", marginBottom: "1rem" }}
-      >
-        Current display name: <strong>{lastSavedName}</strong>
-      </p>
+      {lastSavedName !== null && (
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "#526b59",
+            marginBottom: "1rem",
+          }}
+        >
+          Current display name: <strong>{lastSavedName}</strong>
+        </p>
+      )}
 
       {successMessage && (
         <div
@@ -143,7 +185,10 @@ export function ProfileEditor({
             type="text"
             className="form-input"
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={(e) => {
+              editedRef.current = true;
+              setDisplayName(e.target.value);
+            }}
             required
             aria-invalid={!!fieldErrors.displayName}
             aria-describedby={

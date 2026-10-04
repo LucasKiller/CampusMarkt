@@ -209,4 +209,197 @@ test.describe("public and owner profile journeys", () => {
       page.getByText("Current display name: Katherine Johnson"),
     ).toBeVisible();
   });
+
+  test("loads the saved registration name and keeps an updated name after refresh", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "authenticated",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+
+    let savedName = "Registration Name";
+    await page.route("**/api/identity/me/profile", async (route) => {
+      if (route.request().method() === "PATCH") {
+        savedName = JSON.parse(route.request().postData() || "{}").displayName;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            data: {
+              status: "updated",
+              profile: {
+                publicId: testPublicId,
+                displayName: savedName,
+                joinedMonth: "2026-09",
+                avatarUrl: null,
+              },
+            },
+          }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          data: {
+            publicId: testPublicId,
+            displayName: savedName,
+            joinedMonth: "2026-09",
+            avatarUrl: null,
+          },
+        }),
+      });
+    });
+
+    await page.goto("/account");
+    const input = page.getByLabel("Public display name");
+    await expect(input).toHaveValue("Registration Name");
+    await expect(
+      page.getByText("Current display name: Registration Name"),
+    ).toBeVisible();
+
+    await input.fill("Updated Name");
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(
+      page.getByText("Current display name: Updated Name"),
+    ).toBeVisible();
+
+    await page.reload();
+    await expect(input).toHaveValue("Updated Name");
+    await expect(
+      page.getByText("Current display name: Updated Name"),
+    ).toBeVisible();
+  });
+
+  test("keeps an in-progress edit when the saved profile loads late", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "authenticated",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+
+    let releaseRead!: () => void;
+    const readGate = new Promise<void>((resolve) => {
+      releaseRead = resolve;
+    });
+    await page.route("**/api/identity/me/profile", async (route) => {
+      await readGate;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          data: { displayName: "Saved Name" },
+        }),
+      });
+    });
+
+    await page.goto("/account");
+    const input = page.getByLabel("Public display name");
+    await input.fill("Unsaved Edit");
+    releaseRead();
+
+    await expect(
+      page.getByText("Current display name: Saved Name"),
+    ).toBeVisible();
+    await expect(input).toHaveValue("Unsaved Edit");
+  });
+
+  test("keeps a successful save when the initial profile read finishes late", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "authenticated",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+
+    let releaseRead!: () => void;
+    const readGate = new Promise<void>((resolve) => {
+      releaseRead = resolve;
+    });
+    await page.route("**/api/identity/me/profile", async (route) => {
+      if (route.request().method() === "GET") {
+        await readGate;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true, data: { displayName: "Old Name" } }),
+        });
+        return;
+      }
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          data: { profile: { displayName: "New Name" } },
+        }),
+      });
+    });
+
+    await page.goto("/account");
+    const input = page.getByLabel("Public display name");
+    await input.fill("New Name");
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(
+      page.getByText("Current display name: New Name"),
+    ).toBeVisible();
+    releaseRead();
+    await expect(input).toHaveValue("New Name");
+    await expect(
+      page.getByText("Current display name: New Name"),
+    ).toBeVisible();
+  });
+
+  test("does not present a placeholder as a saved name when profile read fails", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "authenticated",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+    await page.route("**/api/identity/me/profile", async (route) => {
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: false }),
+      });
+    });
+
+    await page.goto("/account");
+    await expect(
+      page.getByText(
+        "Unable to load your display name. Please refresh the page.",
+      ),
+    ).toBeVisible();
+    await expect(page.getByLabel("Public display name")).toHaveValue("");
+    await expect(page.getByText("Current display name: User")).toHaveCount(0);
+  });
 });

@@ -65,8 +65,8 @@ T1 gate: 19 focused route/form tests, typecheck, scoped lint, formatting, and pr
 
 T2 gate: 21 focused Vitest tests and 16 Playwright listing journeys passed. Browser tests prove picker and dropped photos, upload pending state, multipart transport, rejected Storage responses, and photo limits. Typecheck, lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.
 
-After T2, a fresh independent verifier writes `validation.md` with the requirement evidence and discrimination sensor.
+After T2, a fresh independent verifier reviewed the implementation and recorded an initial surviving wrong-bytes mutation; T3 closed this gap.
 
-T3 was added from the independent verifier's first discrimination run: a wrong-bytes upload mutation survived the original transport test. The strengthened test now checks the actual multipart file contents; browser coverage also checks a second drop during the pending request and JPEG/WebP drops. Independent revalidation is pending.
+T3 was added from the independent verifier's first discrimination run: a wrong-bytes upload mutation survived the original transport test. The strengthened test now checks the actual multipart file contents; browser coverage also checks a second drop during the pending request and JPEG/WebP drops. Independent revalidation passed 6/6 acceptance criteria and killed 2/2 final mutations.
 
 T3 gate: 21 focused Vitest tests and 18 Playwright listing journeys passed. Typecheck, scoped lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.

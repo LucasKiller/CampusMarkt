@@ -1,6 +1,6 @@
 # Listing Photo Upload Repair
 
-**Status:** Approved by the operator's 2026-10-04 bug report; local implementation in progress.
+**Status:** Verified locally by independent validation on 2026-10-04.
 
 ## Problem Statement
 
@@ -58,11 +58,11 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PHOTO-01 | Reachable signed upload | Execute | Implemented; awaiting independent validation |
-| PHOTO-02 | Drop photos on creation | Execute | Implemented; awaiting independent validation |
+| PHOTO-01 | Reachable signed upload | Validate | Verified |
+| PHOTO-02 | Drop photos on creation | Validate | Verified |
 
 ## Success Criteria
 
 - [x] Focused route, component, and browser tests pass.
 - [x] Typecheck, lint, format, and production web build pass.
-- [ ] Independent validation records PASS in `validation.md`.
+- [x] Independent validation records PASS in `validation.md`.

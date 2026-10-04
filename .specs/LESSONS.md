@@ -140,6 +140,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: LEGALUI-01.2 (web-ui)
 - last seen: 2026-10-04T01:28:54Z
 
+### L-022 - Assert uploaded file contents in multipart transport tests, not only file metadata.
+- signal: `surviving_mutant` · recurrence: 1 feature(s) · scope: `listings` · harmful: 0
+- features: 021-listing-photo-upload-repair
+- evidence: .specs/features/021-listing-photo-upload-repair/validation.md:38 (listings)
+- last seen: 2026-10-04T15:03:03Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 22,
+  "next_id": 23,
   "lessons": [
     {
       "id": "L-001",
@@ -382,6 +382,24 @@
       ],
       "created": "2026-10-04T01:28:54Z",
       "last_seen": "2026-10-04T01:28:54Z"
+    },
+    {
+      "id": "L-022",
+      "key": "surviving_mutant::assert uploaded file contents in multipart transport tests not only file metadata",
+      "text": "Assert uploaded file contents in multipart transport tests, not only file metadata.",
+      "signal": "surviving_mutant",
+      "scope": "listings",
+      "status": "candidate",
+      "features": [
+        "021-listing-photo-upload-repair"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".specs/features/021-listing-photo-upload-repair/validation.md:38 (listings)"
+      ],
+      "created": "2026-10-04T15:03:03Z",
+      "last_seen": "2026-10-04T15:03:03Z"
     }
   ]
 }

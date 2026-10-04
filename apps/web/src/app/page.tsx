@@ -3,13 +3,11 @@ import Link from "next/link";
 import { getMarketplaceFeedService } from "../modules/listings/server/index";
 import { MarketplaceFeed } from "../components/marketplace/feed";
 import { MarketplaceHeader } from "../components/marketplace/marketplace-header";
+import { MarketplaceFooter } from "../components/marketplace/marketplace-footer";
 import { HomeHeroShowcase } from "../components/marketplace/home-hero-showcase";
 import type { PublicFeedItem } from "@campusmarkt/types";
 import { getCategoryLabel } from "@campusmarkt/domain";
-import {
-  getServerLocale,
-  getServerDictionary,
-} from "../modules/localization/server/index";
+import { getServerLocale } from "../modules/localization/server/index";
 
 export const metadata: Metadata = {
   title: "CampusMarkt · Dein lokaler Marktplatz für Braunschweig",
@@ -29,7 +27,6 @@ interface HomePageProps {
 
 export default async function HomePage(props: HomePageProps) {
   const locale = await getServerLocale();
-  const dict = await getServerDictionary(locale);
   const isEnglish = locale === "en";
   const featuredCategories = [
     "furniture",
@@ -232,20 +229,7 @@ export default async function HomePage(props: HomePageProps) {
         />
       </section>
 
-      <footer className="marketplace-footer">
-        <p>
-          {locale === "en"
-            ? "For the campus community and all of Braunschweig."
-            : "Für die Hochschulcommunity und ganz Braunschweig."}
-        </p>
-        <nav
-          aria-label={isEnglish ? "Legal information" : "Rechtliche Hinweise"}
-        >
-          <Link href="/impressum">{dict.legal.impressum}</Link>
-          <Link href="/datenschutz">{dict.legal.datenschutz}</Link>
-          <Link href="/agb">{dict.legal.agb}</Link>
-        </nav>
-      </footer>
+      <MarketplaceFooter locale={locale} />
     </main>
   );
 }

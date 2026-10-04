@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `018-password-entry-usability`
-- **Phase/task**: Execute complete; T1 through T3 and independent validation passed
-- **Completed**: Features 001-017 retain their recorded outcomes. Feature 018 password visibility, registration confirmation, and progressive length guidance are implemented and independently validated locally. All seven acceptance criteria have exact test evidence. The 54-test browser suite, 47 account-validation unit tests, typecheck, scoped lint, and formatting passed; two targeted browser-side pressed-state mutants were killed.
-- **In-progress**: None for feature 018.
-- **Next step**: Continue with the next approved local feature when requested. No push or deployment is authorized by this local task.
-- **Blockers**: None for local feature 018. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: None after the validation commit.
+- **Feature**: `019-legal-page-alignment`
+- **Phase/task**: Execute T1 complete; independent validation pending
+- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. Focused browser, render, type, lint, formatting, and spec/task gates passed locally.
+- **In-progress**: Fresh independent validation for feature 019.
+- **Next step**: Run the independent verifier, record `validation.md`, and close the feature locally. No push or deployment is authorized by this local task.
+- **Blockers**: None for local feature 019. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: Implementation and task records until the T1 commit.
 - **Branch**: development
 

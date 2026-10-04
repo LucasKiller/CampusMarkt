@@ -22,7 +22,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3
+T1 -> T2 -> T3 -> T4
 ```
 
 ## Task Breakdown
@@ -54,16 +54,28 @@ T1 -> T2 -> T3
 **Tests:** Session-refresh integration test and verifier discrimination sensor.
 **Gate:** Focused tests, types, lint, format, build, and atomic commit.
 
+### T4: Prove production cookie security attributes
+
+**Depends on:** T3
+**Requirements:** SESS-01.1, SESS-01.2
+**Deliverable:** Separate production assertions for Secure, HttpOnly, and SameSite on both sign-in and rotated cookies.
+**Done when:** Mutants that remove Secure from either production cookie fail the route tests.
+**Tests:** Sign-in and refresh integration tests plus verifier sensor.
+**Gate:** Focused tests, types, lint, format, build, and atomic commit.
+
 ## Status
 
 - [x] T1
 - [x] T2
 - [x] T3
+- [x] T4
 
 T1 gate: 65 focused Vitest tests passed across session routes, refresh behavior, security headers, and access service. Typecheck, scoped ESLint, formatting, and the production web build passed. No server or watcher remains running.
 
 T2 gate: 361 identity, cookie, and security-header Vitest tests passed; typecheck, scoped ESLint, and production web build passed. Formatting and diff checks passed. Provider logout now receives the current access JWT, and reauthentication writes a real token pair. No server or watcher remains running.
 
 T3 gate: 362 focused tests, typecheck, lint, formatting, and a fresh production build passed. The independent verifier will rerun the two surviving mutations before the feature verdict.
+
+T4 gate: Production cookie attributes are asserted independently for access and refresh credentials. All 364 focused tests, typecheck, lint, formatting, and a fresh production web build passed. The independent verifier will rerun the Secure mutants before the feature verdict.
 
 After T2 is committed, a fresh independent verifier records evidence and a discrimination sensor in `validation.md`.

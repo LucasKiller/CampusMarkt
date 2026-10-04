@@ -98,6 +98,32 @@ describe("bounded session refresh", () => {
     expect(earlyResponse.cookies.getAll()).toHaveLength(0);
   });
 
+  it("marks each rotated credential Secure in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    try {
+      const req = request(
+        jwt(now + 30),
+        encodeRefreshCookie("current-refresh", now - 20),
+      );
+      const response = await refreshAuthSession(
+        req,
+        async () => ({
+          status: "refreshed",
+          accessToken: jwt(now + 3600),
+          refreshToken: "new-refresh",
+        }),
+        now,
+      );
+      for (const name of [AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME]) {
+        expect(response.cookies.get(name)?.httpOnly).toBe(true);
+        expect(response.cookies.get(name)?.sameSite).toBe("lax");
+        expect(response.cookies.get(name)?.secure).toBe(true);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("does not refresh a valid access token or a legacy access-only cookie", async () => {
     const refresh = vi.fn();
     const current = request(

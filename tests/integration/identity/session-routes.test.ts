@@ -113,6 +113,52 @@ describe("session route integration (POST /api/identity/sessions)", () => {
     );
   });
 
+  it("marks each sign-in credential HttpOnly, SameSite=Lax, and Secure in production", async () => {
+    const mockService = {
+      signIn: vi.fn(
+        async (
+          _body: unknown,
+          context: {
+            onSessionEstablished: (tokens: {
+              accessToken: string;
+              refreshToken: string;
+            }) => void;
+          },
+        ) => {
+          context.onSessionEstablished({
+            accessToken: "production-access",
+            refreshToken: "production-refresh",
+          });
+          return { status: "signed_in" as const, redirectTo: "/account" };
+        },
+      ),
+    };
+    vi.stubEnv("NODE_ENV", "production");
+    try {
+      const handler = createSessionsHandler(
+        mockService as never,
+        canonicalOrigin,
+      );
+      const response = await handler.POST(
+        postRequest(
+          `${canonicalOrigin}/api/identity/sessions`,
+          validCredentials,
+        ),
+      );
+      expect(response.status).toBe(200);
+      for (const name of [AUTH_COOKIE_NAME, REFRESH_COOKIE_NAME]) {
+        const cookie = response.headers
+          .getSetCookie()
+          .find((value) => value.startsWith(`${name}=`));
+        expect(cookie).toContain("HttpOnly");
+        expect(cookie).toContain("SameSite=Lax");
+        expect(cookie).toContain("Secure");
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("passes safe returnTo through sign-in", async () => {
     const mockService = {
       signIn: vi.fn(

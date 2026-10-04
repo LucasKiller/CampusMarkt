@@ -48,7 +48,7 @@ The university email links to `/auth/action/university_verification`, but the ac
 
 | Requirement ID | Story | Status |
 | --- | --- | --- |
-| UNILINK-01 | Confirm a university email link | Implemented T1; validation pending |
+| UNILINK-01 | Confirm a university email link | Implemented T1-T2; validation pending |
 
 ## Success Criteria
 

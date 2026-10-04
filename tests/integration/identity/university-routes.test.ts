@@ -62,12 +62,16 @@ describe("university verification routes integration", () => {
       expect(response.headers.get("set-cookie")).toContain(
         `campusmarkt-action-university_verification=${token}`,
       );
-      expect(response.headers.get("set-cookie")).toContain("HttpOnly");
-      expect(response.headers.get("set-cookie")).toContain("SameSite=Strict");
-      expect(response.headers.get("set-cookie")).toContain("Max-Age=300");
+      const cookieAttributes = response.headers
+        .get("set-cookie")
+        ?.split(";")
+        .map((attribute) => attribute.trim());
+      expect(cookieAttributes).toContain("HttpOnly");
+      expect(cookieAttributes).toContain("SameSite=Strict");
+      expect(cookieAttributes).toContain("Max-Age=300");
     });
 
-    it.each(["", "bad%20token"])(
+    it.each(["", "bad%20token", "short-token"])(
       "redirects a missing or malformed token to an invalid-link result without a cookie",
       async (queryToken) => {
         const handler = createActionStagingHandler({ stage: vi.fn() } as never);

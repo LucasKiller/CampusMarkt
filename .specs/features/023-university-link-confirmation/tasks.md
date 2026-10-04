@@ -24,7 +24,7 @@
 ## Execution Plan
 
 ```text
-T1
+T1 -> T2
 ```
 
 ## Task Breakdown
@@ -38,6 +38,16 @@ T1
 **Tests:** University route integration and browser tests.
 **Gate:** Focused integration, browser, types, lint, format, build, and atomic commit; then independent verification.
 
+### T2: Prove strict token shape and cookie security attributes
+
+**Depends on:** T1
+**Requirements:** UNILINK-01.1, UNILINK-01.3
+**Deliverable:** Reject a short alphanumeric token in the route test and assert the exact `HttpOnly` cookie attribute after parsing `Set-Cookie`.
+**Done when:** The focused integration gate passes and mutations accepting short tokens or replacing `HttpOnly` are detected; types, lint, format, and build pass.
+**Tests:** `tests/integration/identity/university-routes.test.ts`
+**Gate:** Focused integration, types, lint, format, build, and atomic commit; then fresh independent verification.
+
 ## Status
 
 - [x] T1
+- [x] T2

@@ -1,6 +1,6 @@
 # Listing Photo Upload Repair
 
-**Status:** Verified locally by independent validation on 2026-10-04.
+**Status:** Reopened on 2026-10-04 after production exposed a Storage client integration failure; T4 local repair in progress.
 
 ## Problem Statement
 
@@ -39,6 +39,7 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 1. WHEN an authenticated user requests a valid photo upload intent THEN the API SHALL return a signed Storage upload URL on the site origin while retaining the signed path and token.
 2. IF the provider returns a malformed or non-upload signed URL THEN the API SHALL fail without returning a usable upload URL.
 3. WHEN Storage accepts a signed `PUT` upload THEN the form SHALL add the returned storage path to the photo list; IF Storage rejects it THEN the form SHALL show an error and SHALL not count that photo as uploaded.
+4. WHEN a real Supabase admin client backs the upload intent THEN the repository SHALL obtain a signed URL from its Storage namespace without calling the database table query method.
 
 **Independent Test:** Assert internal-to-public URL rewriting, malformed URL rejection, signed upload transport, and success/failure behavior in the browser.
 
@@ -58,11 +59,11 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PHOTO-01 | Reachable signed upload | Validate | Verified |
+| PHOTO-01 | Reachable signed upload | Execute | T1-T3 verified; production integration reopened as T4 |
 | PHOTO-02 | Drop photos on creation | Validate | Verified |
 
 ## Success Criteria
 
 - [x] Focused route, component, and browser tests pass.
 - [x] Typecheck, lint, format, and production web build pass.
-- [x] Independent validation records PASS in `validation.md`.
+- [ ] Independent validation of T4 records PASS in `validation.md`.

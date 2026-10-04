@@ -324,29 +324,7 @@ export function createListingRepository(clients: {
       }
 
       try {
-        type BucketCreator = {
-          from(b: string): {
-            createSignedUploadUrl(
-              p: string,
-            ): Promise<{ data: { signedUrl: string } | null; error: unknown }>;
-          };
-        };
-
-        const target = storage as unknown as {
-          from?: BucketCreator["from"];
-          storage?: BucketCreator;
-        };
-
-        const storageBucket: BucketCreator | undefined =
-          typeof target.from === "function"
-            ? (target as BucketCreator)
-            : target.storage;
-
-        if (!storageBucket) {
-          return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
-        }
-
-        const bucket = storageBucket.from("listing-media");
+        const bucket = storage.storage.from("listing-media");
         const { data, error } = await bucket.createSignedUploadUrl(storagePath);
 
         if (error || !data) {

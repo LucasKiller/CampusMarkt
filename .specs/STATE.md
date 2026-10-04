@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `021-listing-photo-upload-repair`
-- **Phase/task**: Validate complete; T1-T3 and PHOTO-01/PHOTO-02 verified locally
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 returns a signed Storage URL on the site's origin, uploads photos with Supabase-compatible multipart PUT, and accepts dropped files. Failed uploads do not appear as completed photos. T3 added proof of the selected file bytes, duplicate-drop prevention, and JPEG/WebP support. Its gate passed 21 focused tests, 18 browser journeys, typecheck, lint, formatting, and production web build.
-- **In-progress**: None for Feature 021. Independent validation passed 6/6 criteria, all task gates, and 2/2 final discrimination mutations.
-- **Next step**: Local feature complete. Deployment to Docker or the VPS requires a separately authorized operation.
+- **Phase/task**: Execute T4 after a production Storage client integration failure
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T1-T3 previously passed independent local validation. Production commit `1fa9b21` includes those changes, but Coolify web logs show `createSignedUploadUrl is not a function` during upload intent. A red integration test reproduced the failure when the client exposes both database and Storage `from` methods; T4 now uses `client.storage.from`.
+- **In-progress**: Fresh independent validation of T4. Its gate passed 28 repository and route tests, typecheck, lint, formatting, and production web build.
+- **Next step**: Commit T4 locally, independently validate, then request authorization for a production deployment with a concrete reviewed change.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: None after the validation record commit.
+- **Uncommitted files**: T4 implementation and records until its atomic commit.
 - **Branch**: development
 

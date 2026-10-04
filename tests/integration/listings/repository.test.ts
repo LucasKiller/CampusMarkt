@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { createClient } from "@supabase/supabase-js";
 
 vi.mock("server-only", () => ({}));
 
@@ -344,6 +345,40 @@ describe("ListingRepository integration", () => {
   });
 
   describe("createSignedUploadUrl", () => {
+    it("uses the Storage namespace when the Supabase client also has a database from method", async () => {
+      const sdkClient = createClient("http://localhost:54321", "test-key");
+      expect("createSignedUploadUrl" in sdkClient.from("listing-media")).toBe(
+        false,
+      );
+      expect(
+        typeof sdkClient.storage.from("listing-media").createSignedUploadUrl,
+      ).toBe("function");
+
+      const storageMock = mockStorageClient({
+        signedUrl: "https://storage.example.test/signed/123",
+        token: "token123",
+        path: `${ownerId}/photo1.webp`,
+      });
+      const databaseFrom = vi.fn(() => ({
+        createSignedUploadUrl: undefined,
+      }));
+      const supabaseClient = Object.assign(storageMock.storage, {
+        from: databaseFrom,
+      });
+      const repo = createListingRepository({
+        service: mockRpcClient(),
+        storage: supabaseClient,
+      });
+
+      const result = await repo.createSignedUploadUrl(`${ownerId}/photo1.webp`);
+
+      expect(result.ok).toBe(true);
+      expect(databaseFrom).not.toHaveBeenCalled();
+      expect(storageMock.uploadCalls).toEqual([
+        { path: `${ownerId}/photo1.webp`, options: undefined },
+      ]);
+    });
+
     it("returns signed upload url from storage adapter", async () => {
       const storageMock = mockStorageClient({
         signedUrl: "https://storage.example.test/signed/123",

@@ -134,6 +134,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: validation.md:PWDUI-03.2 (identity-ui)
 - last seen: 2026-10-03T21:27:56Z
 
+### L-021 - Cover every route and locale when a responsive acceptance criterion applies to shared page layouts.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `web-ui` · harmful: 0
+- features: 019-legal-page-alignment
+- evidence: LEGALUI-01.2 (web-ui)
+- last seen: 2026-10-04T01:28:54Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

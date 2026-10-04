@@ -165,10 +165,10 @@
 ## Handoff
 
 - **Feature**: `019-legal-page-alignment`
-- **Phase/task**: Execute T1 complete; independent validation pending
-- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. Focused browser, render, type, lint, formatting, and spec/task gates passed locally.
-- **In-progress**: Fresh independent validation for feature 019.
-- **Next step**: Run the independent verifier, record `validation.md`, and close the feature locally. No push or deployment is authorized by this local task.
+- **Phase/task**: Execute T1 and T2 complete; independent revalidation pending
+- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. The first verifier found missing mobile coverage; T2 tested all three routes in both languages at 320px and fixed Privacy Policy title overflow. Focused browser, render, type, lint, formatting, and spec/task gates passed locally.
+- **In-progress**: Independent revalidation for feature 019.
+- **Next step**: Reverify every acceptance criterion, update `validation.md`, and close the feature locally. No push or deployment is authorized by this local task.
 - **Blockers**: None for local feature 019. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
 - **Uncommitted files**: Implementation and task records until the T1 commit.
 - **Branch**: development

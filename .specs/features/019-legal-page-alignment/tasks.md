@@ -22,7 +22,7 @@
 ## Execution Plan
 
 ```text
-T1
+T1 -> T2
 ```
 
 ## Task Breakdown
@@ -36,10 +36,22 @@ T1
 **Tests:** Browser and render checks in the coverage matrix.
 **Gate:** Browser, render, types, lint, formatting, spec/task status, then an atomic local commit.
 
+### T2: Cover every legal route at mobile width
+
+**Depends on:** T1 and the first independent validation finding.
+**Requirements:** LEGALUI-01.2
+**Deliverable:** Browser assertions for Impressum, Privacy Policy, and Terms of Service at 320px in both locales.
+**Done when:** Each route and locale combination has an explicit no-overflow assertion, an operable language control, and a footer link reachable above the fixed mobile navigation.
+**Tests:** Focused Playwright browser gate and formatting/lint checks for the changed test.
+**Gate:** Browser, types, scoped lint, formatting, status update, then an atomic local commit.
+
 ## Status
 
 - [x] T1
+- [x] T2
 
 T1 gate: Three focused Playwright tests passed across all three destinations and both locales; six legal-page render tests passed. Typecheck, scoped lint, formatting, and spec/task validators passed. Chromium screenshots were visually inspected at desktop and 320px mobile widths. The temporary Playwright server exited, leaving port 3100 without a listener.
 
-After T1 is committed, a fresh independent verifier reviews the spec, diff, tests, and a discrimination sensor, then writes `validation.md`.
+T2 gate: The expanded 320px browser check exposed horizontal overflow on the English Privacy Policy title. Adding `overflow-wrap: anywhere` to the legal heading removed it. The targeted mobile check passed all six route/locale combinations, then the full focused Playwright suite passed 3/3. Typecheck, scoped lint, formatting, and task validation passed. The temporary server exited with port 3100 free.
+
+The first independent validation recorded FAIL because T1 tested only AGB at 320px. After T2 is committed, the verifier rechecks all criteria and updates `validation.md`.

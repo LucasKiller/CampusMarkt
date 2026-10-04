@@ -68,43 +68,63 @@ for (const locale of ["en", "de"] as const) {
   });
 }
 
-test("legal content and language control fit a 320px mobile viewport", async ({
+test("all legal pages and language controls fit a 320px mobile viewport", async ({
   page,
+  context,
 }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 700 });
-  await page.goto("/agb");
 
-  await expect(page.locator(".legal-mobile-language button")).toBeVisible();
-  await expect(page.locator(".mobile-navigation")).toBeVisible();
-  await expect(page.locator(".legal-page .marketplace-footer")).toBeVisible();
-  const horizontalOverflow = await page.evaluate(
-    () =>
-      document.documentElement.scrollWidth >
-      document.documentElement.clientWidth,
-  );
-  expect(horizontalOverflow).toBe(false);
-  await page.screenshot({
-    path: testInfo.outputPath("legal-mobile.png"),
-    fullPage: true,
-  });
+  for (const locale of ["en", "de"] as const) {
+    for (const legalPage of legalPages) {
+      await context.addCookies([
+        { name: "NEXT_LOCALE", value: locale, domain: "127.0.0.1", path: "/" },
+      ]);
+      await page.goto(legalPage.href);
+      await expect(page.locator("html")).toHaveAttribute("lang", locale);
+      await expect(page.locator(".legal-page h1")).toContainText(
+        legalPage[locale],
+      );
+      await expect(page.locator(".legal-mobile-language button")).toBeVisible();
+      await expect(page.locator(".mobile-navigation")).toBeVisible();
+      await expect(
+        page.locator(".legal-page .marketplace-footer"),
+      ).toBeVisible();
 
-  const lastFooterLink = page.locator(
-    '.legal-page .marketplace-footer a[href="/agb"]',
-  );
-  await lastFooterLink.scrollIntoViewIfNeeded();
-  const footerLinkBounds = await lastFooterLink.boundingBox();
-  const mobileNavigationBounds = await page
-    .locator(".mobile-navigation")
-    .boundingBox();
-  expect(footerLinkBounds).not.toBeNull();
-  expect(mobileNavigationBounds).not.toBeNull();
-  expect(footerLinkBounds!.y + footerLinkBounds!.height).toBeLessThan(
-    mobileNavigationBounds!.y,
-  );
+      const horizontalOverflow = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth >
+          document.documentElement.clientWidth,
+      );
+      expect(horizontalOverflow, `${legalPage.href} in ${locale}`).toBe(false);
+      if (locale === "en" && legalPage.href === "/agb") {
+        await page.screenshot({
+          path: testInfo.outputPath("legal-mobile.png"),
+          fullPage: true,
+        });
+      }
 
-  await page.locator(".legal-mobile-language button").click();
-  await expect(page.locator("html")).toHaveAttribute("lang", "de");
-  await expect(page.locator(".legal-page h1")).toContainText(
-    "Allgemeine Geschäftsbedingungen",
-  );
+      const lastFooterLink = page.locator(
+        '.legal-page .marketplace-footer a[href="/agb"]',
+      );
+      await lastFooterLink.scrollIntoViewIfNeeded();
+      const footerLinkBounds = await lastFooterLink.boundingBox();
+      const mobileNavigationBounds = await page
+        .locator(".mobile-navigation")
+        .boundingBox();
+      expect(footerLinkBounds).not.toBeNull();
+      expect(mobileNavigationBounds).not.toBeNull();
+      expect(footerLinkBounds!.y + footerLinkBounds!.height).toBeLessThan(
+        mobileNavigationBounds!.y,
+      );
+
+      await page.locator(".legal-mobile-language button").click();
+      await expect(page.locator("html")).toHaveAttribute(
+        "lang",
+        locale === "en" ? "de" : "en",
+      );
+      await expect(page.locator(".legal-page h1")).toContainText(
+        legalPage[locale === "en" ? "de" : "en"],
+      );
+    }
+  }
 });

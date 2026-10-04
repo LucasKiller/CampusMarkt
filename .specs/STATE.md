@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `021-listing-photo-upload-repair`
-- **Phase/task**: Execute T4 after a production Storage client integration failure
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T1-T3 previously passed independent local validation. Production commit `1fa9b21` includes those changes, but Coolify web logs show `createSignedUploadUrl is not a function` during upload intent. A red integration test reproduced the failure when the client exposes both database and Storage `from` methods; T4 now uses `client.storage.from`.
-- **In-progress**: Fresh independent validation of T4. Its gate passed 28 repository and route tests, typecheck, lint, formatting, and production web build.
-- **Next step**: Commit T4 locally, independently validate, then request authorization for a production deployment with a concrete reviewed change.
+- **Phase/task**: Validate T4 complete locally; production check pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T1-T3 previously passed independent local validation. Production commit `1fa9b21` includes those changes, but Coolify web logs show `createSignedUploadUrl is not a function` during upload intent. T4 uses `client.storage.from`; its red regression reproduced the failure and now passes. Independent verification passed 7/7 criteria, 28 repository/route tests, 21 focused tests, typecheck, lint, formatting, build, and a namespace-selection mutation sensor.
+- **In-progress**: None locally. The public site is still on the broken production commit.
+- **Next step**: Obtain authorization to publish the reviewed T4 commit through the production branch/Coolify, then verify a real photo upload on the public site.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: T4 implementation and records until its atomic commit.
+- **Uncommitted files**: None after the validation record commit.
 - **Branch**: development
 

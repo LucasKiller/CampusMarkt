@@ -1,6 +1,6 @@
 # Listing Photo Upload Repair
 
-**Status:** Reopened on 2026-10-04 after production exposed a Storage client integration failure; T4 local repair in progress.
+**Status:** T4 verified locally on 2026-10-04; production deployment and live upload check pending.
 
 ## Problem Statement
 
@@ -59,11 +59,11 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PHOTO-01 | Reachable signed upload | Execute | T1-T3 verified; production integration reopened as T4 |
+| PHOTO-01 | Reachable signed upload | Validate | Verified locally through T4 |
 | PHOTO-02 | Drop photos on creation | Validate | Verified |
 
 ## Success Criteria
 
 - [x] Focused route, component, and browser tests pass.
 - [x] Typecheck, lint, format, and production web build pass.
-- [ ] Independent validation of T4 records PASS in `validation.md`.
+- [x] Independent validation of T4 records PASS in `validation.md`.

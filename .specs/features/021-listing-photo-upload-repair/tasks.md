@@ -81,4 +81,4 @@ T3 was added from the independent verifier's first discrimination run: a wrong-b
 
 T3 gate: 21 focused Vitest tests and 18 Playwright listing journeys passed. Typecheck, scoped lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.
 
-T4 red test reproduced the production `createSignedUploadUrl is not a function` error with a client that has both `from` methods. The corrected repository passes the regression. T4 gate: 28 repository and route integration tests, typecheck, scoped lint, formatting, and production web build passed. No server or watcher remains running. Independent validation is pending.
+T4 red test reproduced the production `createSignedUploadUrl is not a function` error with a client that has both `from` methods. The corrected repository passes the regression. T4 gate: 28 repository and route integration tests, typecheck, scoped lint, formatting, and production web build passed. No server or watcher remains running. Independent validation passed 7/7 criteria and killed the namespace-selection mutation.

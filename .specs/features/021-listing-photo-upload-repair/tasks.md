@@ -8,15 +8,16 @@
 | --- | --- | --- | --- | --- |
 | API | Vitest integration | PHOTO-01 public signed URL and malformed URL failure | `tests/integration/listings/creation-routes.test.ts` | `npx vitest run tests/integration/listings/creation-routes.test.ts` |
 | Browser | Playwright | PHOTO-01 upload success/failure and PHOTO-02 picker/drop/limits | `apps/web/tests/listings-management.spec.ts` | `npx playwright test --config apps/web/playwright.config.mjs apps/web/tests/listings-management.spec.ts` |
+| Transport | Vitest unit | PHOTO-01 signed multipart PUT and failure response | `apps/web/src/modules/listings/client/upload-photo.test.ts` | `npx vitest run apps/web/src/modules/listings/client/upload-photo.test.ts` |
 
 ## Gate Check Commands
 
 | Scope | Command |
 | --- | --- |
-| Focused | `npx vitest run tests/integration/listings/creation-routes.test.ts apps/web/src/app/listings/new/listing-create-form.test.ts apps/web/src/app/listings/[id]/manage/listing-manage-editor.test.ts` |
+| Focused | `npx vitest run tests/integration/listings/creation-routes.test.ts apps/web/src/modules/listings/client/upload-photo.test.ts apps/web/src/app/listings/new/listing-create-form.test.ts apps/web/src/app/listings/[id]/manage/listing-manage-editor.test.ts` |
 | Types | `npm run typecheck` |
 | Lint | `npx eslint apps/web/src/app/api/listings/media/upload-intent/route.ts apps/web/src/app/listings/new/listing-create-form.tsx apps/web/src/app/listings/[id]/manage/listing-manage-editor.tsx apps/web/src/modules/listings tests/integration/listings/creation-routes.test.ts apps/web/tests/listings-management.spec.ts` |
-| Format | `npx prettier --check apps/web/src/app/api/listings/media/upload-intent/route.ts apps/web/src/app/listings/new/listing-create-form.tsx apps/web/src/app/listings/[id]/manage/listing-manage-editor.tsx tests/integration/listings/creation-routes.test.ts apps/web/tests/listings-management.spec.ts` |
+| Format | `npx prettier --check apps/web/src/app/api/listings/media/upload-intent/route.ts apps/web/src/app/listings/new/listing-create-form.tsx apps/web/src/app/listings/[id]/manage/listing-manage-editor.tsx apps/web/src/modules/listings/client/upload-photo.ts apps/web/src/modules/listings/client/upload-photo.test.ts tests/integration/listings/creation-routes.test.ts apps/web/tests/listings-management.spec.ts` |
 | Build | `npm run --workspace @campusmarkt/web build` |
 
 ## Execution Plan
@@ -48,8 +49,10 @@ T1 -> T2
 ## Status
 
 - [x] T1
-- [ ] T2
+- [x] T2
 
 T1 gate: 19 focused route/form tests, typecheck, scoped lint, formatting, and production web build passed. Signed URL tests verify public origin, preserved token, and fail-closed invalid responses. No server or watcher remains running.
+
+T2 gate: 21 focused Vitest tests and 16 Playwright listing journeys passed. Browser tests prove picker and dropped photos, upload pending state, multipart transport, rejected Storage responses, and photo limits. Typecheck, lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.
 
 After T2, a fresh independent verifier writes `validation.md` with the requirement evidence and discrimination sensor.

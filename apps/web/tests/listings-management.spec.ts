@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const mockListingId = "11111111-2222-3333-4444-555555555555";
 
@@ -98,6 +98,25 @@ interface CapturedListingPayload {
   priceCents?: number;
   title?: string;
   [key: string]: unknown;
+}
+
+async function dropListingPhoto(page: Page, name: string, type: string) {
+  await page.evaluate(
+    ({ fileName, contentType }) => {
+      const transfer = new DataTransfer();
+      transfer.items.add(
+        new File([new Uint8Array([137, 80, 78, 71])], fileName, {
+          type: contentType,
+        }),
+      );
+      document
+        .querySelector("#photo-drop-zone")
+        ?.dispatchEvent(
+          new DragEvent("drop", { bubbles: true, dataTransfer: transfer }),
+        );
+    },
+    { fileName: name, contentType: type },
+  );
 }
 
 test.describe("marketplace listing creation and management journeys", () => {
@@ -216,6 +235,11 @@ test.describe("marketplace listing creation and management journeys", () => {
     });
 
     await page.route("http://127.0.0.1:3100/api/mock-upload", async (route) => {
+      expect(route.request().method()).toBe("PUT");
+      expect(route.request().headers()["content-type"]).toContain(
+        "multipart/form-data",
+      );
+      expect(route.request().postData()).toContain("cacheControl");
       await route.fulfill({ status: 200, body: "ok" });
     });
 
@@ -277,6 +301,126 @@ test.describe("marketplace listing creation and management journeys", () => {
     expect(capturedCreatePayload.listingType).toBe("SELL");
     expect(capturedCreatePayload.priceCents).toBe(2450);
     expect(capturedCreatePayload.title).toBe("Calculus Textbook 3rd Edition");
+  });
+
+  test("accepts a dropped photo and shows the upload pending state", async ({
+    page,
+  }) => {
+    await page.route("**/api/listings/media/upload-intent", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          data: {
+            signedUploadUrl: "http://127.0.0.1:3100/api/mock-upload",
+            storagePath: "owner/dropped.png",
+          },
+        }),
+      });
+    });
+    let releaseUpload!: () => void;
+    const uploadGate = new Promise<void>((resolve) => {
+      releaseUpload = resolve;
+    });
+    await page.route("**/api/mock-upload", async (route) => {
+      await uploadGate;
+      await route.fulfill({ status: 200, body: "ok" });
+    });
+
+    await page.goto("/listings/new");
+    await dropListingPhoto(page, "dropped.png", "image/png");
+    await expect(
+      page.getByRole("button", { name: "Uploading..." }),
+    ).toBeDisabled();
+    expect(await page.getByText("0/8 uploaded").isVisible()).toBe(true);
+    releaseUpload();
+    await expect(page.getByText("1/8 uploaded")).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: "Listing photo 1" }),
+    ).toBeVisible();
+  });
+
+  test("does not count a failed or unsupported photo upload", async ({
+    page,
+  }) => {
+    let intentCount = 0;
+    await page.route("**/api/listings/media/upload-intent", async (route) => {
+      intentCount += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          data: {
+            signedUploadUrl: "http://127.0.0.1:3100/api/mock-upload",
+            storagePath: "owner/failed.png",
+          },
+        }),
+      });
+    });
+    await page.route("**/api/mock-upload", async (route) => {
+      await route.fulfill({ status: 503, body: "unavailable" });
+    });
+
+    await page.goto("/listings/new");
+    await dropListingPhoto(page, "document.pdf", "application/pdf");
+    await expect(page.getByText(/must be JPEG, PNG, or WebP/)).toBeVisible();
+    expect(intentCount).toBe(0);
+    await dropListingPhoto(page, "failed.png", "image/png");
+    await expect(
+      page.getByText("Photo upload failed. Please try again."),
+    ).toBeVisible();
+    await expect(page.getByText("0/8 uploaded")).toBeVisible();
+    await expect(
+      page.getByRole("img", { name: "Listing photo 1" }),
+    ).toHaveCount(0);
+  });
+
+  test("applies the eight-photo and 5 MB limits to dropped files", async ({
+    page,
+  }) => {
+    let intentCount = 0;
+    await page.route("**/api/listings/media/upload-intent", async (route) => {
+      intentCount += 1;
+      await route.abort();
+    });
+    await page.goto("/listings/new");
+
+    await page.evaluate(() => {
+      const transfer = new DataTransfer();
+      for (let index = 0; index < 9; index += 1) {
+        transfer.items.add(
+          new File(["photo"], `photo-${index}.png`, { type: "image/png" }),
+        );
+      }
+      document
+        .querySelector("#photo-drop-zone")
+        ?.dispatchEvent(
+          new DragEvent("drop", { bubbles: true, dataTransfer: transfer }),
+        );
+    });
+    await expect(
+      page.getByText("You can upload a maximum of 8 photos."),
+    ).toBeVisible();
+    expect(intentCount).toBe(0);
+
+    await page.evaluate(() => {
+      const transfer = new DataTransfer();
+      transfer.items.add(
+        new File([new Uint8Array(5 * 1024 * 1024 + 1)], "large.png", {
+          type: "image/png",
+        }),
+      );
+      document
+        .querySelector("#photo-drop-zone")
+        ?.dispatchEvent(
+          new DragEvent("drop", { bubbles: true, dataTransfer: transfer }),
+        );
+    });
+    await expect(page.getByText(/exceeds the 5MB size limit/)).toBeVisible();
+    await expect(page.getByText("0/8 uploaded")).toBeVisible();
+    expect(intentCount).toBe(0);
   });
 
   test("creates a GIVE_AWAY listing with locked zero price", async ({

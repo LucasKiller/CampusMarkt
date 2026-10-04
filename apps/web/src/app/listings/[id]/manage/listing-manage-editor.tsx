@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { uploadSignedListingPhoto } from "../../../../modules/listings/client/upload-photo";
 import {
   canTransitionStatus,
   ITEM_CONDITIONS,
@@ -119,6 +120,7 @@ export function ListingManageEditor({ listing }: ListingManageEditorProps) {
 
   async function handleFileSelect(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
+    e.target.value = "";
     if (files.length === 0) return;
 
     if (images.length + files.length > 8) {
@@ -128,11 +130,13 @@ export function ListingManageEditor({ listing }: ListingManageEditorProps) {
 
     setIsUploading(true);
     setGeneralError(null);
+    const newImages: UploadedImage[] = [];
 
     try {
-      const newImages: UploadedImage[] = [];
-
       for (const file of files) {
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+          throw new Error(`File "${file.name}" must be JPEG, PNG, or WebP.`);
+        }
         if (file.size > 5 * 1024 * 1024) {
           throw new Error(`File "${file.name}" exceeds the 5MB size limit.`);
         }
@@ -157,28 +161,22 @@ export function ListingManageEditor({ listing }: ListingManageEditorProps) {
 
         const { signedUploadUrl, storagePath } = intentJson.data;
 
-        await fetch(signedUploadUrl, {
-          method: "PUT",
-          headers: { "content-type": file.type },
-          body: file,
-        });
+        await uploadSignedListingPhoto(signedUploadUrl, file);
 
         newImages.push({
           storagePath,
           previewUrl: URL.createObjectURL(file),
         });
       }
-
-      setImages((prev) => [...prev, ...newImages]);
     } catch (err: unknown) {
       setGeneralError(
         err instanceof Error ? err.message : "Failed to upload photo.",
       );
     } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (newImages.length > 0) {
+        setImages((prev) => [...prev, ...newImages]);
       }
+      setIsUploading(false);
     }
   }
 

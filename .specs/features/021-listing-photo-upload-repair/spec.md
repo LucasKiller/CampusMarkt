@@ -8,9 +8,9 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 
 ## Goals
 
-- [ ] Make signed photo uploads reachable from the public listing page.
-- [ ] Support choosing and dropping photos on listing creation.
-- [ ] Show a photo as uploaded only after Storage accepts it.
+- [x] Make signed photo uploads reachable from the public listing page.
+- [x] Support choosing and dropping photos on listing creation.
+- [x] Show a photo as uploaded only after Storage accepts it.
 
 ## Out of Scope
 
@@ -58,11 +58,11 @@ The listing form returns a signed Storage URL based on the Docker-only `api-gw` 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| PHOTO-01 | Reachable signed upload | Execute | T1 implemented; upload transport pending |
-| PHOTO-02 | Drop photos on creation | Execute | Pending |
+| PHOTO-01 | Reachable signed upload | Execute | Implemented; awaiting independent validation |
+| PHOTO-02 | Drop photos on creation | Execute | Implemented; awaiting independent validation |
 
 ## Success Criteria
 
-- [ ] Focused route, component, and browser tests pass.
-- [ ] Typecheck, lint, format, and production web build pass.
+- [x] Focused route, component, and browser tests pass.
+- [x] Typecheck, lint, format, and production web build pass.
 - [ ] Independent validation records PASS in `validation.md`.

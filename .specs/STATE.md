@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `025-inbox-repair`
-- **Phase/task**: T1 implemented and independently validated locally; publication pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Features 023 and 024 passed independent local validation but remain unpublished. Feature 025 repairs the user-token messaging boundary, message pagination, read receipts for the latest page, truthful failure states, listing-owner entry points, and inbox/thread visual language. Its independent local validation passed INBOX-01/02/03 with the limits recorded in `validation.md`.
+- **Phase/task**: T1 implemented, independently validated locally, and published to production
+- **Completed**: Features 001-020 retain their recorded outcomes. Features 023 and 024 passed independent local validation but remain unpublished. Feature 025 repairs the user-token messaging boundary, message pagination, read receipts for the latest page, truthful failure states, listing-owner entry points, and inbox/thread visual language. Its independent local validation passed INBOX-01/02/03. PR #8 merged into `production` at `91ae235` on 2026-10-05; Coolify reported a successful deployment, the production migration and RPC were confirmed in PostgreSQL, and public health checks passed. See `validation.md` for limits.
 - **In-progress**: None locally for feature 025.
-- **Next step**: Obtain separate authorization before push, database migration, or Coolify deployment. Then verify inbox/send/read behavior with real accounts on the public site.
-- **Blockers**: Docker is unavailable locally, so the new SQL function and transaction-level rate limit have not been executed against PostgreSQL. Feature 009's sub-second Realtime delivery remains open; feature 025 uses four-second polling. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: Validation record until its commit.
+- **Next step**: Verify inbox/send/read behavior with two real accounts and non-participant denial on the public site when a suitable existing conversation is available.
+- **Blockers**: Docker is unavailable locally. The production SQL migration is present, but the transaction-level rate limit has not been load-tested. Feature 009's sub-second Realtime delivery remains open; feature 025 uses four-second polling. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: Production validation record until its commit.
 - **Branch**: development
 

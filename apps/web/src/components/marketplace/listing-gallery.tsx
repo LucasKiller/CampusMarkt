@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import type { PublicListingImage } from "@campusmarkt/types";
 import type { ListingType } from "@campusmarkt/domain";
+import { listingMediaUrl } from "../../modules/listings/media-url";
 
 export interface ListingGalleryProps {
   images: PublicListingImage[];
@@ -104,11 +105,7 @@ export function ListingGallery({
         }}
       >
         <img
-          src={
-            currentImage.storagePath.startsWith("http")
-              ? currentImage.storagePath
-              : `/${currentImage.storagePath}`
-          }
+          src={listingMediaUrl(currentImage.storagePath)}
           alt={`${title} - Foto ${activeIndex + 1}`}
           style={{
             maxWidth: "100%",

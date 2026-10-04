@@ -176,6 +176,11 @@ test.describe("marketplace listing creation and management journeys", () => {
         page.getByRole("heading", { name: "Manage Listing" }),
       ).toBeVisible();
 
+      await expect(page.getByRole("img", { name: "Photo 1" })).toHaveAttribute(
+        "src",
+        `/storage/v1/object/public/listing-media/listings/${mockListingId}/cover.webp`,
+      );
+
       const dimensions = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
         scrollWidth: document.documentElement.scrollWidth,

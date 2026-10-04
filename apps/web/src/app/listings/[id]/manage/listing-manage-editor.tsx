@@ -3,6 +3,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { uploadSignedListingPhoto } from "../../../../modules/listings/client/upload-photo";
+import { listingMediaUrl } from "../../../../modules/listings/media-url";
 import {
   canTransitionStatus,
   ITEM_CONDITIONS,
@@ -59,7 +60,7 @@ export function ListingManageEditor({ listing }: ListingManageEditorProps) {
   const [images, setImages] = useState<UploadedImage[]>(
     listing.media.map((m) => ({
       storagePath: m.storagePath,
-      previewUrl: `/api/listings/media/preview?path=${encodeURIComponent(m.storagePath)}`,
+      previewUrl: listingMediaUrl(m.storagePath),
     })),
   );
 

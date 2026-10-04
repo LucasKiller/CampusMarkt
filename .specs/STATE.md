@@ -164,11 +164,11 @@
 
 ## Handoff
 
-- **Feature**: `022-profile-name-hydration`
-- **Phase/task**: T1-T2 implemented and independently validated locally; public deployment pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T4 photo-upload repair passed independent local validation but has not been deployed. Feature 022 now loads the persisted display name in account settings, preserves active edits and successful saves against late reads, and does not show a fake saved name on load failure. The independent verifier passed 5/5 criteria, 11 browser tests, typecheck, lint, formatting, build, and a mutation sensor that reintroduced the late-read fault in an isolated clone.
-- **In-progress**: None locally. The public site has neither the feature 021 T4 repair nor the feature 022 profile-name fix.
-- **Next step**: Obtain explicit authorization to push/promote/deploy the reviewed local fixes via the production branch/Coolify, then verify a real photo upload and saved display name on the public site.
+- **Feature**: `024-listing-photo-display-repair`
+- **Phase/task**: T1 implemented and independently validated locally; public deployment pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Coolify runs production commit `6e3162a`, which includes feature 021 T4 photo-upload repair and feature 022 profile-name hydration; feature 022 still needs a live behavior check. Feature 023 university-link confirmation passed independent local validation but is not in production. Feature 024 resolves stored photo paths through the public Storage route in every listing view. Its independent validation passed 6/6 criteria, 36 focused tests, 18 browser tests, typecheck, lint, formatting, build, and a two-fault sensor. A production image was observed at HTTP 200 through Storage while the existing card URL returned HTTP 404.
+- **In-progress**: None locally. Feature 024 is committed but not pushed or deployed; feature 023 also remains local.
+- **Next step**: Obtain explicit authorization to push/promote/deploy the reviewed local fixes via the production branch/Coolify, then verify listing images in creation/management and public cards plus university email-link confirmation on the public site.
 - **Blockers**: Deployment authorization is pending. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
 - **Uncommitted files**: None after the validation record commit.
 - **Branch**: development

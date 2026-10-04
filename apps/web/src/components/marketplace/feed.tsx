@@ -12,6 +12,7 @@ import {
   type SupportedLocale,
 } from "@campusmarkt/domain";
 import { FavoriteButton } from "./favorites/favorite-button";
+import { listingMediaUrl } from "../../modules/listings/media-url";
 
 export { MarketplaceFeed } from "./marketplace-feed";
 export type { MarketplaceFeedProps } from "./marketplace-feed";
@@ -65,11 +66,7 @@ export function ListingCard({ item, locale = "de" }: ListingCardProps) {
         <div className="listing-card-media-wrapper">
           {item.coverImage ? (
             <img
-              src={
-                item.coverImage.startsWith("http")
-                  ? item.coverImage
-                  : `/${item.coverImage}`
-              }
+              src={listingMediaUrl(item.coverImage)}
               alt={item.title}
               loading="lazy"
             />

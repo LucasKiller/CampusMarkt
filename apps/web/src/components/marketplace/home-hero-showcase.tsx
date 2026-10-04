@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { PublicFeedItem } from "@campusmarkt/types";
+import { listingMediaUrl } from "../../modules/listings/media-url";
 import {
   formatListingPrice,
   getListingTypeLabel,
@@ -21,9 +22,7 @@ function ListingTile({
 }) {
   const [imageFailed, setImageFailed] = useState(false);
   const hasImage = Boolean(item.coverImage) && !imageFailed;
-  const imageSource = item.coverImage?.startsWith("http")
-    ? item.coverImage
-    : `/${item.coverImage}`;
+  const imageSource = item.coverImage ? listingMediaUrl(item.coverImage) : "";
 
   return (
     <Link

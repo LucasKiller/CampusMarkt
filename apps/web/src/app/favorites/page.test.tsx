@@ -117,6 +117,16 @@ describe("Favorites Dashboard Page UI (T15)", () => {
   });
 
   describe("FavoritesView component", () => {
+    it("renders a saved cover photo from the public listing bucket", () => {
+      const html = renderToString(
+        <FavoritesView initialItems={[sampleFavoriteItem]} />,
+      );
+
+      expect(html).toContain(
+        'src="/storage/v1/object/public/listing-media/media/listings/cover1.webp"',
+      );
+    });
+
     it("renders status chips for reserved and sold items", () => {
       const reservedItem: FavoriteItemDTO = {
         ...sampleFavoriteItem,

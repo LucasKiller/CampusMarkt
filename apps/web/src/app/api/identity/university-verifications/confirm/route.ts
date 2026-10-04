@@ -118,7 +118,7 @@ export function createUniversityConfirmationHandler(
     );
 
     // Clear the action cookie if it was present
-    if (cookieToken) {
+    if (cookieToken && response.status < 500) {
       response.headers.append(
         "set-cookie",
         "campusmarkt-action-university_verification=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict",

@@ -60,15 +60,42 @@ describe("bounded session refresh", () => {
     expect(refresh).toHaveBeenCalledExactlyOnceWith("old-refresh");
     expect(req.cookies.get(AUTH_COOKIE_NAME)?.value).toBe(newAccess);
     expect(response.cookies.get(AUTH_COOKIE_NAME)?.value).toBe(newAccess);
+    expect(response.cookies.get(AUTH_COOKIE_NAME)?.httpOnly).toBe(true);
+    expect(response.cookies.get(AUTH_COOKIE_NAME)?.sameSite).toBe("lax");
     expect(
       parseRefreshCookie(response.cookies.get(REFRESH_COOKIE_NAME)?.value),
     ).toEqual({ refreshToken: "new-refresh", issuedAt });
-    expect(response.headers.get("set-cookie")).toContain("HttpOnly");
-    expect(response.headers.get("set-cookie")).toContain("SameSite=lax");
+    expect(response.cookies.get(REFRESH_COOKIE_NAME)?.httpOnly).toBe(true);
+    expect(response.cookies.get(REFRESH_COOKIE_NAME)?.sameSite).toBe("lax");
     expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(response.cookies.get(REFRESH_COOKIE_NAME)?.maxAge).toBe(
       MAX_AUTH_COOKIE_AGE_SECONDS - 90,
     );
+  });
+
+  it("refreshes at 60 seconds before expiry but waits at 61 seconds", async () => {
+    const refresh = vi.fn(async () => ({
+      status: "refreshed" as const,
+      accessToken: jwt(now + 3600),
+      refreshToken: "rotated",
+    }));
+    const threshold = request(
+      jwt(now + 60),
+      encodeRefreshCookie("at-threshold", now - 20),
+    );
+    const early = request(
+      jwt(now + 61),
+      encodeRefreshCookie("early", now - 20),
+    );
+
+    const thresholdResponse = await refreshAuthSession(threshold, refresh, now);
+    const earlyResponse = await refreshAuthSession(early, refresh, now);
+
+    expect(refresh).toHaveBeenCalledExactlyOnceWith("at-threshold");
+    expect(thresholdResponse.cookies.get(AUTH_COOKIE_NAME)?.value).toBe(
+      jwt(now + 3600),
+    );
+    expect(earlyResponse.cookies.getAll()).toHaveLength(0);
   });
 
   it("does not refresh a valid access token or a legacy access-only cookie", async () => {

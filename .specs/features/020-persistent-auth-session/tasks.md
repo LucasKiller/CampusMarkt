@@ -22,7 +22,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2
+T1 -> T2 -> T3
 ```
 
 ## Task Breakdown
@@ -45,13 +45,25 @@ T1 -> T2
 **Tests:** Identity route and application tests.
 **Gate:** Focused tests, types, lint, format, build, status update, and atomic commit.
 
+### T3: Close verifier-identified refresh test gaps
+
+**Depends on:** T2
+**Requirements:** SESS-01.1, SESS-01.2
+**Deliverable:** Test the exact 60-second refresh threshold and assert HttpOnly on each rotated credential.
+**Done when:** Both verifier sensor mutants fail the requirement-derived tests.
+**Tests:** Session-refresh integration test and verifier discrimination sensor.
+**Gate:** Focused tests, types, lint, format, build, and atomic commit.
+
 ## Status
 
 - [x] T1
 - [x] T2
+- [x] T3
 
 T1 gate: 65 focused Vitest tests passed across session routes, refresh behavior, security headers, and access service. Typecheck, scoped ESLint, formatting, and the production web build passed. No server or watcher remains running.
 
 T2 gate: 361 identity, cookie, and security-header Vitest tests passed; typecheck, scoped ESLint, and production web build passed. Formatting and diff checks passed. Provider logout now receives the current access JWT, and reauthentication writes a real token pair. No server or watcher remains running.
+
+T3 gate: 362 focused tests, typecheck, lint, formatting, and a fresh production build passed. The independent verifier will rerun the two surviving mutations before the feature verdict.
 
 After T2 is committed, a fresh independent verifier records evidence and a discrimination sensor in `validation.md`.

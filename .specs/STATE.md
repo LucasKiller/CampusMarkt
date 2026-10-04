@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `021-listing-photo-upload-repair`
-- **Phase/task**: Validate complete; T1-T3 and PHOTO-01/PHOTO-02 verified locally
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 returns a signed Storage URL on the site's origin, uploads photos with Supabase-compatible multipart PUT, and accepts dropped files. Failed uploads do not appear as completed photos. T3 added proof of the selected file bytes, duplicate-drop prevention, and JPEG/WebP support. Its gate passed 21 focused tests, 18 browser journeys, typecheck, lint, formatting, and production web build.
-- **In-progress**: None for Feature 021. Independent validation passed 6/6 criteria, all task gates, and 2/2 final discrimination mutations.
-- **Next step**: Local feature complete. Deployment to Docker or the VPS requires a separately authorized operation.
-- **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Feature**: `022-profile-name-hydration`
+- **Phase/task**: T1-T2 implemented and independently validated locally; public deployment pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T4 photo-upload repair passed independent local validation but has not been deployed. Feature 022 now loads the persisted display name in account settings, preserves active edits and successful saves against late reads, and does not show a fake saved name on load failure. The independent verifier passed 5/5 criteria, 11 browser tests, typecheck, lint, formatting, build, and a mutation sensor that reintroduced the late-read fault in an isolated clone.
+- **In-progress**: None locally. The public site has neither the feature 021 T4 repair nor the feature 022 profile-name fix.
+- **Next step**: Obtain explicit authorization to push/promote/deploy the reviewed local fixes via the production branch/Coolify, then verify a real photo upload and saved display name on the public site.
+- **Blockers**: Deployment authorization is pending. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
 - **Uncommitted files**: None after the validation record commit.
 - **Branch**: development
 

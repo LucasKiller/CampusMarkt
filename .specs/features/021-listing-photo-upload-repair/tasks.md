@@ -23,7 +23,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2 -> T3
+T1 -> T2 -> T3 -> T4
 ```
 
 ## Task Breakdown
@@ -55,11 +55,21 @@ T1 -> T2 -> T3
 **Tests:** Signed upload transport unit test and listing creation browser journeys.
 **Gate:** Focused tests, browser test, types, lint, format, build, and atomic commit.
 
+### T4: Use the real Supabase Storage namespace
+
+**Depends on:** T3
+**Requirements:** PHOTO-01.4
+**Deliverable:** Obtain the signed URL through `client.storage.from` and add a regression test for a Supabase client exposing both database and Storage `from` methods.
+**Done when:** The regression test reproduces the production TypeError before the fix, passes after the fix, and the repository never uses database `from` for upload signing.
+**Tests:** Listing repository integration tests and upload-intent route tests.
+**Gate:** Focused tests, types, lint, format, build, and atomic commit; then fresh independent validation.
+
 ## Status
 
 - [x] T1
 - [x] T2
 - [x] T3
+- [x] T4
 
 T1 gate: 19 focused route/form tests, typecheck, scoped lint, formatting, and production web build passed. Signed URL tests verify public origin, preserved token, and fail-closed invalid responses. No server or watcher remains running.
 
@@ -70,3 +80,5 @@ After T2, a fresh independent verifier reviewed the implementation and recorded 
 T3 was added from the independent verifier's first discrimination run: a wrong-bytes upload mutation survived the original transport test. The strengthened test now checks the actual multipart file contents; browser coverage also checks a second drop during the pending request and JPEG/WebP drops. Independent revalidation passed 6/6 acceptance criteria and killed 2/2 final mutations.
 
 T3 gate: 21 focused Vitest tests and 18 Playwright listing journeys passed. Typecheck, scoped lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.
+
+T4 red test reproduced the production `createSignedUploadUrl is not a function` error with a client that has both `from` methods. The corrected repository passes the regression. T4 gate: 28 repository and route integration tests, typecheck, scoped lint, formatting, and production web build passed. No server or watcher remains running. Independent validation passed 7/7 criteria and killed the namespace-selection mutation.

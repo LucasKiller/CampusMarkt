@@ -1,6 +1,6 @@
 # Legal Page Alignment Specification
 
-**Status:** Locally implemented on 2026-10-04; awaiting independent validation.
+**Status:** Independently validated on 2026-10-04; complete locally.
 
 ## Problem Statement
 
@@ -60,11 +60,11 @@ The three pages linked from the marketplace footer use unrelated styling and omi
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| LEGALUI-01 | Site design and navigation | Execute | Implemented; awaiting independent validation |
-| LEGALUI-02 | Accurate product language | Execute | Implemented; awaiting independent validation |
+| LEGALUI-01 | Site design and navigation | Execute | Verified |
+| LEGALUI-02 | Accurate product language | Execute | Verified |
 
 ## Success Criteria
 
 - [x] Focused browser and page tests pass for all three links and both locales.
 - [x] Typecheck, lint, formatting, and spec/task gates pass.
-- [ ] Independent validation records PASS in `validation.md`.
+- [x] Independent validation records PASS in `validation.md`.

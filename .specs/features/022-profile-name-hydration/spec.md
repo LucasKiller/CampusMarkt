@@ -1,6 +1,6 @@
 # Saved Profile Name in Account Settings
 
-**Status:** Implemented locally on 2026-10-04; independent validation pending.
+**Status:** Verified locally on 2026-10-04; production deployment pending.
 
 ## Problem Statement
 
@@ -47,7 +47,7 @@ Registration and profile updates store the public display name, but the account 
 
 | Requirement ID | Story | Status |
 | --- | --- | --- |
-| NAME-01 | Read the saved display name | Implemented T1-T2; validation pending |
+| NAME-01 | Read the saved display name | Verified T1-T2; 5/5 criteria passed |
 
 ## Success Criteria
 

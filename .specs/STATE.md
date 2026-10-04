@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `021-listing-photo-upload-repair`
-- **Phase/task**: Validate T4 complete locally; production check pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T1-T3 previously passed independent local validation. Production commit `1fa9b21` includes those changes, but Coolify web logs show `createSignedUploadUrl is not a function` during upload intent. T4 uses `client.storage.from`; its red regression reproduced the failure and now passes. Independent verification passed 7/7 criteria, 28 repository/route tests, 21 focused tests, typecheck, lint, formatting, build, and a namespace-selection mutation sensor.
-- **In-progress**: None locally. The public site is still on the broken production commit.
-- **Next step**: Obtain authorization to publish the reviewed T4 commit through the production branch/Coolify, then verify a real photo upload on the public site.
-- **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Feature**: `022-profile-name-hydration`
+- **Phase/task**: T1-T2 implemented and independently validated locally; public deployment pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T4 photo-upload repair passed independent local validation but has not been deployed. Feature 022 now loads the persisted display name in account settings, preserves active edits and successful saves against late reads, and does not show a fake saved name on load failure. The independent verifier passed 5/5 criteria, 11 browser tests, typecheck, lint, formatting, build, and a mutation sensor that reintroduced the late-read fault in an isolated clone.
+- **In-progress**: None locally. The public site has neither the feature 021 T4 repair nor the feature 022 profile-name fix.
+- **Next step**: Obtain explicit authorization to push/promote/deploy the reviewed local fixes via the production branch/Coolify, then verify a real photo upload and saved display name on the public site.
+- **Blockers**: Deployment authorization is pending. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
 - **Uncommitted files**: None after the validation record commit.
 - **Branch**: development
 

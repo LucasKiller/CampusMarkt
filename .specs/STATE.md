@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `020-persistent-auth-session`
-- **Phase/task**: Feature 020 verified and complete locally
-- **Completed**: Features 001-019 retain their recorded outcomes. Feature 020 stores real access/refresh cookies, refreshes near-expiry JWTs within the original 30-day browser limit, clears both cookies on logout/recovery/deletion, uses the session JWT for provider revocation, and replaces the reauthentication placeholder with real credentials. The T2 gate passed 361 focused tests, typecheck, lint, formatting, and web build locally.
-- **In-progress**: No local feature work remains; independent validation passed all nine acceptance criteria with 10/10 sensor mutants killed.
-- **Next step**: Await explicit deployment authorization before updating Docker or the VPS.
+- **Feature**: `021-listing-photo-upload-repair`
+- **Phase/task**: Execute T1 complete; T2 pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 T1 returns a signed Storage upload URL on the site's origin and rejects malformed paths or missing tokens. Its 19 focused tests, typecheck, lint, formatting, and production web build passed locally.
+- **In-progress**: T2 file picker and drag/drop upload behavior.
+- **Next step**: Complete T2, commit atomically, then run independent validation. No push or deployment is authorized by this local task.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: Final independent validation and completion records until their local commit.
+- **Uncommitted files**: T1 implementation and records until its atomic commit.
 - **Branch**: development
 

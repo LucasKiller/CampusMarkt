@@ -26,10 +26,12 @@ describe("signed listing photo upload", () => {
     expect(options.method).toBe("PUT");
     expect(options.body).toBeInstanceOf(FormData);
     expect((options.body as FormData).get("cacheControl")).toBe("3600");
-    expect((options.body as FormData).get("")).toMatchObject({
+    const uploadedFile = (options.body as FormData).get("");
+    expect(uploadedFile).toMatchObject({
       name: "item.png",
       type: "image/png",
     });
+    expect(await (uploadedFile as File).text()).toBe("photo-bytes");
     expect(options.headers).toBeUndefined();
   });
 

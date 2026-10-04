@@ -306,7 +306,9 @@ test.describe("marketplace listing creation and management journeys", () => {
   test("accepts a dropped photo and shows the upload pending state", async ({
     page,
   }) => {
+    let intentCount = 0;
     await page.route("**/api/listings/media/upload-intent", async (route) => {
+      intentCount += 1;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -323,7 +325,9 @@ test.describe("marketplace listing creation and management journeys", () => {
     const uploadGate = new Promise<void>((resolve) => {
       releaseUpload = resolve;
     });
+    let uploadCount = 0;
     await page.route("**/api/mock-upload", async (route) => {
+      uploadCount += 1;
       await uploadGate;
       await route.fulfill({ status: 200, body: "ok" });
     });
@@ -334,12 +338,44 @@ test.describe("marketplace listing creation and management journeys", () => {
       page.getByRole("button", { name: "Uploading..." }),
     ).toBeDisabled();
     expect(await page.getByText("0/8 uploaded").isVisible()).toBe(true);
+    await dropListingPhoto(page, "duplicate.png", "image/png");
+    expect(intentCount).toBe(1);
+    expect(uploadCount).toBe(1);
     releaseUpload();
     await expect(page.getByText("1/8 uploaded")).toBeVisible();
+    expect(intentCount).toBe(1);
     await expect(
       page.getByRole("img", { name: "Listing photo 1" }),
     ).toBeVisible();
   });
+
+  for (const { name, type } of [
+    { name: "photo.jpg", type: "image/jpeg" },
+    { name: "photo.webp", type: "image/webp" },
+  ]) {
+    test(`accepts a dropped ${type} photo`, async ({ page }) => {
+      await page.route("**/api/listings/media/upload-intent", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            data: {
+              signedUploadUrl: "http://127.0.0.1:3100/api/mock-upload",
+              storagePath: `owner/${name}`,
+            },
+          }),
+        });
+      });
+      await page.route("**/api/mock-upload", async (route) => {
+        await route.fulfill({ status: 200, body: "ok" });
+      });
+
+      await page.goto("/listings/new");
+      await dropListingPhoto(page, name, type);
+      await expect(page.getByText("1/8 uploaded")).toBeVisible();
+    });
+  }
 
   test("does not count a failed or unsupported photo upload", async ({
     page,

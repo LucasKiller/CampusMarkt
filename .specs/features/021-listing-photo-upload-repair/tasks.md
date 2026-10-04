@@ -23,7 +23,7 @@
 ## Execution Plan
 
 ```text
-T1 -> T2
+T1 -> T2 -> T3
 ```
 
 ## Task Breakdown
@@ -46,13 +46,27 @@ T1 -> T2
 **Tests:** Browser listing tests and focused unit/integration tests.
 **Gate:** Focused tests, browser test, types, lint, format, build, and atomic commit.
 
+### T3: Prove the chosen photo and pending drop behavior
+
+**Depends on:** T2
+**Requirements:** PHOTO-01.3, PHOTO-02.1, PHOTO-02.2
+**Deliverable:** Assert the uploaded multipart bytes, reject a second drop while an upload is pending, and cover dropped JPEG and WebP photos.
+**Done when:** A wrong-bytes upload implementation fails the transport test and the browser tests prove one upload during the pending state plus each supported image format.
+**Tests:** Signed upload transport unit test and listing creation browser journeys.
+**Gate:** Focused tests, browser test, types, lint, format, build, and atomic commit.
+
 ## Status
 
 - [x] T1
 - [x] T2
+- [x] T3
 
 T1 gate: 19 focused route/form tests, typecheck, scoped lint, formatting, and production web build passed. Signed URL tests verify public origin, preserved token, and fail-closed invalid responses. No server or watcher remains running.
 
 T2 gate: 21 focused Vitest tests and 16 Playwright listing journeys passed. Browser tests prove picker and dropped photos, upload pending state, multipart transport, rejected Storage responses, and photo limits. Typecheck, lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.
 
 After T2, a fresh independent verifier writes `validation.md` with the requirement evidence and discrimination sensor.
+
+T3 was added from the independent verifier's first discrimination run: a wrong-bytes upload mutation survived the original transport test. The strengthened test now checks the actual multipart file contents; browser coverage also checks a second drop during the pending request and JPEG/WebP drops. Independent revalidation is pending.
+
+T3 gate: 21 focused Vitest tests and 18 Playwright listing journeys passed. Typecheck, scoped lint, formatting, and the production web build passed. Port 3100 closed after Playwright; no server or watcher remains running.

@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `021-listing-photo-upload-repair`
-- **Phase/task**: Execute T1 and T2 complete; independent validation pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 returns a signed Storage URL on the site's origin, uploads photos with Supabase-compatible multipart PUT, and accepts dropped files. Failed uploads do not appear as completed photos. The T2 gate passed 21 focused tests, 16 browser journeys, typecheck, lint, formatting, and production web build.
-- **In-progress**: Fresh independent verification of Feature 021.
-- **Next step**: Commit T2 atomically, then run independent validation. No push or deployment is authorized by this local task.
+- **Phase/task**: Execute T1-T3 complete; independent revalidation pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Feature 021 returns a signed Storage URL on the site's origin, uploads photos with Supabase-compatible multipart PUT, and accepts dropped files. Failed uploads do not appear as completed photos. T3 added proof of the selected file bytes, duplicate-drop prevention, and JPEG/WebP support. Its gate passed 21 focused tests, 18 browser journeys, typecheck, lint, formatting, and production web build.
+- **In-progress**: Independent revalidation of Feature 021 after the verifier found a surviving wrong-bytes upload mutation.
+- **Next step**: Commit T3 atomically, then repeat independent validation. No push or deployment is authorized by this local task.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: T2 implementation and records until its atomic commit.
+- **Uncommitted files**: T3 tests and records until its atomic commit.
 - **Branch**: development
 

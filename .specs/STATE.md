@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `020-persistent-auth-session`
-- **Phase/task**: Execute T1-T4 complete; independent revalidation pending
+- **Phase/task**: Feature 020 verified and complete locally
 - **Completed**: Features 001-019 retain their recorded outcomes. Feature 020 stores real access/refresh cookies, refreshes near-expiry JWTs within the original 30-day browser limit, clears both cookies on logout/recovery/deletion, uses the session JWT for provider revocation, and replaces the reauthentication placeholder with real credentials. The T2 gate passed 361 focused tests, typecheck, lint, formatting, and web build locally.
-- **In-progress**: Fresh independent revalidation of Feature 020 after closing test gaps found by the sensor, including production Secure assertions for each session cookie.
-- **Next step**: Run T4 gate and commit atomically, then rerun the discrimination sensor and require a PASS report. No push or deployment is authorized by this local task.
+- **In-progress**: No local feature work remains; independent validation passed all nine acceptance criteria with 10/10 sensor mutants killed.
+- **Next step**: Await explicit deployment authorization before updating Docker or the VPS.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: T4 tests and records until its atomic commit.
+- **Uncommitted files**: Final independent validation and completion records until their local commit.
 - **Branch**: development
 

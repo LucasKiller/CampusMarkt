@@ -1,6 +1,6 @@
 # Persistent Authentication Session Specification
 
-**Status:** Local implementation complete; awaiting independent validation.
+**Status:** Verified locally by an independent reviewer.
 
 ## Problem Statement
 
@@ -63,11 +63,11 @@ The current sign-in route writes only the access JWT to a persistent cookie. It 
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| SESS-01 | Persist and renew sign-in | Execute | Implemented; awaiting independent validation |
-| SESS-02 | End and replace sessions | Execute | Implemented; awaiting independent validation |
+| SESS-01 | Persist and renew sign-in | Execute | Verified |
+| SESS-02 | End and replace sessions | Execute | Verified |
 
 ## Success Criteria
 
 - [x] Focused identity application, route, middleware, and refresh tests pass with no skipped cases.
 - [x] Typecheck, lint, formatting, and build pass.
-- [ ] Independent validation records PASS in `validation.md`.
+- [x] Independent validation records PASS in `validation.md`.

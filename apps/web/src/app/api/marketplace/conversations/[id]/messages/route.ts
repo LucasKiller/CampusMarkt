@@ -99,7 +99,11 @@ export function createGetMessagesHandler(
       query.limit = url.searchParams.get("limit");
     }
 
-    const resolvedService = service ?? getMarketplaceMessagingService();
+    const resolvedService =
+      service ?? (await getMarketplaceMessagingService(identity.authUserId));
+    if (!resolvedService) {
+      return createFailureResponse("UNAUTHENTICATED", correlationId);
+    }
     const result = await resolvedService.getMessages(
       identity.authUserId,
       id,
@@ -188,7 +192,11 @@ export function createSendMessageHandler(
       });
     }
 
-    const resolvedService = service ?? getMarketplaceMessagingService();
+    const resolvedService =
+      service ?? (await getMarketplaceMessagingService(identity.authUserId));
+    if (!resolvedService) {
+      return createFailureResponse("UNAUTHENTICATED", correlationId);
+    }
     const result = await resolvedService.sendMessage(
       identity.authUserId,
       id,

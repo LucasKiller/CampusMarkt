@@ -131,41 +131,8 @@ export interface MarketplaceMessagingService {
 export function createMarketplaceMessagingService(ports: {
   repository: MarketplaceMessagingRepository;
   security?: MessagingSecurityAudit;
-  rateLimitWindowMs?: number;
-  rateLimitMaxMessages?: number;
 }): MarketplaceMessagingService {
-  const {
-    repository,
-    security = {},
-    rateLimitWindowMs = 60_000,
-    rateLimitMaxMessages = 30,
-  } = ports;
-
-  const inMemoryRateLimits = new Map<string, number[]>();
-
-  function checkLocalRateLimit(userId: string): {
-    allowed: boolean;
-    retryAfterSeconds?: number;
-  } {
-    const now = Date.now();
-    const timestamps = inMemoryRateLimits.get(userId) ?? [];
-    const windowStart = now - rateLimitWindowMs;
-    const activeTimestamps = timestamps.filter((t) => t > windowStart);
-
-    if (activeTimestamps.length >= rateLimitMaxMessages) {
-      const oldest = activeTimestamps[0] ?? now;
-      const retryAfterSeconds = Math.max(
-        1,
-        Math.ceil((oldest + rateLimitWindowMs - now) / 1000),
-      );
-      inMemoryRateLimits.set(userId, activeTimestamps);
-      return { allowed: false, retryAfterSeconds };
-    }
-
-    activeTimestamps.push(now);
-    inMemoryRateLimits.set(userId, activeTimestamps);
-    return { allowed: true };
-  }
+  const { repository, security = {} } = ports;
 
   function mapRepoResult<T>(
     result: MarketplaceMessagingResult<T>,
@@ -287,15 +254,6 @@ export function createMarketplaceMessagingService(ports: {
         }
       }
 
-      // Enforce 30 messages/min local sliding-window rate limit
-      const localCheck = checkLocalRateLimit(userId);
-      if (!localCheck.allowed) {
-        return {
-          status: "rate_limited",
-          retryAfterSeconds: localCheck.retryAfterSeconds ?? 60,
-        };
-      }
-
       const res = await repository.sendMessage(
         convValidation.value,
         bodyValidation.value.content,
@@ -408,21 +366,27 @@ export function createMarketplaceMessagingService(ports: {
         };
       }
 
-      const res = await repository.getMessages(
-        convValidation.value,
-        queryValidation.value,
-      );
+      const limit = queryValidation.value.limit ?? 50;
+      const res = await repository.getMessages(convValidation.value, {
+        ...queryValidation.value,
+        limit: limit + 1,
+      });
 
       if (!res.ok) {
         return mapRepoResult(res);
       }
 
-      const messages = res.value;
-      const limit = queryValidation.value.limit ?? 50;
-      const hasMore = messages.length === limit;
+      const hasMore = res.value.length > limit;
+      const messages = hasMore
+        ? queryValidation.value.after
+          ? res.value.slice(0, limit)
+          : res.value.slice(-limit)
+        : res.value;
       const nextCursor =
         hasMore && messages.length > 0
-          ? (messages[messages.length - 1]?.createdAt ?? null)
+          ? ((queryValidation.value.after
+              ? messages[messages.length - 1]?.id
+              : messages[0]?.id) ?? null)
           : null;
 
       return {

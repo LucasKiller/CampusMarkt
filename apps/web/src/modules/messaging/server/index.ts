@@ -1,8 +1,8 @@
 import "server-only";
 
 import { getIdentityInfrastructureConfig } from "../../identity/infrastructure/environment";
-import { createAdminSupabaseClient } from "../../identity/infrastructure/supabase/client/index";
-import { createIdentityRepository } from "../../identity/infrastructure/supabase/repository/index";
+import { createUserTokenSupabaseClient } from "../../identity/infrastructure/supabase/client/index";
+import { resolveCookieSession } from "../../identity/server/access";
 import {
   createMarketplaceMessagingRepository,
   type MarketplaceMessagingClient,
@@ -17,46 +17,29 @@ import {
 export * from "./messaging-repository";
 export * from "../application/messaging";
 
-let cachedMessagingService: MarketplaceMessagingService | null = null;
-
 export function getMarketplaceMessagingRepository(
-  customClient?: MarketplaceMessagingClient,
+  client: MarketplaceMessagingClient,
 ): MarketplaceMessagingRepository {
-  if (customClient) {
-    return createMarketplaceMessagingRepository({ service: customClient });
-  }
-  const config = getIdentityInfrastructureConfig();
-  const env = {
-    SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
-    SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
-    SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
-  };
-  const adminClient = createAdminSupabaseClient(env);
-  return createMarketplaceMessagingRepository({
-    service: adminClient as unknown as MarketplaceMessagingClient,
-  });
+  return createMarketplaceMessagingRepository({ service: client });
 }
 
-export function getMarketplaceMessagingService(
-  customClient?: MarketplaceMessagingClient,
-): MarketplaceMessagingService {
-  if (cachedMessagingService && !customClient) {
-    return cachedMessagingService;
+export async function getMarketplaceMessagingService(
+  userId: string,
+): Promise<MarketplaceMessagingService | null> {
+  const session = await resolveCookieSession();
+  if (!session.ok || session.value.authUserId !== userId) {
+    return null;
   }
-
-  const repository = getMarketplaceMessagingRepository(customClient);
   const config = getIdentityInfrastructureConfig();
   const env = {
     SUPABASE_INTERNAL_URL: config.supabaseInternalUrl,
     SUPABASE_SERVICE_ROLE_KEY: config.supabaseServiceRoleKey,
     SUPABASE_PUBLISHABLE_KEY: config.supabasePublishableKey,
   };
-  const adminClient = createAdminSupabaseClient(env);
-  const identityRepo = createIdentityRepository({
-    user: adminClient,
-    service: adminClient,
-  });
-
+  const userClient = createUserTokenSupabaseClient(session.value.token, env);
+  const repository = getMarketplaceMessagingRepository(
+    userClient as unknown as MarketplaceMessagingClient,
+  );
   const security: MessagingSecurityAudit = {
     async recordTelemetry(event) {
       if (process.env.NODE_ENV !== "test") {
@@ -67,33 +50,10 @@ export function getMarketplaceMessagingService(
         });
       }
     },
-    async checkRateLimit(userId, action) {
-      const res = await identityRepo.consumeRateLimits({
-        action,
-        subjectHash: userId,
-        ipHash: "127.0.0.1",
-      });
-      if (!res.ok) {
-        return { allowed: true };
-      }
-      const val = res.value as {
-        allowed?: boolean;
-        retry_after_seconds?: number;
-      };
-      if (val && val.allowed === false) {
-        return { allowed: false, retryAfterSeconds: val.retry_after_seconds };
-      }
-      return { allowed: true };
-    },
   };
 
-  const service = createMarketplaceMessagingService({
+  return createMarketplaceMessagingService({
     repository,
     security,
   });
-
-  if (!customClient) {
-    cachedMessagingService = service;
-  }
-  return service;
 }

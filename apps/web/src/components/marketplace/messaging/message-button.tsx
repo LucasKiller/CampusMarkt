@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
+import type { SupportedLocale } from "@campusmarkt/domain";
 
 export interface MessageButtonProps {
   listingId: string;
   sellerId: string;
   currentUserId?: string | null;
+  isListingOwner?: boolean;
+  locale?: SupportedLocale;
   onNavigate?: (url: string) => void;
   className?: string;
 }
@@ -14,17 +17,21 @@ export function MessageButton({
   listingId,
   sellerId,
   currentUserId = null,
+  isListingOwner = false,
+  locale = "de",
   onNavigate,
   className = "",
 }: MessageButtonProps) {
   const [isStarting, setIsStarting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const isSeller = Boolean(
-    currentUserId &&
-    sellerId &&
-    currentUserId.trim().toLowerCase() === sellerId.trim().toLowerCase(),
-  );
+  const isSeller =
+    isListingOwner ||
+    Boolean(
+      currentUserId &&
+      sellerId &&
+      currentUserId.trim().toLowerCase() === sellerId.trim().toLowerCase(),
+    );
 
   const navigate = (url: string) => {
     if (onNavigate) {
@@ -64,7 +71,10 @@ export function MessageButton({
           message?: string;
         };
         throw new Error(
-          errorJson.message || "Fehler beim Starten der Unterhaltung.",
+          errorJson.message ||
+            (locale === "en"
+              ? "Could not open the conversation."
+              : "Fehler beim Starten der Unterhaltung."),
         );
       }
 
@@ -79,7 +89,12 @@ export function MessageButton({
         navigate("/messages");
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Fehler aufgetreten.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : locale === "en"
+            ? "Something went wrong."
+            : "Fehler aufgetreten.";
       setErrorMessage(msg);
       setIsStarting(false);
     }
@@ -90,20 +105,15 @@ export function MessageButton({
   }
 
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="messages-start-wrapper">
       <button
         type="button"
         data-testid="cta-send-message"
         disabled={isStarting}
         onClick={handleStartMessage}
-        className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background hover:bg-muted text-foreground text-sm font-medium transition-colors shadow-2xs cursor-pointer disabled:opacity-50 ${className}`}
+        className={`messages-start-button ${className}`}
       >
-        <svg
-          className="w-4 h-4 text-muted-foreground"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -111,10 +121,20 @@ export function MessageButton({
             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
           />
         </svg>
-        <span>{isStarting ? "Wird geöffnet..." : "Nachricht schreiben"}</span>
+        <span>
+          {isStarting
+            ? locale === "en"
+              ? "Opening…"
+              : "Wird geöffnet..."
+            : locale === "en"
+              ? "Message seller"
+              : "Nachricht schreiben"}
+        </span>
       </button>
       {errorMessage && (
-        <span className="text-xs text-destructive">{errorMessage}</span>
+        <span role="alert" className="messages-start-error">
+          {errorMessage}
+        </span>
       )}
     </div>
   );

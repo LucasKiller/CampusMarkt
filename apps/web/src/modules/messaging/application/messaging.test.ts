@@ -118,42 +118,22 @@ describe("MarketplaceMessagingService", () => {
       expect(repo.sendMessage).not.toHaveBeenCalled();
     });
 
-    it("enforces 30 messages/min rate limit per user", async () => {
+    it("maps the database rate limit to a retryable response", async () => {
       const repo = mockRepo();
       repo.sendMessage.mockResolvedValue({
-        ok: true,
-        value: {
-          id: messageId,
-          conversationId,
-          senderId: userId,
-          content: "Hello",
-          createdAt: nowIso,
-          readAt: null,
-        },
+        ok: false,
+        code: "RATE_LIMIT_EXCEEDED",
       });
-
-      const service = createMarketplaceMessagingService({
-        repository: repo,
-        rateLimitMaxMessages: 30,
-        rateLimitWindowMs: 60_000,
-      });
-
-      // Send 30 messages successfully
-      for (let i = 0; i < 30; i++) {
-        const res = await service.sendMessage(userId, conversationId, {
-          content: `Message ${i}`,
-        });
-        expect(res.status).toBe("success");
-      }
-
-      // 31st message must be rate limited
+      const service = createMarketplaceMessagingService({ repository: repo });
       const rateLimitedRes = await service.sendMessage(userId, conversationId, {
-        content: "Message 31",
+        content: "Message",
       });
 
-      expect(rateLimitedRes.status).toBe("rate_limited");
-      expect(rateLimitedRes).toHaveProperty("retryAfterSeconds");
-      expect(repo.sendMessage).toHaveBeenCalledTimes(30);
+      expect(rateLimitedRes).toEqual({
+        status: "rate_limited",
+        retryAfterSeconds: 60,
+      });
+      expect(repo.sendMessage).toHaveBeenCalledOnce();
     });
 
     it("respects security audit rate limit", async () => {
@@ -308,6 +288,47 @@ describe("MarketplaceMessagingService", () => {
   });
 
   describe("getMessages", () => {
+    it("returns message IDs as stable pagination cursors", async () => {
+      const repo = mockRepo();
+      const older: MessageDTO = {
+        id: "66666666-6666-4666-8666-666666666666",
+        conversationId,
+        senderId: userId,
+        content: "Older",
+        createdAt: nowIso,
+        readAt: null,
+      };
+      const newer: MessageDTO = {
+        ...older,
+        id: messageId,
+        content: "Newer",
+      };
+      repo.getMessages.mockResolvedValue({
+        ok: true,
+        value: [
+          older,
+          newer,
+          { ...newer, id: "77777777-7777-4777-8777-777777777777" },
+        ],
+      });
+      const service = createMarketplaceMessagingService({ repository: repo });
+
+      const initial = await service.getMessages(userId, conversationId, {
+        limit: 2,
+      });
+      const after = await service.getMessages(userId, conversationId, {
+        after: older.id,
+        limit: 2,
+      });
+
+      expect(initial.status === "success" && initial.data.nextCursor).toBe(
+        newer.id,
+      );
+      expect(after.status === "success" && after.data.nextCursor).toBe(
+        newer.id,
+      );
+    });
+
     it("returns paginated messages", async () => {
       const repo = mockRepo();
       const msg: MessageDTO = {
@@ -337,7 +358,7 @@ describe("MarketplaceMessagingService", () => {
         },
       });
       expect(repo.getMessages).toHaveBeenCalledWith(conversationId, {
-        limit: 10,
+        limit: 11,
         before: undefined,
         after: undefined,
       });

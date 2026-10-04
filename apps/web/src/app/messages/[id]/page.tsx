@@ -5,6 +5,11 @@ import { getSessionDal } from "../../../modules/identity/server/access";
 import { getMarketplaceMessagingService } from "../../../modules/messaging/server/index";
 import { getMarketplaceNegotiationService } from "../../../modules/listings/server/index";
 import { ConversationThreadView } from "../../../components/marketplace/messaging/conversation-thread-view";
+import { MarketplaceHeader } from "../../../components/marketplace/marketplace-header";
+import { MarketplaceFooter } from "../../../components/marketplace/marketplace-footer";
+import { getMessagesCopy } from "../../../components/marketplace/messaging/messages-copy";
+import { getServerLocale } from "../../../modules/localization/server/index";
+import Link from "next/link";
 import type {
   ConversationDTO,
   MessageDTO,
@@ -24,17 +29,17 @@ function getCanonicalOrigin() {
   );
 }
 
-export async function generateMetadata(
-  props: MessageThreadPageProps,
-): Promise<Metadata> {
-  const params = await props.params;
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = getMessagesCopy(await getServerLocale());
   return {
-    title: `Nachrichtenverlauf · CampusMarkt`,
-    description: `Unterhaltung #${params.id} auf CampusMarkt`,
+    title: `${copy.history} · CampusMarkt`,
+    description: copy.subtitle,
   };
 }
 
 export default async function MessageThreadPage(props: MessageThreadPageProps) {
+  const locale = await getServerLocale();
+  const copy = getMessagesCopy(locale);
   const params = await props.params;
   const conversationId = params.id;
 
@@ -67,31 +72,42 @@ export default async function MessageThreadPage(props: MessageThreadPageProps) {
     redirect(`/login?next=/messages/${conversationId}`);
   }
 
-  const messagingService = getMarketplaceMessagingService();
   let conversation: ConversationDTO | null = null;
   let initialMessages: MessageDTO[] = [];
+  let initialHasMore = false;
   let initialOffers: OfferDTO[] = [];
   let initialReservation: ReservationDTO | null = null;
+  let loadFailed = false;
 
   try {
+    const messagingService =
+      await getMarketplaceMessagingService(currentUserId);
+    if (!messagingService) {
+      throw new Error("Messaging session unavailable");
+    }
     const res = await messagingService.getConversationById(
       currentUserId,
       conversationId,
     );
     if (res.status === "success") {
       conversation = res.data;
-    }
-
-    const msgRes = await messagingService.getMessages(
-      currentUserId,
-      conversationId,
-      { limit: 50 },
-    );
-    if (msgRes.status === "success") {
-      initialMessages = msgRes.data.messages;
+      const msgRes = await messagingService.getMessages(
+        currentUserId,
+        conversationId,
+        { limit: 50 },
+      );
+      if (msgRes.status === "success") {
+        initialMessages = msgRes.data.messages;
+        initialHasMore = Boolean(msgRes.data.hasMore);
+      } else {
+        loadFailed = true;
+      }
+    } else if (res.status !== "not_found") {
+      loadFailed = true;
     }
   } catch (err) {
     console.error("[MessageThreadPage: getConversationById]", err);
+    loadFailed = true;
   }
 
   // E2E test fixture fallback
@@ -147,6 +163,26 @@ export default async function MessageThreadPage(props: MessageThreadPageProps) {
         readAt: null,
       },
     ];
+    loadFailed = false;
+  }
+
+  if (loadFailed) {
+    return (
+      <div className="messages-page">
+        <MarketplaceHeader locale={locale} active="messages" />
+        <main className="messages-inner messages-state" role="alert">
+          <h1>{copy.loadError}</h1>
+          <p>{copy.loadErrorBody}</p>
+          <Link
+            href={`/messages/${conversationId}`}
+            className="messages-primary-link"
+          >
+            {locale === "en" ? "Try again" : "Erneut versuchen"}
+          </Link>
+        </main>
+        <MarketplaceFooter locale={locale} />
+      </div>
+    );
   }
 
   if (!conversation) {
@@ -177,14 +213,20 @@ export default async function MessageThreadPage(props: MessageThreadPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-muted/20">
-      <ConversationThreadView
-        conversation={conversation}
-        currentUserId={currentUserId}
-        initialMessages={initialMessages}
-        initialOffers={initialOffers}
-        initialReservation={initialReservation}
-      />
-    </main>
+    <div className="messages-page">
+      <MarketplaceHeader locale={locale} active="messages" />
+      <main className="messages-thread-page">
+        <ConversationThreadView
+          conversation={conversation}
+          currentUserId={currentUserId}
+          initialMessages={initialMessages}
+          initialHasMore={initialHasMore}
+          initialOffers={initialOffers}
+          initialReservation={initialReservation}
+          locale={locale}
+        />
+      </main>
+      <MarketplaceFooter locale={locale} />
+    </div>
   );
 }

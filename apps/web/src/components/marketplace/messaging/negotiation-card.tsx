@@ -7,8 +7,9 @@ import type {
   OfferDTO,
   ReservationDTO,
 } from "@campusmarkt/types";
-import { formatCurrencyEuros } from "@campusmarkt/domain";
+import { formatCurrencyEuros, type SupportedLocale } from "@campusmarkt/domain";
 import { listingMediaUrl } from "../../../modules/listings/media-url";
+import { getMessagesCopy } from "./messages-copy";
 
 export interface NegotiationCardProps {
   listing: ConversationListingSummary;
@@ -16,6 +17,7 @@ export interface NegotiationCardProps {
   activeReservation?: ReservationDTO | null;
   currentUserId: string;
   onActionComplete?: () => void;
+  locale?: SupportedLocale;
 }
 
 export function NegotiationCard({
@@ -24,7 +26,9 @@ export function NegotiationCard({
   activeReservation,
   currentUserId,
   onActionComplete,
+  locale = "de",
 }: NegotiationCardProps) {
+  const copy = getMessagesCopy(locale);
   const [isProcessing, setIsProcessing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -41,11 +45,20 @@ export function NegotiationCard({
         headers: { "content-type": "application/json" },
       });
       if (!res.ok) {
-        throw new Error("Fehler beim Annehmen des Angebots.");
+        throw new Error(
+          locale === "en"
+            ? "Could not accept the offer."
+            : "Fehler beim Annehmen des Angebots.",
+        );
       }
       onActionComplete?.();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Fehler aufgetreten.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : locale === "en"
+            ? "Something went wrong."
+            : "Fehler aufgetreten.";
       setActionError(msg);
     } finally {
       setIsProcessing(false);
@@ -65,11 +78,20 @@ export function NegotiationCard({
         },
       );
       if (!res.ok) {
-        throw new Error("Fehler beim Stornieren der Reservierung.");
+        throw new Error(
+          locale === "en"
+            ? "Could not cancel the reservation."
+            : "Fehler beim Stornieren der Reservierung.",
+        );
       }
       onActionComplete?.();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Fehler aufgetreten.";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : locale === "en"
+            ? "Something went wrong."
+            : "Fehler aufgetreten.";
       setActionError(msg);
     } finally {
       setIsProcessing(false);
@@ -77,55 +99,50 @@ export function NegotiationCard({
   };
 
   return (
-    <div
-      data-testid="negotiation-status-card"
-      className="bg-card border-b border-border px-4 py-2.5 flex flex-col gap-2 shadow-2xs"
-    >
-      <div className="flex items-center justify-between gap-3">
+    <div data-testid="negotiation-status-card" className="messages-negotiation">
+      <div className="messages-negotiation-main">
         <Link
           href={`/listings/${listing.id}`}
-          className="flex items-center gap-3 hover:opacity-85 transition-opacity min-w-0"
+          className="messages-negotiation-listing"
         >
-          <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden shrink-0 text-xs font-semibold text-muted-foreground border border-border">
+          <div className="messages-negotiation-photo">
             {listing.coverImage ? (
               <img
                 src={listingMediaUrl(listing.coverImage)}
                 alt={listing.title}
-                className="w-full h-full object-cover"
+                className="messages-negotiation-image"
               />
             ) : (
               listing.title.slice(0, 2).toUpperCase()
             )}
           </div>
-          <div className="min-w-0">
-            <h3 className="text-xs font-semibold text-foreground truncate">
-              {listing.title}
-            </h3>
-            <p className="text-xs text-muted-foreground">
+          <div className="messages-negotiation-info">
+            <h3>{listing.title}</h3>
+            <p>
               {listing.priceCents !== null
                 ? formatCurrencyEuros(listing.priceCents)
-                : "Zu verschenken"}
+                : copy.free}
             </p>
           </div>
         </Link>
 
         {/* Active Reservation Status */}
         {activeReservation && activeReservation.status === "active" && (
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="messages-negotiation-action">
             <span
               data-testid="negotiation-badge-reserved"
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-300 dark:border-amber-800"
+              className="messages-negotiation-status"
             >
-              Reserviert (
+              {copy.reserved} (
               {formatCurrencyEuros(activeReservation.agreedPriceCents)})
             </span>
             <button
               type="button"
               disabled={isProcessing}
               onClick={() => handleCancelReservation(activeReservation.id)}
-              className="text-xs text-destructive hover:underline cursor-pointer disabled:opacity-50"
+              className="messages-negotiation-button"
             >
-              Stornieren
+              {copy.cancel}
             </button>
           </div>
         )}
@@ -134,12 +151,12 @@ export function NegotiationCard({
         {(!activeReservation || activeReservation.status !== "active") &&
           activeOffer &&
           activeOffer.status === "pending" && (
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="messages-negotiation-action">
               <span
                 data-testid="negotiation-badge-offer"
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-300 dark:border-blue-800"
+                className="messages-negotiation-status"
               >
-                Angebot: {formatCurrencyEuros(activeOffer.amountCents)}
+                {copy.offer}: {formatCurrencyEuros(activeOffer.amountCents)}
               </span>
               {isSeller ? (
                 <button
@@ -147,13 +164,13 @@ export function NegotiationCard({
                   data-testid="accept-offer-button"
                   disabled={isProcessing}
                   onClick={() => handleAcceptOffer(activeOffer.id)}
-                  className="px-2.5 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-md shadow-xs hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50"
+                  className="messages-negotiation-button"
                 >
-                  Annehmen
+                  {copy.accept}
                 </button>
               ) : (
-                <span className="text-xs text-muted-foreground">
-                  Warte auf Verkäufer
+                <span className="messages-negotiation-waiting">
+                  {copy.waiting}
                 </span>
               )}
             </div>
@@ -161,7 +178,9 @@ export function NegotiationCard({
       </div>
 
       {actionError && (
-        <div className="text-xs text-destructive">{actionError}</div>
+        <div className="messages-send-error" role="alert">
+          {actionError}
+        </div>
       )}
     </div>
   );

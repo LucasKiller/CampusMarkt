@@ -5,13 +5,20 @@ import { cookies } from "next/headers";
 import { getSessionDal } from "../../modules/identity/server/access";
 import { getMarketplaceMessagingService } from "../../modules/messaging/server/index";
 import { TrustBadge } from "../../components/marketplace/feed";
-import { formatRelativeTime } from "@campusmarkt/domain";
+import { MarketplaceHeader } from "../../components/marketplace/marketplace-header";
+import { MarketplaceFooter } from "../../components/marketplace/marketplace-footer";
+import { getMessagesCopy } from "../../components/marketplace/messaging/messages-copy";
+import { getServerLocale } from "../../modules/localization/server/index";
+import { formatCurrencyEuros, formatRelativeTime } from "@campusmarkt/domain";
 import type { ConversationDTO } from "@campusmarkt/types";
 
-export const metadata: Metadata = {
-  title: "Nachrichten · CampusMarkt",
-  description: "Deine Unterhaltungen auf CampusMarkt",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const copy = getMessagesCopy(await getServerLocale());
+  return {
+    title: `${copy.title} · CampusMarkt`,
+    description: copy.subtitle,
+  };
+}
 
 function getCanonicalOrigin() {
   return (
@@ -22,6 +29,8 @@ function getCanonicalOrigin() {
 }
 
 export default async function InboxPage() {
+  const locale = await getServerLocale();
+  const copy = getMessagesCopy(locale);
   const origin = getCanonicalOrigin();
   const dal = getSessionDal(origin);
 
@@ -51,16 +60,24 @@ export default async function InboxPage() {
     redirect("/login?next=/messages");
   }
 
-  const messagingService = getMarketplaceMessagingService();
   let conversations: ConversationDTO[] = [];
+  let loadFailed = false;
 
   try {
+    const messagingService =
+      await getMarketplaceMessagingService(currentUserId);
+    if (!messagingService) {
+      throw new Error("Messaging session unavailable");
+    }
     const res = await messagingService.getUserConversations(currentUserId);
     if (res.status === "success") {
       conversations = res.data;
+    } else {
+      loadFailed = true;
     }
   } catch (err) {
     console.error("[InboxPage: getUserConversations]", err);
+    loadFailed = true;
   }
 
   // E2E test fallback fixture when enabled and no conversations exist
@@ -106,40 +123,35 @@ export default async function InboxPage() {
         },
       },
     ];
+    loadFailed = false;
   }
 
   return (
-    <main className="min-h-screen bg-muted/20 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-6 flex items-center justify-between">
+    <div className="messages-page">
+      <MarketplaceHeader locale={locale} active="messages" />
+      <main className="messages-inner">
+        <header className="messages-heading">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Nachrichten
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Verwalte deine Unterhaltungen und Verhandlungen
-            </p>
+            <h1>{copy.title}</h1>
+            <p>{copy.subtitle}</p>
           </div>
-          <Link
-            href="/"
-            className="text-sm text-primary hover:underline font-medium"
-          >
-            ← Zum Marktplatz
+          <Link href="/" className="messages-back-link">
+            {copy.marketplace} →
           </Link>
         </header>
 
-        {conversations.length === 0 ? (
-          <div
-            data-testid="inbox-empty-state"
-            className="bg-card border border-border rounded-2xl p-12 text-center shadow-xs flex flex-col items-center justify-center"
-          >
-            <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+        {loadFailed ? (
+          <div className="messages-state" role="alert">
+            <h2>{copy.loadError}</h2>
+            <p>{copy.loadErrorBody}</p>
+            <Link href="/messages">
+              {locale === "en" ? "Try again" : "Erneut versuchen"}
+            </Link>
+          </div>
+        ) : conversations.length === 0 ? (
+          <div data-testid="inbox-empty-state" className="messages-state">
+            <div className="messages-empty-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -148,26 +160,18 @@ export default async function InboxPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-lg font-semibold text-foreground mb-1">
-              Keine Nachrichten vorhanden
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-sm mb-6">
-              Du hast aktuell noch keine Unterhaltungen. Finde interessante
-              Artikel auf CampusMarkt und nimm direkt Kontakt auf!
-            </p>
+            <h2>{copy.emptyTitle}</h2>
+            <p>{copy.emptyBody}</p>
             <Link
               href="/"
               data-testid="empty-inbox-browse-link"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shadow-xs"
+              className="messages-primary-link"
             >
-              Jetzt stöbern
+              {copy.browse}
             </Link>
           </div>
         ) : (
-          <div
-            data-testid="inbox-list"
-            className="bg-card border border-border rounded-2xl divide-y divide-border overflow-hidden shadow-xs"
-          >
+          <div data-testid="inbox-list" className="messages-list">
             {conversations.map((conv) => {
               const partner = conv.partner;
               const listing = conv.listing;
@@ -178,67 +182,65 @@ export default async function InboxPage() {
                   key={conv.id}
                   href={`/messages/${conv.id}`}
                   data-testid={`conversation-card-${conv.id}`}
-                  className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="messages-conversation"
                 >
-                  {/* Partner Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 overflow-hidden border border-border">
+                  <div className="messages-avatar">
                     {partner?.avatarUrl ? (
-                      <img
-                        src={partner.avatarUrl}
-                        alt={partner.displayName}
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={partner.avatarUrl} alt={partner.displayName} />
                     ) : (
                       (partner?.displayName ?? "U").slice(0, 2).toUpperCase()
                     )}
                   </div>
 
-                  {/* Conversation Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-semibold text-sm text-foreground truncate">
-                          {partner?.displayName ?? "CampusMarkt Nutzer"}
+                  <div className="messages-conversation-body">
+                    <div className="messages-conversation-top">
+                      <div className="messages-partner">
+                        <span className="messages-partner-name">
+                          {partner?.displayName ?? copy.unknownUser}
                         </span>
                         {partner?.universityBadge && (
-                          <div className="shrink-0">
+                          <div>
                             <TrustBadge badge={partner.universityBadge} />
                           </div>
                         )}
                       </div>
                       <time
                         dateTime={conv.lastMessageAt}
-                        className="text-xs text-muted-foreground shrink-0"
+                        className="messages-time"
                       >
-                        {formatRelativeTime(conv.lastMessageAt)}
+                        {formatRelativeTime(
+                          conv.lastMessageAt,
+                          new Date(),
+                          locale,
+                        )}
                       </time>
                     </div>
 
-                    {/* Listing Title Preview */}
                     {listing && (
-                      <div className="text-xs font-medium text-foreground/80 truncate mb-1">
-                        Inserat: {listing.title}
+                      <div className="messages-listing-summary">
+                        <span className="messages-listing-title">
+                          {copy.listing}: {listing.title}
+                        </span>
+                        {listing.priceCents !== null && (
+                          <span className="messages-listing-price">
+                            {formatCurrencyEuros(listing.priceCents)}
+                          </span>
+                        )}
                       </div>
                     )}
 
-                    {/* Last Message Snippet */}
                     <p
-                      className={`text-xs truncate ${
-                        hasUnread
-                          ? "font-semibold text-foreground"
-                          : "text-muted-foreground"
-                      }`}
+                      className={`messages-snippet${hasUnread ? " messages-snippet-unread" : ""}`}
                     >
-                      {conv.lastMessage?.content ?? "Unterhaltung gestartet"}
+                      {conv.lastMessage?.content ?? copy.started}
                     </p>
                   </div>
 
-                  {/* Unread Pill */}
                   {hasUnread && (
-                    <div className="shrink-0">
+                    <div>
                       <span
                         data-testid="unread-pill"
-                        className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[11px] font-bold bg-primary text-primary-foreground shadow-xs"
+                        className="messages-unread"
                       >
                         {conv.unreadCount}
                       </span>
@@ -249,7 +251,8 @@ export default async function InboxPage() {
             })}
           </div>
         )}
-      </div>
-    </main>
+      </main>
+      <MarketplaceFooter locale={locale} />
+    </div>
   );
 }

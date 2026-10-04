@@ -3,17 +3,23 @@
 import React, { useState } from "react";
 import type { ConversationMilestone } from "@campusmarkt/domain";
 import type { MessageDTO } from "@campusmarkt/types";
+import type { SupportedLocale } from "@campusmarkt/domain";
+import { getMessagesCopy } from "./messages-copy";
 
 export interface MessageBubbleProps {
   message: MessageDTO;
   isCurrentUser: boolean;
   senderName?: string;
+  locale?: SupportedLocale;
 }
 
-export function formatMessageTime(isoString: string): string {
+export function formatMessageTime(
+  isoString: string,
+  locale: SupportedLocale = "de",
+): string {
   try {
     const date = new Date(isoString);
-    return date.toLocaleTimeString("de-DE", {
+    return date.toLocaleTimeString(locale === "en" ? "en-GB" : "de-DE", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -26,43 +32,29 @@ export function MessageBubble({
   message,
   isCurrentUser,
   senderName,
+  locale = "de",
 }: MessageBubbleProps) {
+  const copy = getMessagesCopy(locale);
   return (
     <div
       data-testid={`message-bubble-${message.id}`}
       data-sender={isCurrentUser ? "me" : "partner"}
-      className={`flex w-full ${isCurrentUser ? "justify-end" : "justify-start"} my-1`}
+      className="messages-bubble-row"
     >
-      <div
-        className={`max-w-[75%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm text-sm ${
-          isCurrentUser
-            ? "bg-primary text-primary-foreground rounded-br-none"
-            : "bg-muted text-foreground border border-border/50 rounded-bl-none"
-        }`}
-      >
+      <div className="messages-bubble">
         {!isCurrentUser && senderName && (
-          <div className="text-xs font-semibold text-muted-foreground mb-1">
-            {senderName}
-          </div>
+          <div className="messages-bubble-sender">{senderName}</div>
         )}
-        <p className="whitespace-pre-wrap break-words leading-relaxed">
-          {message.content}
-        </p>
-        <div
-          className={`flex items-center gap-1.5 mt-1 text-[11px] ${
-            isCurrentUser
-              ? "text-primary-foreground/75 justify-end"
-              : "text-muted-foreground justify-start"
-          }`}
-        >
+        <p className="messages-bubble-content">{message.content}</p>
+        <div className="messages-bubble-meta">
           <time dateTime={message.createdAt}>
-            {formatMessageTime(message.createdAt)}
+            {formatMessageTime(message.createdAt, locale)}
           </time>
           {isCurrentUser && (
             <span
               data-testid="message-read-receipt"
-              title={message.readAt ? "Gelesen" : "Gesendet"}
-              className="inline-block text-[11px]"
+              title={message.readAt ? copy.read : copy.sent}
+              className="messages-read-receipt"
             >
               {message.readAt ? "✓✓" : "✓"}
             </span>
@@ -81,13 +73,13 @@ export function MilestonePill({ milestone }: MilestonePillProps) {
   return (
     <div
       data-testid={`milestone-pill-${milestone.id}`}
-      className="flex justify-center my-3 w-full"
+      className="messages-milestone-row"
     >
-      <div className="inline-flex items-center gap-2 px-3 py-1 text-xs rounded-full bg-muted/60 text-muted-foreground border border-border/40 shadow-xs">
-        <span className="w-1.5 h-1.5 rounded-full bg-primary/70 inline-block" />
-        <span className="font-medium">{milestone.label}</span>
+      <div className="messages-milestone">
+        <span className="messages-milestone-dot" aria-hidden="true" />
+        <span className="messages-milestone-label">{milestone.label}</span>
         {milestone.description && (
-          <span className="text-[11px] opacity-80">
+          <span className="messages-milestone-description">
             ({milestone.description})
           </span>
         )}
@@ -104,6 +96,7 @@ export interface MessageListProps {
   hasMore?: boolean;
   isLoadingOlder?: boolean;
   onLoadOlder?: () => void;
+  locale?: SupportedLocale;
 }
 
 type TimelineItem =
@@ -118,7 +111,9 @@ export function MessageList({
   hasMore = false,
   isLoadingOlder = false,
   onLoadOlder,
+  locale = "de",
 }: MessageListProps) {
+  const copy = getMessagesCopy(locale);
   // Merge messages and milestones into unified chronological timeline
   const items: TimelineItem[] = [
     ...messages.map((m) => ({
@@ -138,29 +133,25 @@ export function MessageList({
   return (
     <div
       role="log"
-      aria-label="Nachrichtenverlauf"
+      aria-label={copy.history}
       aria-live="polite"
-      className="flex flex-col flex-1 overflow-y-auto px-4 py-3 space-y-1"
+      className="messages-timeline"
     >
       {hasMore && onLoadOlder && (
-        <div className="flex justify-center py-2">
+        <div className="messages-older-row">
           <button
             type="button"
             onClick={onLoadOlder}
             disabled={isLoadingOlder}
-            className="text-xs text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md border border-border hover:bg-muted/50 transition-colors disabled:opacity-50 cursor-pointer"
+            className="messages-older-button"
           >
-            {isLoadingOlder
-              ? "Lade ältere Nachrichten..."
-              : "Ältere Nachrichten laden"}
+            {isLoadingOlder ? copy.loadingOlder : copy.older}
           </button>
         </div>
       )}
 
       {items.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center py-12 text-sm text-muted-foreground">
-          Noch keine Nachrichten. Schreibe die erste Nachricht!
-        </div>
+        <div className="messages-timeline-empty">{copy.noMessages}</div>
       ) : (
         items.map((item) => {
           if (item.type === "milestone") {
@@ -175,6 +166,7 @@ export function MessageList({
               message={item.data}
               isCurrentUser={isCurrentUser}
               senderName={partnerName}
+              locale={locale}
             />
           );
         })
@@ -188,16 +180,20 @@ export interface MessageComposerProps {
   disabled?: boolean;
   placeholder?: string;
   maxLength?: number;
+  locale?: SupportedLocale;
 }
 
 export function MessageComposer({
   onSendMessage,
   disabled = false,
-  placeholder = "Nachricht schreiben...",
+  placeholder,
   maxLength = 2000,
+  locale = "de",
 }: MessageComposerProps) {
+  const copy = getMessagesCopy(locale);
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const trimmed = content.trim();
   const canSend =
@@ -209,9 +205,12 @@ export function MessageComposer({
   const handleSend = async () => {
     if (!canSend) return;
     setIsSubmitting(true);
+    setSendError(null);
     try {
       await onSendMessage(trimmed);
       setContent("");
+    } catch {
+      setSendError(copy.sendError);
     } finally {
       setIsSubmitting(false);
     }
@@ -230,40 +229,47 @@ export function MessageComposer({
         e.preventDefault();
         void handleSend();
       }}
-      className="p-3 border-t border-border bg-background flex flex-col gap-2"
+      className="messages-composer"
     >
-      <div className="relative flex items-end gap-2">
+      <div className="messages-composer-row">
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={placeholder ?? copy.placeholder}
           maxLength={maxLength}
           disabled={disabled || isSubmitting}
           rows={2}
-          aria-label="Nachricht schreiben"
-          className="flex-1 resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label={
+            locale === "en" ? "Write a message" : "Nachricht schreiben"
+          }
+          className="messages-composer-input"
         />
         <button
           type="submit"
           disabled={!canSend}
-          aria-label="Nachricht senden"
-          className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-10 transition-colors cursor-pointer"
+          aria-label={locale === "en" ? "Send message" : "Nachricht senden"}
+          className="messages-composer-send"
         >
-          {isSubmitting ? "Senden..." : "Senden"}
+          {isSubmitting ? copy.sending : copy.send}
         </button>
       </div>
-      <div className="flex justify-between items-center px-1 text-[11px] text-muted-foreground">
-        <span>Drücke Strg+Enter zum Senden</span>
+      <div className="messages-composer-meta">
+        <span>{copy.sendHint}</span>
         <span
           data-testid="composer-char-count"
           className={
-            content.length > maxLength ? "text-destructive font-semibold" : ""
+            content.length > maxLength ? "messages-char-count-error" : ""
           }
         >
           {`${content.length} / ${maxLength}`}
         </span>
       </div>
+      {sendError && (
+        <p role="alert" className="messages-send-error">
+          {sendError}
+        </p>
+      )}
     </form>
   );
 }

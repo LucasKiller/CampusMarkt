@@ -76,7 +76,11 @@ export function createGetConversationsHandler(
       return createFailureResponse("UNAUTHENTICATED", correlationId);
     }
 
-    const resolvedService = service ?? getMarketplaceMessagingService();
+    const resolvedService =
+      service ?? (await getMarketplaceMessagingService(identity.authUserId));
+    if (!resolvedService) {
+      return createFailureResponse("UNAUTHENTICATED", correlationId);
+    }
     const result = await resolvedService.getUserConversations(
       identity.authUserId,
       { correlationId },
@@ -149,7 +153,11 @@ export function createCreateConversationHandler(
       });
     }
 
-    const resolvedService = service ?? getMarketplaceMessagingService();
+    const resolvedService =
+      service ?? (await getMarketplaceMessagingService(identity.authUserId));
+    if (!resolvedService) {
+      return createFailureResponse("UNAUTHENTICATED", correlationId);
+    }
     const result = await resolvedService.getOrCreateConversation(
       identity.authUserId,
       body,

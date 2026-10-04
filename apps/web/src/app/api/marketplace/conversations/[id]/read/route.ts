@@ -102,7 +102,11 @@ export function createMarkConversationReadHandler(
       return createFailureResponse("UNAUTHENTICATED", correlationId);
     }
 
-    const resolvedService = service ?? getMarketplaceMessagingService();
+    const resolvedService =
+      service ?? (await getMarketplaceMessagingService(identity.authUserId));
+    if (!resolvedService) {
+      return createFailureResponse("UNAUTHENTICATED", correlationId);
+    }
     const result = await resolvedService.markConversationRead(
       identity.authUserId,
       id,

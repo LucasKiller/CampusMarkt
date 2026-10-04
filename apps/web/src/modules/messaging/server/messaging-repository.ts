@@ -23,35 +23,7 @@ export type MarketplaceMessagingResult<T> =
   | { ok: true; value: T }
   | { ok: false; code: MarketplaceMessagingErrorCode; message?: string };
 
-export interface MarketplaceMessagingTableQuery {
-  eq(column: string, value: unknown): MarketplaceMessagingTableQuery;
-  lt(column: string, value: unknown): MarketplaceMessagingTableQuery;
-  gt(column: string, value: unknown): MarketplaceMessagingTableQuery;
-  order(
-    column: string,
-    options?: { ascending?: boolean },
-  ): MarketplaceMessagingTableQuery;
-  limit(count: number): MarketplaceMessagingTableQuery;
-  maybeSingle(): PromiseLike<{ data: unknown; error: unknown }>;
-  then<TResult1 = { data: unknown; error: unknown }, TResult2 = never>(
-    onfulfilled?:
-      | ((value: {
-          data: unknown;
-          error: unknown;
-        }) => TResult1 | PromiseLike<TResult1>)
-      | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
-  ): PromiseLike<TResult1 | TResult2>;
-}
-
-export interface MarketplaceMessagingTableBuilder {
-  select(columns: string): MarketplaceMessagingTableQuery;
-}
-
-export interface MarketplaceMessagingClient extends MarketplaceRpcClient {
-  from?(table: string): unknown;
-  schema?(schema: string): unknown;
-}
+export type MarketplaceMessagingClient = MarketplaceRpcClient;
 
 export function mapRawMessageRowToDTO(raw: unknown): MessageDTO | null {
   if (typeof raw !== "object" || raw === null) {
@@ -225,6 +197,10 @@ export function mapMessagingDatabaseError(error: unknown): {
     return { code: "CANNOT_MESSAGE_OWN_LISTING", message };
   }
 
+  if (err.code === "P0006" || message.includes("RATE_LIMIT_EXCEEDED")) {
+    return { code: "RATE_LIMIT_EXCEEDED", message };
+  }
+
   if (err.code === "P0004" || message.includes("INVALID_MESSAGE_CONTENT")) {
     return { code: "INVALID_MESSAGE_CONTENT", message };
   }
@@ -261,23 +237,6 @@ async function callMarketplaceRpc(
       : client;
 
   return target.rpc(functionName, arguments_);
-}
-
-function getMarketplaceTable(
-  client: MarketplaceMessagingClient,
-  table: string,
-): MarketplaceMessagingTableBuilder {
-  if (typeof client.schema === "function") {
-    const s = client.schema("marketplace") as
-      { from?(t: string): MarketplaceMessagingTableBuilder } | undefined;
-    if (s && typeof s.from === "function") {
-      return s.from(table) as MarketplaceMessagingTableBuilder;
-    }
-  }
-  if (typeof client.from === "function") {
-    return client.from(table) as MarketplaceMessagingTableBuilder;
-  }
-  throw new Error("Client does not support table querying via .from()");
 }
 
 export interface MarketplaceMessagingRepository {
@@ -459,6 +418,11 @@ export function createMarketplaceMessagingRepository(clients: {
           }
         }
 
+        result.sort(
+          (a, b) =>
+            b.lastMessageAt.localeCompare(a.lastMessageAt) ||
+            b.id.localeCompare(a.id),
+        );
         return { ok: true, value: result };
       } catch (err) {
         console.error(
@@ -473,46 +437,18 @@ export function createMarketplaceMessagingRepository(clients: {
       conversationId: string,
     ): Promise<MarketplaceMessagingResult<ConversationDTO>> {
       try {
-        // Try finding it from user conversations inbox projection first (includes partner & listing)
         const inboxRes = await this.getUserConversations();
-        if (inboxRes.ok) {
-          const found = inboxRes.value.find((c) => c.id === conversationId);
-          if (found) {
-            return { ok: true, value: found };
-          }
+        if (!inboxRes.ok) {
+          return inboxRes;
         }
-
-        // Fallback: direct query on marketplace.conversations
-        const query = getMarketplaceTable(service, "conversations")
-          .select(
-            "id, listing_id, buyer_id, seller_id, last_message_at, created_at, updated_at",
-          )
-          .eq("id", conversationId);
-
-        const { data, error } = await query.maybeSingle();
-
-        if (error) {
-          return { ok: false, ...mapMessagingDatabaseError(error) };
-        }
-
-        if (!data) {
-          return {
-            ok: false,
-            code: "NOT_FOUND",
-            message: "Conversation not found",
-          };
-        }
-
-        const dto = mapRawConversationDTO(data);
-        if (!dto) {
-          return {
-            ok: false,
-            code: "INVALID_PROVIDER_RESPONSE",
-            message: "Conversation row has invalid format",
-          };
-        }
-
-        return { ok: true, value: dto };
+        const found = inboxRes.value.find((c) => c.id === conversationId);
+        return found
+          ? { ok: true, value: found }
+          : {
+              ok: false,
+              code: "NOT_FOUND",
+              message: "Conversation not found",
+            };
       } catch (err) {
         console.error(
           "[MarketplaceMessagingRepository: getConversationById]",
@@ -527,25 +463,16 @@ export function createMarketplaceMessagingRepository(clients: {
       query?: GetMessagesQuery,
     ): Promise<MarketplaceMessagingResult<MessageDTO[]>> {
       try {
-        let q = getMarketplaceTable(service, "messages")
-          .select(
-            "id, conversation_id, sender_id, content, created_at, read_at",
-          )
-          .eq("conversation_id", conversationId);
-
-        if (query?.after) {
-          q = q.gt("created_at", query.after);
-        }
-        if (query?.before) {
-          q = q.lt("created_at", query.before);
-        }
-
-        q = q.order("created_at", { ascending: true });
-
-        const limit = query?.limit ?? 50;
-        q = q.limit(limit);
-
-        const { data, error } = await q;
+        const { data, error } = await callMarketplaceRpc(
+          service,
+          "get_messages",
+          {
+            p_conversation_id: conversationId,
+            p_before: query?.before ?? null,
+            p_after: query?.after ?? null,
+            p_limit: query?.limit ?? 50,
+          },
+        );
 
         if (error) {
           return { ok: false, ...mapMessagingDatabaseError(error) };
@@ -555,7 +482,7 @@ export function createMarketplaceMessagingRepository(clients: {
           return {
             ok: false,
             code: "INVALID_PROVIDER_RESPONSE",
-            message: "messages query returned non-array",
+            message: "get_messages returned non-array",
           };
         }
 
@@ -567,7 +494,10 @@ export function createMarketplaceMessagingRepository(clients: {
           }
         }
 
-        return { ok: true, value: messages };
+        return {
+          ok: true,
+          value: query?.after ? messages : messages.reverse(),
+        };
       } catch (err) {
         console.error("[MarketplaceMessagingRepository: getMessages]", err);
         return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };

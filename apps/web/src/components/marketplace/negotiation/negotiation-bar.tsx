@@ -12,6 +12,7 @@ export interface NegotiationBarProps {
   listingType?: string;
   listingStatus?: string;
   currentUserId?: string | null;
+  isListingOwner?: boolean;
   initialOffers?: OfferDTO[];
   initialReservation?: ReservationDTO | null;
   onNavigate?: (url: string) => void;
@@ -25,6 +26,7 @@ export function NegotiationBar({
   listingType = "SELL",
   listingStatus = "active",
   currentUserId = null,
+  isListingOwner = false,
   initialOffers = [],
   initialReservation = null,
   onNavigate,
@@ -42,11 +44,13 @@ export function NegotiationBar({
   const [counterOfferId, setCounterOfferId] = useState<string | null>(null);
   const [counterAmount, setCounterAmount] = useState<string>("");
 
-  const isSeller = Boolean(
-    currentUserId &&
-    sellerId &&
-    currentUserId.trim().toLowerCase() === sellerId.trim().toLowerCase(),
-  );
+  const isSeller =
+    isListingOwner ||
+    Boolean(
+      currentUserId &&
+      sellerId &&
+      currentUserId.trim().toLowerCase() === sellerId.trim().toLowerCase(),
+    );
 
   const isReserved = listingStatus === "reserved" || Boolean(reservation);
   const isInactive = listingStatus === "sold" || listingStatus === "archived";

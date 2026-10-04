@@ -4,7 +4,7 @@ import { renderToString } from "react-dom/server";
 vi.mock("server-only", () => ({}));
 
 import type { ConversationDTO } from "@campusmarkt/types";
-import InboxPage from "./page";
+import InboxPage, { generateMetadata } from "./page";
 
 const sampleConversation: ConversationDTO = {
   id: "conv-1111-4111-8111-111111111111",
@@ -46,6 +46,12 @@ let mockIdentity: { authUserId: string; emailConfirmed: boolean } | null = {
 };
 
 let mockConversationsList: ConversationDTO[] = [sampleConversation];
+let mockLocale: "en" | "de" = "en";
+let mockLoadFailed = false;
+
+vi.mock("../../modules/localization/server/index", () => ({
+  getServerLocale: async () => mockLocale,
+}));
 
 vi.mock("../../modules/identity/server/access", () => ({
   getSessionDal: () => ({
@@ -58,10 +64,10 @@ vi.mock("../../modules/identity/server/access", () => ({
 
 vi.mock("../../modules/messaging/server/index", () => ({
   getMarketplaceMessagingService: () => ({
-    getUserConversations: async () => ({
-      status: "success",
-      data: mockConversationsList,
-    }),
+    getUserConversations: async () =>
+      mockLoadFailed
+        ? { status: "unavailable" }
+        : { status: "success", data: mockConversationsList },
   }),
 }));
 
@@ -79,6 +85,8 @@ describe("InboxPage component (T15)", () => {
       emailConfirmed: true,
     };
     mockConversationsList = [sampleConversation];
+    mockLocale = "en";
+    mockLoadFailed = false;
   });
 
   it("redirects unauthenticated user to login", async () => {
@@ -113,8 +121,34 @@ describe("InboxPage component (T15)", () => {
     const html = renderToString(component);
 
     expect(html).toContain('data-testid="inbox-empty-state"');
-    expect(html).toContain("Keine Nachrichten vorhanden");
+    expect(html).toContain("No conversations yet");
     expect(html).toContain('data-testid="empty-inbox-browse-link"');
-    expect(html).toContain("Jetzt stöbern");
+    expect(html).toContain("Browse listings");
+  });
+
+  it("uses German copy when German is selected", async () => {
+    mockLocale = "de";
+    mockConversationsList = [];
+
+    const html = renderToString(await InboxPage());
+    expect(html).toContain("Noch keine Unterhaltungen");
+    expect(html).toContain("Inserate ansehen");
+  });
+
+  it("localizes page metadata with the selected language", async () => {
+    expect((await generateMetadata()).title).toBe("Messages · CampusMarkt");
+    mockLocale = "de";
+    expect((await generateMetadata()).title).toBe("Nachrichten · CampusMarkt");
+  });
+
+  it("shows a retryable error instead of an empty inbox when loading fails", async () => {
+    mockLoadFailed = true;
+    mockConversationsList = [];
+
+    const html = renderToString(await InboxPage());
+
+    expect(html).toContain("Unable to load your messages");
+    expect(html).toContain('role="alert"');
+    expect(html).not.toContain('data-testid="inbox-empty-state"');
   });
 });

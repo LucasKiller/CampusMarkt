@@ -9,12 +9,7 @@ import {
 } from "./messaging-repository";
 import type { MarketplaceMessagingClient } from "./messaging-repository";
 
-function mockClient(
-  rpcData: unknown = null,
-  rpcError: unknown = null,
-  tableData: unknown = null,
-  tableError: unknown = null,
-) {
+function mockClient(rpcData: unknown = null, rpcError: unknown = null) {
   const rpcCalls: Array<{
     functionName: string;
     arguments_?: Record<string, unknown>;
@@ -28,32 +23,14 @@ function mockClient(
     return { data: rpcData, error: rpcError };
   };
 
-  const queryBuilder = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    lt: vi.fn().mockReturnThis(),
-    gt: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn().mockImplementation(async () => ({
-      data: tableData,
-      error: tableError,
-    })),
-    then: (
-      resolve?: ((value: { data: unknown; error: unknown }) => unknown) | null,
-    ) => Promise.resolve({ data: tableData, error: tableError }).then(resolve),
-  };
-
-  const from = vi.fn().mockReturnValue(queryBuilder);
-  const schema = vi.fn().mockReturnValue({ rpc, from });
+  const schema = vi.fn().mockReturnValue({ rpc });
 
   const client: MarketplaceMessagingClient = {
     rpc,
     schema,
-    from,
   };
 
-  return { client, rpcCalls, queryBuilder, from };
+  return { client, rpcCalls };
 }
 
 describe("MarketplaceMessagingRepository", () => {
@@ -198,6 +175,20 @@ describe("MarketplaceMessagingRepository", () => {
         message: "FORBIDDEN",
       });
     });
+
+    it("maps the database message-rate limit to a retryable result", async () => {
+      const { client } = mockClient(null, {
+        code: "P0006",
+        message: "RATE_LIMIT_EXCEEDED",
+      });
+      const repo = createMarketplaceMessagingRepository({ service: client });
+
+      expect(await repo.sendMessage(conversationId, "Hello")).toEqual({
+        ok: false,
+        code: "RATE_LIMIT_EXCEEDED",
+        message: "RATE_LIMIT_EXCEEDED",
+      });
+    });
   });
 
   describe("markConversationRead", () => {
@@ -289,7 +280,47 @@ describe("MarketplaceMessagingRepository", () => {
   });
 
   describe("getMessages", () => {
-    it("queries messages table with cursor filtering", async () => {
+    it("loads the latest page first and renders it chronologically (INBOX-02)", async () => {
+      const rows = [
+        {
+          id: "66666666-6666-4666-8666-666666666666",
+          conversation_id: conversationId,
+          sender_id: buyerId,
+          content: "newer",
+          created_at: "2026-09-24T20:02:00.000Z",
+          read_at: null,
+        },
+        {
+          id: messageId,
+          conversation_id: conversationId,
+          sender_id: sellerId,
+          content: "older",
+          created_at: nowIso,
+          read_at: null,
+        },
+      ];
+      const { client, rpcCalls } = mockClient(rows);
+      const repo = createMarketplaceMessagingRepository({ service: client });
+
+      const result = await repo.getMessages(conversationId, { limit: 2 });
+
+      expect(rpcCalls).toEqual([
+        {
+          functionName: "get_messages",
+          arguments_: {
+            p_conversation_id: conversationId,
+            p_before: null,
+            p_after: null,
+            p_limit: 2,
+          },
+        },
+      ]);
+      expect(
+        result.ok && result.value.map((message) => message.content),
+      ).toEqual(["older", "newer"]);
+    });
+
+    it("queries participant-scoped history RPC with a cursor", async () => {
       const mockMessages = [
         {
           id: messageId,
@@ -300,7 +331,7 @@ describe("MarketplaceMessagingRepository", () => {
           read_at: null,
         },
       ];
-      const { client, queryBuilder } = mockClient(null, null, mockMessages);
+      const { client, rpcCalls } = mockClient(mockMessages);
       const repo = createMarketplaceMessagingRepository({ service: client });
 
       const result = await repo.getMessages(conversationId, {
@@ -321,15 +352,17 @@ describe("MarketplaceMessagingRepository", () => {
           },
         ],
       });
-      expect(queryBuilder.eq).toHaveBeenCalledWith(
-        "conversation_id",
-        conversationId,
-      );
-      expect(queryBuilder.gt).toHaveBeenCalledWith(
-        "created_at",
-        "2026-09-24T19:00:00.000Z",
-      );
-      expect(queryBuilder.limit).toHaveBeenCalledWith(20);
+      expect(rpcCalls).toEqual([
+        {
+          functionName: "get_messages",
+          arguments_: {
+            p_conversation_id: conversationId,
+            p_before: null,
+            p_after: "2026-09-24T19:00:00.000Z",
+            p_limit: 20,
+          },
+        },
+      ]);
     });
   });
 

@@ -46,4 +46,30 @@ describe("MessageButton component (T15)", () => {
 
     expect(html).toBe("");
   });
+
+  it("hides the CTA when the owner's public ID differs from their auth ID", () => {
+    const html = renderToString(
+      <MessageButton
+        listingId={listingId}
+        sellerId={sellerId}
+        currentUserId="auth-user-id"
+        isListingOwner={true}
+      />,
+    );
+
+    expect(html).toBe("");
+  });
+
+  it("uses English on an English listing", () => {
+    const html = renderToString(
+      <MessageButton
+        listingId={listingId}
+        sellerId={sellerId}
+        currentUserId={buyerId}
+        locale="en"
+      />,
+    );
+
+    expect(html).toContain("Message seller");
+  });
 });

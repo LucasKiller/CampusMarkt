@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `024-listing-photo-display-repair`
-- **Phase/task**: T1 implemented and independently validated locally; public deployment pending
-- **Completed**: Features 001-020 retain their recorded outcomes. Coolify runs production commit `6e3162a`, which includes feature 021 T4 photo-upload repair and feature 022 profile-name hydration; feature 022 still needs a live behavior check. Feature 023 university-link confirmation passed independent local validation but is not in production. Feature 024 resolves stored photo paths through the public Storage route in every listing view. Its independent validation passed 6/6 criteria, 36 focused tests, 18 browser tests, typecheck, lint, formatting, build, and a two-fault sensor. A production image was observed at HTTP 200 through Storage while the existing card URL returned HTTP 404.
-- **In-progress**: None locally. Feature 024 is committed but not pushed or deployed; feature 023 also remains local.
-- **Next step**: Obtain explicit authorization to push/promote/deploy the reviewed local fixes via the production branch/Coolify, then verify listing images in creation/management and public cards plus university email-link confirmation on the public site.
-- **Blockers**: Deployment authorization is pending. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: None after the validation record commit.
+- **Feature**: `025-inbox-repair`
+- **Phase/task**: T1 implemented locally; independent validation pending
+- **Completed**: Features 001-020 retain their recorded outcomes. Features 023 and 024 passed independent local validation but remain unpublished. Feature 025 repairs the user-token messaging boundary, message pagination, truthful failure states, listing-owner entry points, and inbox/thread visual language. Focused tests, responsive browser checks, typecheck, lint, and build pass.
+- **In-progress**: Independent review of feature 025 and its database migration.
+- **Next step**: Record independent validation, then request separate authorization before push, migration, or Coolify deployment. Verify inbox/send/read behavior with real accounts after deployment.
+- **Blockers**: Docker is unavailable locally, so the new SQL function and transaction-level rate limit have not been executed against PostgreSQL. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: Feature 025 implementation until the task commit.
 - **Branch**: development
 

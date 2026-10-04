@@ -66,7 +66,7 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
     // Click "Nachricht schreiben" CTA
     const messageBtn = page.locator('[data-testid="cta-send-message"]');
     await expect(messageBtn).toBeVisible();
-    await expect(messageBtn).toContainText("Nachricht schreiben");
+    await expect(messageBtn).toContainText("Message seller");
     await messageBtn.click();
 
     // Verify redirected to thread view
@@ -131,7 +131,7 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
 
     // Fill composer input
     const composerInput = page.locator(
-      'textarea[aria-label="Nachricht schreiben"]',
+      'textarea[aria-label="Write a message"]',
     );
     await expect(composerInput).toBeVisible();
     await composerInput.fill("Können wir uns morgen um 14 Uhr treffen?");
@@ -142,7 +142,7 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
     await expect(charCount).toContainText("/ 2000");
 
     // Click send button
-    const sendBtn = page.locator('button[aria-label="Nachricht senden"]');
+    const sendBtn = page.locator('button[aria-label="Send message"]');
     await expect(sendBtn).toBeEnabled();
     await sendBtn.click();
 
@@ -155,6 +155,149 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
       "Können wir uns morgen um 14 Uhr treffen?",
     );
     await expect(bubble).toHaveAttribute("data-sender", "me");
+  });
+
+  test("failed send keeps the draft and shows a retryable error", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "buyer",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+    await page.route(
+      `**/api/marketplace/conversations/${testConversationId}/messages`,
+      async (route) => {
+        if (route.request().method() === "POST") {
+          await route.fulfill({ status: 503, body: "{}" });
+        } else {
+          await route.continue();
+        }
+      },
+    );
+
+    await page.goto(`/messages/${testConversationId}`);
+    const draft = page.locator('textarea[aria-label="Write a message"]');
+    await draft.fill("Can we meet tomorrow?");
+    await page.locator('button[aria-label="Send message"]').click();
+
+    await expect(page.locator(".messages-send-error")).toContainText(
+      "Could not send your message",
+    );
+    await expect(draft).toHaveValue("Can we meet tomorrow?");
+    await expect(
+      page.locator('button[aria-label="Send message"]'),
+    ).toBeEnabled();
+  });
+
+  test("refreshes read receipts while the thread remains open", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "buyer",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+    const message = {
+      id: "msg-receipt-101",
+      conversationId: testConversationId,
+      senderId: "22222222-2222-4222-8222-222222222222",
+      content: "Is pickup possible today?",
+      createdAt: new Date().toISOString(),
+      readAt: null as string | null,
+    };
+    await page.route(
+      `**/api/marketplace/conversations/${testConversationId}/messages**`,
+      async (route) => {
+        if (route.request().method() === "POST") {
+          await route.fulfill({
+            status: 201,
+            contentType: "application/json",
+            body: JSON.stringify({ data: { message } }),
+          });
+          return;
+        }
+        const url = new URL(route.request().url());
+        const messages = url.searchParams.has("after")
+          ? []
+          : [{ ...message, readAt: new Date().toISOString() }];
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ data: { messages, hasMore: false } }),
+        });
+      },
+    );
+
+    await page.goto(`/messages/${testConversationId}`);
+    await page
+      .locator('textarea[aria-label="Write a message"]')
+      .fill(message.content);
+    await page.locator('button[aria-label="Send message"]').click();
+    await expect(
+      page.locator(
+        `[data-testid="message-bubble-${message.id}"] [data-testid="message-read-receipt"]`,
+      ),
+    ).toHaveAttribute("title", "Read", { timeout: 10_000 });
+  });
+
+  test("catches up multiple pages after returning to a conversation", async ({
+    page,
+    context,
+  }) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "buyer",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+    const firstPage = Array.from({ length: 50 }, (_, index) => ({
+      id: `catchup-${index}`,
+      conversationId: testConversationId,
+      senderId: "11111111-1111-4111-8111-111111111111",
+      content: `Update ${index}`,
+      createdAt: new Date(Date.now() + index * 1000).toISOString(),
+      readAt: null,
+    }));
+    const lastMessage = {
+      ...firstPage[0],
+      id: "catchup-final",
+      content: "Final update",
+    };
+    await page.route(
+      `**/api/marketplace/conversations/${testConversationId}/messages**`,
+      async (route) => {
+        const cursor = new URL(route.request().url()).searchParams.get("after");
+        const isFirstPage = cursor === "msg-2-2222-4222-8222-222222222222";
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            data: {
+              messages: isFirstPage ? firstPage : [lastMessage],
+              hasMore: isFirstPage,
+            },
+          }),
+        });
+      },
+    );
+
+    await page.goto(`/messages/${testConversationId}`);
+    await expect(
+      page.locator('[data-testid="message-bubble-catchup-final"]'),
+    ).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("inbox page renders active conversations with snippet and relative timestamp", async ({
@@ -174,7 +317,7 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
     await page.goto("/messages");
 
     // Verify inbox header and conversation card
-    await expect(page.locator("h1")).toContainText("Nachrichten");
+    await expect(page.locator("h1")).toContainText("Messages");
 
     const inboxList = page.locator('[data-testid="inbox-list"]');
     await expect(inboxList).toBeVisible();
@@ -188,6 +331,62 @@ test.describe("Marketplace Private Messaging E2E Journeys (T16)", () => {
     await expect(convCard).toContainText(
       "Abholung an der Universitätsbibliothek",
     );
+  });
+
+  test("inbox and thread follow the marketplace palette without mobile overflow", async ({
+    page,
+    context,
+  }, testInfo) => {
+    await context.addCookies([
+      {
+        name: "campusmarkt-test-session",
+        value: "buyer",
+        domain: "127.0.0.1",
+        path: "/",
+      },
+    ]);
+
+    for (const width of [390, 1280]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/messages");
+      await expect(page.locator('[data-testid="inbox-list"]')).toBeVisible();
+      const inboxStyle = await page
+        .locator('[data-testid="inbox-list"]')
+        .evaluate((node) => ({
+          background: getComputedStyle(node).backgroundColor,
+          radius: getComputedStyle(node).borderRadius,
+        }));
+      expect(inboxStyle).toEqual({
+        background: "rgb(255, 255, 255)",
+        radius: "16px",
+      });
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(width);
+      if (width === 390) {
+        await page.screenshot({
+          path: testInfo.outputPath("inbox-mobile.png"),
+          fullPage: true,
+        });
+      }
+
+      await page.goto(`/messages/${testConversationId}`);
+      await expect(
+        page.locator('[data-testid="conversation-header"]'),
+      ).toBeVisible();
+      await expect(
+        page.locator('textarea[aria-label="Write a message"]'),
+      ).toBeVisible();
+      if (width === 390) {
+        await page.screenshot({
+          path: testInfo.outputPath("thread-mobile.png"),
+          fullPage: true,
+        });
+      }
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(width);
+    }
   });
 
   test("negotiation card in conversation view shows active status", async ({

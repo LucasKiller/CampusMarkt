@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import type { SupportedLocale } from "@campusmarkt/domain";
+import { getMessagesCopy } from "./messages-copy";
 import { TrustBadge } from "../feed";
 import { NegotiationCard } from "./negotiation-card";
 import { MessageComposer, MessageList } from "./message-list";
@@ -21,75 +23,98 @@ export interface ConversationThreadViewProps {
   conversation: ConversationDTO;
   currentUserId: string;
   initialMessages?: MessageDTO[];
+  initialHasMore?: boolean;
   initialOffers?: OfferDTO[];
   initialReservation?: ReservationDTO | null;
+  locale?: SupportedLocale;
 }
 
 export function ConversationThreadView({
   conversation,
   currentUserId,
   initialMessages = [],
+  initialHasMore = false,
   initialOffers = [],
   initialReservation = null,
+  locale = "de",
 }: ConversationThreadViewProps) {
+  const copy = getMessagesCopy(locale);
   const [messages, setMessages] = useState<MessageDTO[]>(initialMessages);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
   const [offers] = useState<OfferDTO[]>(initialOffers);
   const [reservation] = useState<ReservationDTO | null>(initialReservation);
   const [isMarkingRead, setIsMarkingRead] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fetchingMessagesRef = useRef(false);
+  const markingReadRef = useRef(false);
+  const needsReadSyncRef = useRef(true);
+  const readSyncVersionRef = useRef(0);
 
   const partner = conversation.partner;
   const listing = conversation.listing;
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
-  // Mark conversation read on mount
   useEffect(() => {
-    let isCancelled = false;
-    const markRead = async () => {
-      try {
-        setIsMarkingRead(true);
-        await fetch(`/api/marketplace/conversations/${conversation.id}/read`, {
+    scrollToBottom();
+  }, []);
+
+  const markConversationRead = useCallback(async () => {
+    if (markingReadRef.current) return;
+    markingReadRef.current = true;
+    setIsMarkingRead(true);
+    const requestedVersion = readSyncVersionRef.current;
+    try {
+      const response = await fetch(
+        `/api/marketplace/conversations/${conversation.id}/read`,
+        {
           method: "POST",
           headers: { "content-type": "application/json" },
-        });
-      } catch (err) {
-        if (!isCancelled) {
-          console.error("[ConversationThreadView: markRead]", err);
-        }
-      } finally {
-        if (!isCancelled) {
-          setIsMarkingRead(false);
-        }
-      }
-    };
-
-    void markRead();
-    return () => {
-      isCancelled = true;
-    };
+        },
+      );
+      needsReadSyncRef.current =
+        !response.ok || requestedVersion !== readSyncVersionRef.current;
+    } catch {
+      needsReadSyncRef.current = true;
+    } finally {
+      markingReadRef.current = false;
+      setIsMarkingRead(false);
+    }
   }, [conversation.id]);
+
+  useEffect(() => {
+    void markConversationRead();
+  }, [markConversationRead]);
 
   // Keyset hydration for live updates
   const fetchNewMessages = useCallback(async () => {
-    if (messages.length === 0) return;
-    const latestTimestamp = messages[messages.length - 1]?.createdAt;
-    if (!latestTimestamp) return;
-
+    if (fetchingMessagesRef.current) return;
+    fetchingMessagesRef.current = true;
     try {
-      const res = await fetch(
-        `/api/marketplace/conversations/${conversation.id}/messages?after=${encodeURIComponent(
-          latestTimestamp,
-        )}`,
-      );
-      if (!res.ok) return;
-      const json = (await res.json()) as {
-        data?: { messages?: MessageDTO[] };
-      };
-      const incoming = json.data?.messages ?? [];
+      let cursor = messages[messages.length - 1]?.id ?? conversation.createdAt;
+      const incoming: MessageDTO[] = [];
+      let hasMore = false;
+      do {
+        const res = await fetch(
+          `/api/marketplace/conversations/${conversation.id}/messages?after=${encodeURIComponent(cursor)}`,
+        );
+        if (!res.ok) return;
+        const json = (await res.json()) as {
+          data?: { messages?: MessageDTO[]; hasMore?: boolean };
+        };
+        const page = json.data?.messages ?? [];
+        incoming.push(...page);
+        const nextCursor = page[page.length - 1]?.id;
+        hasMore = Boolean(
+          json.data?.hasMore && nextCursor && nextCursor !== cursor,
+        );
+        cursor = nextCursor ?? cursor;
+      } while (hasMore);
+
       if (incoming.length > 0) {
         setMessages((prev) => {
           const existingIds = new Set(prev.map((m) => m.id));
@@ -97,12 +122,57 @@ export function ConversationThreadView({
           if (toAdd.length === 0) return prev;
           return [...prev, ...toAdd];
         });
-        scrollToBottom();
+        requestAnimationFrame(scrollToBottom);
+        readSyncVersionRef.current += 1;
+        needsReadSyncRef.current = true;
+      }
+
+      if (
+        messages
+          .slice(-50)
+          .some(
+            (message) => message.senderId === currentUserId && !message.readAt,
+          )
+      ) {
+        const receiptResponse = await fetch(
+          `/api/marketplace/conversations/${conversation.id}/messages?limit=50`,
+        );
+        if (receiptResponse.ok) {
+          const receiptJson = (await receiptResponse.json()) as {
+            data?: { messages?: MessageDTO[] };
+          };
+          const readAtById = new Map(
+            (receiptJson.data?.messages ?? []).map((message) => [
+              message.id,
+              message.readAt,
+            ]),
+          );
+          setMessages((prev) =>
+            prev.map((message) => {
+              const readAt = readAtById.get(message.id);
+              return readAt && readAt !== message.readAt
+                ? { ...message, readAt }
+                : message;
+            }),
+          );
+        }
+      }
+
+      if (needsReadSyncRef.current) {
+        await markConversationRead();
       }
     } catch {
       // offline / transient failure
+    } finally {
+      fetchingMessagesRef.current = false;
     }
-  }, [conversation.id, messages]);
+  }, [
+    conversation.createdAt,
+    conversation.id,
+    currentUserId,
+    markConversationRead,
+    messages,
+  ]);
 
   // Periodic polling for live updates and on window focus
   useEffect(() => {
@@ -121,6 +191,29 @@ export function ConversationThreadView({
     };
   }, [fetchNewMessages]);
 
+  const loadOlderMessages = async () => {
+    const oldestMessageId = messages[0]?.id;
+    if (!oldestMessageId || isLoadingOlder) return;
+    setIsLoadingOlder(true);
+    try {
+      const res = await fetch(
+        `/api/marketplace/conversations/${conversation.id}/messages?before=${encodeURIComponent(oldestMessageId)}`,
+      );
+      if (!res.ok) return;
+      const json = (await res.json()) as {
+        data?: { messages?: MessageDTO[]; hasMore?: boolean };
+      };
+      const older = json.data?.messages ?? [];
+      setMessages((prev) => {
+        const known = new Set(prev.map((message) => message.id));
+        return [...older.filter((message) => !known.has(message.id)), ...prev];
+      });
+      setHasMore(Boolean(json.data?.hasMore));
+    } finally {
+      setIsLoadingOlder(false);
+    }
+  };
+
   const handleSendMessage = async (content: string) => {
     const res = await fetch(
       `/api/marketplace/conversations/${conversation.id}/messages`,
@@ -135,15 +228,19 @@ export function ConversationThreadView({
       const errorJson = (await res.json().catch(() => ({}))) as {
         message?: string;
       };
-      throw new Error(errorJson.message || "Fehler beim Senden der Nachricht.");
+      throw new Error(errorJson.message || copy.sendError);
     }
 
     const json = (await res.json()) as {
       data?: { message: MessageDTO };
     };
     if (json.data?.message) {
-      setMessages((prev) => [...prev, json.data!.message]);
-      scrollToBottom();
+      setMessages((prev) =>
+        prev.some((message) => message.id === json.data!.message.id)
+          ? prev
+          : [...prev, json.data!.message],
+      );
+      requestAnimationFrame(scrollToBottom);
     }
   };
 
@@ -154,24 +251,19 @@ export function ConversationThreadView({
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto bg-background border-x border-border shadow-sm">
+    <div className="messages-thread">
       {/* Sticky Header: Partner & Trust Badge */}
       <header
         data-testid="conversation-header"
-        className="sticky top-0 z-20 bg-background/95 backdrop-blur-xs border-b border-border px-4 py-3 flex items-center justify-between gap-3"
+        className="messages-thread-header"
       >
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="messages-thread-partner">
           <Link
             href="/messages"
-            aria-label="Zurück zum Postfach"
-            className="p-1.5 -ml-1 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors cursor-pointer"
+            aria-label={copy.back}
+            className="messages-thread-back"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -182,41 +274,27 @@ export function ConversationThreadView({
           </Link>
 
           {/* Partner Avatar */}
-          <div
-            data-testid="partner-avatar"
-            className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-border"
-          >
+          <div data-testid="partner-avatar" className="messages-avatar">
             {partner?.avatarUrl ? (
-              <img
-                src={partner.avatarUrl}
-                alt={partner.displayName}
-                className="w-full h-full object-cover"
-              />
+              <img src={partner.avatarUrl} alt={partner.displayName} />
             ) : (
               (partner?.displayName ?? "U").slice(0, 2).toUpperCase()
             )}
           </div>
 
-          <div className="min-w-0 flex items-center gap-2">
-            <span
-              data-testid="partner-name"
-              className="font-semibold text-sm text-foreground truncate"
-            >
-              {partner?.displayName ?? "CampusMarkt Nutzer"}
+          <div className="messages-thread-name">
+            <span data-testid="partner-name" className="messages-partner-name">
+              {partner?.displayName ?? copy.unknownUser}
             </span>
             {partner?.universityBadge && (
-              <div data-testid="partner-badge" className="shrink-0">
+              <div data-testid="partner-badge">
                 <TrustBadge badge={partner.universityBadge} />
               </div>
             )}
           </div>
         </div>
 
-        {isMarkingRead && (
-          <span className="text-[11px] text-muted-foreground">
-            Aktualisiere...
-          </span>
-        )}
+        {isMarkingRead && <span className="sr-only">{copy.updating}</span>}
       </header>
 
       {/* Sticky Negotiation Bar / Card */}
@@ -229,22 +307,27 @@ export function ConversationThreadView({
           onActionComplete={() => {
             void fetchNewMessages();
           }}
+          locale={locale}
         />
       )}
 
       {/* Message Stream */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className="messages-stream">
         <MessageList
           messages={messages}
           currentUserId={currentUserId}
           milestones={milestones}
           partnerName={partner?.displayName}
+          hasMore={hasMore}
+          isLoadingOlder={isLoadingOlder}
+          onLoadOlder={loadOlderMessages}
+          locale={locale}
         />
         <div ref={messagesEndRef} />
       </div>
 
       {/* Composer Input */}
-      <MessageComposer onSendMessage={handleSendMessage} />
+      <MessageComposer onSendMessage={handleSendMessage} locale={locale} />
     </div>
   );
 }

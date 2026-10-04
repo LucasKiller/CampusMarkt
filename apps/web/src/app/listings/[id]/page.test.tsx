@@ -40,11 +40,19 @@ const sampleDetails: PublicListingDetails = {
 };
 
 let mockListingToReturn: PublicListingDetails | null = sampleDetails;
-const mockIdentity = null;
+let mockIdentity: { authUserId: string; emailConfirmed: boolean } | null = null;
 
 vi.mock("../../../modules/identity/server/access", () => ({
   getSessionDal: () => ({
     getOptionalIdentity: async () => mockIdentity,
+  }),
+}));
+vi.mock("../../../modules/identity/server/profile", () => ({
+  createProfileService: () => ({
+    getOwnerProfile: async () => ({
+      status: "found",
+      profile: { publicId: sampleDetails.seller.publicId },
+    }),
   }),
 }));
 
@@ -101,6 +109,22 @@ describe("Public Listing Details Page UI (T15)", () => {
   });
 
   describe("ListingDetailsPage", () => {
+    it("hides self-messaging for an owner whose public ID differs from their auth ID", async () => {
+      mockIdentity = {
+        authUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        emailConfirmed: true,
+      };
+      try {
+        const html = renderToString(
+          await ListingDetailsPage({
+            params: Promise.resolve({ id: sampleDetails.id }),
+          }),
+        );
+        expect(html).not.toContain('data-testid="cta-send-message"');
+      } finally {
+        mockIdentity = null;
+      }
+    });
     it("renders active listing with price, gallery, description, and seller trust badge", async () => {
       mockListingToReturn = sampleDetails;
       const pageJsx = await ListingDetailsPage({

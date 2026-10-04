@@ -13,6 +13,7 @@ import { TrustBadge } from "../../../components/marketplace/feed";
 import { FavoriteButton } from "../../../components/marketplace/favorites/favorite-button";
 import { NegotiationBar } from "../../../components/marketplace/negotiation/negotiation-bar";
 import { MessageButton } from "../../../components/marketplace/messaging/message-button";
+import { createProfileService } from "../../../modules/identity/server/profile";
 import {
   BlockButton,
   ReportButton,
@@ -147,6 +148,7 @@ export default async function ListingDetailsPage(
   const isInactive = isSold || isArchived;
 
   let currentUserId: string | null = null;
+  let currentUserPublicId: string | null = null;
   try {
     const dal = getSessionDal();
     const identity = await dal.getOptionalIdentity();
@@ -172,14 +174,27 @@ export default async function ListingDetailsPage(
               : testSession === "authenticated"
                 ? "test-auth-user-id"
                 : testSession;
+        currentUserPublicId = currentUserId;
       }
     } catch {
       // Ignored
     }
   }
 
+  if (currentUserId && !currentUserPublicId) {
+    try {
+      const ownerProfile =
+        await createProfileService().getOwnerProfile(currentUserId);
+      if (ownerProfile.status === "found") {
+        currentUserPublicId = ownerProfile.profile.publicId;
+      }
+    } catch {
+      // The database still rejects self-messaging if profile lookup is unavailable.
+    }
+  }
+
   const isOwner = Boolean(
-    currentUserId && currentUserId === listing.seller.publicId,
+    currentUserPublicId && currentUserPublicId === listing.seller.publicId,
   );
 
   let initialOffers: OfferDTO[] = [];
@@ -524,6 +539,7 @@ export default async function ListingDetailsPage(
                       listingType={listing.listingType}
                       listingStatus={listing.status}
                       currentUserId={currentUserId}
+                      isListingOwner={isOwner}
                       initialOffers={initialOffers}
                       initialReservation={initialReservation}
                     />
@@ -534,6 +550,8 @@ export default async function ListingDetailsPage(
                     listingId={listing.id}
                     sellerId={listing.seller.publicId}
                     currentUserId={currentUserId}
+                    isListingOwner={isOwner}
+                    locale={locale}
                   />
                 </>
               )}

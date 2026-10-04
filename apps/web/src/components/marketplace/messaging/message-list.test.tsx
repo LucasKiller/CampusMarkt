@@ -59,8 +59,8 @@ describe("MessageList and Composer components (T13)", () => {
 
       expect(html).toContain('data-testid="message-bubble-' + messageId1 + '"');
       expect(html).toContain('data-sender="me"');
-      expect(html).toContain("justify-end");
-      expect(html).toContain("bg-primary");
+      expect(html).toContain('class="messages-bubble-row"');
+      expect(html).toContain('class="messages-bubble"');
       expect(html).toContain("Hallo, steht das Fahrrad noch zum Verkauf?");
       expect(html).toContain('data-testid="message-read-receipt"');
       expect(html).toContain("✓✓"); // readAt is set
@@ -77,8 +77,8 @@ describe("MessageList and Composer components (T13)", () => {
 
       expect(html).toContain('data-testid="message-bubble-' + messageId2 + '"');
       expect(html).toContain('data-sender="partner"');
-      expect(html).toContain("justify-start");
-      expect(html).toContain("bg-muted");
+      expect(html).toContain('class="messages-bubble-row"');
+      expect(html).toContain('class="messages-bubble"');
       expect(html).toContain("Lukas K.");
       expect(html).toContain("Ja, es ist noch da!");
       expect(html).not.toContain('data-testid="message-read-receipt"');

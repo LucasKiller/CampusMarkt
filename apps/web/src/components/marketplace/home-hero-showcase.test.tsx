@@ -24,6 +24,19 @@ const noPhotoItem: PublicFeedItem = {
 };
 
 describe("HomeHeroShowcase", () => {
+  it("renders stored listing photos from the public bucket", () => {
+    const html = renderToStaticMarkup(
+      <HomeHeroShowcase
+        items={[{ ...noPhotoItem, coverImage: "owner/cover.webp" }]}
+        locale="en"
+      />,
+    );
+
+    expect(html).toContain(
+      'src="/storage/v1/object/public/listing-media/owner/cover.webp"',
+    );
+  });
+
   it("uses a textual tile when a live listing has no photo", () => {
     const html = renderToStaticMarkup(
       <HomeHeroShowcase items={[noPhotoItem]} locale="en" />,

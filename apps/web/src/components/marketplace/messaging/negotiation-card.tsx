@@ -8,6 +8,7 @@ import type {
   ReservationDTO,
 } from "@campusmarkt/types";
 import { formatCurrencyEuros } from "@campusmarkt/domain";
+import { listingMediaUrl } from "../../../modules/listings/media-url";
 
 export interface NegotiationCardProps {
   listing: ConversationListingSummary;
@@ -88,7 +89,7 @@ export function NegotiationCard({
           <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden shrink-0 text-xs font-semibold text-muted-foreground border border-border">
             {listing.coverImage ? (
               <img
-                src={listing.coverImage}
+                src={listingMediaUrl(listing.coverImage)}
                 alt={listing.title}
                 className="w-full h-full object-cover"
               />

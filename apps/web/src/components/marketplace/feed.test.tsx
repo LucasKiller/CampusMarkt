@@ -37,7 +37,9 @@ describe("ListingCard and feed filter UI components (T13)", () => {
       expect(html).toContain("Möbel &amp; Wohnen");
       expect(html).toContain("Innenstadt");
       expect(html).toContain("Brunswick Student");
-      expect(html).toContain("media/listings/cover1.webp");
+      expect(html).toContain(
+        'src="/storage/v1/object/public/listing-media/media/listings/cover1.webp"',
+      );
       expect(html).toContain(
         'href="/listings/00000000-0000-4000-8000-000000000001"',
       );

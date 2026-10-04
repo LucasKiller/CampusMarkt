@@ -10,6 +10,7 @@ import {
   getListingTypeLabel,
 } from "@campusmarkt/domain";
 import { TrustBadge } from "../../components/marketplace/feed";
+import { listingMediaUrl } from "../../modules/listings/media-url";
 
 export interface FavoritesViewProps {
   initialItems: FavoriteItemDTO[];
@@ -245,11 +246,7 @@ export function FavoritesView({ initialItems }: FavoritesViewProps) {
               >
                 {item.coverImage ? (
                   <img
-                    src={
-                      item.coverImage.startsWith("http")
-                        ? item.coverImage
-                        : `/${item.coverImage}`
-                    }
+                    src={listingMediaUrl(item.coverImage)}
                     alt={item.title}
                     style={{
                       width: "100%",

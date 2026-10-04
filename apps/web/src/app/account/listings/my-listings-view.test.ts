@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ListingEntity } from "@campusmarkt/types";
+import React from "react";
+import { renderToString } from "react-dom/server";
 import { MyListingsView } from "./my-listings-view";
 
 describe("MyListingsView dashboard component logic", () => {
@@ -27,6 +29,17 @@ describe("MyListingsView dashboard component logic", () => {
 
   it("exports MyListingsView component function", () => {
     expect(typeof MyListingsView).toBe("function");
+  });
+
+  it("renders an owner's saved cover photo from Storage", () => {
+    const html = renderToString(
+      React.createElement(MyListingsView, { initialListings: [sampleListing] }),
+    );
+
+    expect(html).toContain(
+      'src="/storage/v1/object/public/listing-media/test/desk.webp"',
+    );
+    expect(html).not.toContain("/api/listings/media/preview");
   });
 
   it("filters listings accurately by status", () => {

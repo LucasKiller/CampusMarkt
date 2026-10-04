@@ -79,7 +79,9 @@ describe("Public Listing Details Page UI (T15)", () => {
       );
 
       expect(html).toContain("listing-gallery-carousel");
-      expect(html).toContain("media/listings/cover1.webp");
+      expect(html).toContain(
+        'src="/storage/v1/object/public/listing-media/media/listings/cover1.webp"',
+      );
       expect(html).toContain("gallery-dots");
       expect(html).toContain("1 / 3");
     });

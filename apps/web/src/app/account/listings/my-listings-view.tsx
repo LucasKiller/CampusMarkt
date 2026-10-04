@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ListingStatus } from "@campusmarkt/domain";
 import type { ListingEntity } from "@campusmarkt/types";
+import { listingMediaUrl } from "../../../modules/listings/media-url";
 import {
   STATUS_BADGE_STYLES,
   STATUS_LABELS,
@@ -151,7 +152,7 @@ export function MyListingsView({ initialListings }: MyListingsViewProps) {
                 >
                   {coverImage ? (
                     <img
-                      src={`/api/listings/media/preview?path=${encodeURIComponent(coverImage.storagePath)}`}
+                      src={listingMediaUrl(coverImage.storagePath)}
                       alt={listing.title}
                       style={{
                         width: "100%",

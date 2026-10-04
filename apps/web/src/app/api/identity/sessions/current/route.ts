@@ -4,10 +4,8 @@ import {
   validateMutationRequest,
   createIdentityHttpContext,
 } from "../../../../../modules/identity/http/index";
-import {
-  getAccessService,
-  AUTH_COOKIE_NAME,
-} from "../../../../../modules/identity/server/access";
+import { getAccessService } from "../../../../../modules/identity/server/access";
+import { appendClearedSessionCookies } from "../../../../../modules/identity/session-cookie";
 
 function getCanonicalOrigin(request: Request) {
   return (
@@ -48,10 +46,7 @@ export function createCurrentSessionHandler(
       context.correlationId,
     );
 
-    response.headers.append(
-      "set-cookie",
-      `${AUTH_COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`,
-    );
+    appendClearedSessionCookies(response.headers);
 
     return response;
   };

@@ -2,9 +2,11 @@ import { handleIdentityJsonMutation } from "../../../../../modules/identity/http
 import {
   getAccessService,
   getSessionDal,
-  AUTH_COOKIE_NAME,
-  MAX_AUTH_COOKIE_AGE_SECONDS,
 } from "../../../../../modules/identity/server/access";
+import {
+  appendSessionCookies,
+  type SessionTokens,
+} from "../../../../../modules/identity/session-cookie";
 
 function getCanonicalOrigin(request: Request) {
   return (
@@ -26,6 +28,7 @@ export function createReauthenticationHandler(
       const origin = canonicalOrigin ?? getCanonicalOrigin(request);
       const resolvedService = service ?? getAccessService(origin);
       const dal = getDal(origin);
+      let establishedSession: SessionTokens | null = null;
 
       const response = await handleIdentityJsonMutation(
         request,
@@ -41,10 +44,16 @@ export function createReauthenticationHandler(
             };
           }
 
-          const result = await resolvedService.reauthenticate(identity, {
-            email: body.email,
-            password: body.password,
-          });
+          const result = await resolvedService.reauthenticate(
+            identity,
+            {
+              email: body.email,
+              password: body.password,
+            },
+            (tokens) => {
+              establishedSession = tokens;
+            },
+          );
 
           if (result.status === "invalid") {
             return {
@@ -65,6 +74,9 @@ export function createReauthenticationHandler(
               code: "DEPENDENCY_UNAVAILABLE",
             };
           }
+          if (!establishedSession) {
+            return { ok: false, code: "DEPENDENCY_UNAVAILABLE" };
+          }
 
           return {
             ok: true,
@@ -76,17 +88,12 @@ export function createReauthenticationHandler(
         },
       );
 
-      if (response.status === 200) {
-        const isProduction = process.env.NODE_ENV === "production";
-        const cookieAttributes = [
-          `${AUTH_COOKIE_NAME}=authenticated-session`,
-          "Path=/",
-          `Max-Age=${MAX_AUTH_COOKIE_AGE_SECONDS}`,
-          "HttpOnly",
-          "SameSite=Lax",
-          ...(isProduction ? ["Secure"] : []),
-        ].join("; ");
-        response.headers.append("set-cookie", cookieAttributes);
+      if (response.status === 200 && establishedSession) {
+        appendSessionCookies(
+          response.headers,
+          establishedSession,
+          Math.floor(Date.now() / 1000),
+        );
       }
 
       return response;

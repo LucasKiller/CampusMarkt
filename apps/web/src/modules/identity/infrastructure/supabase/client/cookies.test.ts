@@ -9,6 +9,7 @@ import {
   clearAuthCookies,
   createAuthCookieMethods,
 } from "./cookies";
+import { REFRESH_COOKIE_NAME } from "../../../session-cookie";
 
 type StoredCookie = {
   name: string;
@@ -250,6 +251,32 @@ describe("identity auth cookie adapter", () => {
       [AUTH_COOKIE_NAME, "", expect.objectContaining({ maxAge: 0 })],
       [`${AUTH_COOKIE_NAME}.0`, "", expect.objectContaining({ maxAge: 0 })],
       [`${AUTH_COOKIE_NAME}.1`, "", expect.objectContaining({ maxAge: 0 })],
+    ]);
+  });
+
+  it("clears a refresh cookie without making it available to Supabase SSR", async () => {
+    const store = cookieStore([
+      { name: AUTH_COOKIE_NAME, value: "access" },
+      { name: REFRESH_COOKIE_NAME, value: "refresh" },
+    ]);
+
+    expect(await createAuthCookieMethods(store).getAll?.()).toEqual([
+      { name: AUTH_COOKIE_NAME, value: "access" },
+    ]);
+    clearAuthCookies(store, { production: true });
+    expect(
+      store.writes.map(({ name, value, options }) => [name, value, options]),
+    ).toEqual([
+      [
+        AUTH_COOKIE_NAME,
+        "",
+        expect.objectContaining({ maxAge: 0, secure: true }),
+      ],
+      [
+        REFRESH_COOKIE_NAME,
+        "",
+        expect.objectContaining({ maxAge: 0, secure: true }),
+      ],
     ]);
   });
 

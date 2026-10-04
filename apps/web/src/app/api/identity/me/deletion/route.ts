@@ -4,8 +4,8 @@ import { handleIdentityJsonMutation } from "../../../../../modules/identity/http
 import {
   getAccessService,
   getSessionDal,
-  AUTH_COOKIE_NAME,
 } from "../../../../../modules/identity/server/access";
+import { appendClearedSessionCookies } from "../../../../../modules/identity/session-cookie";
 
 function getCanonicalOrigin(request: Request) {
   return (
@@ -94,10 +94,7 @@ export function createAccountDeletionHandler(
 
       // When deletion becomes pending or dependency failed after local clear, clear auth cookie
       if (outcomeStatus === "deletion_pending" || response.status === 503) {
-        response.headers.append(
-          "set-cookie",
-          `${AUTH_COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`,
-        );
+        appendClearedSessionCookies(response.headers);
       }
 
       return response;

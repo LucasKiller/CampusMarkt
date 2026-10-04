@@ -31,8 +31,8 @@ type AccessSecurity = {
 
 type AccessAuth = {
   signInWithPassword(email: string, password: string): Promise<PortResult>;
-  signOutCurrent(): Promise<PortResult>;
-  signOutAll(): Promise<PortResult>;
+  signOutCurrent(accessToken?: string): Promise<PortResult>;
+  signOutAll(accessToken?: string): Promise<PortResult>;
   updatePassword(authUserId: string, password: string): Promise<PortResult>;
 };
 
@@ -140,12 +140,16 @@ export function createAccessService({
     }
   }
 
-  async function compensateSession() {
+  async function revokeProviderSession(accessToken?: string) {
     try {
-      await auth.signOutCurrent();
+      await auth.signOutCurrent(accessToken);
     } catch {
-      // The local cookie boundary is still cleared below.
+      // A failed provider revocation does not leak a new browser credential.
     }
+  }
+
+  async function compensateSession(accessToken?: string) {
+    await revokeProviderSession(accessToken);
     await clearLocal();
   }
 
@@ -190,11 +194,11 @@ export function createAccessService({
               active.authUserId !== actual.authUserId ||
               active.sessionId !== actual.sessionId
             ) {
-              await compensateSession();
+              await compensateSession(actual.accessToken);
               return { status: "denied" };
             }
           } catch {
-            await compensateSession();
+            await compensateSession(actual.accessToken);
             return { status: "denied" };
           }
 
@@ -203,11 +207,11 @@ export function createAccessService({
             sessionId: actual.sessionId,
           });
           if (!assured.ok) {
-            await compensateSession();
+            await compensateSession(actual.accessToken);
             return { status: "unavailable" };
           }
           if (!actual.accessToken || !actual.refreshToken) {
-            await compensateSession();
+            await compensateSession(actual.accessToken);
             return { status: "unavailable" };
           }
           if (context.onSessionEstablished) {
@@ -262,6 +266,7 @@ export function createAccessService({
     async reauthenticate(
       identity: Identity,
       command: { email: unknown; password: unknown },
+      onSessionEstablished?: (tokens: SessionTokens) => void,
     ) {
       const parsed = parseCredentials(command);
       if (!parsed.ok) {
@@ -274,12 +279,32 @@ export function createAccessService({
         );
         const actual = result.ok ? boundedSession(result.value) : null;
         if (!actual || actual.authUserId !== identity.authUserId) {
+          if (actual?.accessToken)
+            await revokeProviderSession(actual.accessToken);
           return { status: "denied" as const };
         }
-        const assured = await repository.recordPasswordAssurance(actual);
-        return assured.ok
-          ? { status: "reauthenticated" as const }
-          : { status: "unavailable" as const };
+        if (!actual.accessToken || !actual.refreshToken) {
+          await revokeProviderSession(actual.accessToken);
+          return { status: "unavailable" as const };
+        }
+        const assured = await repository.recordPasswordAssurance({
+          authUserId: actual.authUserId,
+          sessionId: actual.sessionId,
+        });
+        if (!assured.ok) {
+          await revokeProviderSession(actual.accessToken);
+          return { status: "unavailable" as const };
+        }
+        try {
+          onSessionEstablished?.({
+            accessToken: actual.accessToken,
+            refreshToken: actual.refreshToken,
+          });
+        } catch {
+          await revokeProviderSession(actual.accessToken);
+          return { status: "unavailable" as const };
+        }
+        return { status: "reauthenticated" as const };
       } catch {
         return { status: "unavailable" as const };
       }

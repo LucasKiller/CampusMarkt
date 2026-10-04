@@ -48,8 +48,10 @@ T1 -> T2
 ## Status
 
 - [x] T1
-- [ ] T2
+- [x] T2
 
 T1 gate: 65 focused Vitest tests passed across session routes, refresh behavior, security headers, and access service. Typecheck, scoped ESLint, formatting, and the production web build passed. No server or watcher remains running.
+
+T2 gate: 361 identity, cookie, and security-header Vitest tests passed; typecheck, scoped ESLint, and production web build passed. Formatting and diff checks passed. Provider logout now receives the current access JWT, and reauthentication writes a real token pair. No server or watcher remains running.
 
 After T2 is committed, a fresh independent verifier records evidence and a discrimination sensor in `validation.md`.

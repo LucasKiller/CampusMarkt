@@ -70,7 +70,10 @@ function writeCookie(
   cookie: RequestCookie & { options: CookieOptions },
   security: CookieSecurity,
 ) {
-  if (!isAuthCookieName(cookie.name)) {
+  if (
+    !isAuthCookieName(cookie.name) &&
+    !(cookie.name === REFRESH_COOKIE_NAME && cookie.options.maxAge === 0)
+  ) {
     throw new AuthCookieMutationError();
   }
 

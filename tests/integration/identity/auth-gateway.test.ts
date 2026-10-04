@@ -179,7 +179,19 @@ describe("Supabase Auth gateway", () => {
       ok: true,
       value: null,
     });
-    expect(test.userClient.auth.signOut).toHaveBeenCalledWith({ scope });
+    expect(test.userClient.auth.signOut).toHaveBeenCalledWith({
+      scope,
+      accessToken: undefined,
+    });
+  });
+
+  it("passes the actual session JWT to current-device provider revocation", async () => {
+    const test = clients({ data: null, error: null });
+    await createSupabaseAuthGateway(test).signOutCurrent("current-jwt");
+    expect(test.userClient.auth.signOut).toHaveBeenCalledWith({
+      scope: "local",
+      accessToken: "current-jwt",
+    });
   });
 
   it("deletes an Auth user permanently through the admin client", async () => {

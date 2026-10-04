@@ -453,7 +453,7 @@ describe("session route integration (POST /api/identity/sessions)", () => {
 });
 
 describe("current session logout (DELETE /api/identity/sessions/current)", () => {
-  it("clears auth cookie and calls signOutCurrent", async () => {
+  it("clears both session cookies and calls signOutCurrent", async () => {
     const mockService = {
       signIn: vi.fn(),
       signOutCurrent: vi.fn(async () => {}),
@@ -474,7 +474,9 @@ describe("current session logout (DELETE /api/identity/sessions/current)", () =>
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
     expect(cookie).toContain(`${AUTH_COOKIE_NAME}=;`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("Max-Age=0");
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("HttpOnly");
 
     const json = await res.json();
@@ -529,7 +531,7 @@ describe("current session logout (DELETE /api/identity/sessions/current)", () =>
 });
 
 describe("all sessions logout (DELETE /api/identity/sessions)", () => {
-  it("clears auth cookie and returns signed_out", async () => {
+  it("clears both session cookies and returns signed_out", async () => {
     const mockService = {
       signIn: vi.fn(),
       signOutCurrent: vi.fn(),
@@ -548,6 +550,7 @@ describe("all sessions logout (DELETE /api/identity/sessions)", () => {
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
     expect(cookie).toContain(`${AUTH_COOKIE_NAME}=;`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("Max-Age=0");
 
     const json = await res.json();

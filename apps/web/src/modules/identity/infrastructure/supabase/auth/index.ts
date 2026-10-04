@@ -11,7 +11,10 @@ type UserAuthClient = {
       password: string;
     }): Promise<ProviderResult>;
     refreshSession(input: { refresh_token: string }): Promise<ProviderResult>;
-    signOut(input: { scope: "local" | "global" }): Promise<ProviderResult>;
+    signOut(input: {
+      scope: "local" | "global";
+      accessToken?: string;
+    }): Promise<ProviderResult>;
   };
 };
 
@@ -234,16 +237,16 @@ export function createSupabaseAuthGateway({
       );
     },
 
-    signOutCurrent() {
+    signOutCurrent(accessToken?: string) {
       return boundedVoid(
-        () => userClient.auth.signOut({ scope: "local" }),
+        () => userClient.auth.signOut({ scope: "local", accessToken }),
         ["session_not_found", "refresh_token_not_found"],
       );
     },
 
-    signOutAll() {
+    signOutAll(accessToken?: string) {
       return boundedVoid(
-        () => userClient.auth.signOut({ scope: "global" }),
+        () => userClient.auth.signOut({ scope: "global", accessToken }),
         ["session_not_found", "refresh_token_not_found"],
       );
     },

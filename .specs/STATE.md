@@ -165,11 +165,11 @@
 ## Handoff
 
 - **Feature**: `020-persistent-auth-session`
-- **Phase/task**: Execute T1 complete; T2 pending
-- **Completed**: Features 001-019 retain their recorded outcomes. Feature 020 T1 writes real access/refresh cookies on sign-in, refreshes near-expiry access JWTs in middleware, and preserves the original 30-day browser limit. Its 65 focused tests, typecheck, lint, formatting, and web build passed locally.
-- **In-progress**: T2 logout, reauthentication, and account-ending cookie consistency.
-- **Next step**: Complete T2, run its gate, commit atomically, then run independent validation. No push or deployment is authorized by this local task.
+- **Phase/task**: Execute T1 and T2 complete; independent validation pending
+- **Completed**: Features 001-019 retain their recorded outcomes. Feature 020 stores real access/refresh cookies, refreshes near-expiry JWTs within the original 30-day browser limit, clears both cookies on logout/recovery/deletion, uses the session JWT for provider revocation, and replaces the reauthentication placeholder with real credentials. The T2 gate passed 361 focused tests, typecheck, lint, formatting, and web build locally.
+- **In-progress**: Fresh independent verification of Feature 020.
+- **Next step**: Commit T2 atomically, then run independent validation. No push or deployment is authorized by this local task.
 - **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: T1 implementation and records until its atomic commit.
+- **Uncommitted files**: T2 implementation and records until its atomic commit.
 - **Branch**: development
 

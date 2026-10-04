@@ -22,6 +22,7 @@ import {
 import { createIdentitySecurity } from "../security/index";
 import { createIdentitySessionDal } from "./session/index";
 import { getActionLinkService } from "./registration";
+import { REFRESH_COOKIE_NAME } from "../session-cookie";
 
 export { AUTH_COOKIE_NAME, MAX_AUTH_COOKIE_AGE_SECONDS };
 
@@ -150,6 +151,7 @@ export function getSessionDal(canonicalOrigin?: string) {
       try {
         const cookieStore = await cookies();
         cookieStore.delete(AUTH_COOKIE_NAME);
+        cookieStore.delete(REFRESH_COOKIE_NAME);
       } catch {
         // Cookie deletion in read-only phases fails safely
       }
@@ -188,7 +190,16 @@ export function getAccessService(canonicalOrigin?: string) {
         },
         async signOut(input) {
           const client = createAnonSupabaseClient(env);
-          const { error } = await client.auth.signOut(input);
+          const cookieStore = await cookies();
+          const accessToken =
+            input.accessToken ?? cookieStore.get(AUTH_COOKIE_NAME)?.value;
+          if (!accessToken) {
+            return { data: null, error: { code: "session_not_found" } };
+          }
+          const { error } = await client.auth.admin.signOut(
+            accessToken,
+            input.scope,
+          );
           return { data: null, error };
         },
       },
@@ -212,6 +223,7 @@ export function getAccessService(canonicalOrigin?: string) {
       try {
         const cookieStore = await cookies();
         cookieStore.delete(AUTH_COOKIE_NAME);
+        cookieStore.delete(REFRESH_COOKIE_NAME);
       } catch {
         // Ignored
       }

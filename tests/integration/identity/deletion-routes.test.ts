@@ -5,6 +5,10 @@ vi.mock("server-only", () => ({}));
 import { createReauthenticationHandler } from "../../../apps/web/src/app/api/identity/me/reauthentication/route.ts";
 import { createAccountDeletionHandler } from "../../../apps/web/src/app/api/identity/me/deletion/route.ts";
 import { AUTH_COOKIE_NAME } from "../../../apps/web/src/modules/identity/server/access.ts";
+import {
+  REFRESH_COOKIE_NAME,
+  parseRefreshCookie,
+} from "../../../apps/web/src/modules/identity/session-cookie.ts";
 
 const canonicalOrigin = "https://markt.example.test";
 
@@ -61,11 +65,24 @@ describe("reauthentication route integration (POST /api/identity/me/reauthentica
     password: "Password123!",
   };
 
-  it("succeeds on valid credentials, rotates auth cookie, and returns reauthenticated status", async () => {
+  it("replaces both cookies with the real reauthenticated session", async () => {
     const mockService = {
-      reauthenticate: vi.fn(async () => ({
-        status: "reauthenticated" as const,
-      })),
+      reauthenticate: vi.fn(
+        async (
+          _identity: unknown,
+          _command: unknown,
+          onSessionEstablished: (tokens: {
+            accessToken: string;
+            refreshToken: string;
+          }) => void,
+        ) => {
+          onSessionEstablished({
+            accessToken: "new-access",
+            refreshToken: "new-refresh",
+          });
+          return { status: "reauthenticated" as const };
+        },
+      ),
     };
     const handler = createReauthenticationHandler(
       mockService as never,
@@ -83,7 +100,17 @@ describe("reauthentication route integration (POST /api/identity/me/reauthentica
 
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
-    expect(cookie).toContain(`${AUTH_COOKIE_NAME}=authenticated-session`);
+    expect(cookie).toContain(`${AUTH_COOKIE_NAME}=new-access`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=`);
+    const refreshCookie = res.headers
+      .getSetCookie()
+      .find((value) => value.startsWith(`${REFRESH_COOKIE_NAME}=`));
+    expect(
+      parseRefreshCookie(refreshCookie?.split(";")[0]?.split("=")[1]),
+    ).toEqual({
+      refreshToken: "new-refresh",
+      issuedAt: expect.any(Number),
+    });
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("SameSite=Lax");
     expect(cookie).toContain("Path=/");
@@ -95,7 +122,29 @@ describe("reauthentication route integration (POST /api/identity/me/reauthentica
     expect(mockService.reauthenticate).toHaveBeenCalledWith(
       testIdentity,
       validCredentials,
+      expect.any(Function),
     );
+  });
+
+  it("fails closed if reauthentication returns success without a token pair", async () => {
+    const mockService = {
+      reauthenticate: vi.fn(async () => ({
+        status: "reauthenticated" as const,
+      })),
+    };
+    const handler = createReauthenticationHandler(
+      mockService as never,
+      createMockDal(testIdentity) as never,
+      canonicalOrigin,
+    );
+    const res = await handler.POST(
+      postRequest(
+        `${canonicalOrigin}/api/identity/me/reauthentication`,
+        validCredentials,
+      ),
+    );
+    expect(res.status).toBe(503);
+    expect(res.headers.get("set-cookie")).toBeNull();
   });
 
   it("rejects unauthenticated requests with 401 UNAUTHENTICATED", async () => {
@@ -364,6 +413,7 @@ describe("account deletion route integration (POST /api/identity/me/deletion)", 
     const cookie = res.headers.get("set-cookie");
     expect(cookie).toBeTruthy();
     expect(cookie).toContain(`${AUTH_COOKIE_NAME}=;`);
+    expect(cookie).toContain(`${REFRESH_COOKIE_NAME}=;`);
     expect(cookie).toContain("Max-Age=0");
     expect(cookie).toContain("HttpOnly");
 

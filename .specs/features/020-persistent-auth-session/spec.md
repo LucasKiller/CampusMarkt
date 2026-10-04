@@ -1,6 +1,6 @@
 # Persistent Authentication Session Specification
 
-**Status:** Local implementation in progress; T1 complete.
+**Status:** Local implementation complete; awaiting independent validation.
 
 ## Problem Statement
 
@@ -10,7 +10,7 @@ The current sign-in route writes only the access JWT to a persistent cookie. It 
 
 - [x] Persist a bounded refresh token alongside the access token in server-managed HttpOnly cookies.
 - [x] Renew the access token before expiry and carry the rotated refresh token forward without exposing either token to browser JavaScript.
-- [ ] Keep logout, password reset, deletion, and reauthentication consistent with the active session cookies.
+- [x] Keep logout, password reset, deletion, and reauthentication consistent with the active session cookies.
 
 ## Out of Scope
 
@@ -64,10 +64,10 @@ The current sign-in route writes only the access JWT to a persistent cookie. It 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
 | SESS-01 | Persist and renew sign-in | Execute | Implemented; awaiting independent validation |
-| SESS-02 | End and replace sessions | Execute | Pending |
+| SESS-02 | End and replace sessions | Execute | Implemented; awaiting independent validation |
 
 ## Success Criteria
 
-- [ ] Focused identity application, route, middleware, and refresh tests pass with no skipped cases.
-- [ ] Typecheck, lint, formatting, and build pass.
+- [x] Focused identity application, route, middleware, and refresh tests pass with no skipped cases.
+- [x] Typecheck, lint, formatting, and build pass.
 - [ ] Independent validation records PASS in `validation.md`.

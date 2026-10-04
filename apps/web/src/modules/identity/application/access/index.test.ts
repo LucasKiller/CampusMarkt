@@ -180,7 +180,7 @@ describe("access sign-in", () => {
     await expect(
       createAccessService(ports).signIn(credentials, context),
     ).resolves.toEqual({ status: "denied" });
-    expect(ports.auth.signOutCurrent).toHaveBeenCalled();
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledWith("secret");
     expect(ports.clearSession).toHaveBeenCalled();
   });
 
@@ -227,7 +227,7 @@ describe("access sign-in", () => {
       }),
     ).resolves.toEqual({ status: "unavailable" });
     expect(onSessionEstablished).not.toHaveBeenCalled();
-    expect(ports.auth.signOutCurrent).toHaveBeenCalledOnce();
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledExactlyOnceWith("secret");
   });
 
   it("fails closed and signs out when assurance cannot be recorded", async () => {
@@ -305,16 +305,47 @@ describe("access logout and reauthentication", () => {
     const newSessionId = "44444444-4444-4444-8444-444444444444";
     ports.auth.signInWithPassword.mockResolvedValue({
       ok: true,
-      value: { authUserId, sessionId: newSessionId },
+      value: {
+        authUserId,
+        sessionId: newSessionId,
+        accessToken: "new-access",
+        refreshToken: "new-refresh",
+      },
     });
-    await createAccessService(ports).reauthenticate(
-      { authUserId, sessionId },
-      { email: "person@example.test", password: "long-password" },
-    );
+    const onSessionEstablished = vi.fn();
+    await expect(
+      createAccessService(ports).reauthenticate(
+        { authUserId, sessionId },
+        { email: "person@example.test", password: "long-password" },
+        onSessionEstablished,
+      ),
+    ).resolves.toEqual({ status: "reauthenticated" });
     expect(ports.repository.recordPasswordAssurance).toHaveBeenCalledWith({
       authUserId,
       sessionId: newSessionId,
     });
+    expect(onSessionEstablished).toHaveBeenCalledExactlyOnceWith({
+      accessToken: "new-access",
+      refreshToken: "new-refresh",
+    });
+  });
+
+  it("fails reauthentication without a real refresh token and revokes the new access JWT", async () => {
+    const ports = dependencies();
+    ports.auth.signInWithPassword.mockResolvedValue({
+      ok: true,
+      value: { authUserId, sessionId, accessToken: "new-access" },
+    });
+    const onSessionEstablished = vi.fn();
+    await expect(
+      createAccessService(ports).reauthenticate(
+        { authUserId, sessionId },
+        { email: "person@example.test", password: "long-password" },
+        onSessionEstablished,
+      ),
+    ).resolves.toEqual({ status: "unavailable" });
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledWith("new-access");
+    expect(onSessionEstablished).not.toHaveBeenCalled();
   });
 
   it("rejects reauthentication when Auth returns another user", async () => {

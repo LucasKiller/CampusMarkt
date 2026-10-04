@@ -1,6 +1,6 @@
 # Listing Photo Upload Repair
 
-**Status:** T4 verified locally on 2026-10-04; production deployment and live upload check pending.
+**Status:** T4 verified locally on 2026-10-04 and included in Coolify production commit `6e3162a`. A stored listing photo was observed in production; a new end-to-end upload was not replayed during the display repair.
 
 ## Problem Statement
 

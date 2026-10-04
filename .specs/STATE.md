@@ -164,12 +164,12 @@
 
 ## Handoff
 
-- **Feature**: `019-legal-page-alignment`
-- **Phase/task**: Feature 019 complete and independently validated
-- **Completed**: Features 001-018 retain their recorded outcomes. Feature 019 aligns the three footer legal destinations with `DESIGN.md`, keeps English/German navigation, and corrects the student-only product description. T2 tested all three routes in both languages at 320px and fixed Privacy Policy title overflow. Independent revalidation passed all six acceptance criteria and the focused browser, render, type, lint, formatting, and spec/task gates.
-- **In-progress**: None for feature 019.
-- **Next step**: Await the next approved feature. No push or deployment was authorized by this local task.
-- **Blockers**: None for local feature 019. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
-- **Uncommitted files**: None after the feature 019 validation commit.
+- **Feature**: `020-persistent-auth-session`
+- **Phase/task**: Execute T1 complete; T2 pending
+- **Completed**: Features 001-019 retain their recorded outcomes. Feature 020 T1 writes real access/refresh cookies on sign-in, refreshes near-expiry access JWTs in middleware, and preserves the original 30-day browser limit. Its 65 focused tests, typecheck, lint, formatting, and web build passed locally.
+- **In-progress**: T2 logout, reauthentication, and account-ending cookie consistency.
+- **Next step**: Complete T2, run its gate, commit atomically, then run independent validation. No push or deployment is authorized by this local task.
+- **Blockers**: None for local implementation. Existing off-host backup and beta security/recovery blockers remain before real-user beta.
+- **Uncommitted files**: T1 implementation and records until its atomic commit.
 - **Branch**: development
 

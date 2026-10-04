@@ -28,7 +28,13 @@ function dependencies() {
         void _password;
         return {
           ok: true,
-          value: { authUserId, sessionId, accessToken: "secret", issuedAt: 99 },
+          value: {
+            authUserId,
+            sessionId,
+            accessToken: "secret",
+            refreshToken: "refresh-secret",
+            issuedAt: 99,
+          },
         };
       },
     ),
@@ -185,6 +191,43 @@ describe("access sign-in", () => {
       authUserId,
       sessionId,
     });
+  });
+
+  it("passes the real access and refresh pair to the server only after session validation", async () => {
+    const ports = dependencies();
+    const onSessionEstablished = vi.fn();
+
+    await expect(
+      createAccessService(ports).signIn(credentials, {
+        ...context,
+        onSessionEstablished,
+      }),
+    ).resolves.toEqual({
+      status: "signed_in",
+      redirectTo: "/account/security",
+    });
+    expect(onSessionEstablished).toHaveBeenCalledExactlyOnceWith({
+      accessToken: "secret",
+      refreshToken: "refresh-secret",
+    });
+  });
+
+  it("fails closed when the provider omits the refresh token", async () => {
+    const ports = dependencies();
+    ports.auth.signInWithPassword.mockResolvedValue({
+      ok: true,
+      value: { authUserId, sessionId, accessToken: "secret" },
+    });
+    const onSessionEstablished = vi.fn();
+
+    await expect(
+      createAccessService(ports).signIn(credentials, {
+        ...context,
+        onSessionEstablished,
+      }),
+    ).resolves.toEqual({ status: "unavailable" });
+    expect(onSessionEstablished).not.toHaveBeenCalled();
+    expect(ports.auth.signOutCurrent).toHaveBeenCalledOnce();
   });
 
   it("fails closed and signs out when assurance cannot be recorded", async () => {

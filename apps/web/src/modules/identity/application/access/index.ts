@@ -2,13 +2,14 @@ import {
   normalizePrimaryEmail,
   parseCredentials,
 } from "@campusmarkt/validation";
+import type { SessionTokens } from "../../session-cookie";
 
 type PortResult = { ok: boolean; value?: unknown; code?: string };
 type Identity = { authUserId: string; sessionId: string };
 type RequestContext = {
   trustedClientIp: string;
   correlationId: string;
-  onSessionEstablished?: (token: string) => void;
+  onSessionEstablished?: (tokens: SessionTokens) => void;
 };
 
 type AccessSecurity = {
@@ -69,7 +70,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function boundedSession(
   value: unknown,
-): (Identity & { accessToken?: string }) | null {
+): (Identity & { accessToken?: string; refreshToken?: string }) | null {
   if (
     !isRecord(value) ||
     typeof value.authUserId !== "string" ||
@@ -79,10 +80,13 @@ function boundedSession(
   }
   const token =
     typeof value.accessToken === "string" ? value.accessToken : undefined;
+  const refreshToken =
+    typeof value.refreshToken === "string" ? value.refreshToken : undefined;
   return {
     authUserId: value.authUserId,
     sessionId: value.sessionId,
     accessToken: token,
+    refreshToken,
   };
 }
 
@@ -202,8 +206,15 @@ export function createAccessService({
             await compensateSession();
             return { status: "unavailable" };
           }
-          if (actual.accessToken && context.onSessionEstablished) {
-            context.onSessionEstablished(actual.accessToken);
+          if (!actual.accessToken || !actual.refreshToken) {
+            await compensateSession();
+            return { status: "unavailable" };
+          }
+          if (context.onSessionEstablished) {
+            context.onSessionEstablished({
+              accessToken: actual.accessToken,
+              refreshToken: actual.refreshToken,
+            });
           }
           return {
             status: "signed_in",

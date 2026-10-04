@@ -332,6 +332,128 @@ test.describe("university verification account journeys", () => {
   });
 });
 
+test.describe("university email link confirmation", () => {
+  const token = "A".repeat(43);
+
+  test("follows the email link, confirms from a staged cookie, and shows the verified result", async ({
+    page,
+  }) => {
+    let confirmationCookie = "";
+    await page.route(
+      "**/api/identity/university-verifications/confirm",
+      async (route) => {
+        confirmationCookie = route.request().headers()["cookie"] ?? "";
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            ok: true,
+            data: {
+              status: "verified",
+              universityId: "tu-braunschweig",
+              badgeLabel: "TU Braunschweig",
+              expiresAt: "2027-10-04T12:00:00.000Z",
+            },
+          }),
+        });
+      },
+    );
+
+    await page.goto(`/auth/action/university_verification?token=${token}`);
+
+    await expect(page).toHaveURL(
+      "http://127.0.0.1:3100/auth/university-verification",
+    );
+    await expect(
+      page.getByRole("heading", { name: "University verification complete" }),
+    ).toBeVisible();
+    await expect(page.getByRole("status")).toContainText("TU Braunschweig");
+    expect(confirmationCookie).toContain(
+      `campusmarkt-action-university_verification=${token}`,
+    );
+  });
+
+  test("explains a missing or invalid university link and offers a new request", async ({
+    page,
+  }) => {
+    await page.goto("/auth/action/university_verification");
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Verification link invalid or expired",
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Request a new link" }),
+    ).toHaveAttribute("href", "/account");
+  });
+
+  test("shows an invalid result for a consumed university link", async ({
+    page,
+  }) => {
+    await page.route(
+      "**/api/identity/university-verifications/confirm",
+      async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: true, data: { status: "invalid_link" } }),
+        });
+      },
+    );
+
+    await page.goto(`/auth/action/university_verification?token=${token}`);
+    await expect(
+      page.getByRole("heading", {
+        name: "Verification link invalid or expired",
+      }),
+    ).toBeVisible();
+  });
+
+  test("shows a retryable error when university confirmation is unavailable", async ({
+    page,
+  }) => {
+    let attempts = 0;
+    await page.route(
+      "**/api/identity/university-verifications/confirm",
+      async (route) => {
+        attempts++;
+        await route.fulfill({
+          status: attempts === 1 ? 503 : 200,
+          contentType: "application/json",
+          body: JSON.stringify(
+            attempts === 1
+              ? { ok: false, code: "DEPENDENCY_UNAVAILABLE" }
+              : {
+                  ok: true,
+                  data: {
+                    status: "verified",
+                    universityId: "tu-braunschweig",
+                    badgeLabel: "TU Braunschweig",
+                    expiresAt: "2027-10-04T12:00:00.000Z",
+                  },
+                },
+          ),
+        });
+      },
+    );
+
+    await page.goto(`/auth/action/university_verification?token=${token}`);
+    await expect(
+      page.getByText("We could not verify your university right now."),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "University verification complete" }),
+    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(
+      page.getByRole("heading", { name: "University verification complete" }),
+    ).toBeVisible();
+    expect(attempts).toBe(2);
+  });
+});
+
 test.describe("public profile trust badge display", () => {
   const verifiedPublicId = "77777777-6666-4555-8444-333333333333";
   const unverifiedPublicId = "99999999-8888-4777-8666-555555555555";

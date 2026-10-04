@@ -5,6 +5,7 @@ vi.mock("server-only", () => ({}));
 import { createUniversityVerificationHandler } from "../../../apps/web/src/app/api/identity/university-verifications/route.ts";
 import { createUniversityConfirmationHandler } from "../../../apps/web/src/app/api/identity/university-verifications/confirm/route.ts";
 import { createUniversityVerificationMeHandler } from "../../../apps/web/src/app/api/identity/me/university-verification/route.ts";
+import { createActionStagingHandler } from "../../../apps/web/src/app/auth/action/[purpose]/route.ts";
 
 const canonicalOrigin = "https://markt.example.test";
 const authUserId = "11111111-1111-4111-8111-111111111111";
@@ -40,6 +41,53 @@ function mockSessionDal(
 }
 
 describe("university verification routes integration", () => {
+  describe("GET /auth/action/university_verification (email link)", () => {
+    const token = "A".repeat(43);
+
+    it("stages a valid email token and redirects to a tokenless confirmation page", async () => {
+      const handler = createActionStagingHandler({ stage: vi.fn() } as never);
+      const response = await handler(
+        new Request(
+          `${canonicalOrigin}/auth/action/university_verification?token=${token}`,
+        ),
+        { params: { purpose: "university_verification" } },
+      );
+
+      expect(response.status).toBe(303);
+      expect(response.headers.get("location")).toBe(
+        "/auth/university-verification",
+      );
+      expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+      expect(response.headers.get("cache-control")).toBe("no-store");
+      expect(response.headers.get("set-cookie")).toContain(
+        `campusmarkt-action-university_verification=${token}`,
+      );
+      expect(response.headers.get("set-cookie")).toContain("HttpOnly");
+      expect(response.headers.get("set-cookie")).toContain("SameSite=Strict");
+      expect(response.headers.get("set-cookie")).toContain("Max-Age=300");
+    });
+
+    it.each(["", "bad%20token"])(
+      "redirects a missing or malformed token to an invalid-link result without a cookie",
+      async (queryToken) => {
+        const handler = createActionStagingHandler({ stage: vi.fn() } as never);
+        const suffix = queryToken ? `?token=${queryToken}` : "";
+        const response = await handler(
+          new Request(
+            `${canonicalOrigin}/auth/action/university_verification${suffix}`,
+          ),
+          { params: { purpose: "university_verification" } },
+        );
+
+        expect(response.status).toBe(303);
+        expect(response.headers.get("location")).toBe(
+          "/auth/university-verification?status=invalid_link",
+        );
+        expect(response.headers.get("set-cookie")).toBeNull();
+      },
+    );
+  });
+
   describe("POST /api/identity/university-verifications (initiation)", () => {
     const validBody = {
       institutionalEmail: "student@tu-braunschweig.de",
@@ -334,6 +382,35 @@ describe("university verification routes integration", () => {
       expect(setCookie).toContain(
         "campusmarkt-action-university_verification=;",
       );
+      expect(mockService.confirmVerification).toHaveBeenCalledWith(
+        "cookie-token-abc",
+        expect.any(Object),
+      );
+    });
+
+    it("keeps the staged cookie when confirmation is temporarily unavailable", async () => {
+      const mockService = {
+        confirmVerification: vi.fn(async () => ({
+          status: "unavailable" as const,
+        })),
+      };
+      const handler = createUniversityConfirmationHandler(
+        mockService as never,
+        canonicalOrigin,
+      );
+      const response = await handler(
+        postRequest(
+          `${canonicalOrigin}/api/identity/university-verifications/confirm`,
+          {},
+          {
+            cookie:
+              "campusmarkt-action-university_verification=cookie-token-abc",
+          },
+        ),
+      );
+
+      expect(response.status).toBe(503);
+      expect(response.headers.get("set-cookie")).toBeNull();
       expect(mockService.confirmVerification).toHaveBeenCalledWith(
         "cookie-token-abc",
         expect.any(Object),

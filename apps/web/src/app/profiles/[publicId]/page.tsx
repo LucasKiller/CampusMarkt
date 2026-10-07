@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { getProfileService } from "../../../modules/identity/server/profile";
 import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
@@ -57,6 +58,12 @@ export default async function PublicProfilePage({ params }: PageProps) {
   }
 
   const profile = result.profile;
+  const e2ePhoto =
+    process.env.E2E_TEST === "true" &&
+    (await cookies()).get("campusmarkt-e2e-avatar-photo")?.value === "1";
+  const avatarUrl = e2ePhoto
+    ? `/media/avatars/${publicId}/1.webp`
+    : profile.avatarUrl;
   return (
     <main>
       <header className="site-header">
@@ -77,9 +84,9 @@ export default async function PublicProfilePage({ params }: PageProps) {
               marginBottom: "1rem",
             }}
           >
-            {profile.avatarUrl ? (
+            {avatarUrl ? (
               <img
-                src={profile.avatarUrl}
+                src={avatarUrl}
                 alt={profile.displayName}
                 style={{
                   width: "96px",

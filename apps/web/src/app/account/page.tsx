@@ -31,13 +31,12 @@ export default async function AccountPage({
 
   if (process.env.E2E_TEST === "true" && !identity) {
     const cookieStore = await cookies();
-    if (
-      cookieStore.get("campusmarkt-test-session")?.value === "authenticated"
-    ) {
+    const testSession = cookieStore.get("campusmarkt-test-session")?.value;
+    if (testSession === "authenticated" || testSession === "unconfirmed") {
       identity = {
         authUserId: "test-auth-user-id",
         sessionId: "test-session-id",
-        emailConfirmed: true,
+        emailConfirmed: testSession === "authenticated",
         profileComplete: true,
         consentComplete: true,
       };

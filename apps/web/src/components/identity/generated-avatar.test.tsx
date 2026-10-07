@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { GeneratedAvatar } from "./generated-avatar";
 
@@ -19,6 +19,7 @@ describe("GeneratedAvatar", () => {
   });
 
   it("generic avatar uses only local vector markup", () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
     const markup = renderToStaticMarkup(
       <GeneratedAvatar displayName="Member" />,
     );
@@ -28,6 +29,12 @@ describe("GeneratedAvatar", () => {
     expect(markup).not.toContain("<img");
     expect(markup).not.toMatch(/\b(?:src|href|xlink:href)=/u);
     expect(markup).not.toContain("<image");
+    expect(markup).not.toContain("<style");
+    expect(markup).not.toContain("<foreignObject");
+    expect(markup).not.toMatch(/url\s*\(/iu);
+    expect(markup).not.toMatch(/https?:\/\/(?!www\.w3\.org\/2000\/svg)/iu);
     expect(markup).not.toContain("@");
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 });

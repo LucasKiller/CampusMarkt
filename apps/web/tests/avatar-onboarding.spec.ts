@@ -91,6 +91,10 @@ test("setup offers photo or later", async ({ page, context }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/account?setup=avatar");
   const setup = page.getByTestId("avatar-setup");
+  await expect(
+    setup.getByRole("heading", { name: "Make it yours" }),
+  ).toBeVisible();
+  await expect(setup).toContainText("You can change it anytime.");
   await expect(setup.getByTestId("generated-avatar")).toBeVisible();
   await expect(setup.getByText("Choose new avatar")).toBeVisible();
   await expect(
@@ -133,6 +137,9 @@ test("setup saves a valid photo", async ({ page, context }) => {
   let posts = 0;
   await page.route("**/api/identity/me/avatar", (route) => {
     posts += 1;
+    expect(route.request().headers().cookie).toContain(
+      "campusmarkt-test-session=authenticated",
+    );
     return route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -158,6 +165,20 @@ test("setup saves a valid photo", async ({ page, context }) => {
   await page.getByRole("button", { name: "Save avatar" }).click();
   await expect(page.getByText("Avatar updated successfully.")).toBeVisible();
   await expect(page.locator(`img[src='${photoUrl}']`)).toBeVisible();
+  expect(posts).toBe(1);
+
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByText("Choose new avatar").click();
+  await (
+    await chooser
+  ).setFiles({
+    name: "oversized.png",
+    mimeType: "image/png",
+    buffer: Buffer.alloc(5 * 1024 * 1024 + 1),
+  });
+  await expect(page.locator(".error-summary")).toContainText(
+    "Image must be no larger than 5 MB.",
+  );
   expect(posts).toBe(1);
 });
 
@@ -199,9 +220,34 @@ test("failed setup upload keeps generic avatar", async ({ page, context }) => {
   );
   await expect(page.getByTestId("generated-avatar")).toBeVisible();
   await expect(page.getByRole("link", { name: "Do this later" })).toBeVisible();
+
+  await profileResponse(page, photoUrl);
+  await page.route(`**${photoUrl}`, (route) =>
+    route.fulfill({ status: 200, contentType: "image/png", body: png }),
+  );
+  await page.reload();
+  await expect(page.locator(`img[src='${photoUrl}']`)).toBeVisible();
+  await choosePng(page);
+  await page.getByRole("button", { name: "Save avatar" }).click();
+  await expect(page.locator(".error-summary")).toContainText(
+    "Failed to upload avatar. Please try again.",
+  );
+  await expect(page.locator(`img[src='${photoUrl}']`)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Do this later" })).toBeVisible();
 });
 
-test("setup requires a confirmed session", async ({ page }) => {
+test("setup requires a confirmed session", async ({ page, context }) => {
+  await page.goto("/account?setup=avatar");
+  await expect(page).toHaveURL(/\/sign-in\?returnTo=/);
+  await expect(page.getByTestId("avatar-setup")).toHaveCount(0);
+  await context.addCookies([
+    {
+      name: "campusmarkt-test-session",
+      value: "unconfirmed",
+      domain: "127.0.0.1",
+      path: "/",
+    },
+  ]);
   await page.goto("/account?setup=avatar");
   await expect(page).toHaveURL(/\/sign-in\?returnTo=/);
   await expect(page.getByTestId("avatar-setup")).toHaveCount(0);
@@ -233,6 +279,19 @@ test("shared generic avatar appears on all profile surfaces", async ({
       );
     if (signature) expect(shapes).toEqual(signature);
     else signature = shapes;
+    if (path === "/account") {
+      await page.reload();
+      await expect(page.getByTestId("generated-avatar").first()).toBeVisible();
+      expect(
+        await page
+          .getByTestId("generated-avatar")
+          .first()
+          .locator("path")
+          .evaluateAll((nodes) =>
+            nodes.map((node) => node.getAttribute("d") ?? ""),
+          ),
+      ).toEqual(signature);
+    }
   }
 });
 
@@ -241,6 +300,14 @@ test("removing photo restores the generic avatar", async ({
   context,
 }) => {
   await signedIn(context);
+  await context.addCookies([
+    {
+      name: "campusmarkt-e2e-avatar-photo",
+      value: "1",
+      domain: "127.0.0.1",
+      path: "/",
+    },
+  ]);
   await profileResponse(page, photoUrl);
   await page.route("**/api/identity/me/avatar", (route) =>
     route.fulfill({
@@ -258,8 +325,16 @@ test("removing photo restores the generic avatar", async ({
           },
         },
       }),
+      headers: {
+        "set-cookie": "campusmarkt-e2e-avatar-photo=; Max-Age=0; Path=/",
+      },
     }),
   );
+  await page.route(`**${photoUrl}`, (route) =>
+    route.fulfill({ status: 200, contentType: "image/png", body: png }),
+  );
+  await page.goto(`/profiles/${publicId}`);
+  await expect(page.locator(`img[src='${photoUrl}']`)).toBeVisible();
   await page.goto("/account");
   await page.getByRole("button", { name: "Remove avatar" }).click();
   await expect(page.getByTestId("generated-avatar")).toBeVisible();
@@ -278,5 +353,9 @@ test("uploaded photo takes priority over generic avatar", async ({
   );
   await page.goto("/account");
   await expect(page.locator(`img[src='${photoUrl}']`)).toBeVisible();
+  await expect(page.locator(`img[src='${photoUrl}']`)).toHaveJSProperty(
+    "naturalWidth",
+    1,
+  );
   await expect(page.getByTestId("generated-avatar")).toHaveCount(0);
 });

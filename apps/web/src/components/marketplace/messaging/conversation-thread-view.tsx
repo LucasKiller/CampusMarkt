@@ -7,6 +7,7 @@ import { getMessagesCopy } from "./messages-copy";
 import { TrustBadge } from "../feed";
 import { NegotiationCard } from "./negotiation-card";
 import { MessageComposer, MessageList } from "./message-list";
+import { GeneratedAvatar } from "../../identity/generated-avatar";
 import type {
   ConversationDTO,
   MessageDTO,
@@ -278,7 +279,7 @@ export function ConversationThreadView({
             {partner?.avatarUrl ? (
               <img src={partner.avatarUrl} alt={partner.displayName} />
             ) : (
-              (partner?.displayName ?? "U").slice(0, 2).toUpperCase()
+              <GeneratedAvatar displayName={partner?.displayName ?? "User"} />
             )}
           </div>
 

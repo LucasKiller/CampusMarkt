@@ -97,6 +97,19 @@ describe("Avatar processing and private media access (T28)", () => {
   });
 
   describe("Image bounds and format enforcement", () => {
+    it.each(["jpeg", "png", "webp"] as const)(
+      "accepts supported avatar formats: %s",
+      async (format) => {
+        const buffer = await createSampleImage(format);
+        const result = await processAvatarImage(
+          buffer,
+          { x: 0, y: 0, size: 1 },
+          `image/${format}`,
+        );
+        expect(result.ok).toBe(true);
+      },
+    );
+
     it("rejects empty buffer", async () => {
       const result = await processAvatarImage(Buffer.alloc(0), {
         x: 0,

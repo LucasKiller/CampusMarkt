@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getProfileService } from "../../../modules/identity/server/profile";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 
 type PageProps = {
   params: Promise<{ publicId: string }>;
@@ -56,8 +57,6 @@ export default async function PublicProfilePage({ params }: PageProps) {
   }
 
   const profile = result.profile;
-  const initials = profile.displayName.slice(0, 2).toUpperCase();
-
   return (
     <main>
       <header className="site-header">
@@ -90,23 +89,8 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 }}
               />
             ) : (
-              <div
-                className="avatar-fallback"
-                aria-hidden="true"
-                style={{
-                  width: "96px",
-                  height: "96px",
-                  borderRadius: "50%",
-                  backgroundColor: "#2d6a4f",
-                  color: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                }}
-              >
-                {initials}
+              <div style={{ width: "96px", height: "96px" }}>
+                <GeneratedAvatar displayName={profile.displayName} />
               </div>
             )}
           </div>

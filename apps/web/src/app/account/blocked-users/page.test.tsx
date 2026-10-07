@@ -3,6 +3,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 
 import type { UserBlockDTO } from "@campusmarkt/types";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 import { BlockedUsersView } from "./blocked-users-view";
 
 describe("BlockedUsersView component (T15)", () => {
@@ -50,11 +51,15 @@ describe("BlockedUsersView component (T15)", () => {
     expect(html).toContain('alt="Nerviger Nutzer"');
   });
 
-  it("renders initial letter fallback when avatarUrl is null", () => {
+  it("renders generic artwork when avatarUrl is null", () => {
     const html = renderToString(
       <BlockedUsersView initialBlockedUsers={[sampleBlockedUser]} />,
     );
 
-    expect(html).toContain("N"); // First letter of "Nerviger Nutzer"
+    expect(html).toContain('data-testid="generated-avatar"');
+    const genericHtml = renderToString(
+      <GeneratedAvatar displayName="Nerviger Nutzer" />,
+    );
+    expect(html).toContain(genericHtml);
   });
 });

@@ -7,6 +7,7 @@ import { getMarketplaceMessagingService } from "../../modules/messaging/server/i
 import { TrustBadge } from "../../components/marketplace/feed";
 import { MarketplaceHeader } from "../../components/marketplace/marketplace-header";
 import { MarketplaceFooter } from "../../components/marketplace/marketplace-footer";
+import { GeneratedAvatar } from "../../components/identity/generated-avatar";
 import { getMessagesCopy } from "../../components/marketplace/messaging/messages-copy";
 import { getServerLocale } from "../../modules/localization/server/index";
 import { formatCurrencyEuros, formatRelativeTime } from "@campusmarkt/domain";
@@ -188,7 +189,9 @@ export default async function InboxPage() {
                     {partner?.avatarUrl ? (
                       <img src={partner.avatarUrl} alt={partner.displayName} />
                     ) : (
-                      (partner?.displayName ?? "U").slice(0, 2).toUpperCase()
+                      <GeneratedAvatar
+                        displayName={partner?.displayName ?? copy.unknownUser}
+                      />
                     )}
                   </div>
 

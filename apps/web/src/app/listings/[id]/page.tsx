@@ -13,6 +13,7 @@ import { TrustBadge } from "../../../components/marketplace/feed";
 import { FavoriteButton } from "../../../components/marketplace/favorites/favorite-button";
 import { NegotiationBar } from "../../../components/marketplace/negotiation/negotiation-bar";
 import { MessageButton } from "../../../components/marketplace/messaging/message-button";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 import { createProfileService } from "../../../modules/identity/server/profile";
 import {
   BlockButton,
@@ -646,7 +647,7 @@ export default async function ListingDetailsPage(
                       }}
                     />
                   ) : (
-                    listing.seller.displayName.charAt(0).toUpperCase()
+                    <GeneratedAvatar displayName={listing.seller.displayName} />
                   )}
                 </div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { PublicProfile } from "@campusmarkt/types";
-import { avatarFallback } from "@campusmarkt/domain";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 
 const MAX_AVATAR_FILE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -195,7 +195,6 @@ export function AvatarManager({
   }
 
   const displayName = profile?.displayName || "User";
-  const fallback = avatarFallback(displayName);
   const showImage = Boolean(profile?.avatarUrl) && !brokenImage;
 
   return (
@@ -268,16 +267,7 @@ export function AvatarManager({
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           ) : (
-            <span
-              className="avatar-fallback"
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: 600,
-                color: "#475569",
-              }}
-            >
-              {fallback.kind === "initials" ? fallback.value : "👤"}
-            </span>
+            <GeneratedAvatar displayName={displayName} />
           )}
         </div>
 
@@ -301,11 +291,11 @@ export function AvatarManager({
                 <input
                   ref={fileInputRef}
                   type="file"
+                  className="avatar-file-input"
                   accept="image/jpeg,image/png,image/webp"
                   aria-label="Upload avatar image"
                   disabled={pending}
                   onChange={handleFileChange}
-                  style={{ display: "none" }}
                 />
               </label>
 

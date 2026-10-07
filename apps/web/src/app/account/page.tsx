@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getSessionDal } from "../../modules/identity/server/access";
 import { AvatarManager } from "./avatar/avatar-manager";
+import { AccountAvatarSetup } from "./avatar/account-avatar-setup";
 import { ProfileEditor } from "./profile/profile-editor";
 import { SecurityControls } from "./security/security-controls";
 import { UniversityVerificationSection } from "./university-verification-section";
@@ -13,7 +14,12 @@ export const metadata: Metadata = {
   description: "Manage your CampusMarkt account.",
 };
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ setup?: string }>;
+}) {
+  const setupAvatar = (await searchParams)?.setup === "avatar";
   const dal = getSessionDal();
   let identity = null;
 
@@ -39,7 +45,8 @@ export default async function AccountPage() {
   }
 
   if (!identity || !identity.emailConfirmed) {
-    redirect("/sign-in?returnTo=/account");
+    const returnTo = setupAvatar ? "/account?setup=avatar" : "/account";
+    redirect(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`);
   }
 
   return (
@@ -61,22 +68,28 @@ export default async function AccountPage() {
           Manage your session and account settings.
         </p>
 
-        <div className="info-card" style={{ marginBottom: "1.5rem" }}>
-          <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>Public Profile</h2>
-          <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
-            Update your public avatar and display name.
-          </p>
+        {setupAvatar ? (
+          <AccountAvatarSetup />
+        ) : (
+          <div className="info-card" style={{ marginBottom: "1.5rem" }}>
+            <h2 style={{ marginTop: 0, fontSize: "1.25rem" }}>
+              Public Profile
+            </h2>
+            <p style={{ fontSize: "0.875rem", color: "#526b59" }}>
+              Update your public avatar and display name.
+            </p>
 
-          <AvatarManager />
-          <hr
-            style={{
-              margin: "1.5rem 0",
-              border: "none",
-              borderTop: "1px solid #e2e8f0",
-            }}
-          />
-          <ProfileEditor />
-        </div>
+            <AvatarManager />
+            <hr
+              style={{
+                margin: "1.5rem 0",
+                border: "none",
+                borderTop: "1px solid #e2e8f0",
+              }}
+            />
+            <ProfileEditor />
+          </div>
+        )}
 
         <UniversityVerificationSection />
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import type { UserBlockDTO } from "@campusmarkt/types";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 
 function formatBlockDate(dateString: string): string {
   try {
@@ -128,8 +129,8 @@ export function BlockedUsersView({
                       className="h-10 w-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200 text-sm font-semibold text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
-                      {user.blockedName.charAt(0).toUpperCase()}
+                    <div className="h-10 w-10 shrink-0">
+                      <GeneratedAvatar displayName={user.blockedName} />
                     </div>
                   )}
                   <div>

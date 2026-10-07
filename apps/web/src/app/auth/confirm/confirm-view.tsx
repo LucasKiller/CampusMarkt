@@ -91,7 +91,7 @@ export function ConfirmView() {
         </p>
         <div style={{ marginTop: "1.5rem" }}>
           <a
-            href="/sign-in"
+            href="/sign-in?returnTo=%2Faccount%3Fsetup%3Davatar"
             className="btn-primary"
             style={{ display: "inline-block", textDecoration: "none" }}
           >

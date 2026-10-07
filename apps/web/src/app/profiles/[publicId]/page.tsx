@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { getProfileService } from "../../../modules/identity/server/profile";
+import { GeneratedAvatar } from "../../../components/identity/generated-avatar";
 
 type PageProps = {
   params: Promise<{ publicId: string }>;
@@ -56,8 +58,12 @@ export default async function PublicProfilePage({ params }: PageProps) {
   }
 
   const profile = result.profile;
-  const initials = profile.displayName.slice(0, 2).toUpperCase();
-
+  const e2ePhoto =
+    process.env.E2E_TEST === "true" &&
+    (await cookies()).get("campusmarkt-e2e-avatar-photo")?.value === "1";
+  const avatarUrl = e2ePhoto
+    ? `/media/avatars/${publicId}/1.webp`
+    : profile.avatarUrl;
   return (
     <main>
       <header className="site-header">
@@ -78,9 +84,9 @@ export default async function PublicProfilePage({ params }: PageProps) {
               marginBottom: "1rem",
             }}
           >
-            {profile.avatarUrl ? (
+            {avatarUrl ? (
               <img
-                src={profile.avatarUrl}
+                src={avatarUrl}
                 alt={profile.displayName}
                 style={{
                   width: "96px",
@@ -90,23 +96,8 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 }}
               />
             ) : (
-              <div
-                className="avatar-fallback"
-                aria-hidden="true"
-                style={{
-                  width: "96px",
-                  height: "96px",
-                  borderRadius: "50%",
-                  backgroundColor: "#2d6a4f",
-                  color: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                }}
-              >
-                {initials}
+              <div style={{ width: "96px", height: "96px" }}>
+                <GeneratedAvatar displayName={profile.displayName} />
               </div>
             )}
           </div>

@@ -48,7 +48,7 @@ test.describe("avatar upload, crop, and removal journey", () => {
       await expect(
         page.getByRole("heading", { name: "My Account" }),
       ).toBeVisible();
-      await expect(page.locator(".avatar-fallback")).toHaveText("AL");
+      await expect(page.getByTestId("generated-avatar")).toBeVisible();
 
       const dimensions = await page.evaluate(() => ({
         clientWidth: document.documentElement.clientWidth,
@@ -254,7 +254,7 @@ test.describe("avatar upload, crop, and removal journey", () => {
     ).toBeVisible();
   });
 
-  test("removes avatar and restores fallback initials", async ({
+  test("removes avatar and restores generic artwork", async ({
     page,
     context,
   }) => {
@@ -316,13 +316,13 @@ test.describe("avatar upload, crop, and removal journey", () => {
 
     expect(removed).toBe(true);
     await expect(page.getByText("Avatar removed.")).toBeVisible();
-    await expect(page.locator(".avatar-fallback")).toHaveText("AL");
+    await expect(page.getByTestId("generated-avatar")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Remove avatar" }),
     ).not.toBeVisible();
   });
 
-  test("handles broken avatar image gracefully by falling back to initials", async ({
+  test("handles broken avatar image gracefully with generic artwork", async ({
     page,
     context,
   }) => {
@@ -359,7 +359,7 @@ test.describe("avatar upload, crop, and removal journey", () => {
 
     await page.goto("/account");
 
-    // Because the image fails to load, onError triggers and renders initials fallback
-    await expect(page.locator(".avatar-fallback")).toHaveText("AL");
+    // A failed image load restores the same generic artwork used for no photo.
+    await expect(page.getByTestId("generated-avatar")).toBeVisible();
   });
 });

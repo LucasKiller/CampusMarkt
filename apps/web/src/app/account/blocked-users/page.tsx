@@ -10,7 +10,11 @@ export const metadata: Metadata = {
   description: "Verwalten Sie Ihre blockierten Nutzer auf CampusMarkt.",
 };
 
-export default async function BlockedUsersPage() {
+export default async function BlockedUsersPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ e2eAvatarFallback?: string }>;
+}) {
   const dal = getSessionDal();
   let identity = null;
   try {
@@ -49,7 +53,19 @@ export default async function BlockedUsersPage() {
 
   const safetyService = getMarketplaceSafetyService();
   const res = await safetyService.getBlockedUsers(identity.authUserId);
-  const items = res.status === "success" ? res.data.items : [];
+  const items = res.status === "success" ? [...res.data.items] : [];
+  if (
+    process.env.E2E_TEST === "true" &&
+    (await searchParams)?.e2eAvatarFallback === "1"
+  ) {
+    items.push({
+      id: "avatar-fallback-test-block",
+      blockedId: "22222222-2222-4222-8222-222222222222",
+      blockedName: "Test Buyer",
+      avatarUrl: null,
+      createdAt: "2026-09-24T00:00:00.000Z",
+    });
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">

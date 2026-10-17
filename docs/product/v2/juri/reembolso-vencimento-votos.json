@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-17",
+  "decision": "Financial resolution after ordinary pickup deadline and final 48-hour window expire without a proven reason",
+  "options": {
+    "A": "Automatic full refund of item price and platform fee for uncontested expiry",
+    "B": "Human review of all such expiries before financial decision",
+    "C": "Checks of authorized records, human review for material indications or conflict, full refund by default when no relevant evidence appears after an effective opportunity to respond"
+  },
+  "diversity": "medium",
+  "diversity_note": "Three models (gpt-6.1-sol, gpt-6-astra, gpt-6-sol), distinct fairness/adversarial, cost/reliability and product/evidence lenses. Same model family, shared context, no local outcome or support capacity data. Initial recruitment was staggered; every first-round commitment remained isolated before anonymized deliberation.",
+  "jurors": [
+    {
+      "id": "j1",
+      "role": "proponent",
+      "initial_choice": "C",
+      "initial_confidence": 86,
+      "final_choice": "C",
+      "final_confidence": 84,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j2",
+      "role": "devils_advocate",
+      "initial_choice": "C",
+      "initial_confidence": 85,
+      "final_choice": "C",
+      "final_confidence": 81,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j3",
+      "role": "integrator",
+      "initial_choice": "C",
+      "initial_confidence": 78,
+      "final_choice": "C",
+      "final_confidence": 76,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-17",
+  "decision": "Cancellation timing and additional penalties before physical pickup",
+  "options": {
+    "A": "Allow cancellation before physical pickup, no additional monetary penalty, proportionate response to repeated abuse",
+    "B": "Require a cutoff or seller approval for late cancellation",
+    "C": "Add a monetary penalty for late cancellation or no-show"
+  },
+  "diversity": "medium",
+  "diversity_note": "Three models (gpt-6.1-sol, gpt-6-astra, gpt-6-sol), distinct buyer, seller/adversarial and operational/economic lenses. Same model family and shared limited empirical evidence; unanimity is not empirical validation.",
+  "jurors": [
+    {
+      "id": "j1",
+      "role": "proponent",
+      "initial_choice": "A",
+      "initial_confidence": 83,
+      "final_choice": "A",
+      "final_confidence": 81,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j2",
+      "role": "devils_advocate",
+      "initial_choice": "A",
+      "initial_confidence": 80,
+      "final_choice": "A",
+      "final_confidence": 80,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j3",
+      "role": "integrator",
+      "initial_choice": "A",
+      "initial_confidence": 76,
+      "final_choice": "A",
+      "final_confidence": 74,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-17",
+  "decision": "Quais imagens, PDFs e fontes de design devem ser versionados no Git?",
+  "options": {
+    "A": "Versionar todo o material atual",
+    "B": "Versionar conjunto essencial com curadoria conservadora",
+    "C": "Manter todos os documentos visuais e fontes nativas fora do Git"
+  },
+  "diversity": "medium",
+  "diversity_note": "Tres modelos da mesma familia, com lentes de manutencao, preservacao do design e operacao; independencia parcial. Evidencia semantica de dependencias e regeneracao ainda incompleta.",
+  "jurors": [
+    {
+      "id": "j1",
+      "role": "proponent / maintainer / second-order consequences",
+      "initial_choice": "B",
+      "initial_confidence": 93,
+      "final_choice": "B",
+      "final_confidence": 93,
+      "flip_reason": "",
+      "evidence_grade": "B"
+    },
+    {
+      "id": "j2",
+      "role": "skeptic / design handoff / pre-mortem",
+      "initial_choice": "B",
+      "initial_confidence": 86,
+      "final_choice": "B",
+      "final_confidence": 86,
+      "flip_reason": "",
+      "evidence_grade": "B"
+    },
+    {
+      "id": "j3",
+      "role": "integrator / operator / evidence-audit",
+      "initial_choice": "B",
+      "initial_confidence": 87,
+      "final_choice": "B",
+      "final_confidence": 84,
+      "flip_reason": "",
+      "evidence_grade": "B"
+    }
+  ]
+}

@@ -2,6 +2,13 @@
 
 CampusMarkt uses spec-driven development. This file is a map, not the complete product specification.
 
+## V2 Discovery and Local Tooling
+
+- V2 planning lives in `docs/product/v2/README.md`, with the PRD, technical design and confirmed discovery decisions. These are drafts until explicitly approved and do not authorize implementation.
+- Preserve V1 feature contracts while V2 behavior is discussed. Reconcile new decisions with the approved screens before creating implementation tasks.
+- Repository skills and provenance are in `.agents/skills/README.md` and `.agents/skills/sources.json`. Read only the skills relevant to the requested work.
+- Local MCP configuration and connection status are documented in `docs/development/agent-tooling.md`. Configuration does not establish authentication or authorize external writes.
+
 ## Read Before Changing the Product
 
 1. Read the relevant file under `docs/product/`.

@@ -1,0 +1,7 @@
+# Project-local MCP configuration. No credentials belong in this file.
+[mcp_servers.notion]
+url = "https://mcp.notion.com/mcp"
+
+[mcp_servers.playwright]
+command = "npx.cmd"
+args = ["-y", "@playwright/mcp@latest"]

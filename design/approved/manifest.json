@@ -1,0 +1,2232 @@
+{
+  "name": "CampusMarkt — Produto aprovado",
+  "path": "design/CampusMarkt-Approved.figcraft",
+  "approvalDate": "2026-10-16",
+  "checkout": "Main design journey, explicitly selected by user",
+  "variables": 60,
+  "textStyles": [
+    {
+      "id": "S:1",
+      "name": "CampusMarkt/Display",
+      "type": "text"
+    },
+    {
+      "id": "S:2",
+      "name": "CampusMarkt/Heading/H1",
+      "type": "text"
+    },
+    {
+      "id": "S:3",
+      "name": "CampusMarkt/Heading/H1-mobile",
+      "type": "text"
+    },
+    {
+      "id": "S:4",
+      "name": "CampusMarkt/Heading/H2",
+      "type": "text"
+    },
+    {
+      "id": "S:5",
+      "name": "CampusMarkt/Card/Title",
+      "type": "text"
+    },
+    {
+      "id": "S:6",
+      "name": "CampusMarkt/Body",
+      "type": "text"
+    },
+    {
+      "id": "S:7",
+      "name": "CampusMarkt/Metadata",
+      "type": "text"
+    },
+    {
+      "id": "S:8",
+      "name": "CampusMarkt/Action",
+      "type": "text"
+    },
+    {
+      "id": "S:9",
+      "name": "CampusMarkt/Compact",
+      "type": "text"
+    },
+    {
+      "id": "S:10",
+      "name": "CampusMarkt/Display-mobile",
+      "type": "text"
+    },
+    {
+      "id": "S:11",
+      "name": "CampusMarkt/Heading/H2-mobile",
+      "type": "text"
+    },
+    {
+      "id": "S:12",
+      "name": "CampusMarkt/Compact-regular",
+      "type": "text"
+    }
+  ],
+  "source": "CampusMarkt-Redesign.figcraft",
+  "pages": [
+    {
+      "id": 18299,
+      "name": "00 · Comece aqui",
+      "frames": [
+        {
+          "id": 18598,
+          "name": "CampusMarkt / Produto aprovado / Índice",
+          "width": 1600,
+          "height": 1380
+        }
+      ]
+    },
+    {
+      "id": 17492,
+      "name": "01 · Marca e design system",
+      "frames": [
+        {
+          "id": 17498,
+          "name": "00 · CampusMarkt Design System",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17499,
+          "name": "01 · Marca: um C aberto, um M próximo.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17507,
+          "name": "02 · Marca também é como a gente fala.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17515,
+          "name": "03 · O teal conduz. O estado explica.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17523,
+          "name": "04 · Inter, do anúncio ao painel interno.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17531,
+          "name": "05 · A mesma lógica, em qualquer largura.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17539,
+          "name": "06 · Símbolos que ajudam a reconhecer.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17547,
+          "name": "07 · Controles que mostram o próprio estado.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17555,
+          "name": "08 · O objeto primeiro. A ação depois.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17563,
+          "name": "09 · Uma marca. Duas áreas de trabalho.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17571,
+          "name": "10 · Padrões para não reinventar cada tela.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17579,
+          "name": "11 · Movimento para responder, não distrair.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17587,
+          "name": "12 · Acessível no detalhe. Coerente no conjunto.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 17595,
+          "name": "13 · A marca em contexto.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 18180,
+          "name": "14 · Escolhas, feedback e estados menores.",
+          "width": 1600,
+          "height": 1120
+        },
+        {
+          "id": 18216,
+          "name": "Brand/Monogram",
+          "width": 48,
+          "height": 48
+        },
+        {
+          "id": 18285,
+          "name": "Brand/Lockup",
+          "width": 340,
+          "height": 48
+        },
+        {
+          "id": 18289,
+          "name": "Brand/Lockup inverse",
+          "width": 340,
+          "height": 48
+        },
+        {
+          "id": 18293,
+          "name": "Brand/Symbol inverse",
+          "width": 48,
+          "height": 48
+        },
+        {
+          "id": 18296,
+          "name": "Brand/Symbol mono",
+          "width": 48,
+          "height": 48
+        }
+      ]
+    },
+    {
+      "id": 18219,
+      "name": "02 · Movimento e protótipos",
+      "frames": [
+        {
+          "id": 18224,
+          "name": "FavoriteButton/standard",
+          "width": 194,
+          "height": 104
+        },
+        {
+          "id": 18229,
+          "name": "FavoriteButton/reduced",
+          "width": 194,
+          "height": 104
+        },
+        {
+          "id": 18230,
+          "name": "Motion / standard",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "id": 18247,
+          "name": "Dialog / standard",
+          "width": 560,
+          "height": 360
+        },
+        {
+          "id": 18255,
+          "name": "Motion / reduced",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "id": 18272,
+          "name": "Dialog / reduced",
+          "width": 560,
+          "height": 360
+        }
+      ]
+    },
+    {
+      "id": 828,
+      "name": "03 · Descoberta e busca",
+      "frames": [
+        {
+          "id": 829,
+          "name": "Explore / refined desktop navbar",
+          "width": 1440,
+          "height": 1260
+        },
+        {
+          "id": 927,
+          "name": "Explore / refined mobile navbar",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 1007,
+          "name": "Search / refined desktop navbar",
+          "width": 1440,
+          "height": 1140
+        },
+        {
+          "id": 1090,
+          "name": "Search / refined mobile navbar",
+          "width": 390,
+          "height": 1140
+        },
+        {
+          "id": 1148,
+          "name": "Navigation / anatomy and states",
+          "width": 1440,
+          "height": 920
+        },
+        {
+          "id": 1149,
+          "name": "Mobile navigation / 320 px",
+          "width": 320,
+          "height": 600
+        },
+        {
+          "id": 649,
+          "name": "Filters / mobile sheet",
+          "width": 390,
+          "height": 844
+        }
+      ]
+    },
+    {
+      "id": 1429,
+      "name": "04 · Detalhes do anúncio",
+      "frames": [
+        {
+          "id": 1430,
+          "name": "Sell / desktop",
+          "width": 1440,
+          "height": 1320
+        },
+        {
+          "id": 1431,
+          "name": "Sell / mobile full page",
+          "width": 390,
+          "height": 1510
+        },
+        {
+          "id": 1782,
+          "name": "Sell / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 1432,
+          "name": "Free / mobile",
+          "width": 390,
+          "height": 1340
+        },
+        {
+          "id": 1825,
+          "name": "Give away / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 1433,
+          "name": "Wanted / mobile",
+          "width": 390,
+          "height": 1250
+        },
+        {
+          "id": 1860,
+          "name": "Wanted / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 1434,
+          "name": "Listing actions / owner and availability",
+          "width": 1440,
+          "height": 960
+        },
+        {
+          "id": 1615,
+          "name": "Give away / desktop",
+          "width": 1440,
+          "height": 1320
+        },
+        {
+          "id": 1647,
+          "name": "Wanted / desktop",
+          "width": 1440,
+          "height": 1200
+        },
+        {
+          "id": 1915,
+          "name": "Semântica e voltar / padrão aprovado",
+          "width": 1040,
+          "height": 520
+        },
+        {
+          "id": 1940,
+          "name": "Disponibilidade / padrão aprovado",
+          "width": 1040,
+          "height": 610
+        },
+        {
+          "id": 18679,
+          "name": "Wanted / reference response / mobile",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 19041,
+          "name": "Buyer / request at asking price / mobile",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 19054,
+          "name": "Buyer / purchase request sent / mobile",
+          "width": 390,
+          "height": 900
+        }
+      ]
+    },
+    {
+      "id": 1991,
+      "name": "05 · Publicar e editar",
+      "frames": [
+        {
+          "id": 1992,
+          "name": "Create / Sell / desktop",
+          "width": 1440,
+          "height": 1796
+        },
+        {
+          "id": 2094,
+          "name": "Create / Sell / mobile full",
+          "width": 390,
+          "height": 2076
+        },
+        {
+          "id": 2740,
+          "name": "sell / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 2155,
+          "name": "Create / Give away / desktop",
+          "width": 1440,
+          "height": 1600
+        },
+        {
+          "id": 2257,
+          "name": "Create / Give away / mobile full",
+          "width": 390,
+          "height": 1880
+        },
+        {
+          "id": 2805,
+          "name": "free / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 2318,
+          "name": "Create / Wanted / desktop",
+          "width": 1440,
+          "height": 1600
+        },
+        {
+          "id": 2415,
+          "name": "Create / Wanted / mobile full",
+          "width": 390,
+          "height": 1880
+        },
+        {
+          "id": 2870,
+          "name": "wanted / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 2473,
+          "name": "Edit / desktop",
+          "width": 1440,
+          "height": 1600
+        },
+        {
+          "id": 2569,
+          "name": "Edit / mobile full",
+          "width": 390,
+          "height": 1880
+        },
+        {
+          "id": 2928,
+          "name": "Edit / mobile viewport 390 × 844",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 2650,
+          "name": "Review before publish / desktop",
+          "width": 1440,
+          "height": 940
+        },
+        {
+          "id": 2703,
+          "name": "Review before publish / mobile",
+          "width": 390,
+          "height": 1140
+        },
+        {
+          "id": 2725,
+          "name": "Publish / success mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 2989,
+          "name": "Create & edit / validation, upload and exit states",
+          "width": 1440,
+          "height": 1020
+        }
+      ]
+    },
+    {
+      "id": 3222,
+      "name": "06 · Fotos e referências Wanted",
+      "frames": [
+        {
+          "id": 3223,
+          "name": "Sell / creation with 3 photos",
+          "width": 390,
+          "height": 2200
+        },
+        {
+          "id": 3331,
+          "name": "Wanted / creation with 3 reference photos",
+          "width": 390,
+          "height": 2200
+        },
+        {
+          "id": 3432,
+          "name": "Wanted / desktop creation with reference photos",
+          "width": 1440,
+          "height": 1700
+        },
+        {
+          "id": 3567,
+          "name": "Wanted / 3 reference photos / desktop",
+          "width": 1440,
+          "height": 1400
+        },
+        {
+          "id": 3648,
+          "name": "Wanted / 3 reference photos / mobile",
+          "width": 390,
+          "height": 1458
+        },
+        {
+          "id": 3701,
+          "name": "Wanted / 1 reference photo / mobile",
+          "width": 390,
+          "height": 1362
+        },
+        {
+          "id": 3741,
+          "name": "Reference gallery / viewer / desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": 3753,
+          "name": "Reference gallery / viewer / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 3765,
+          "name": "Photo manager / maximum 8 photos",
+          "width": 1440,
+          "height": 720
+        },
+        {
+          "id": 4056,
+          "name": "Sell / 3 photos / desktop",
+          "width": 1440,
+          "height": 1320
+        },
+        {
+          "id": 4150,
+          "name": "Sell / 3 photos / mobile",
+          "width": 390,
+          "height": 1614
+        },
+        {
+          "id": 4214,
+          "name": "Wanted / 8 reference photos / scrollable thumbnails",
+          "width": 390,
+          "height": 1458
+        },
+        {
+          "id": 4569,
+          "name": "Photo drag and language / EN–DE refinement",
+          "width": 1400,
+          "height": 1090
+        },
+        {
+          "id": 5003,
+          "name": "Photo options / keyboard alternative",
+          "width": 390,
+          "height": 370
+        }
+      ]
+    },
+    {
+      "id": 5014,
+      "name": "07 · Meus anúncios e favoritos",
+      "frames": [
+        {
+          "id": 5015,
+          "name": "My listings / active / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 5122,
+          "name": "My listings / active / mobile full",
+          "width": 390,
+          "height": 1240
+        },
+        {
+          "id": 5214,
+          "name": "Favorites / saved listings / desktop",
+          "width": 1440,
+          "height": 1060
+        },
+        {
+          "id": 5299,
+          "name": "Favorites / saved listings / mobile full",
+          "width": 390,
+          "height": 1160
+        },
+        {
+          "id": 5368,
+          "name": "My listings / empty / desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": 5411,
+          "name": "My listings / empty / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5440,
+          "name": "Favorites / empty / desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": 5483,
+          "name": "Favorites / empty / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5512,
+          "name": "My listings / mobile viewport",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5604,
+          "name": "Favorites / mobile viewport",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5673,
+          "name": "Owner / reserved, completed and archived states",
+          "width": 1440,
+          "height": 810
+        },
+        {
+          "id": 5717,
+          "name": "Account lists / actions, undo and recoverable errors",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 5756,
+          "name": "Favorites / German mobile viewport",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5825,
+          "name": "My listings / owner actions menu",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 5924,
+          "name": "My listings / German mobile viewport",
+          "width": 390,
+          "height": 844
+        }
+      ]
+    },
+    {
+      "id": 6268,
+      "name": "08 · Mensagens",
+      "frames": [
+        {
+          "id": 6269,
+          "name": "Inbox / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6317,
+          "name": "Conversation / sell / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 6415,
+          "name": "Conversation / sell / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 19067,
+          "name": "Conversation / purchase request at €25 / buyer",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6455,
+          "name": "Conversation / reserved / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6495,
+          "name": "Conversation / wanted / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6530,
+          "name": "Inbox / empty / desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": 6573,
+          "name": "Inbox / empty / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6602,
+          "name": "Conversation / first message",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6644,
+          "name": "Inbox / desktop before selecting a thread",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 6748,
+          "name": "Conversation / German interface",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6788,
+          "name": "Inbox / recoverable error mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 6841,
+          "name": "Messaging / delivery, draft recovery and private-access states",
+          "width": 1440,
+          "height": 1120
+        }
+      ]
+    },
+    {
+      "id": 7021,
+      "name": "09 · Ofertas e segurança no chat",
+      "frames": [
+        {
+          "id": 7022,
+          "name": "Counteroffer / received / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7049,
+          "name": "Counteroffer / compose / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7077,
+          "name": "Counteroffer / buyer / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7103,
+          "name": "Counteroffer / reserved / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7130,
+          "name": "Counteroffer / desktop dialog",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 7372,
+          "name": "Counteroffer / invalid, stale and conflicting states",
+          "width": 1440,
+          "height": 740
+        },
+        {
+          "id": 7397,
+          "name": "Contact sharing / blocked send and reviewed account warning",
+          "width": 1400,
+          "height": 1110
+        }
+      ]
+    },
+    {
+      "id": 7517,
+      "name": "10 · Reserva e retirada",
+      "frames": [
+        {
+          "id": 7518,
+          "name": "Pickup / buyer / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7550,
+          "name": "Pickup / seller / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7583,
+          "name": "Pickup / cancel / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7619,
+          "name": "Pickup / confirm / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7647,
+          "name": "Pickup / done / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7677,
+          "name": "Pickup / history / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 7707,
+          "name": "Pickup / reservation / desktop",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 7772,
+          "name": "Pickup / history / desktop",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 7934,
+          "name": "Pickup / cancellation and recovery states",
+          "width": 1400,
+          "height": 910
+        },
+        {
+          "id": 7979,
+          "name": "Pickup / confirm / desktop dialog",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 8065,
+          "name": "Pickup / cancel / desktop dialog",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 18678,
+          "name": "Give away / pickup / mobile",
+          "width": 390,
+          "height": 950
+        }
+      ]
+    },
+    {
+      "id": 8158,
+      "name": "11 · Checkout e recebimentos",
+      "frames": [
+        {
+          "id": 8159,
+          "name": "Payments / preferences / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8189,
+          "name": "Payments / setup / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8212,
+          "name": "Payments / choose / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8244,
+          "name": "Payments / ready / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 18680,
+          "name": "Reservation / paid / buyer / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 19011,
+          "name": "Buyer / completed pickup and payment / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8308,
+          "name": "Payments / paypal / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8332,
+          "name": "Payments / paid / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8358,
+          "name": "Payments / seller / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8387,
+          "name": "Payments / refund / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8419,
+          "name": "Payments / details / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8449,
+          "name": "Payments / cash / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 8676,
+          "name": "Payments / recovery and refund states",
+          "width": 1400,
+          "height": 1240
+        },
+        {
+          "id": 8805,
+          "name": "Payments / settings / desktop",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 8864,
+          "name": "Payments / listing and reservation entry points",
+          "width": 1400,
+          "height": 690
+        },
+        {
+          "id": 9202,
+          "name": "Checkout / desktop / carteiras e cartão",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 9280,
+          "name": "Checkout / mobile / carteiras e cartão",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 18676,
+          "name": "Buyer / payment record / mobile",
+          "width": 390,
+          "height": 1000
+        },
+        {
+          "id": 18677,
+          "name": "Buyer / payment record / desktop",
+          "width": 1440,
+          "height": 1000
+        }
+      ]
+    },
+    {
+      "id": 9317,
+      "name": "12 · Cadastro, login e recuperação",
+      "frames": [
+        {
+          "id": 9318,
+          "name": "Access / signin / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9344,
+          "name": "Access / register / mobile",
+          "width": 390,
+          "height": 1150
+        },
+        {
+          "id": 9378,
+          "name": "Access / confirmSent / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9401,
+          "name": "Access / confirmed / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9418,
+          "name": "Access / forgot / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9437,
+          "name": "Access / recoverySent / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9460,
+          "name": "Access / reset / mobile",
+          "width": 390,
+          "height": 940
+        },
+        {
+          "id": 9480,
+          "name": "Access / resetDone / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 9497,
+          "name": "Access / signin / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9534,
+          "name": "Access / register / desktop",
+          "width": 1440,
+          "height": 1340
+        },
+        {
+          "id": 9579,
+          "name": "Access / forgot / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9609,
+          "name": "Access / reset / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 9640,
+          "name": "Access / confirmSent / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9683,
+          "name": "Access / confirmed / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9720,
+          "name": "Access / recoverySent / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9763,
+          "name": "Access / resetDone / desktop",
+          "width": 1440,
+          "height": 1040
+        },
+        {
+          "id": 9800,
+          "name": "Access / validation and recovery states",
+          "width": 1400,
+          "height": 1230
+        },
+        {
+          "id": 9857,
+          "name": "Access / sign in / 320 px browser",
+          "width": 320,
+          "height": 844
+        },
+        {
+          "id": 9883,
+          "name": "Access / sign in / German",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10332,
+          "name": "Password strength / variety, phrase and confirmation states",
+          "width": 1400,
+          "height": 1060
+        },
+        {
+          "id": 10447,
+          "name": "Auth discovery / loading empty and failure",
+          "width": 1400,
+          "height": 600
+        }
+      ]
+    },
+    {
+      "id": 10467,
+      "name": "13 · Conta B e perfil",
+      "frames": [
+        {
+          "id": 10537,
+          "name": "Account / profile / mobile",
+          "width": 390,
+          "height": 1040
+        },
+        {
+          "id": 10569,
+          "name": "Account / edit / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10594,
+          "name": "Account / crop / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10626,
+          "name": "Account / security / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10651,
+          "name": "Account / preferences / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10672,
+          "name": "Account / delete / mobile",
+          "width": 390,
+          "height": 940
+        },
+        {
+          "id": 10696,
+          "name": "Account / reauth / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10720,
+          "name": "Account / deleted / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 10817,
+          "name": "Account / profile / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 10880,
+          "name": "Account / edit / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 10950,
+          "name": "Account / security / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 11020,
+          "name": "Account / preferences / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 11086,
+          "name": "Account / delete / desktop",
+          "width": 1440,
+          "height": 1240
+        },
+        {
+          "id": 11154,
+          "name": "Account / crop / desktop dialog",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 11260,
+          "name": "Account / reauth / desktop dialog",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 11356,
+          "name": "Account / deletion pending / desktop",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 11371,
+          "name": "Account / own public profile preview / mobile",
+          "width": 390,
+          "height": 1040
+        },
+        {
+          "id": 11472,
+          "name": "Account / edit profile with photo / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 11502,
+          "name": "Account / profile and security recovery states",
+          "width": 1400,
+          "height": 1240
+        },
+        {
+          "id": 11561,
+          "name": "Account / confirm sign out everywhere / mobile",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 11594,
+          "name": "Account / confirm sign out everywhere / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 11672,
+          "name": "Account / preferences / German",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 11900,
+          "name": "Account B / mobile",
+          "width": 390,
+          "height": 1080
+        },
+        {
+          "id": 11960,
+          "name": "Account B / desktop",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 12053,
+          "name": "Avatar · camera or file",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12079,
+          "name": "Avatar · camera preview",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12097,
+          "name": "Avatar · camera unavailable",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12411,
+          "name": "Account B · photo and verified state review",
+          "width": 1390,
+          "height": 1240
+        }
+      ]
+    },
+    {
+      "id": 12112,
+      "name": "14 · Verificação universitária",
+      "frames": [
+        {
+          "id": 12113,
+          "name": "University · entry",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12135,
+          "name": "University · pending",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12156,
+          "name": "University · verified",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12180,
+          "name": "University · expired",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12197,
+          "name": "University · disconnect",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12216,
+          "name": "University · removed",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12231,
+          "name": "University desktop · entry",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 12266,
+          "name": "University desktop · verified",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "id": 12343,
+          "name": "Badge · public contexts and private meaning",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 12379,
+          "name": "Verification · recovery states",
+          "width": 1400,
+          "height": 1150
+        },
+        {
+          "id": 12524,
+          "name": "University · mobile confirmation journey",
+          "width": 1390,
+          "height": 1000
+        },
+        {
+          "id": 12624,
+          "name": "University seal · social identity refinement",
+          "width": 1440,
+          "height": 1160
+        },
+        {
+          "id": 12684,
+          "name": "Public profile · social university seal",
+          "width": 390,
+          "height": 1040
+        }
+      ]
+    },
+    {
+      "id": 12720,
+      "name": "15 · Denúncia e bloqueio",
+      "frames": [
+        {
+          "id": 12721,
+          "name": "Safety mobile · reasons",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12758,
+          "name": "Safety mobile · details",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12784,
+          "name": "Safety mobile · user",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12810,
+          "name": "Safety mobile · sent",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12830,
+          "name": "Safety mobile · block",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12850,
+          "name": "Safety mobile · blocked",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12868,
+          "name": "Safety mobile · manage",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12892,
+          "name": "Safety mobile · unblock",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12908,
+          "name": "Safety mobile · empty",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12923,
+          "name": "Safety mobile · thread",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 12944,
+          "name": "Safety desktop · report",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13003,
+          "name": "Safety desktop · block",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13053,
+          "name": "Safety desktop · manage",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13109,
+          "name": "Safety desktop · receipt",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13159,
+          "name": "Safety · entry points and recovery states",
+          "width": 1400,
+          "height": 1875
+        },
+        {
+          "id": 13202,
+          "name": "Safety desktop · report reasons",
+          "width": 1440,
+          "height": 1080
+        }
+      ]
+    },
+    {
+      "id": 13427,
+      "name": "16 · Moderação",
+      "frames": [
+        {
+          "id": 13428,
+          "name": "Moderation mobile · queue",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13461,
+          "name": "Moderation mobile · listing",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13485,
+          "name": "Moderation mobile · remove",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13506,
+          "name": "Moderation mobile · dismiss",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13527,
+          "name": "Moderation mobile · user",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13551,
+          "name": "Moderation mobile · suspend",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13572,
+          "name": "Moderation mobile · success",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13591,
+          "name": "Moderation mobile · audit",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13615,
+          "name": "Moderation mobile · denied",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13628,
+          "name": "Moderation mobile · owner",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13645,
+          "name": "Moderation mobile · suspended",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13661,
+          "name": "Moderation desktop · queue",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13703,
+          "name": "Moderation desktop · listing",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13740,
+          "name": "Moderation desktop · user",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13777,
+          "name": "Moderation desktop · audit",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13811,
+          "name": "Moderation desktop · remove",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13844,
+          "name": "Moderation desktop · dismiss",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13877,
+          "name": "Moderation desktop · suspend",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 13913,
+          "name": "Moderation mobile · queue empty",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 13929,
+          "name": "Moderation · recovery and authorization",
+          "width": 1400,
+          "height": 1550
+        }
+      ]
+    },
+    {
+      "id": 14127,
+      "name": "17 · Ajuda, políticas e legal",
+      "frames": [
+        {
+          "id": 14128,
+          "name": "Help mobile · home",
+          "width": 390,
+          "height": 1100
+        },
+        {
+          "id": 14163,
+          "name": "Help mobile · contact",
+          "width": 390,
+          "height": 1000
+        },
+        {
+          "id": 14187,
+          "name": "Mobile · A safer pickup",
+          "width": 390,
+          "height": 1049
+        },
+        {
+          "id": 14212,
+          "name": "Desktop · A safer pickup",
+          "width": 1440,
+          "height": 975
+        },
+        {
+          "id": 14245,
+          "name": "Mobile · Marketplace rules",
+          "width": 390,
+          "height": 1233
+        },
+        {
+          "id": 14272,
+          "name": "Desktop · Marketplace rules",
+          "width": 1440,
+          "height": 1079
+        },
+        {
+          "id": 14308,
+          "name": "Mobile · Terms of Service",
+          "width": 390,
+          "height": 1465
+        },
+        {
+          "id": 14337,
+          "name": "Desktop · Terms of Service",
+          "width": 1440,
+          "height": 1154
+        },
+        {
+          "id": 14373,
+          "name": "Mobile · Privacy Policy",
+          "width": 390,
+          "height": 1671
+        },
+        {
+          "id": 14404,
+          "name": "Desktop · Privacy Policy",
+          "width": 1440,
+          "height": 1349
+        },
+        {
+          "id": 14442,
+          "name": "Mobile · Legal Notice",
+          "width": 390,
+          "height": 1397
+        },
+        {
+          "id": 14471,
+          "name": "Desktop · Legal Notice",
+          "width": 1440,
+          "height": 1153
+        },
+        {
+          "id": 14506,
+          "name": "Help desktop · home",
+          "width": 1440,
+          "height": 1260
+        },
+        {
+          "id": 14555,
+          "name": "Help desktop · contact",
+          "width": 1440,
+          "height": 1100
+        },
+        {
+          "id": 14584,
+          "name": "Help mobile · university badge FAQ",
+          "width": 390,
+          "height": 1080
+        },
+        {
+          "id": 14605,
+          "name": "Mobile · Reports & blocks",
+          "width": 390,
+          "height": 1235
+        },
+        {
+          "id": 14632,
+          "name": "Desktop · Reports & blocks",
+          "width": 1440,
+          "height": 1079
+        },
+        {
+          "id": 14668,
+          "name": "Legal mobile · contents sheet",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 14878,
+          "name": "Privacy mobile · 320 px reading",
+          "width": 320,
+          "height": 1989
+        }
+      ]
+    },
+    {
+      "id": 14906,
+      "name": "18 · Administração",
+      "frames": [
+        {
+          "id": 14907,
+          "name": "Account B · authorised administration entry",
+          "width": 390,
+          "height": 1180
+        },
+        {
+          "id": 14972,
+          "name": "Account B · authorised administration entry",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 15069,
+          "name": "Desktop account menu · staff only entry",
+          "width": 1440,
+          "height": 1120
+        },
+        {
+          "id": 15174,
+          "name": "Administration desktop · overview",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15219,
+          "name": "Administration desktop · listings",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15272,
+          "name": "Administration desktop · edit",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15315,
+          "name": "Administration desktop · review",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15354,
+          "name": "Administration desktop · users",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15407,
+          "name": "Administration desktop · user",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15453,
+          "name": "Administration desktop · settings",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15494,
+          "name": "Administration desktop · category",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15536,
+          "name": "Administration desktop · team",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15578,
+          "name": "Administration desktop · grant",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15617,
+          "name": "Administration desktop · audit",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 15660,
+          "name": "Administration mobile · overview",
+          "width": 390,
+          "height": 960
+        },
+        {
+          "id": 15697,
+          "name": "Administration mobile · listings",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 15723,
+          "name": "Administration mobile · edit",
+          "width": 390,
+          "height": 1110
+        },
+        {
+          "id": 15751,
+          "name": "Administration mobile · review",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 15774,
+          "name": "Administration mobile · users",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 15800,
+          "name": "Administration mobile · user",
+          "width": 390,
+          "height": 1100
+        },
+        {
+          "id": 15827,
+          "name": "Administration mobile · settings",
+          "width": 390,
+          "height": 940
+        },
+        {
+          "id": 15855,
+          "name": "Administration mobile · category",
+          "width": 390,
+          "height": 1000
+        },
+        {
+          "id": 15881,
+          "name": "Administration mobile · team",
+          "width": 390,
+          "height": 1050
+        },
+        {
+          "id": 15907,
+          "name": "Administration mobile · access",
+          "width": 390,
+          "height": 1050
+        },
+        {
+          "id": 15933,
+          "name": "Administration mobile · grant",
+          "width": 390,
+          "height": 980
+        },
+        {
+          "id": 15955,
+          "name": "Administration mobile · audit",
+          "width": 390,
+          "height": 1050
+        },
+        {
+          "id": 15982,
+          "name": "Administration mobile · auditdetail",
+          "width": 390,
+          "height": 940
+        },
+        {
+          "id": 16004,
+          "name": "Administration · existing moderation queue",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 16066,
+          "name": "Administration mobile · recent authentication",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16088,
+          "name": "Administration mobile · revoke access",
+          "width": 390,
+          "height": 900
+        },
+        {
+          "id": 16109,
+          "name": "Administration · permission and recovery contract",
+          "width": 1400,
+          "height": 1880
+        },
+        {
+          "id": 16161,
+          "name": "Administration desktop · areas",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 16200,
+          "name": "Administration mobile · areas",
+          "width": 390,
+          "height": 1000
+        },
+        {
+          "id": 16223,
+          "name": "Administration desktop · content",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 16261,
+          "name": "Administration mobile · content",
+          "width": 390,
+          "height": 1120
+        },
+        {
+          "id": 16285,
+          "name": "Administration desktop · legal",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 16327,
+          "name": "Administration mobile · legal",
+          "width": 390,
+          "height": 1000
+        },
+        {
+          "id": 16350,
+          "name": "Administration overview · entry",
+          "width": 1390,
+          "height": 1320
+        },
+        {
+          "id": 16481,
+          "name": "Administration overview · correction",
+          "width": 1390,
+          "height": 1250
+        },
+        {
+          "id": 16557,
+          "name": "Administration overview · access",
+          "width": 1390,
+          "height": 1190
+        }
+      ]
+    },
+    {
+      "id": 16634,
+      "name": "19 · Carregamento e recuperação",
+      "frames": [
+        {
+          "id": 16635,
+          "name": "Recovery mobile · loading",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16673,
+          "name": "Recovery mobile · empty",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16702,
+          "name": "Recovery mobile · zero",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16736,
+          "name": "Recovery mobile · error",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16763,
+          "name": "Recovery mobile · offline",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16790,
+          "name": "Recovery mobile · unavailable",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16807,
+          "name": "Recovery mobile · upload",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16831,
+          "name": "Recovery mobile · unsaved",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16854,
+          "name": "Recovery mobile · invalid",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16871,
+          "name": "Recovery mobile · photo",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16906,
+          "name": "Recovery mobile · pagination",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "id": 16947,
+          "name": "Recovery desktop · loading",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 16980,
+          "name": "Recovery desktop · empty",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17003,
+          "name": "Recovery desktop · zero",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17030,
+          "name": "Recovery desktop · error",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17051,
+          "name": "Recovery desktop · unavailable",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17074,
+          "name": "Recovery desktop · unsaved",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17102,
+          "name": "Recovery desktop · upload",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17138,
+          "name": "Recovery desktop · pagination",
+          "width": 1440,
+          "height": 1080
+        },
+        {
+          "id": 17178,
+          "name": "Search zero results · German 320 px",
+          "width": 320,
+          "height": 844
+        },
+        {
+          "id": 17208,
+          "name": "Feedback · pending, acknowledged and recoverable",
+          "width": 1400,
+          "height": 1490
+        }
+      ]
+    },
+    {
+      "id": 18300,
+      "name": "20 · Jornada de compra",
+      "frames": [
+        {
+          "id": 18599,
+          "name": "CampusMarkt / buyer / Jornada aprovada",
+          "width": 1880,
+          "height": 1450
+        }
+      ]
+    },
+    {
+      "id": 18301,
+      "name": "21 · Jornada de venda",
+      "frames": [
+        {
+          "id": 18600,
+          "name": "CampusMarkt / seller / Jornada aprovada",
+          "width": 1880,
+          "height": 1450
+        }
+      ]
+    },
+    {
+      "id": 18302,
+      "name": "22 · Jornada de administração",
+      "frames": [
+        {
+          "id": 18601,
+          "name": "CampusMarkt / ops / Jornada aprovada",
+          "width": 1880,
+          "height": 1450
+        }
+      ]
+    },
+    {
+      "id": 18303,
+      "name": "23 · Contratos e critérios de entrega",
+      "frames": [
+        {
+          "id": 18602,
+          "name": "CampusMarkt / rules / Jornada aprovada",
+          "width": 1600,
+          "height": 1500
+        }
+      ]
+    }
+  ],
+  "journeys": {
+    "home": 18598,
+    "buyer": 18599,
+    "seller": 18600,
+    "ops": 18601,
+    "rules": 18602
+  },
+  "derivedViews": [
+    {
+      "key": "receiptMobile",
+      "id": 18676,
+      "w": 390,
+      "h": 1000
+    },
+    {
+      "key": "receiptDesktop",
+      "id": 18677,
+      "w": 1440,
+      "h": 1000
+    },
+    {
+      "key": "free",
+      "id": 18678,
+      "w": 390,
+      "h": 950
+    },
+    {
+      "key": "wanted",
+      "id": 18679,
+      "w": 390,
+      "h": 900
+    },
+    {
+      "key": "paid",
+      "id": 18680
+    },
+    {
+      "key": "completed",
+      "id": 19011
+    },
+    {
+      "key": "request",
+      "id": 19041
+    },
+    {
+      "key": "requestSent",
+      "id": 19054
+    },
+    {
+      "key": "directRequestConversation",
+      "id": 19067
+    }
+  ],
+  "review": "Native key index/buyer/checkout/payment navigation tested; PNG visual inspection; not full application validation"
+}

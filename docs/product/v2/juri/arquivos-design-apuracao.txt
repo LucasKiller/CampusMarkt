@@ -1,0 +1,38 @@
+============================================================
+THE JURY - TALLY
+============================================================
+Jurors: 3   Panel diversity: medium
+
+Round 1 (independent) weighted scores:
+  B                      266.0
+
+Round 2 (final) weighted scores:
+  B                      263.0
+
+Flips: 0  (unjustified: 0)
+
+Bandwagon check: clean
+Aggregate used: final confidence-weighted aggregate
+
+------------------------------------------------------------
+RESULT
+------------------------------------------------------------
+  Recommended winner : B
+  Recommended conf.  : HIGH
+  Winner evidence avg: 3.00 (A=4 .. D=1)
+
+  Reminders for the foreman:
+   - This is a recommendation. You still emit the verdict.
+   - PIVOT (question is mis-framed) is your call; the script does not detect it.
+   - On a flagged tie, decide on the rubric and survival against the devil's advocate.
+   - There is always a verdict. Never abstain.
+
+{
+  "winner": "B",
+  "confidence": "HIGH",
+  "aggregate_source": "final",
+  "bandwagon_suspect": false,
+  "tie_flag": false,
+  "winner_evidence_avg": 3.0,
+  "caps": []
+}

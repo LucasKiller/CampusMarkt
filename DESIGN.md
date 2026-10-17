@@ -1,8 +1,34 @@
 # CampusMarkt — Product Design
 
+> Documentation images and PDFs were archived outside the repository on 2026-10-17 at the user's request. Historical export names below resolve through the [external artifact inventory](design/EXTERNAL-ARTIFACTS.md); native design sources remain in `design/`.
+
 **Status:** approved design direction. Implementation follows `.specs/features/015-marketplace-visual-system/plan.md`.
 
+## Current curated reference - 2026-10-16
+
+The user approved the design-system proposals and requested a separate approved-only FigCraft reference, then explicitly selected integrated checkout as the main **design** journey. Current source: `design/CampusMarkt-Approved.figcraft`, titled **CampusMarkt — Produto aprovado**, starting at **00 · Comece aqui**. It consolidates A, account B, CM, the university seal, screen flows, system and motion across 24 pages. See `design/APPROVED-PRODUCT.md`. Earlier review/deferral labels below describe exploration history and are superseded by this approval record. Checkout and expanded admin still require approved behavioral implementation specifications; the current V1 runtime boundary has not been changed by design work.
+
+## Redesign direction selected on 2026-10-16
+
+The user selected **A / Local discovery**, the Karrot-inspired proposal in `design/CampusMarkt-Redesign.figcraft`, page `02 · Karrot × Hazaar — visual comparison`. This is the reference for the screen-by-screen redesign: original teal, Inter, rounded item photography, visible search, neighborhood context, category icons and two-column discovery cards at 390px. The Hazaar-inspired editorial proposal B was not selected. Logo exploration was reopened by the design-system request; the new CM proposal awaits review and existing screen logos remain preserved.
+
+Page **21 · CampusMarkt Design System — v1.0** documents preserved decisions and proposes branding, detailed typography, geometry, components and motion. Page 22 contains standard/reduced motion demonstrations. See `design/DESIGN-SYSTEM.md` and `output/pdf/CampusMarkt-Design-System.pdf`. New definitions await review before adoption; feature specifications still govern behavior.
+
+Design the responsive browser screens before implementation. Existing specifications continue to govern product behavior. The two-column mobile arrangement supersedes the older single-column guidance below for redesign proposals; validate narrow widths, long translations and accessibility before implementation. The existing application is not changed by this visual choice.
+
+The navigation refinement on FigCraft page `04 · Navigation refinement — direction A` was also accepted, with extra separation requested between publishing and language. The corrected proposal uses a 48px desktop gap and a 12px mobile vertical gap. Continue subsequent screen designs with this navigation hierarchy; contextual listing actions are under review on page 05.
+
 ## Intent
+
+The user visually accepted page 19 Administration and asked to continue. Page 20 now proposes common loading, empty, zero-result, unavailable, offline/retry, photo/upload and unsaved/invalid form states. Keep the accepted Administration direction and private-conversation boundary. `design/REVIEW-HANDOFF.md` consolidates the remaining locale/width/interaction/specification work before coding and final independent validation.
+
+Page 18's help/policies/legal visual unit was accepted. Page 19 now presents the user-requested Administration expansion: conditional account/menu entry, public-record corrections with reason/before-after review, controlled platform settings, staff permissions and activity history, reusing moderation. Private conversations stay excluded. This is a design/scope proposal; existing specs still govern implementation and no broad administrator privileges are implicitly granted.
+
+The user has explicitly accepted the social-style teal university-cap seal on page 15. Keep it as the selected badge, superseding the earlier text pill; account layout B remains selected. Page 16's reporting/blocking direction was accepted, including disabled sending for both sides of a block and a generic notice for the blocked participant. Page 17's moderation workspace is the next proposal for review.
+
+Latest university-badge proposal: the user requested the familiar visual language of social verification with a university cap. Page 15 now replaces the text pill with an original teal scalloped seal and white graduation cap, immediately after the display name. Supporting university text and the badge explanation preserve the limited institutional-email meaning. See `design/UNIVERSITY-VERIFICATION.md` and `design/15-social-university-seal.png`. Account layout B remains selected.
+
+On 2026-10-16 the user selected **account layout alternative B** on FigCraft page 14 as the main desktop/mobile account layout. This is an account-layout refinement within direction A, unrelated to the rejected Hazaar direction B. Preserve the previous account hub only as historical comparison. Page 15's selected university seal supersedes the historical text-pill iterations.
 
 CampusMarkt should feel like a local, trustworthy, welcoming marketplace — neither a corporate storefront nor an Airbnb clone. The previously approved reference is structural: photography first, prominent search, easy-to-scan categories, lightweight cards, and clear actions on listing details. CampusMarkt owns its visual identity, copy, and interactions.
 
@@ -84,6 +110,8 @@ Spacing follows a 4px base: `4, 8, 12, 16, 24, 32, 48, 64px`. Radii: `8px` on fi
 | Moderation               | Favor density, readability, and decision auditability; do not force the consumer photo grid onto an operations queue.                               |
 
 ## Components and states
+
+Listing detail uses distinct semantic accents: the approved Available has a white surface, green outline (`#BBDCC7`), green dot with a pale halo and text `#23734A`; Unavailable is gray with a circled minus, while Reserved stays amber. Reporting has a pale rose surface (`#FFF1F2`, text/icon `#B42332`); item condition has its own labeled tint (New violet, Like new cyan, Good blue, Fair amber). Exact pairs and contrast calculations live in `design/LISTING-DETAIL.md`. Mobile detail uses a round-capped Lucide chevron-left inside a 44 px back target. These refinements follow the user's detail-screen feedback and remain static FigCraft designs until implementation is approved.
 
 | Component | Required variants                                                              |
 | --------- | ------------------------------------------------------------------------------ |

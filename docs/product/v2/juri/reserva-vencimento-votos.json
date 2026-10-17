@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-17",
+  "decision": "Meaning and consequence of the three-day paid reservation deadline",
+  "options": {
+    "A": "Three-day checkpoint with manual seller action and no automatic final end",
+    "B": "Automatic cancellation at three days unless pickup, bilateral extension or a delivery dispute applies",
+    "C": "Three-day pickup period followed by a disclosed finite resolution window, then closure if unresolved and uncontested"
+  },
+  "diversity": "medium",
+  "diversity_note": "Three models (gpt-6.1-sol, gpt-6-astra, gpt-6-sol), distinct coordination, financial reliability and product/operations lenses. Same model family, shared evidence and no local outcome data; partial independence.",
+  "jurors": [
+    {
+      "id": "j1",
+      "role": "proponent",
+      "initial_choice": "C",
+      "initial_confidence": 81,
+      "final_choice": "C",
+      "final_confidence": 74,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j2",
+      "role": "devils_advocate",
+      "initial_choice": "C",
+      "initial_confidence": 84,
+      "final_choice": "C",
+      "final_confidence": 73,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    },
+    {
+      "id": "j3",
+      "role": "integrator",
+      "initial_choice": "B",
+      "initial_confidence": 72,
+      "final_choice": "B",
+      "final_confidence": 70,
+      "flip_reason": "",
+      "evidence_grade": "C"
+    }
+  ]
+}

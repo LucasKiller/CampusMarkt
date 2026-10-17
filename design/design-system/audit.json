@@ -1,0 +1,250 @@
+{
+  "date": "2026-10-16",
+  "boards": {
+    "cover": 17498,
+    "brand": 17499,
+    "voice": 17507,
+    "color": 17515,
+    "type": 17523,
+    "layout": 17531,
+    "icons": 17539,
+    "controls": 17547,
+    "cards": 17555,
+    "navigation": 17563,
+    "patterns": 17571,
+    "motion": 17579,
+    "access": 17587,
+    "applications": 17595,
+    "choices": 18180
+  },
+  "textOutsideBoards": [],
+  "prototypes": {
+    "favoriteStandard": "visually toggled",
+    "dialogStandard": "opened and closed",
+    "reducedNavigation": "confirmed",
+    "favoriteReduced": "visually toggled",
+    "dialogReduced": "opened and closed"
+  },
+  "styles": [
+    {
+      "description": "",
+      "id": "S:1",
+      "name": "CampusMarkt/Display",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 52,
+        "font_style": "Bold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": -1.04
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 55
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:2",
+      "name": "CampusMarkt/Heading/H1",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 40,
+        "font_style": "Bold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": -0.8
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 46
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:3",
+      "name": "CampusMarkt/Heading/H1-mobile",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 28,
+        "font_style": "Bold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": -0.4
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 36
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:4",
+      "name": "CampusMarkt/Heading/H2",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 28,
+        "font_style": "Bold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": -0.3
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 36
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:5",
+      "name": "CampusMarkt/Card/Title",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 16,
+        "font_style": "Bold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": 0
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 22
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:6",
+      "name": "CampusMarkt/Body",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 16,
+        "font_style": "Regular",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": 0
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 24
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:7",
+      "name": "CampusMarkt/Metadata",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 14,
+        "font_style": "Regular",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": 0
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 20
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:8",
+      "name": "CampusMarkt/Action",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 14,
+        "font_style": "SemiBold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": 0
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 20
+        },
+        "link": null
+      },
+      "type": "text"
+    },
+    {
+      "description": "",
+      "id": "S:9",
+      "name": "CampusMarkt/Compact",
+      "style": {
+        "case": "original",
+        "decoration": "none",
+        "fills": null,
+        "font_family": "Inter",
+        "font_size": 12,
+        "font_style": "SemiBold",
+        "letter_spacing": {
+          "unit": "pixels",
+          "value": 0
+        },
+        "line_height": {
+          "unit": "pixels",
+          "value": 16
+        },
+        "link": null
+      },
+      "type": "text"
+    }
+  ],
+  "assets": {
+    "symbol": 18216,
+    "logo-lockup": 18285,
+    "logo-lockup-inverse": 18289,
+    "logo-symbol-inverse": 18293,
+    "logo-symbol-mono": 18296
+  },
+  "tokens": 55,
+  "limitations": [
+    "Local visual QA only; no independent final application validation",
+    "Only selected native component properties are variable-bound",
+    "Native overlay travel is not the production 12px distance"
+  ]
+}

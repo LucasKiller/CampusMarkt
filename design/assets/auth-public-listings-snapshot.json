@@ -1,0 +1,20 @@
+[
+  {
+    "id": "dcdf35f7-636f-4eb6-8c47-8017b174f63d",
+    "title": "Candle",
+    "listingType": "GIVE_AWAY",
+    "priceCents": 0,
+    "pickupArea": "innenstadt",
+    "status": "active",
+    "coverImage": "0f12dbbb-0f84-40e1-a56d-6ceed1c2ae92/afe47621-0a45-492e-a433-684faeec6bc8.jpg"
+  },
+  {
+    "id": "6f1fc34a-00c0-43d3-878a-6517b97f67dd",
+    "title": "plant vse",
+    "listingType": "SELL",
+    "priceCents": 1500,
+    "pickupArea": "weststadt",
+    "status": "active",
+    "coverImage": "0f12dbbb-0f84-40e1-a56d-6ceed1c2ae92/96268c8e-7d3c-4e57-a6a2-765afd9891f6.jpg"
+  }
+]

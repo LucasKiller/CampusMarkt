@@ -9,3 +9,18 @@ coverage/
 .env.*
 !.env.example
 .harness-eval/
+
+# Documentation exports are archived outside this repository.
+/design/**/*.png
+/design/**/*.jpg
+/design/**/*.jpeg
+/design/**/*.svg
+/design/**/*.gif
+/design/**/*.webp
+/design/**/*.avif
+/design/**/*.pdf
+/design/**/*.eps
+/design/**/*.zip
+/design/assets/payment-brands/
+/output/**/*.pdf
+/tmp/

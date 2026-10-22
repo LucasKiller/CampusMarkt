@@ -2,6 +2,14 @@
 
 CampusMarkt uses spec-driven development. This file is a map, not the complete product specification.
 
+## Delivery Workflow
+
+- Follow [Delivery workflow](docs/development/delivery-workflow.md) for planning, discussion, tasks, execution, validation, branches and pull requests.
+- Use one `feature/` branch and one PR into `development` per approved roadmap stage. TLC phases and worker batches stay inside that delivery; keep one atomic commit per task.
+- Start new stage branches from current `origin/development`; never implement new tasks directly on `development` or `production`. Isolate unrelated or concurrent work in a separate checkout.
+- Open the stage PR as a draft after its first published commit. Mark it ready only after the stage exit criteria, applicable gates and independent feature validations pass. Preserve task commits when merging; do not squash the stage into one commit.
+- Reconcile existing commits and local changes before adopting the branch convention. Do not rewrite history, move unfinished work, or repeat completed tasks by inference.
+
 ## V2 Discovery and Local Tooling
 
 - V2 planning lives in `docs/product/v2/README.md`, with the PRD, technical design and confirmed discovery decisions. These are drafts until explicitly approved and do not authorize implementation.

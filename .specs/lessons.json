@@ -3,7 +3,7 @@
   "promote_threshold": 2,
   "window_days": 45,
   "quarantine_threshold": 2,
-  "next_id": 23,
+  "next_id": 24,
   "lessons": [
     {
       "id": "L-001",
@@ -400,6 +400,24 @@
       ],
       "created": "2026-10-04T15:03:03Z",
       "last_seen": "2026-10-04T15:03:03Z"
+    },
+    {
+      "id": "L-023",
+      "key": "ac_gap::use absolute repository blob urls for documentation links in github pull request templates because the rendered pr body has a different relative link context",
+      "text": "Use absolute repository blob URLs for documentation links in GitHub pull request templates, because the rendered PR body has a different relative-link context.",
+      "signal": "ac_gap",
+      "scope": "github-templates",
+      "status": "candidate",
+      "features": [
+        "roadmap-delivery-workflow"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        ".github/pull_request_template.md:27 / FLOW-07 / validation.md (github-templates)"
+      ],
+      "created": "2026-10-22T18:38:24Z",
+      "last_seen": "2026-10-22T18:38:24Z"
     }
   ]
 }

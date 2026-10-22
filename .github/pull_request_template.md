@@ -24,4 +24,4 @@ Registre comandos, resultados, evidências e limites reais. Para features, inclu
 - [ ] As checagens documentais estão registradas quando a entrega é apenas documental; itens inaplicáveis estão justificados.
 - [ ] Os processos iniciados para verificação foram encerrados.
 
-Preservar os commits das tarefas usando merge commit. Merge e produção seguem suas autorizações próprias. Consulte o [fluxo de entrega](../docs/development/delivery-workflow.md).
+Preservar os commits das tarefas usando merge commit. Merge e produção seguem suas autorizações próprias. Consulte o [fluxo de entrega](https://github.com/LucasKiller/CampusMarkt/blob/development/docs/development/delivery-workflow.md).

@@ -146,6 +146,12 @@ Seen once or not yet corroborated. Tracked, not trusted.
 - evidence: .specs/features/021-listing-photo-upload-repair/validation.md:38 (listings)
 - last seen: 2026-10-04T15:03:03Z
 
+### L-023 - Use absolute repository blob URLs for documentation links in GitHub pull request templates, because the rendered PR body has a different relative-link context.
+- signal: `ac_gap` · recurrence: 1 feature(s) · scope: `github-templates` · harmful: 0
+- features: roadmap-delivery-workflow
+- evidence: .github/pull_request_template.md:27 / FLOW-07 / validation.md (github-templates)
+- last seen: 2026-10-22T18:38:24Z
+
 ## Quarantined (failed when applied - ignore)
 
 A confirmed lesson that recurred alongside failure. Kept for the maintainer to review.

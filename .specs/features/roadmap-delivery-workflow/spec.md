@@ -57,15 +57,15 @@ O processo TLC e o planejamento existem, mas a convenção de branch/PR por etap
 
 ## Requirement Traceability
 
-| Requirement ID | Story    | Phase   | Status       |
-| -------------- | -------- | ------- | ------------ |
-| FLOW-01        | P1 / AC1 | Execute | Implementing |
-| FLOW-02        | P1 / AC2 | Execute | Implementing |
-| FLOW-03        | P1 / AC3 | Execute | Implementing |
-| FLOW-04        | P1 / AC4 | Execute | Implementing |
-| FLOW-05        | P1 / AC5 | Execute | Implementing |
-| FLOW-06        | P1 / AC6 | Execute | Implementing |
-| FLOW-07        | P1 / AC7 | Execute | Implementing |
+| Requirement ID | Story    | Phase   | Status   |
+| -------------- | -------- | ------- | -------- |
+| FLOW-01        | P1 / AC1 | Execute | Verified |
+| FLOW-02        | P1 / AC2 | Execute | Verified |
+| FLOW-03        | P1 / AC3 | Execute | Verified |
+| FLOW-04        | P1 / AC4 | Execute | Verified |
+| FLOW-05        | P1 / AC5 | Execute | Verified |
+| FLOW-06        | P1 / AC6 | Execute | Verified |
+| FLOW-07        | P1 / AC7 | Execute | Verified |
 
 ## Success Criteria
 
@@ -76,5 +76,11 @@ Gate documental: `validate_spec.py roadmap-delivery-workflow`, Prettier focado, 
 ## Execution
 
 - [x] T1: Documentar o fluxo, publicar seus pontos de entrada e criar o modelo de PR. Gate documental aprovado em 2026-10-22: spec sem erros/avisos, cinco arquivos formatados, 26 links locais resolvidos, `docs:check` com quatro guias e 37 comandos, mensagem Conventional Commit e diff sem erros. Nenhum teste de produto alterado ou processo persistente iniciado.
-- Validação independente: pendente após o commit de implementação; requisitos permanecem Implementing até o verificador registrar suas evidências.
-- [x] T2: Corrigir o link do modelo para o contexto do corpo de PR, conforme a revisão independente. URL absoluta do guia em `development`, que receberá guia e modelo juntos no merge. Gate aprovado: destino de arquivo correto, URL preservada em contextos de arquivo e PR, 25 links locais resolvidos, formatação e comandos documentais aprovados. A descrição deste PR de adoção usará o guia na própria branch até o merge. Registrada a lição candidata L-023 pelo script TLC; revalidação independente pendente.
+- Validação independente concluída em 2026-10-22: 7/7 critérios aprovados, 2/2 mutações documentais detectadas, gates documentais e `validate_state.py` aprovados. Evidências em [validation.md](validation.md).
+- [x] T2: Corrigir o link do modelo para o contexto do corpo de PR, conforme a revisão independente. URL absoluta do guia em `development`, que receberá guia e modelo juntos no merge. Gate aprovado: destino de arquivo correto, URL preservada em contextos de arquivo e PR, 25 links locais resolvidos, formatação e comandos documentais aprovados. A descrição deste PR de adoção usará o guia na própria branch até o merge. Registrada a lição candidata L-023 pelo script TLC; correção aprovada na revalidação independente.
+
+## Publicação e estado de integração
+
+[PR #12](https://github.com/LucasKiller/CampusMarkt/pull/12), branch `feature/roadmap-delivery-workflow`, base `development`. A entrega documental passou na validação independente; o PR permanece draft enquanto a CI geral estiver vermelha.
+
+A [primeira execução de CI](https://github.com/LucasKiller/CampusMarkt/actions/runs/39833302483) passou por typecheck e lint, mas parou em `format:check` com dez arquivos de design; build e etapas posteriores não foram executados. A comparação dos dez blobs entre HEAD e `origin/development` confirmou igualdade: são falhas da base publicada, fora do diff deste PR. São os mesmos caminhos previstos pelas tarefas de normalização da base técnica em andamento no checkout original. Não foram importados os commits dessa execução nem enfraquecido o gate para obter aprovação. Merge e deploy não foram executados.

@@ -95,3 +95,5 @@ Cross-feature product decisions live in:
 6. [Future Capabilities](docs/product/05-future-capabilities.md)
 
 CampusMarkt uses the TLC spec-driven flow: approved requirements lead to atomic tasks and commits, requirement-derived tests, and independent validation. Read [AGENTS.md](AGENTS.md) before changing the product and consult [.specs/STATE.md](.specs/STATE.md) for active decisions, handoff state, and blockers.
+
+The [Delivery workflow](docs/development/delivery-workflow.md) defines the complete cycle and the convention of one branch and PR per roadmap stage, with atomic task commits and independent validation before review.
